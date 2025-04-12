@@ -1,8 +1,8 @@
 package prometheus
 
 import (
-	"github.com/nicolastakashi/community-perses-dashboards/internal/dashboards"
-	"github.com/nicolastakashi/community-perses-dashboards/internal/promql"
+	"github.com/perses/community-dashboards/internal/dashboards"
+	"github.com/perses/community-dashboards/internal/promql"
 	"github.com/perses/perses/go-sdk/panel"
 	panelgroup "github.com/perses/perses/go-sdk/panel-group"
 	"github.com/perses/perses/go-sdk/prometheus/query"

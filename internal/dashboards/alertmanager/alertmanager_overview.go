@@ -1,9 +1,9 @@
 package alertmanager
 
 import (
-	"github.com/nicolastakashi/community-perses-dashboards/internal/dashboards"
-	"github.com/nicolastakashi/community-perses-dashboards/internal/promql"
-	panels "github.com/nicolastakashi/community-perses-dashboards/pkg/panels/alertmanager"
+	"github.com/perses/community-dashboards/internal/dashboards"
+	"github.com/perses/community-dashboards/internal/promql"
+	panels "github.com/perses/community-dashboards/pkg/panels/alertmanager"
 	"github.com/perses/perses/go-sdk/dashboard"
 	panelgroup "github.com/perses/perses/go-sdk/panel-group"
 	labelValuesVar "github.com/perses/perses/go-sdk/prometheus/variable/label-values"

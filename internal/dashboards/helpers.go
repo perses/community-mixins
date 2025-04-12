@@ -1,7 +1,7 @@
 package dashboards
 
 import (
-	"github.com/nicolastakashi/community-perses-dashboards/internal/promql"
+	"github.com/perses/community-dashboards/internal/promql"
 	"github.com/perses/perses/go-sdk/dashboard"
 	"github.com/perses/perses/go-sdk/prometheus/query"
 	labelValuesVar "github.com/perses/perses/go-sdk/prometheus/variable/label-values"

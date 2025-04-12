@@ -1,8 +1,8 @@
 package alertmanager
 
 import (
-	"github.com/nicolastakashi/community-perses-dashboards/internal/dashboards"
-	"github.com/nicolastakashi/community-perses-dashboards/internal/promql"
+	"github.com/perses/community-dashboards/internal/dashboards"
+	"github.com/perses/community-dashboards/internal/promql"
 	commonSdk "github.com/perses/perses/go-sdk/common"
 	"github.com/perses/perses/go-sdk/panel"
 	panelgroup "github.com/perses/perses/go-sdk/panel-group"
