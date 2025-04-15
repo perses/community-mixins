@@ -1,12 +1,12 @@
 package nodeexporter
 
 import (
-	"github.com/nicolastakashi/community-perses-dashboards/internal/dashboards"
-	"github.com/nicolastakashi/community-perses-dashboards/internal/promql"
+	"github.com/perses/community-dashboards/internal/dashboards"
+	"github.com/perses/community-dashboards/internal/promql"
 	"github.com/perses/perses/go-sdk/dashboard"
 	panelgroup "github.com/perses/perses/go-sdk/panel-group"
 
-	panels "github.com/nicolastakashi/community-perses-dashboards/pkg/panels/node_exporter"
+	panels "github.com/perses/community-dashboards/pkg/panels/node_exporter"
 	labelValuesVar "github.com/perses/perses/go-sdk/prometheus/variable/label-values"
 	listVar "github.com/perses/perses/go-sdk/variable/list-variable"
 )

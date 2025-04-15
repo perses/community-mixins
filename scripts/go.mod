@@ -1,4 +1,4 @@
-module github.com/nicolastakashi/community-perses-dashboards/tools
+module github.com/perses/community-dashboards/tools
 
 go 1.23.2
 
