@@ -24,23 +24,29 @@ func init() {
 func executeDashboardBuilder(builder dashboard.Builder, outputFormat string, outputDir string, errWriter io.Writer) {
 	var err error
 	var output []byte
-	if outputFormat == YAMLOutput {
+
+	switch outputFormat {
+	case YAMLOutput:
 		output, err = yaml.Marshal(builder.Dashboard)
-	} else if outputFormat == JSONOutput {
+	case JSONOutput:
 		output, err = json.Marshal(builder.Dashboard)
-	} else {
+	default:
 		err = fmt.Errorf("--output must be %q or %q", JSONOutput, YAMLOutput)
 	}
 
 	if err != nil {
-		fmt.Fprint(errWriter, err)
+		if _, ferr := fmt.Fprint(errWriter, err); ferr != nil {
+			panic(fmt.Errorf("failed to write err: %w", err))
+		}
 		os.Exit(-1)
 	}
 
 	// create output directory if not exists
 	_, err = os.Stat(outputDir)
 	if err != nil && !os.IsNotExist(err) {
-		fmt.Fprint(errWriter, err)
+		if _, ferr := fmt.Fprint(errWriter, err); ferr != nil {
+			panic(fmt.Errorf("failed to write err: %w", err))
+		}
 		os.Exit(-1)
 	}
 
