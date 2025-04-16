@@ -1,9 +1,9 @@
 package prometheus
 
 import (
-	"github.com/perses/community-dashboards/internal/dashboards"
-	"github.com/perses/community-dashboards/internal/promql"
+	"github.com/perses/community-dashboards/pkg/dashboards"
 	panels "github.com/perses/community-dashboards/pkg/panels/prometheus"
+	"github.com/perses/community-dashboards/pkg/promql"
 	"github.com/perses/perses/go-sdk/dashboard"
 	panelgroup "github.com/perses/perses/go-sdk/panel-group"
 	labelValuesVar "github.com/perses/perses/go-sdk/prometheus/variable/label-values"

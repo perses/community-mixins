@@ -3,10 +3,10 @@ package main
 import (
 	"flag"
 
-	dashboards "github.com/perses/community-dashboards/internal/dashboards"
-	"github.com/perses/community-dashboards/internal/dashboards/alertmanager"
-	nodeexporter "github.com/perses/community-dashboards/internal/dashboards/node_exporter"
-	"github.com/perses/community-dashboards/internal/dashboards/prometheus"
+	dashboards "github.com/perses/community-dashboards/pkg/dashboards"
+	"github.com/perses/community-dashboards/pkg/dashboards/alertmanager"
+	nodeexporter "github.com/perses/community-dashboards/pkg/dashboards/node_exporter"
+	"github.com/perses/community-dashboards/pkg/dashboards/prometheus"
 )
 
 var (

@@ -1,8 +1,8 @@
 package nodeexporter
 
 import (
-	"github.com/perses/community-dashboards/internal/dashboards"
-	"github.com/perses/community-dashboards/internal/promql"
+	"github.com/perses/community-dashboards/pkg/dashboards"
+	"github.com/perses/community-dashboards/pkg/promql"
 	commonSdk "github.com/perses/perses/go-sdk/common"
 	"github.com/perses/perses/go-sdk/panel"
 	panelgroup "github.com/perses/perses/go-sdk/panel-group"
