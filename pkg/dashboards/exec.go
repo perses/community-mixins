@@ -7,13 +7,17 @@ import (
 	"io"
 	"os"
 
+	persesv1 "github.com/perses/perses-operator/api/v1alpha1"
 	"github.com/perses/perses/go-sdk/dashboard"
 	"gopkg.in/yaml.v3"
+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	k8syaml "sigs.k8s.io/yaml"
 )
 
 const (
-	JSONOutput = "json"
-	YAMLOutput = "yaml"
+	JSONOutput     = "json"
+	YAMLOutput     = "yaml"
+	OperatorOutput = "operator"
 )
 
 func init() {
@@ -24,14 +28,40 @@ func init() {
 func executeDashboardBuilder(builder dashboard.Builder, outputFormat string, outputDir string, errWriter io.Writer) {
 	var err error
 	var output []byte
+	var ext string
 
 	switch outputFormat {
 	case YAMLOutput:
 		output, err = yaml.Marshal(builder.Dashboard)
+		ext = YAMLOutput
 	case JSONOutput:
 		output, err = json.Marshal(builder.Dashboard)
+		ext = JSONOutput
+	case OperatorOutput:
+		op := persesv1.PersesDashboard{
+			TypeMeta: metav1.TypeMeta{
+				Kind:       "PersesDashboard",
+				APIVersion: "perses.dev/v1alpha1",
+			},
+			ObjectMeta: metav1.ObjectMeta{
+				Name:      builder.Dashboard.Metadata.Name,
+				Namespace: builder.Dashboard.Metadata.Project,
+				Labels: map[string]string{
+					"app.kubernetes.io/name":      "perses-dashboard",
+					"app.kubernetes.io/instance":  builder.Dashboard.Metadata.Name,
+					"app.kubernetes.io/part-of":   "perses-operator",
+					"app.kubernetes.io/component": "dashboard",
+				},
+			},
+			Spec: persesv1.Dashboard{
+				DashboardSpec: builder.Dashboard.Spec,
+			},
+		}
+
+		output, err = k8syaml.Marshal(op)
+		ext = YAMLOutput
 	default:
-		err = fmt.Errorf("--output must be %q or %q", JSONOutput, YAMLOutput)
+		err = fmt.Errorf("--output must be %q, %q or %q", JSONOutput, YAMLOutput, OperatorOutput)
 	}
 
 	if err != nil {
@@ -54,7 +84,7 @@ func executeDashboardBuilder(builder dashboard.Builder, outputFormat string, out
 		_ = os.MkdirAll(outputDir, os.ModePerm)
 	}
 
-	_ = os.WriteFile(fmt.Sprintf("%s/%s.%s", outputDir, builder.Dashboard.Metadata.Name, outputFormat), output, os.ModePerm)
+	_ = os.WriteFile(fmt.Sprintf("%s/%s.%s", outputDir, builder.Dashboard.Metadata.Name, ext), output, os.ModePerm)
 }
 
 func NewExec() Exec {
