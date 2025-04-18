@@ -7,7 +7,6 @@ import (
 	listVar "github.com/perses/perses/go-sdk/variable/list-variable"
 
 	"github.com/perses/community-dashboards/pkg/dashboards"
-	prom_panels "github.com/perses/community-dashboards/pkg/panels/prometheus"
 	panels "github.com/perses/community-dashboards/pkg/panels/thanos"
 	"github.com/perses/community-dashboards/pkg/promql"
 )
@@ -101,9 +100,10 @@ func withThanosBucketUploadGroup(datasource string, labelMatcher promql.LabelMat
 
 func withPrometheusStorageGroup(datasource string, labelMatcher promql.LabelMatcher) dashboard.Option {
 	return dashboard.AddPanelGroup("Storage",
-		panelgroup.PanelsPerLine(2),
-		prom_panels.PrometheusHeadSeries(datasource, labelMatcher),
-		prom_panels.PrometheusHeadChunks(datasource, labelMatcher),
+		panelgroup.PanelsPerLine(3),
+		panels.ReceiveAppendedSamples(datasource, labelMatcher),
+		panels.ReceiveHeadSeries(datasource, labelMatcher),
+		panels.ReceiveHeadChunks(datasource, labelMatcher),
 	)
 }
 
@@ -124,7 +124,7 @@ func BuildThanosReceiveOverview(project string, datasource string, clusterLabelN
 		dashboards.AddClusterVariable(datasource, clusterLabelName, "thanos_build_info"),
 		dashboard.AddVariable("namespace",
 			listVar.List(
-				labelValuesVar.PrometheusLabelValues("instance",
+				labelValuesVar.PrometheusLabelValues("namespace",
 					labelValuesVar.Matchers(
 						promql.SetLabelMatchers(
 							"thanos_build_info{container=\"thanos-receive\"}",
@@ -147,7 +147,7 @@ func BuildThanosReceiveOverview(project string, datasource string, clusterLabelN
 					),
 					dashboards.AddVariableDatasource(datasource),
 				),
-				listVar.DisplayName("namespace"),
+				listVar.DisplayName("tenant"),
 				listVar.AllowMultiple(true),
 			),
 		),

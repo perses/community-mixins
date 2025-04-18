@@ -89,6 +89,8 @@ func RemoteWriteRequestDuration(datasourceName string, labelMatchers ...promql.L
 				dashboards.AddQueryDataSource(datasourceName),
 				query.SeriesNameFormat("p50 {{job}} - {{namespace}} duration"),
 			),
+		),
+		panel.AddQuery(
 			query.PromQL(
 				promql.SetLabelMatchers(
 					"histogram_quantile(0.90, sum by (namespace, job, le) (rate(http_request_duration_seconds_bucket{namespace='$namespace', job=~'$job', handler=\"receive\"}[5m])))",
@@ -97,6 +99,8 @@ func RemoteWriteRequestDuration(datasourceName string, labelMatchers ...promql.L
 				dashboards.AddQueryDataSource(datasourceName),
 				query.SeriesNameFormat("p90 {{job}} - {{namespace}} duration"),
 			),
+		),
+		panel.AddQuery(
 			query.PromQL(
 				promql.SetLabelMatchers(
 					"histogram_quantile(0.99, sum by (namespace, job, le) (rate(http_request_duration_seconds_bucket{namespace='$namespace', job=~'$job', handler=\"receive\"}[5m])))",
@@ -271,20 +275,10 @@ func InflightRemoteWriteRequests(datasourceName string, labelMatchers ...promql.
 	)
 }
 
-const (
-	seriesPerSecond  commonSdk.ThroughputUnit = "series/sec"
-	samplesPerSecond commonSdk.ThroughputUnit = "samples/sec"
-)
-
 func RemoteWriteSeriesRate(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
 	return panelgroup.AddPanel("Rate of Series ingested",
 		panel.Description("Shows rate of timeseries ingested by Receive, split by tenant."),
 		timeSeriesPanel.Chart(
-			timeSeriesPanel.WithYAxis(timeSeriesPanel.YAxis{
-				Format: &commonSdk.Format{
-					Unit: string(seriesPerSecond),
-				},
-			}),
 			timeSeriesPanel.WithLegend(timeSeriesPanel.Legend{
 				Position: timeSeriesPanel.BottomPosition,
 				Mode:     timeSeriesPanel.TableMode,
@@ -307,11 +301,6 @@ func RemoteWriteSeriesNotWrittenRate(datasourceName string, labelMatchers ...pro
 	return panelgroup.AddPanel("Rate of Series not ingested",
 		panel.Description("Shows rate of timeseries not ingested by Receive, split by tenant."),
 		timeSeriesPanel.Chart(
-			timeSeriesPanel.WithYAxis(timeSeriesPanel.YAxis{
-				Format: &commonSdk.Format{
-					Unit: string(seriesPerSecond),
-				},
-			}),
 			timeSeriesPanel.WithLegend(timeSeriesPanel.Legend{
 				Position: timeSeriesPanel.BottomPosition,
 				Mode:     timeSeriesPanel.TableMode,
@@ -334,11 +323,6 @@ func RemoteWriteSamplesRate(datasourceName string, labelMatchers ...promql.Label
 	return panelgroup.AddPanel("Rate of Samples ingested",
 		panel.Description("Shows rate of samples ingested by Receive, split by tenant."),
 		timeSeriesPanel.Chart(
-			timeSeriesPanel.WithYAxis(timeSeriesPanel.YAxis{
-				Format: &commonSdk.Format{
-					Unit: string(seriesPerSecond),
-				},
-			}),
 			timeSeriesPanel.WithLegend(timeSeriesPanel.Legend{
 				Position: timeSeriesPanel.BottomPosition,
 				Mode:     timeSeriesPanel.TableMode,
@@ -361,11 +345,6 @@ func RemoteWriteSamplesNotWrittenRate(datasourceName string, labelMatchers ...pr
 	return panelgroup.AddPanel("Rate of Samples not ingested",
 		panel.Description("Shows rate of samples not ingested by Receive, split by tenant."),
 		timeSeriesPanel.Chart(
-			timeSeriesPanel.WithYAxis(timeSeriesPanel.YAxis{
-				Format: &commonSdk.Format{
-					Unit: string(seriesPerSecond),
-				},
-			}),
 			timeSeriesPanel.WithLegend(timeSeriesPanel.Legend{
 				Position: timeSeriesPanel.BottomPosition,
 				Mode:     timeSeriesPanel.TableMode,
@@ -790,6 +769,86 @@ func ReadGPRCStreamDuration(datasourceName string, labelMatchers ...promql.Label
 				),
 				dashboards.AddQueryDataSource(datasourceName),
 				query.SeriesNameFormat("p99 {{namespace}} {{job}}"),
+			),
+		),
+	)
+}
+
+// ReceiveAppendedSamples creates a panel option for displaying sample append rate.
+//
+// The panel uses the following Prometheus metrics:
+// - prometheus_tsdb_head_samples_appended_total: Total samples appended to TSDB head
+//
+// The panel shows:
+// - Rate of samples being appended
+// - Breakdown by job and instance
+func ReceiveAppendedSamples(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
+	return panelgroup.AddPanel("Appended Samples",
+		panel.Description("Shows rate of samples appended to Receive TSDB"),
+		timeSeriesPanel.Chart(
+			timeSeriesPanel.WithLegend(timeSeriesPanel.Legend{
+				Position: timeSeriesPanel.BottomPosition,
+				Mode:     timeSeriesPanel.TableMode,
+			}),
+		),
+		panel.AddQuery(
+			query.PromQL(
+				promql.SetLabelMatchers("rate(prometheus_tsdb_head_samples_appended_total{job=~'$job',namespace=~'$namespace'}[5m])", labelMatchers),
+				dashboards.AddQueryDataSource(datasourceName),
+				query.SeriesNameFormat("{{job}} - {{namespace}}"),
+			),
+		),
+	)
+}
+
+// ReceiveHeadSeries creates a panel option for displaying the head series metric from Prometheus.
+// The panel uses the following Prometheus metrics:
+// - prometheus_tsdb_head_series: Number of series in the head block
+//
+// The panel shows:
+// - Current number of active series in TSDB head
+// - Breakdown by job and instance
+func ReceiveHeadSeries(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
+	return panelgroup.AddPanel("Head Series",
+		panel.Description("Shows number of series in Receive TSDB head"),
+		timeSeriesPanel.Chart(
+			timeSeriesPanel.WithLegend(timeSeriesPanel.Legend{
+				Position: timeSeriesPanel.BottomPosition,
+				Mode:     timeSeriesPanel.TableMode,
+			}),
+		),
+		panel.AddQuery(
+			query.PromQL(
+				promql.SetLabelMatchers("prometheus_tsdb_head_series{job=~'$job', namespace=~'$namespace'}", labelMatchers),
+				dashboards.AddQueryDataSource(datasourceName),
+				query.SeriesNameFormat("{{job}} - {{namespace}} - Head Series"),
+			),
+		),
+	)
+}
+
+// ReceiveHeadChunks creates a panel option for displaying the "Head Chunks" metric from Prometheus.
+//
+// The panel uses the following Prometheus metrics:
+// - prometheus_tsdb_head_chunks: Number of chunks in the head block
+//
+// The panel shows:
+// - Current number of chunks in TSDB head
+// - Breakdown by job and instance
+func ReceiveHeadChunks(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
+	return panelgroup.AddPanel("Head Chunks",
+		panel.Description("Shows number of chunks in Prometheus TSDB head"),
+		timeSeriesPanel.Chart(
+			timeSeriesPanel.WithLegend(timeSeriesPanel.Legend{
+				Position: timeSeriesPanel.BottomPosition,
+				Mode:     timeSeriesPanel.TableMode,
+			}),
+		),
+		panel.AddQuery(
+			query.PromQL(
+				promql.SetLabelMatchers("prometheus_tsdb_head_chunks{job=~'$job',namespace=~'$namespace'}", labelMatchers),
+				dashboards.AddQueryDataSource(datasourceName),
+				query.SeriesNameFormat("{{job}} - {{namespace}} - Head Chunks"),
 			),
 		),
 	)
