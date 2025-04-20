@@ -1,0 +1,555 @@
+kind: Dashboard
+metadata:
+    name: prometheus-remote-write
+    createdAt: 0001-01-01T00:00:00Z
+    updatedAt: 0001-01-01T00:00:00Z
+    version: 0
+    project: perses-dev
+spec:
+    display:
+        name: Prometheus / Remote Write
+    variables:
+        - kind: ListVariable
+          spec:
+            display:
+                name: instance
+                hidden: false
+            allowAllValue: false
+            allowMultiple: false
+            plugin:
+                kind: PrometheusLabelValuesVariable
+                spec:
+                    datasource:
+                        kind: PrometheusDatasource
+                        name: prometheus-datasource
+                    labelName: instance
+                    matchers:
+                        - prometheus_remote_storage_shards{}
+            name: instance
+        - kind: ListVariable
+          spec:
+            display:
+                name: url
+                hidden: false
+            allowAllValue: false
+            allowMultiple: false
+            plugin:
+                kind: PrometheusLabelValuesVariable
+                spec:
+                    datasource:
+                        kind: PrometheusDatasource
+                        name: prometheus-datasource
+                    labelName: url
+                    matchers:
+                        - prometheus_remote_storage_shards{instance="$instance"}
+            name: url
+    panels:
+        "0_0":
+            kind: Panel
+            spec:
+                display:
+                    name: Timestamp Lag
+                    description: Shows timestamp lag in remote storage
+                plugin:
+                    kind: TimeSeriesChart
+                    spec:
+                        legend:
+                            position: bottom
+                            mode: table
+                queries:
+                    - kind: TimeSeriesQuery
+                      spec:
+                        plugin:
+                            kind: PrometheusTimeSeriesQuery
+                            spec:
+                                datasource:
+                                    kind: PrometheusDatasource
+                                    name: prometheus-datasource
+                                query: |-
+                                    (
+                                        prometheus_remote_storage_highest_timestamp_in_seconds{instance=~"$instance"}
+                                      - ignoring (remote_name, url) group_right (instance)
+                                        (
+                                            prometheus_remote_storage_queue_highest_sent_timestamp_seconds{instance=~"$instance",url="$url"}
+                                          !=
+                                            0
+                                        )
+                                    )
+                                seriesNameFormat: '{{instance}} - {{remote_name}} - {{url}} - Segment'
+        "0_1":
+            kind: Panel
+            spec:
+                display:
+                    name: Rate[5m]
+                    description: Shows rate metrics over 5 minute intervals
+                plugin:
+                    kind: TimeSeriesChart
+                    spec:
+                        legend:
+                            position: bottom
+                            mode: table
+                queries:
+                    - kind: TimeSeriesQuery
+                      spec:
+                        plugin:
+                            kind: PrometheusTimeSeriesQuery
+                            spec:
+                                datasource:
+                                    kind: PrometheusDatasource
+                                    name: prometheus-datasource
+                                query: |-
+                                    clamp_min(
+                                        rate(prometheus_remote_storage_highest_timestamp_in_seconds{instance=~"$instance"}[5m])
+                                      - ignoring (remote_name, url) group_right (instance)
+                                        rate(
+                                          prometheus_remote_storage_queue_highest_sent_timestamp_seconds{instance=~"$instance",url="$url"}[5m]
+                                        ),
+                                      0
+                                    )
+                                seriesNameFormat: '{{instance}} - {{remote_name}} - {{url}} - Metrics'
+        "1_0":
+            kind: Panel
+            spec:
+                display:
+                    name: Rate, in vs. succeeded or dropped [5m]
+                    description: Shows rate of samples in remote storage
+                plugin:
+                    kind: TimeSeriesChart
+                    spec:
+                        legend:
+                            position: bottom
+                            mode: table
+                queries:
+                    - kind: TimeSeriesQuery
+                      spec:
+                        plugin:
+                            kind: PrometheusTimeSeriesQuery
+                            spec:
+                                datasource:
+                                    kind: PrometheusDatasource
+                                    name: prometheus-datasource
+                                query: |4-
+                                        rate(prometheus_remote_storage_samples_in_total{instance=~"$instance"}[5m])
+                                      - ignoring (remote_name, url) group_right (instance)
+                                        (
+                                            rate(prometheus_remote_storage_succeeded_samples_total{instance=~"$instance",url="$url"}[5m])
+                                          or
+                                            rate(prometheus_remote_storage_samples_total{instance=~"$instance",url="$url"}[5m])
+                                        )
+                                    -
+                                      (
+                                          rate(prometheus_remote_storage_dropped_samples_total{instance=~"$instance",url="$url"}[5m])
+                                        or
+                                          rate(prometheus_remote_storage_samples_dropped_total{instance=~"$instance",url="$url"}[5m])
+                                      )
+                                seriesNameFormat: '{{instance}} - {{remote_name}} - {{url}} - Metrics'
+        "2_0":
+            kind: Panel
+            spec:
+                display:
+                    name: Current Shards
+                    description: Shows current number of shards in remote storage
+                plugin:
+                    kind: TimeSeriesChart
+                    spec:
+                        legend:
+                            position: bottom
+                            mode: table
+                queries:
+                    - kind: TimeSeriesQuery
+                      spec:
+                        plugin:
+                            kind: PrometheusTimeSeriesQuery
+                            spec:
+                                datasource:
+                                    kind: PrometheusDatasource
+                                    name: prometheus-datasource
+                                query: prometheus_remote_storage_shards{instance=~"$instance",url="$url"}
+                                seriesNameFormat: '{{instance}} - {{remote_name}} - {{url}} - Metrics'
+        "2_1":
+            kind: Panel
+            spec:
+                display:
+                    name: Desired Shards
+                    description: Shows desired number of shards in remote storage
+                plugin:
+                    kind: TimeSeriesChart
+                    spec:
+                        legend:
+                            position: bottom
+                            mode: table
+                queries:
+                    - kind: TimeSeriesQuery
+                      spec:
+                        plugin:
+                            kind: PrometheusTimeSeriesQuery
+                            spec:
+                                datasource:
+                                    kind: PrometheusDatasource
+                                    name: prometheus-datasource
+                                query: prometheus_remote_storage_shards_desired{instance=~"$instance",url="$url"}
+                                seriesNameFormat: '{{instance}} - {{remote_name}} - {{url}} - Metrics'
+        "2_2":
+            kind: Panel
+            spec:
+                display:
+                    name: Max Shards
+                    description: Shows maximum number of shards in remote storage
+                plugin:
+                    kind: TimeSeriesChart
+                    spec:
+                        legend:
+                            position: bottom
+                            mode: table
+                queries:
+                    - kind: TimeSeriesQuery
+                      spec:
+                        plugin:
+                            kind: PrometheusTimeSeriesQuery
+                            spec:
+                                datasource:
+                                    kind: PrometheusDatasource
+                                    name: prometheus-datasource
+                                query: prometheus_remote_storage_shards_max{instance=~"$instance",url="$url"}
+                                seriesNameFormat: '{{instance}} - {{remote_name}} - {{url}} - Metrics'
+        "2_3":
+            kind: Panel
+            spec:
+                display:
+                    name: Min Shards
+                    description: Shows minimum number of shards in remote storage
+                plugin:
+                    kind: TimeSeriesChart
+                    spec:
+                        legend:
+                            position: bottom
+                            mode: table
+                queries:
+                    - kind: TimeSeriesQuery
+                      spec:
+                        plugin:
+                            kind: PrometheusTimeSeriesQuery
+                            spec:
+                                datasource:
+                                    kind: PrometheusDatasource
+                                    name: prometheus-datasource
+                                query: prometheus_remote_storage_shards_min{instance=~"$instance",url="$url"}
+                                seriesNameFormat: '{{instance}} - {{remote_name}} - {{url}} - Metrics'
+        "3_0":
+            kind: Panel
+            spec:
+                display:
+                    name: Shard Capacity
+                    description: Shows shard capacity in remote storage
+                plugin:
+                    kind: TimeSeriesChart
+                    spec:
+                        legend:
+                            position: bottom
+                            mode: table
+                queries:
+                    - kind: TimeSeriesQuery
+                      spec:
+                        plugin:
+                            kind: PrometheusTimeSeriesQuery
+                            spec:
+                                datasource:
+                                    kind: PrometheusDatasource
+                                    name: prometheus-datasource
+                                query: prometheus_remote_storage_shard_capacity{instance=~"$instance",url="$url"}
+                                seriesNameFormat: '{{instance}} - {{remote_name}} - {{url}} - Metrics'
+        "3_1":
+            kind: Panel
+            spec:
+                display:
+                    name: Pending Samples
+                    description: Shows number of pending samples in remote storage
+                plugin:
+                    kind: TimeSeriesChart
+                    spec:
+                        legend:
+                            position: bottom
+                            mode: table
+                queries:
+                    - kind: TimeSeriesQuery
+                      spec:
+                        plugin:
+                            kind: PrometheusTimeSeriesQuery
+                            spec:
+                                datasource:
+                                    kind: PrometheusDatasource
+                                    name: prometheus-datasource
+                                query: |4-
+                                      prometheus_remote_storage_pending_samples{instance=~"$instance",url="$url"}
+                                    or
+                                      prometheus_remote_storage_samples_pending{instance=~"$instance",url="$url"}
+                                seriesNameFormat: '{{instance}} - {{remote_name}} - {{url}} - Metrics'
+        "4_0":
+            kind: Panel
+            spec:
+                display:
+                    name: TSDB Current Segment
+                    description: Shows current TSDB WAL segment
+                plugin:
+                    kind: TimeSeriesChart
+                    spec:
+                        legend:
+                            position: bottom
+                            mode: table
+                queries:
+                    - kind: TimeSeriesQuery
+                      spec:
+                        plugin:
+                            kind: PrometheusTimeSeriesQuery
+                            spec:
+                                datasource:
+                                    kind: PrometheusDatasource
+                                    name: prometheus-datasource
+                                query: prometheus_tsdb_wal_segment_current{instance=~"$instance"}
+                                seriesNameFormat: '{{instance}} - Segment - Metrics'
+        "4_1":
+            kind: Panel
+            spec:
+                display:
+                    name: Remote Write Current Segment
+                    description: Shows current remote write WAL segment
+                plugin:
+                    kind: TimeSeriesChart
+                    spec:
+                        legend:
+                            position: bottom
+                            mode: table
+                queries:
+                    - kind: TimeSeriesQuery
+                      spec:
+                        plugin:
+                            kind: PrometheusTimeSeriesQuery
+                            spec:
+                                datasource:
+                                    kind: PrometheusDatasource
+                                    name: prometheus-datasource
+                                query: prometheus_wal_watcher_current_segment{instance=~"$instance"}
+                                seriesNameFormat: '{{instance}} - Segment - Metrics'
+        "5_0":
+            kind: Panel
+            spec:
+                display:
+                    name: Dropped Samples Rate
+                    description: Shows rate of dropped samples in remote storage
+                plugin:
+                    kind: TimeSeriesChart
+                    spec:
+                        legend:
+                            position: bottom
+                            mode: table
+                queries:
+                    - kind: TimeSeriesQuery
+                      spec:
+                        plugin:
+                            kind: PrometheusTimeSeriesQuery
+                            spec:
+                                datasource:
+                                    kind: PrometheusDatasource
+                                    name: prometheus-datasource
+                                query: |4-
+                                      rate(prometheus_remote_storage_dropped_samples_total{instance=~"$instance",url="$url"}[5m])
+                                    or
+                                      rate(prometheus_remote_storage_samples_dropped_total{instance=~"$instance",url="$url"}[5m])
+                                seriesNameFormat: '{{instance}} - {{remote_name}} - {{url}} - Metrics'
+        "5_1":
+            kind: Panel
+            spec:
+                display:
+                    name: Failed Samples
+                    description: Shows rate of failed samples in remote storage
+                plugin:
+                    kind: TimeSeriesChart
+                    spec:
+                        legend:
+                            position: bottom
+                            mode: table
+                queries:
+                    - kind: TimeSeriesQuery
+                      spec:
+                        plugin:
+                            kind: PrometheusTimeSeriesQuery
+                            spec:
+                                datasource:
+                                    kind: PrometheusDatasource
+                                    name: prometheus-datasource
+                                query: |4-
+                                      rate(prometheus_remote_storage_failed_samples_total{instance=~"$instance",url="$url"}[5m])
+                                    or
+                                      rate(prometheus_remote_storage_samples_failed_total{instance=~"$instance",url="$url"}[5m])
+                                seriesNameFormat: '{{instance}} - {{remote_name}} - {{url}} - Metrics'
+        "5_2":
+            kind: Panel
+            spec:
+                display:
+                    name: Retried Samples
+                    description: Shows rate of retried samples in remote storage
+                plugin:
+                    kind: TimeSeriesChart
+                    spec:
+                        legend:
+                            position: bottom
+                            mode: table
+                queries:
+                    - kind: TimeSeriesQuery
+                      spec:
+                        plugin:
+                            kind: PrometheusTimeSeriesQuery
+                            spec:
+                                datasource:
+                                    kind: PrometheusDatasource
+                                    name: prometheus-datasource
+                                query: |4-
+                                      rate(prometheus_remote_storage_retried_samples_total{instance=~"$instance",url=~"$url"}[5m])
+                                    or
+                                      rate(prometheus_remote_storage_samples_retried_total{instance=~"$instance",url=~"$url"}[5m])
+                                seriesNameFormat: '{{instance}} - {{remote_name}} - {{url}} - Metrics'
+        "5_3":
+            kind: Panel
+            spec:
+                display:
+                    name: Enqueue Retries
+                    description: Shows rate of enqueue retries in remote storage
+                plugin:
+                    kind: TimeSeriesChart
+                    spec:
+                        legend:
+                            position: bottom
+                            mode: table
+                queries:
+                    - kind: TimeSeriesQuery
+                      spec:
+                        plugin:
+                            kind: PrometheusTimeSeriesQuery
+                            spec:
+                                datasource:
+                                    kind: PrometheusDatasource
+                                    name: prometheus-datasource
+                                query: rate(prometheus_remote_storage_enqueue_retries_total{instance=~"$instance",url=~"$url"}[5m])
+                                seriesNameFormat: '{{instance}} - {{remote_name}} - {{url}} - Metrics'
+    layouts:
+        - kind: Grid
+          spec:
+            display:
+                title: Timestamps
+            items:
+                - x: 0
+                  "y": 0
+                  width: 12
+                  height: 6
+                  content:
+                    $ref: '#/spec/panels/0_0'
+                - x: 12
+                  "y": 0
+                  width: 12
+                  height: 6
+                  content:
+                    $ref: '#/spec/panels/0_1'
+        - kind: Grid
+          spec:
+            display:
+                title: Samples
+            items:
+                - x: 0
+                  "y": 0
+                  width: 24
+                  height: 6
+                  content:
+                    $ref: '#/spec/panels/1_0'
+        - kind: Grid
+          spec:
+            display:
+                title: Shards
+            items:
+                - x: 0
+                  "y": 0
+                  width: 12
+                  height: 6
+                  content:
+                    $ref: '#/spec/panels/2_0'
+                - x: 12
+                  "y": 0
+                  width: 12
+                  height: 6
+                  content:
+                    $ref: '#/spec/panels/2_1'
+                - x: 0
+                  "y": 6
+                  width: 12
+                  height: 6
+                  content:
+                    $ref: '#/spec/panels/2_2'
+                - x: 12
+                  "y": 6
+                  width: 12
+                  height: 6
+                  content:
+                    $ref: '#/spec/panels/2_3'
+        - kind: Grid
+          spec:
+            display:
+                title: Shard Details
+            items:
+                - x: 0
+                  "y": 0
+                  width: 12
+                  height: 6
+                  content:
+                    $ref: '#/spec/panels/3_0'
+                - x: 12
+                  "y": 0
+                  width: 12
+                  height: 6
+                  content:
+                    $ref: '#/spec/panels/3_1'
+        - kind: Grid
+          spec:
+            display:
+                title: Segments
+            items:
+                - x: 0
+                  "y": 0
+                  width: 12
+                  height: 6
+                  content:
+                    $ref: '#/spec/panels/4_0'
+                - x: 12
+                  "y": 0
+                  width: 12
+                  height: 6
+                  content:
+                    $ref: '#/spec/panels/4_1'
+        - kind: Grid
+          spec:
+            display:
+                title: Misc. Rates
+            items:
+                - x: 0
+                  "y": 0
+                  width: 6
+                  height: 6
+                  content:
+                    $ref: '#/spec/panels/5_0'
+                - x: 6
+                  "y": 0
+                  width: 6
+                  height: 6
+                  content:
+                    $ref: '#/spec/panels/5_1'
+                - x: 12
+                  "y": 0
+                  width: 6
+                  height: 6
+                  content:
+                    $ref: '#/spec/panels/5_2'
+                - x: 18
+                  "y": 0
+                  width: 6
+                  height: 6
+                  content:
+                    $ref: '#/spec/panels/5_3'
+    duration: 1h

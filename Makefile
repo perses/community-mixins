@@ -31,8 +31,8 @@ clean-demo:
 .PHONY: build-dashboards
 build-dashboards:
 	@echo "Building dashboards"
-	@$(ENVVARS) $(GOCMD) run $(GOMAIN)
-
+	@$(ENVVARS) $(GOCMD) run $(GOMAIN) --output-dir="./examples/dashboards/operator" --output="operator" --project="perses-dev" --datasource="prometheus-datasource"
+	@$(ENVVARS) $(GOCMD) run $(GOMAIN) --output-dir="./examples/dashboards/perses" --output="yaml" --project="perses-dev" --datasource="prometheus-datasource"
 
 .PHONY: deps
 deps:
