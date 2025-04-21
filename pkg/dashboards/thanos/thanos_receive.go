@@ -125,12 +125,7 @@ func BuildThanosReceiveOverview(project string, datasource string, clusterLabelN
 		dashboard.AddVariable("namespace",
 			listVar.List(
 				labelValuesVar.PrometheusLabelValues("namespace",
-					labelValuesVar.Matchers(
-						promql.SetLabelMatchers(
-							"thanos_build_info{container=\"thanos-receive\"}",
-							[]promql.LabelMatcher{clusterLabelMatcher, {Name: "job", Type: "=", Value: "$job"}},
-						),
-					),
+					labelValuesVar.Matchers("thanos_status"),
 					dashboards.AddVariableDatasource(datasource),
 				),
 				listVar.DisplayName("namespace"),
