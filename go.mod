@@ -5,7 +5,7 @@ go 1.24.0
 require (
 	github.com/perses/perses v0.50.3
 	github.com/perses/perses-operator v0.1.10
-	github.com/prometheus/prometheus v0.302.1
+	github.com/prometheus/prometheus v0.303.0
 	gopkg.in/yaml.v3 v3.0.1
 	k8s.io/apimachinery v0.32.3
 	sigs.k8s.io/yaml v1.4.0
