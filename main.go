@@ -32,6 +32,7 @@ func main() {
 	dashboardWriter.Add(alertmanager.BuildAlertManagerOverview(project, datasource, clusterLabelName))
 	dashboardWriter.Add(thanos.BuildThanosReceiveOverview(project, datasource, clusterLabelName))
 	dashboardWriter.Add(thanos.BuildThanosQueryOverview(project, datasource, clusterLabelName))
+	dashboardWriter.Add(thanos.BuildThanosStoreOverview(project, datasource, clusterLabelName))
 
 	dashboardWriter.Write()
 }
