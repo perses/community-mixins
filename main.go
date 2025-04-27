@@ -35,6 +35,6 @@ func main() {
 	dashboardWriter.Add(thanos.BuildThanosStoreOverview(project, datasource, clusterLabelName))
 	dashboardWriter.Add(thanos.BuildThanosRulerOverview(project, datasource, clusterLabelName))
 	dashboardWriter.Add(thanos.BuildThanosQueryFrontendOverview(project, datasource, clusterLabelName))
-
+	dashboardWriter.Add(thanos.BuildThanosCompactOverview(project, datasource, clusterLabelName))
 	dashboardWriter.Write()
 }
