@@ -24,10 +24,10 @@ func withThanosBlockOperationsGroup(datasource string, labelMatcher promql.Label
 func withThanosCacheOperationsGroup(datasource string, labelMatcher promql.LabelMatcher) dashboard.Option {
 	return dashboard.AddPanelGroup("Cache Operations",
 		panelgroup.PanelsPerLine(4),
-		panels.CacheRequests(datasource, labelMatcher),
-		panels.CacheHits(datasource, labelMatcher),
-		panels.CacheItemsAdded(datasource, labelMatcher),
-		panels.CacheItemsEvicted(datasource, labelMatcher),
+		panels.CacheRequestRate(datasource, labelMatcher),
+		panels.CacheHitRate(datasource, labelMatcher),
+		panels.CacheItemsAddRate(datasource, labelMatcher),
+		panels.CacheItemsEvictRate(datasource, labelMatcher),
 	)
 }
 
@@ -44,7 +44,7 @@ func withThanosQueryOperationsGroup(datasource string, labelMatcher promql.Label
 func withThanosQueryOperationDurationGroup(datasource string, labelMatcher promql.LabelMatcher) dashboard.Option {
 	return dashboard.AddPanelGroup("Query Operation Durations",
 		panelgroup.PanelsPerLine(3),
-		panels.GetAllSeriesDuration(datasource, labelMatcher),
+		panels.GetAllSeriesDurations(datasource, labelMatcher),
 		panels.MergeDurations(datasource, labelMatcher),
 		panels.GateWaitingDurations(datasource, labelMatcher),
 	)
@@ -53,7 +53,7 @@ func withThanosQueryOperationDurationGroup(datasource string, labelMatcher promq
 func withThanosStoreSentGroup(datasource string, labelMatcher promql.LabelMatcher) dashboard.Option {
 	return dashboard.AddPanelGroup("Store Sent Chunk Size",
 		panelgroup.PanelsPerLine(1),
-		panels.StoreSentChunkSize(datasource, labelMatcher),
+		panels.StoreSentChunkSizes(datasource, labelMatcher),
 	)
 }
 

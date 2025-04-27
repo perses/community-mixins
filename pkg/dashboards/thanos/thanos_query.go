@@ -11,21 +11,21 @@ import (
 	"github.com/perses/community-dashboards/pkg/promql"
 )
 
-func withThanosQueryGroup(datasource string, labelMatcher promql.LabelMatcher) dashboard.Option {
+func withThanosQueryInstantQueryGroup(datasource string, labelMatcher promql.LabelMatcher) dashboard.Option {
 	return dashboard.AddPanelGroup("Instant Query",
 		panelgroup.PanelsPerLine(3),
 		panels.InstantQueryRequestRate(datasource, labelMatcher),
 		panels.InstantQueryRequestErrors(datasource, labelMatcher),
-		panels.InstantQueryRequestDuration(datasource, labelMatcher),
+		panels.InstantQueryRequestDurations(datasource, labelMatcher),
 	)
 }
 
-func withThanosRangeQueryGroup(datasource string, labelMatcher promql.LabelMatcher) dashboard.Option {
+func withThanosQueryRangeQueryGroup(datasource string, labelMatcher promql.LabelMatcher) dashboard.Option {
 	return dashboard.AddPanelGroup("Range Query",
 		panelgroup.PanelsPerLine(3),
 		panels.RangeQueryRequestRate(datasource, labelMatcher),
 		panels.RangeQueryRequestErrors(datasource, labelMatcher),
-		panels.RangeQueryRequestDuration(datasource, labelMatcher),
+		panels.RangeQueryRequestDurations(datasource, labelMatcher),
 	)
 }
 
@@ -36,7 +36,7 @@ func withThanosQueryConcurrencyGroup(datasource string, labelMatcher promql.Labe
 	)
 }
 
-func withThanosDNSLookupGroup(datasource string, labelMatcher promql.LabelMatcher) dashboard.Option {
+func withThanosQueryDNSLookupGroup(datasource string, labelMatcher promql.LabelMatcher) dashboard.Option {
 	return dashboard.AddPanelGroup("DNS Lookups",
 		panelgroup.PanelsPerLine(2),
 		panels.DNSLookups(datasource, labelMatcher),
@@ -69,12 +69,12 @@ func BuildThanosQueryOverview(project string, datasource string, clusterLabelNam
 			),
 		),
 		dashboards.AddClusterVariable(datasource, clusterLabelName, "thanos_build_info"),
-		withThanosQueryGroup(datasource, clusterLabelMatcher),
-		withThanosRangeQueryGroup(datasource, clusterLabelMatcher),
+		withThanosQueryInstantQueryGroup(datasource, clusterLabelMatcher),
+		withThanosQueryRangeQueryGroup(datasource, clusterLabelMatcher),
 		withThanosReadGRPCUnaryGroup(datasource, clusterLabelMatcher),
 		withThanosReadGRPCStreamGroup(datasource, clusterLabelMatcher),
 		withThanosQueryConcurrencyGroup(datasource, clusterLabelMatcher),
-		withThanosDNSLookupGroup(datasource, clusterLabelMatcher),
+		withThanosQueryDNSLookupGroup(datasource, clusterLabelMatcher),
 		withThanosResourcesGroup(datasource, clusterLabelMatcher),
 	)
 }

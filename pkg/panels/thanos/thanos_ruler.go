@@ -39,7 +39,7 @@ func RuleEvaluationRate(datasourceName string, labelMatchers ...promql.LabelMatc
 	)
 }
 
-func RuleEvaluationFailures(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
+func RuleEvaluationFailureRate(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
 	return panelgroup.AddPanel("Rule Group Evaluation Failures",
 		panel.Description("Shows the rate of failed rule group evaluations."),
 		timeSeriesPanel.Chart(
@@ -66,7 +66,7 @@ func RuleEvaluationFailures(datasourceName string, labelMatchers ...promql.Label
 	)
 }
 
-func RuleGroupEvaluationsMissed(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
+func RuleGroupEvaluationsMissRate(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
 	return panelgroup.AddPanel("Rule Group Evaluations Missed",
 		panel.Description("Shows rate of rule group evaluations missed due to slow rule evaluations."),
 		timeSeriesPanel.Chart(
@@ -124,7 +124,7 @@ func RuleGroupEvaluationsTooSlow(datasourceName string, labelMatchers ...promql.
 	)
 }
 
-func AlertsDropped(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
+func AlertsDroppedRate(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
 	return panelgroup.AddPanel("Alerts Dropped",
 		panel.Description("Shows rate of alerts dropped by Ruler when sending."),
 		timeSeriesPanel.Chart(
@@ -151,7 +151,7 @@ func AlertsDropped(datasourceName string, labelMatchers ...promql.LabelMatcher) 
 	)
 }
 
-func AlertsSent(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
+func AlertsSentRate(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
 	return panelgroup.AddPanel("Alerts Sent",
 		panel.Description("Shows rate of alerts sent by ruler."),
 		timeSeriesPanel.Chart(
@@ -252,7 +252,7 @@ func AlertSendingDurations(datasourceName string, labelMatchers ...promql.LabelM
 	)
 }
 
-func AlertQueuePushed(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
+func AlertQueuePushedRate(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
 	return panelgroup.AddPanel("Alert Queue Pushed",
 		panel.Description("Shows the rate of alerts being pushed to sender queue."),
 		timeSeriesPanel.Chart(
@@ -279,7 +279,7 @@ func AlertQueuePushed(datasourceName string, labelMatchers ...promql.LabelMatche
 	)
 }
 
-func AlertQueuePopped(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
+func AlertQueuePoppedRate(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
 	return panelgroup.AddPanel("Alert Queue Popped",
 		panel.Description("Shows rate of alerts popped from queue, to be sent to Alertmanagers."),
 		timeSeriesPanel.Chart(

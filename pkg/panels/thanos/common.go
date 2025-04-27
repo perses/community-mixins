@@ -12,7 +12,7 @@ import (
 	timeSeriesPanel "github.com/perses/perses/go-sdk/panel/time-series"
 )
 
-func BucketOperations(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
+func BucketOperationRate(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
 	return panelgroup.AddPanel("Bucket Operations",
 		panel.Description("Shows rate of executions of operations against object storage bucket."),
 		timeSeriesPanel.Chart(
@@ -66,7 +66,7 @@ func BucketOperationErrors(datasourceName string, labelMatchers ...promql.LabelM
 	)
 }
 
-func BucketOperationLatency(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
+func BucketOperationDurations(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
 	return panelgroup.AddPanel("Bucket Operation Latency",
 		panel.Description("Shows latency of operations against object storage bucket."),
 		timeSeriesPanel.Chart(
@@ -140,7 +140,7 @@ func ReadGRPCUnaryRate(datasourceName string, labelMatchers ...promql.LabelMatch
 	)
 }
 
-func ReadGRPCUnaryErrRate(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
+func ReadGRPCUnaryErrors(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
 	return panelgroup.AddPanel("Unary gRPC Read error rate",
 		panel.Description("Shows percentage of errors of Unary gRPC Read requests (StoreAPI)."),
 		timeSeriesPanel.Chart(
@@ -167,7 +167,7 @@ func ReadGRPCUnaryErrRate(datasourceName string, labelMatchers ...promql.LabelMa
 	)
 }
 
-func ReadGPRCUnaryDuration(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
+func ReadGPRCUnaryDurations(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
 	return panelgroup.AddPanel("Unary gRPC Read duration",
 		panel.Description("Shows duration percentiles of handled Unary gRPC Read requests (StoreAPI)."),
 		timeSeriesPanel.Chart(
@@ -241,7 +241,7 @@ func ReadGRPCStreamRate(datasourceName string, labelMatchers ...promql.LabelMatc
 	)
 }
 
-func ReadGRPCStreamErrRate(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
+func ReadGRPCStreamErrors(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
 	return panelgroup.AddPanel("Stream gRPC Read error rate",
 		panel.Description("Shows percentage of errors of Stream gRPC Read requests (StoreAPI Series/Exemplar calls)."),
 		timeSeriesPanel.Chart(
@@ -268,7 +268,7 @@ func ReadGRPCStreamErrRate(datasourceName string, labelMatchers ...promql.LabelM
 	)
 }
 
-func ReadGPRCStreamDuration(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
+func ReadGPRCStreamDurations(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
 	return panelgroup.AddPanel("Stream gRPC Read duration",
 		panel.Description("Shows duration percentiles of handled Stream gRPC Read requests (StoreAPI Series/Exemplar calls)."),
 		timeSeriesPanel.Chart(

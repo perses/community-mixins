@@ -66,7 +66,7 @@ func InstantQueryRequestErrors(datasourceName string, labelMatchers ...promql.La
 	)
 }
 
-func InstantQueryRequestDuration(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
+func InstantQueryRequestDurations(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
 	return panelgroup.AddPanel("Instant Query Duration",
 		panel.Description("Duration percentiles of successful instant query (/query) requests."),
 		timeSeriesPanel.Chart(
@@ -167,7 +167,7 @@ func RangeQueryRequestErrors(datasourceName string, labelMatchers ...promql.Labe
 	)
 }
 
-func RangeQueryRequestDuration(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
+func RangeQueryRequestDurations(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
 	return panelgroup.AddPanel("Range Query Duration",
 		panel.Description("Duration percentiles of successful range query (/query_range) requests."),
 		timeSeriesPanel.Chart(

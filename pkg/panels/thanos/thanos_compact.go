@@ -12,7 +12,7 @@ import (
 	timeSeriesPanel "github.com/perses/perses/go-sdk/panel/time-series"
 )
 
-func GroupCompactions(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
+func GroupCompactionRate(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
 	return panelgroup.AddPanel("Group Compactions",
 		panel.Description("Shows rate of execution of compaction operations against blocks in a bucket, split by compaction resolution."),
 		timeSeriesPanel.Chart(
@@ -349,7 +349,7 @@ func MarkingRate(datasourceName string, labelMatchers ...promql.LabelMatcher) pa
 	)
 }
 
-func GarbageCollection(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
+func GarbageCollectionRate(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
 	return panelgroup.AddPanel("Garbage Collection",
 		panel.Description("Shows rate of execution of removal of blocks, if their data is available as part of a block with a higher compaction level."),
 		timeSeriesPanel.Chart(

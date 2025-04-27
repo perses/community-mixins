@@ -66,7 +66,7 @@ func QueryFrontendQueryRate(datasourceName string, labelMatchers ...promql.Label
 	)
 }
 
-func QueryFrontendErrorRate(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
+func QueryFrontendErrors(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
 	return panelgroup.AddPanel("Query Error Rate",
 		panel.Description("Shows the percentage of errors compared to the total number of requests on query frontend API."),
 		timeSeriesPanel.Chart(
@@ -93,7 +93,7 @@ func QueryFrontendErrorRate(datasourceName string, labelMatchers ...promql.Label
 	)
 }
 
-func QueryFrontendDuration(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
+func QueryFrontendDurations(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
 	return panelgroup.AddPanel("Query Duration",
 		panel.Description("Shows p50, p90 and p99 of the time taken to respond to a query via the query frontend API."),
 		timeSeriesPanel.Chart(
@@ -140,7 +140,7 @@ func QueryFrontendDuration(datasourceName string, labelMatchers ...promql.LabelM
 	)
 }
 
-func QueryFrontendCacheRequests(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
+func QueryFrontendCacheRequestRate(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
 	return panelgroup.AddPanel("Cache Requests",
 		panel.Description("Shows rate of cache requests by cortex."),
 		timeSeriesPanel.Chart(
@@ -167,7 +167,7 @@ func QueryFrontendCacheRequests(datasourceName string, labelMatchers ...promql.L
 	)
 }
 
-func QueryFrontendCacheHits(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
+func QueryFrontendCacheHitRate(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
 	return panelgroup.AddPanel("Cache Hits",
 		panel.Description("Shows rate of cache hits by cortex."),
 		timeSeriesPanel.Chart(
@@ -194,7 +194,7 @@ func QueryFrontendCacheHits(datasourceName string, labelMatchers ...promql.Label
 	)
 }
 
-func QueryFrontendCacheMisses(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
+func QueryFrontendCacheMissRate(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
 	return panelgroup.AddPanel("Cache Misses",
 		panel.Description("Shows rate of cache misses by cortex."),
 		timeSeriesPanel.Chart(
@@ -221,7 +221,7 @@ func QueryFrontendCacheMisses(datasourceName string, labelMatchers ...promql.Lab
 	)
 }
 
-func QueryFrontendFetchedKeys(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
+func QueryFrontendFetchedKeyRate(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
 	return panelgroup.AddPanel("Fetched Keys",
 		panel.Description("Shows rate of keys fetched from cache by cortex."),
 		timeSeriesPanel.Chart(

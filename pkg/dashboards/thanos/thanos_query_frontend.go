@@ -16,18 +16,18 @@ func withThanosQueryFrontendRequestsGroup(datasource string, labelMatcher promql
 		panelgroup.PanelsPerLine(4),
 		panels.QueryFrontendRequestRate(datasource, labelMatcher),
 		panels.QueryFrontendQueryRate(datasource, labelMatcher),
-		panels.QueryFrontendErrorRate(datasource, labelMatcher),
-		panels.QueryFrontendDuration(datasource, labelMatcher),
+		panels.QueryFrontendErrors(datasource, labelMatcher),
+		panels.QueryFrontendDurations(datasource, labelMatcher),
 	)
 }
 
 func withThanosQueryFrontendCacheGroup(datasource string, labelMatcher promql.LabelMatcher) dashboard.Option {
 	return dashboard.AddPanelGroup("Query Frontend Cache Operations",
 		panelgroup.PanelsPerLine(4),
-		panels.QueryFrontendCacheRequests(datasource, labelMatcher),
-		panels.QueryFrontendCacheHits(datasource, labelMatcher),
-		panels.QueryFrontendCacheMisses(datasource, labelMatcher),
-		panels.QueryFrontendFetchedKeys(datasource, labelMatcher),
+		panels.QueryFrontendCacheRequestRate(datasource, labelMatcher),
+		panels.QueryFrontendCacheHitRate(datasource, labelMatcher),
+		panels.QueryFrontendCacheMissRate(datasource, labelMatcher),
+		panels.QueryFrontendFetchedKeyRate(datasource, labelMatcher),
 	)
 }
 

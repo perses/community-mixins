@@ -66,7 +66,7 @@ func RemoteWriteRequestErrors(datasourceName string, labelMatchers ...promql.Lab
 	)
 }
 
-func RemoteWriteRequestDuration(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
+func RemoteWriteRequestDurations(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
 	return panelgroup.AddPanel("Remote Write Duration",
 		panel.Description("Duration percentiles of successful Remote Write requests."),
 		timeSeriesPanel.Chart(
@@ -167,7 +167,7 @@ func TenantedRemoteWriteRequestErrors(datasourceName string, labelMatchers ...pr
 	)
 }
 
-func TenantedRemoteWriteRequestDuration(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
+func TenantedRemoteWriteRequestDurations(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
 	return panelgroup.AddPanel("Average Remote Write Duration by tenant",
 		panel.Description("Average duration of Remote Write requests by tenants."),
 		timeSeriesPanel.Chart(
@@ -444,7 +444,7 @@ func RemoteWriteForwardRate(datasourceName string, labelMatchers ...promql.Label
 	)
 }
 
-func RemoteWriteForwardErrRate(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
+func RemoteWriteForwardErrorRate(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
 	return panelgroup.AddPanel("Rate of forward errors",
 		panel.Description("Shows rate of forward errors between Receives."),
 		timeSeriesPanel.Chart(
@@ -498,7 +498,7 @@ func WriteGRPCUnaryRate(datasourceName string, labelMatchers ...promql.LabelMatc
 	)
 }
 
-func WriteGRPCUnaryErrRate(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
+func WriteGRPCUnaryErrors(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
 	return panelgroup.AddPanel("Unary gRPC Write error rate",
 		panel.Description("Shows percentage of errors of Unary gRPC Write requests (WritableStore)."),
 		timeSeriesPanel.Chart(
@@ -525,7 +525,7 @@ func WriteGRPCUnaryErrRate(datasourceName string, labelMatchers ...promql.LabelM
 	)
 }
 
-func WriteGPRCUnaryDuration(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
+func WriteGPRCUnaryDurations(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
 	return panelgroup.AddPanel("Unary gRPC Write duration",
 		panel.Description("Shows duration percentiles of handled Unary gRPC Write requests (WritableStore)."),
 		timeSeriesPanel.Chart(
@@ -572,15 +572,7 @@ func WriteGPRCUnaryDuration(datasourceName string, labelMatchers ...promql.Label
 	)
 }
 
-// ReceiveAppendedSamples creates a panel option for displaying sample append rate.
-//
-// The panel uses the following Prometheus metrics:
-// - prometheus_tsdb_head_samples_appended_total: Total samples appended to TSDB head
-//
-// The panel shows:
-// - Rate of samples being appended
-// - Breakdown by job and instance
-func ReceiveAppendedSamples(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
+func ReceiveAppendedSampleRate(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
 	return panelgroup.AddPanel("Appended Samples",
 		panel.Description("Shows rate of samples appended to Receive TSDB"),
 		timeSeriesPanel.Chart(
@@ -599,13 +591,6 @@ func ReceiveAppendedSamples(datasourceName string, labelMatchers ...promql.Label
 	)
 }
 
-// ReceiveHeadSeries creates a panel option for displaying the head series metric from Prometheus.
-// The panel uses the following Prometheus metrics:
-// - prometheus_tsdb_head_series: Number of series in the head block
-//
-// The panel shows:
-// - Current number of active series in TSDB head
-// - Breakdown by job and instance
 func ReceiveHeadSeries(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
 	return panelgroup.AddPanel("Head Series",
 		panel.Description("Shows number of series in Receive TSDB head"),
@@ -625,14 +610,6 @@ func ReceiveHeadSeries(datasourceName string, labelMatchers ...promql.LabelMatch
 	)
 }
 
-// ReceiveHeadChunks creates a panel option for displaying the "Head Chunks" metric from Prometheus.
-//
-// The panel uses the following Prometheus metrics:
-// - prometheus_tsdb_head_chunks: Number of chunks in the head block
-//
-// The panel shows:
-// - Current number of chunks in TSDB head
-// - Breakdown by job and instance
 func ReceiveHeadChunks(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
 	return panelgroup.AddPanel("Head Chunks",
 		panel.Description("Shows number of chunks in Prometheus TSDB head"),

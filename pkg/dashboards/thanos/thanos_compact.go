@@ -11,7 +11,7 @@ import (
 	"github.com/perses/community-dashboards/pkg/promql"
 )
 
-func withThanosTODOGroup(datasource string, labelMatcher promql.LabelMatcher) dashboard.Option {
+func withThanosCompactTODOGroup(datasource string, labelMatcher promql.LabelMatcher) dashboard.Option {
 	return dashboard.AddPanelGroup("TODO Operations",
 		panelgroup.PanelsPerLine(4),
 		panels.TodoCompactionBlocks(datasource, labelMatcher),
@@ -21,15 +21,15 @@ func withThanosTODOGroup(datasource string, labelMatcher promql.LabelMatcher) da
 	)
 }
 
-func withThanosGroupCompactionGroup(datasource string, labelMatcher promql.LabelMatcher) dashboard.Option {
+func withThanosCompactGroupCompactionGroup(datasource string, labelMatcher promql.LabelMatcher) dashboard.Option {
 	return dashboard.AddPanelGroup("Group Compactions",
 		panelgroup.PanelsPerLine(2),
-		panels.GroupCompactions(datasource, labelMatcher),
+		panels.GroupCompactionRate(datasource, labelMatcher),
 		panels.GroupCompactionErrors(datasource, labelMatcher),
 	)
 }
 
-func withThanosDownsampleGroup(datasource string, labelMatcher promql.LabelMatcher) dashboard.Option {
+func withThanosCompactDownsampleGroup(datasource string, labelMatcher promql.LabelMatcher) dashboard.Option {
 	return dashboard.AddPanelGroup("Downsample Operations",
 		panelgroup.PanelsPerLine(3),
 		panels.DownsampleRate(datasource, labelMatcher),
@@ -38,7 +38,7 @@ func withThanosDownsampleGroup(datasource string, labelMatcher promql.LabelMatch
 	)
 }
 
-func withThanosSyncMetaGroup(datasource string, labelMatcher promql.LabelMatcher) dashboard.Option {
+func withThanosCompactSyncMetaGroup(datasource string, labelMatcher promql.LabelMatcher) dashboard.Option {
 	return dashboard.AddPanelGroup("Sync Meta",
 		panelgroup.PanelsPerLine(3),
 		panels.SyncMetaRate(datasource, labelMatcher),
@@ -47,7 +47,7 @@ func withThanosSyncMetaGroup(datasource string, labelMatcher promql.LabelMatcher
 	)
 }
 
-func withThanosBlockDeletionGroup(datasource string, labelMatcher promql.LabelMatcher) dashboard.Option {
+func withThanosCompactBlockDeletionGroup(datasource string, labelMatcher promql.LabelMatcher) dashboard.Option {
 	return dashboard.AddPanelGroup("Block Deletion",
 		panelgroup.PanelsPerLine(3),
 		panels.DeletionRate(datasource, labelMatcher),
@@ -56,17 +56,17 @@ func withThanosBlockDeletionGroup(datasource string, labelMatcher promql.LabelMa
 	)
 }
 
-func withThanosHaltedGroup(datasource string, labelMatcher promql.LabelMatcher) dashboard.Option {
+func withThanosCompactHaltedGroup(datasource string, labelMatcher promql.LabelMatcher) dashboard.Option {
 	return dashboard.AddPanelGroup("Halted Compactors",
 		panelgroup.PanelsPerLine(1),
 		panels.HaltedCompactors(datasource, labelMatcher),
 	)
 }
 
-func withThanosGarbageCollectionGroup(datasource string, labelMatcher promql.LabelMatcher) dashboard.Option {
+func withThanosCompactGarbageCollectionGroup(datasource string, labelMatcher promql.LabelMatcher) dashboard.Option {
 	return dashboard.AddPanelGroup("Garbage Collection",
 		panelgroup.PanelsPerLine(3),
-		panels.GarbageCollection(datasource, labelMatcher),
+		panels.GarbageCollectionRate(datasource, labelMatcher),
 		panels.GarbageCollectionErrors(datasource, labelMatcher),
 		panels.GarbageCollectionDurations(datasource, labelMatcher),
 	)
@@ -97,14 +97,14 @@ func BuildThanosCompactOverview(project string, datasource string, clusterLabelN
 				listVar.DisplayName("namespace"),
 			),
 		),
-		withThanosTODOGroup(datasource, clusterLabelMatcher),
-		withThanosGroupCompactionGroup(datasource, clusterLabelMatcher),
-		withThanosDownsampleGroup(datasource, clusterLabelMatcher),
-		withThanosSyncMetaGroup(datasource, clusterLabelMatcher),
-		withThanosBlockDeletionGroup(datasource, clusterLabelMatcher),
+		withThanosCompactTODOGroup(datasource, clusterLabelMatcher),
+		withThanosCompactGroupCompactionGroup(datasource, clusterLabelMatcher),
+		withThanosCompactDownsampleGroup(datasource, clusterLabelMatcher),
+		withThanosCompactSyncMetaGroup(datasource, clusterLabelMatcher),
+		withThanosCompactBlockDeletionGroup(datasource, clusterLabelMatcher),
 		withThanosBucketOperationsGroup(datasource, clusterLabelMatcher),
-		withThanosHaltedGroup(datasource, clusterLabelMatcher),
-		withThanosGarbageCollectionGroup(datasource, clusterLabelMatcher),
+		withThanosCompactHaltedGroup(datasource, clusterLabelMatcher),
+		withThanosCompactGarbageCollectionGroup(datasource, clusterLabelMatcher),
 		withThanosResourcesGroup(datasource, clusterLabelMatcher),
 	)
 }

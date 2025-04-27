@@ -11,25 +11,25 @@ import (
 	"github.com/perses/community-dashboards/pkg/promql"
 )
 
-func withThanosRemoteWriteGroup(datasource string, labelMatcher promql.LabelMatcher) dashboard.Option {
+func withThanosReceiveRemoteWriteGroup(datasource string, labelMatcher promql.LabelMatcher) dashboard.Option {
 	return dashboard.AddPanelGroup("Remote Write v1 - Incoming Requests",
 		panelgroup.PanelsPerLine(3),
 		panels.RemoteWriteRequestRate(datasource, labelMatcher),
 		panels.RemoteWriteRequestErrors(datasource, labelMatcher),
-		panels.RemoteWriteRequestDuration(datasource, labelMatcher),
+		panels.RemoteWriteRequestDurations(datasource, labelMatcher),
 	)
 }
 
-func withThanosRemoteWriteTenantedGroup(datasource string, labelMatcher promql.LabelMatcher) dashboard.Option {
+func withThanosReceiveRemoteWriteTenantedGroup(datasource string, labelMatcher promql.LabelMatcher) dashboard.Option {
 	return dashboard.AddPanelGroup("Remote Write v1 - Incoming Requests (tenanted)",
 		panelgroup.PanelsPerLine(3),
 		panels.TenantedRemoteWriteRequestRate(datasource, labelMatcher),
 		panels.TenantedRemoteWriteRequestErrors(datasource, labelMatcher),
-		panels.TenantedRemoteWriteRequestDuration(datasource, labelMatcher),
+		panels.TenantedRemoteWriteRequestDurations(datasource, labelMatcher),
 	)
 }
 
-func withThanosRemoteWriteHTTPGroup(datasource string, labelMatcher promql.LabelMatcher) dashboard.Option {
+func withThanosReceiveRemoteWriteHTTPGroup(datasource string, labelMatcher promql.LabelMatcher) dashboard.Option {
 	return dashboard.AddPanelGroup("Remote Write v1 - HTTP Requests",
 		panelgroup.PanelsPerLine(3),
 		panels.AvgRemoteWriteRequestSize(datasource, labelMatcher),
@@ -38,7 +38,7 @@ func withThanosRemoteWriteHTTPGroup(datasource string, labelMatcher promql.Label
 	)
 }
 
-func withThanosRemoteWriteSeriesSampleGroup(datasource string, labelMatcher promql.LabelMatcher) dashboard.Option {
+func withThanosReceiveRemoteWriteSeriesSampleGroup(datasource string, labelMatcher promql.LabelMatcher) dashboard.Option {
 	return dashboard.AddPanelGroup("Series and Samples (tenanted)",
 		panelgroup.PanelsPerLine(4),
 		panels.RemoteWriteSeriesRate(datasource, labelMatcher),
@@ -48,7 +48,7 @@ func withThanosRemoteWriteSeriesSampleGroup(datasource string, labelMatcher prom
 	)
 }
 
-func withThanosRemoteWriteReplicationGroup(datasource string, labelMatcher promql.LabelMatcher) dashboard.Option {
+func withThanosReceiveRemoteWriteReplicationGroup(datasource string, labelMatcher promql.LabelMatcher) dashboard.Option {
 	return dashboard.AddPanelGroup("Remote Write Replication",
 		panelgroup.PanelsPerLine(2),
 		panels.RemoteWriteReplicationRate(datasource, labelMatcher),
@@ -56,34 +56,27 @@ func withThanosRemoteWriteReplicationGroup(datasource string, labelMatcher promq
 	)
 }
 
-func withThanosRemoteWriteForwardGroup(datasource string, labelMatcher promql.LabelMatcher) dashboard.Option {
+func withThanosReceiveRemoteWriteForwardGroup(datasource string, labelMatcher promql.LabelMatcher) dashboard.Option {
 	return dashboard.AddPanelGroup("Remote Write Forward",
 		panelgroup.PanelsPerLine(2),
 		panels.RemoteWriteForwardRate(datasource, labelMatcher),
-		panels.RemoteWriteForwardErrRate(datasource, labelMatcher),
+		panels.RemoteWriteForwardErrorRate(datasource, labelMatcher),
 	)
 }
 
-func withThanosWriteGRPCUnaryGroup(datasource string, labelMatcher promql.LabelMatcher) dashboard.Option {
+func withThanosReceiveWriteGRPCUnaryGroup(datasource string, labelMatcher promql.LabelMatcher) dashboard.Option {
 	return dashboard.AddPanelGroup("Write gRPC Unary (WritableStore)",
 		panelgroup.PanelsPerLine(3),
 		panels.WriteGRPCUnaryRate(datasource, labelMatcher),
-		panels.WriteGRPCUnaryErrRate(datasource, labelMatcher),
-		panels.WriteGPRCUnaryDuration(datasource, labelMatcher),
-	)
-}
-
-func withThanosBucketUploadGroup(datasource string, labelMatcher promql.LabelMatcher) dashboard.Option {
-	return dashboard.AddPanelGroup("Last Bucket Upload",
-		panelgroup.PanelsPerLine(1),
-		panels.BucketUploadTable(datasource, labelMatcher),
+		panels.WriteGRPCUnaryErrors(datasource, labelMatcher),
+		panels.WriteGPRCUnaryDurations(datasource, labelMatcher),
 	)
 }
 
 func withPrometheusStorageGroup(datasource string, labelMatcher promql.LabelMatcher) dashboard.Option {
 	return dashboard.AddPanelGroup("Storage",
 		panelgroup.PanelsPerLine(3),
-		panels.ReceiveAppendedSamples(datasource, labelMatcher),
+		panels.ReceiveAppendedSampleRate(datasource, labelMatcher),
 		panels.ReceiveHeadSeries(datasource, labelMatcher),
 		panels.ReceiveHeadChunks(datasource, labelMatcher),
 	)
@@ -129,13 +122,13 @@ func BuildThanosReceiveOverview(project string, datasource string, clusterLabelN
 				listVar.AllowMultiple(true),
 			),
 		),
-		withThanosRemoteWriteGroup(datasource, clusterLabelMatcher),
-		withThanosRemoteWriteTenantedGroup(datasource, clusterLabelMatcher),
-		withThanosRemoteWriteHTTPGroup(datasource, clusterLabelMatcher),
-		withThanosRemoteWriteSeriesSampleGroup(datasource, clusterLabelMatcher),
-		withThanosRemoteWriteReplicationGroup(datasource, clusterLabelMatcher),
-		withThanosRemoteWriteForwardGroup(datasource, clusterLabelMatcher),
-		withThanosWriteGRPCUnaryGroup(datasource, clusterLabelMatcher),
+		withThanosReceiveRemoteWriteGroup(datasource, clusterLabelMatcher),
+		withThanosReceiveRemoteWriteTenantedGroup(datasource, clusterLabelMatcher),
+		withThanosReceiveRemoteWriteHTTPGroup(datasource, clusterLabelMatcher),
+		withThanosReceiveRemoteWriteSeriesSampleGroup(datasource, clusterLabelMatcher),
+		withThanosReceiveRemoteWriteReplicationGroup(datasource, clusterLabelMatcher),
+		withThanosReceiveRemoteWriteForwardGroup(datasource, clusterLabelMatcher),
+		withThanosReceiveWriteGRPCUnaryGroup(datasource, clusterLabelMatcher),
 		withThanosReadGRPCUnaryGroup(datasource, clusterLabelMatcher),
 		withThanosReadGRPCStreamGroup(datasource, clusterLabelMatcher),
 		withThanosBucketUploadGroup(datasource, clusterLabelMatcher),

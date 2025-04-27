@@ -120,7 +120,7 @@ func BlockDropErrors(datasourceName string, labelMatchers ...promql.LabelMatcher
 	)
 }
 
-func CacheRequests(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
+func CacheRequestRate(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
 	return panelgroup.AddPanel("Cache Requests",
 		panel.Description("Shows rate of cache requests."),
 		timeSeriesPanel.Chart(
@@ -147,7 +147,7 @@ func CacheRequests(datasourceName string, labelMatchers ...promql.LabelMatcher) 
 	)
 }
 
-func CacheHits(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
+func CacheHitRate(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
 	return panelgroup.AddPanel("Cache Hits",
 		panel.Description("Shows rate of cache hits."),
 		timeSeriesPanel.Chart(
@@ -174,7 +174,7 @@ func CacheHits(datasourceName string, labelMatchers ...promql.LabelMatcher) pane
 	)
 }
 
-func CacheItemsAdded(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
+func CacheItemsAddRate(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
 	return panelgroup.AddPanel("Cache Items Added",
 		panel.Description("Shows rate of items added to cache."),
 		timeSeriesPanel.Chart(
@@ -201,7 +201,7 @@ func CacheItemsAdded(datasourceName string, labelMatchers ...promql.LabelMatcher
 	)
 }
 
-func CacheItemsEvicted(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
+func CacheItemsEvictRate(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
 	return panelgroup.AddPanel("Cache Items Evicted",
 		panel.Description("Shows rate of items evicted from cache."),
 		timeSeriesPanel.Chart(
@@ -456,7 +456,7 @@ func ResultSeries(datasourceName string, labelMatchers ...promql.LabelMatcher) p
 	)
 }
 
-func GetAllSeriesDuration(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
+func GetAllSeriesDurations(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
 	return panelgroup.AddPanel("Get All Series Duration",
 		panel.Description("Shows the p50, p90 and p99 of time it takes until all per-block prepares and loads for each query is finished."),
 		timeSeriesPanel.Chart(
@@ -597,7 +597,7 @@ func GateWaitingDurations(datasourceName string, labelMatchers ...promql.LabelMa
 	)
 }
 
-func StoreSentChunkSize(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
+func StoreSentChunkSizes(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
 	return panelgroup.AddPanel("Store Sent Chunk Size",
 		panel.Description("Shows the mean rate, p50, p90 and p99 for the bytes of chunks sent for single series, which are adequate to the gRPC message size sent to querier."),
 		timeSeriesPanel.Chart(
