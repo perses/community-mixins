@@ -119,6 +119,7 @@ func BuildThanosReceiveOverview(project string, datasource string, clusterLabelN
 					dashboards.AddVariableDatasource(datasource),
 				),
 				listVar.DisplayName("job"),
+				listVar.AllowMultiple(true),
 			),
 		),
 		dashboards.AddClusterVariable(datasource, clusterLabelName, "thanos_build_info"),

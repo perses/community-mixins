@@ -32,7 +32,7 @@ spec:
                 name: job
                 hidden: false
             allowAllValue: false
-            allowMultiple: false
+            allowMultiple: true
             plugin:
                 kind: PrometheusLabelValuesVariable
                 spec:

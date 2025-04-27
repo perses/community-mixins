@@ -78,6 +78,7 @@ func BuildThanosStoreOverview(project string, datasource string, clusterLabelNam
 					dashboards.AddVariableDatasource(datasource),
 				),
 				listVar.DisplayName("job"),
+				listVar.AllowMultiple(true),
 			),
 		),
 		dashboards.AddClusterVariable(datasource, clusterLabelName, "thanos_build_info"),

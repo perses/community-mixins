@@ -1512,7 +1512,7 @@ spec:
   - kind: ListVariable
     spec:
       allowAllValue: false
-      allowMultiple: false
+      allowMultiple: true
       display:
         hidden: false
         name: job
