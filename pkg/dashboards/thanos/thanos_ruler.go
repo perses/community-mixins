@@ -70,5 +70,6 @@ func BuildThanosRulerOverview(project string, datasource string, clusterLabelNam
 		withThanosAlertQueueGroup(datasource, clusterLabelMatcher),
 		withThanosReadGRPCUnaryGroup(datasource, clusterLabelMatcher),
 		withThanosReadGRPCStreamGroup(datasource, clusterLabelMatcher),
+		withThanosResourcesGroup(datasource, clusterLabelMatcher),
 	)
 }

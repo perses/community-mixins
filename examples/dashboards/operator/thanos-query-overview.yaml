@@ -134,6 +134,29 @@ spec:
         width: 12
         x: 12
         "y": 0
+  - kind: Grid
+    spec:
+      display:
+        title: Resources
+      items:
+      - content:
+          $ref: '#/spec/panels/6_0'
+        height: 6
+        width: 8
+        x: 0
+        "y": 0
+      - content:
+          $ref: '#/spec/panels/6_1'
+        height: 6
+        width: 8
+        x: 8
+        "y": 0
+      - content:
+          $ref: '#/spec/panels/6_2'
+        height: 6
+        width: 8
+        x: 16
+        "y": 0
   panels:
     "0_0":
       kind: Panel
@@ -772,6 +795,131 @@ spec:
                       rate(thanos_query_store_apis_dns_lookups_total{job=~"$job",namespace="$namespace"}[5m])
                     )
                 seriesNameFormat: '{{job}}'
+    "6_0":
+      kind: Panel
+      spec:
+        display:
+          description: Shows various memory usage metrics of the component.
+          name: Memory Usage
+        plugin:
+          kind: TimeSeriesChart
+          spec:
+            legend:
+              mode: table
+              position: bottom
+            yAxis:
+              format:
+                unit: bytes
+        queries:
+        - kind: TimeSeriesQuery
+          spec:
+            plugin:
+              kind: PrometheusTimeSeriesQuery
+              spec:
+                datasource:
+                  kind: PrometheusDatasource
+                  name: prometheus-datasource
+                query: go_memstats_alloc_bytes{job=~"$job",namespace="$namespace"}
+                seriesNameFormat: Alloc All {{instance}}
+        - kind: TimeSeriesQuery
+          spec:
+            plugin:
+              kind: PrometheusTimeSeriesQuery
+              spec:
+                datasource:
+                  kind: PrometheusDatasource
+                  name: prometheus-datasource
+                query: go_memstats_heap_alloc_bytes{job=~"$job",namespace="$namespace"}
+                seriesNameFormat: Alloc Heap {{instance}}
+        - kind: TimeSeriesQuery
+          spec:
+            plugin:
+              kind: PrometheusTimeSeriesQuery
+              spec:
+                datasource:
+                  kind: PrometheusDatasource
+                  name: prometheus-datasource
+                query: rate(go_memstats_alloc_bytes_total{job=~"$job",namespace="$namespace"}[30s])
+                seriesNameFormat: Alloc Rate All {{instance}}
+        - kind: TimeSeriesQuery
+          spec:
+            plugin:
+              kind: PrometheusTimeSeriesQuery
+              spec:
+                datasource:
+                  kind: PrometheusDatasource
+                  name: prometheus-datasource
+                query: rate(go_memstats_heap_alloc_bytes{job=~"$job",namespace="$namespace"}[30s])
+                seriesNameFormat: Alloc Rate Heap {{instance}}
+        - kind: TimeSeriesQuery
+          spec:
+            plugin:
+              kind: PrometheusTimeSeriesQuery
+              spec:
+                datasource:
+                  kind: PrometheusDatasource
+                  name: prometheus-datasource
+                query: go_memstats_stack_inuse_bytes{job=~"$job",namespace="$namespace"}
+                seriesNameFormat: Inuse Stack {{instance}}
+        - kind: TimeSeriesQuery
+          spec:
+            plugin:
+              kind: PrometheusTimeSeriesQuery
+              spec:
+                datasource:
+                  kind: PrometheusDatasource
+                  name: prometheus-datasource
+                query: go_memstats_heap_inuse_bytes{job=~"$job",namespace="$namespace"}
+                seriesNameFormat: Inuse Heap {{instance}}
+    "6_1":
+      kind: Panel
+      spec:
+        display:
+          description: Shows the number of goroutines being used by the component.
+          name: Goroutines
+        plugin:
+          kind: TimeSeriesChart
+          spec:
+            legend:
+              mode: table
+              position: bottom
+        queries:
+        - kind: TimeSeriesQuery
+          spec:
+            plugin:
+              kind: PrometheusTimeSeriesQuery
+              spec:
+                datasource:
+                  kind: PrometheusDatasource
+                  name: prometheus-datasource
+                query: go_goroutines{job=~"$job",namespace="$namespace"}
+                seriesNameFormat: '{{instance}}'
+    "6_2":
+      kind: Panel
+      spec:
+        display:
+          description: Shows the Go GC pause durations for the component.
+          name: GC Duration
+        plugin:
+          kind: TimeSeriesChart
+          spec:
+            legend:
+              mode: table
+              position: bottom
+            yAxis:
+              format:
+                unit: milliseconds
+        queries:
+        - kind: TimeSeriesQuery
+          spec:
+            plugin:
+              kind: PrometheusTimeSeriesQuery
+              spec:
+                datasource:
+                  kind: PrometheusDatasource
+                  name: prometheus-datasource
+                query: go_gc_duration_seconds{job=~"$job",namespace="$namespace"}
+                seriesNameFormat: '{{quantile}} {{instance}}'
   variables:
   - kind: ListVariable
     spec:

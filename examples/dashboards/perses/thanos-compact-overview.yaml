@@ -861,6 +861,131 @@ spec:
                                       )
                                     )
                                 seriesNameFormat: p99 {{job}} {{namespace}}
+        "8_0":
+            kind: Panel
+            spec:
+                display:
+                    name: Memory Usage
+                    description: Shows various memory usage metrics of the component.
+                plugin:
+                    kind: TimeSeriesChart
+                    spec:
+                        legend:
+                            position: bottom
+                            mode: table
+                        yAxis:
+                            format:
+                                unit: bytes
+                queries:
+                    - kind: TimeSeriesQuery
+                      spec:
+                        plugin:
+                            kind: PrometheusTimeSeriesQuery
+                            spec:
+                                datasource:
+                                    kind: PrometheusDatasource
+                                    name: prometheus-datasource
+                                query: go_memstats_alloc_bytes{job=~"$job",namespace="$namespace"}
+                                seriesNameFormat: Alloc All {{instance}}
+                    - kind: TimeSeriesQuery
+                      spec:
+                        plugin:
+                            kind: PrometheusTimeSeriesQuery
+                            spec:
+                                datasource:
+                                    kind: PrometheusDatasource
+                                    name: prometheus-datasource
+                                query: go_memstats_heap_alloc_bytes{job=~"$job",namespace="$namespace"}
+                                seriesNameFormat: Alloc Heap {{instance}}
+                    - kind: TimeSeriesQuery
+                      spec:
+                        plugin:
+                            kind: PrometheusTimeSeriesQuery
+                            spec:
+                                datasource:
+                                    kind: PrometheusDatasource
+                                    name: prometheus-datasource
+                                query: rate(go_memstats_alloc_bytes_total{job=~"$job",namespace="$namespace"}[30s])
+                                seriesNameFormat: Alloc Rate All {{instance}}
+                    - kind: TimeSeriesQuery
+                      spec:
+                        plugin:
+                            kind: PrometheusTimeSeriesQuery
+                            spec:
+                                datasource:
+                                    kind: PrometheusDatasource
+                                    name: prometheus-datasource
+                                query: rate(go_memstats_heap_alloc_bytes{job=~"$job",namespace="$namespace"}[30s])
+                                seriesNameFormat: Alloc Rate Heap {{instance}}
+                    - kind: TimeSeriesQuery
+                      spec:
+                        plugin:
+                            kind: PrometheusTimeSeriesQuery
+                            spec:
+                                datasource:
+                                    kind: PrometheusDatasource
+                                    name: prometheus-datasource
+                                query: go_memstats_stack_inuse_bytes{job=~"$job",namespace="$namespace"}
+                                seriesNameFormat: Inuse Stack {{instance}}
+                    - kind: TimeSeriesQuery
+                      spec:
+                        plugin:
+                            kind: PrometheusTimeSeriesQuery
+                            spec:
+                                datasource:
+                                    kind: PrometheusDatasource
+                                    name: prometheus-datasource
+                                query: go_memstats_heap_inuse_bytes{job=~"$job",namespace="$namespace"}
+                                seriesNameFormat: Inuse Heap {{instance}}
+        "8_1":
+            kind: Panel
+            spec:
+                display:
+                    name: Goroutines
+                    description: Shows the number of goroutines being used by the component.
+                plugin:
+                    kind: TimeSeriesChart
+                    spec:
+                        legend:
+                            position: bottom
+                            mode: table
+                queries:
+                    - kind: TimeSeriesQuery
+                      spec:
+                        plugin:
+                            kind: PrometheusTimeSeriesQuery
+                            spec:
+                                datasource:
+                                    kind: PrometheusDatasource
+                                    name: prometheus-datasource
+                                query: go_goroutines{job=~"$job",namespace="$namespace"}
+                                seriesNameFormat: '{{instance}}'
+        "8_2":
+            kind: Panel
+            spec:
+                display:
+                    name: GC Duration
+                    description: Shows the Go GC pause durations for the component.
+                plugin:
+                    kind: TimeSeriesChart
+                    spec:
+                        legend:
+                            position: bottom
+                            mode: table
+                        yAxis:
+                            format:
+                                unit: milliseconds
+                queries:
+                    - kind: TimeSeriesQuery
+                      spec:
+                        plugin:
+                            kind: PrometheusTimeSeriesQuery
+                            spec:
+                                datasource:
+                                    kind: PrometheusDatasource
+                                    name: prometheus-datasource
+                                query: go_gc_duration_seconds{job=~"$job",namespace="$namespace"}
+                                seriesNameFormat: '{{quantile}} {{instance}}'
     layouts:
         - kind: Grid
           spec:
@@ -1034,4 +1159,27 @@ spec:
                   height: 6
                   content:
                     $ref: '#/spec/panels/7_2'
+        - kind: Grid
+          spec:
+            display:
+                title: Resources
+            items:
+                - x: 0
+                  "y": 0
+                  width: 8
+                  height: 6
+                  content:
+                    $ref: '#/spec/panels/8_0'
+                - x: 8
+                  "y": 0
+                  width: 8
+                  height: 6
+                  content:
+                    $ref: '#/spec/panels/8_1'
+                - x: 16
+                  "y": 0
+                  width: 8
+                  height: 6
+                  content:
+                    $ref: '#/spec/panels/8_2'
     duration: 1h

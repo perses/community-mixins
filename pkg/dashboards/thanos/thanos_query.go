@@ -75,5 +75,6 @@ func BuildThanosQueryOverview(project string, datasource string, clusterLabelNam
 		withThanosReadGRPCStreamGroup(datasource, clusterLabelMatcher),
 		withThanosQueryConcurrencyGroup(datasource, clusterLabelMatcher),
 		withThanosDNSLookupGroup(datasource, clusterLabelMatcher),
+		withThanosResourcesGroup(datasource, clusterLabelMatcher),
 	)
 }

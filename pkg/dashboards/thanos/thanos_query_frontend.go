@@ -58,5 +58,6 @@ func BuildThanosQueryFrontendOverview(project string, datasource string, cluster
 		),
 		withThanosQueryFrontendRequestsGroup(datasource, clusterLabelMatcher),
 		withThanosQueryFrontendCacheGroup(datasource, clusterLabelMatcher),
+		withThanosResourcesGroup(datasource, clusterLabelMatcher),
 	)
 }

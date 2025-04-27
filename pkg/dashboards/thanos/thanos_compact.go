@@ -105,5 +105,6 @@ func BuildThanosCompactOverview(project string, datasource string, clusterLabelN
 		withThanosBucketOperationsGroup(datasource, clusterLabelMatcher),
 		withThanosHaltedGroup(datasource, clusterLabelMatcher),
 		withThanosGarbageCollectionGroup(datasource, clusterLabelMatcher),
+		withThanosResourcesGroup(datasource, clusterLabelMatcher),
 	)
 }

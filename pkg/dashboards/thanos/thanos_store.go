@@ -11,15 +11,6 @@ import (
 	"github.com/perses/community-dashboards/pkg/promql"
 )
 
-func withThanosBucketOperationsGroup(datasource string, labelMatcher promql.LabelMatcher) dashboard.Option {
-	return dashboard.AddPanelGroup("Bucket Operations",
-		panelgroup.PanelsPerLine(3),
-		panels.BucketOperations(datasource, labelMatcher),
-		panels.BucketOperationErrors(datasource, labelMatcher),
-		panels.BucketOperationLatency(datasource, labelMatcher),
-	)
-}
-
 func withThanosBlockOperationsGroup(datasource string, labelMatcher promql.LabelMatcher) dashboard.Option {
 	return dashboard.AddPanelGroup("Block Operations",
 		panelgroup.PanelsPerLine(4),
@@ -99,5 +90,6 @@ func BuildThanosStoreOverview(project string, datasource string, clusterLabelNam
 		withThanosQueryOperationsGroup(datasource, clusterLabelMatcher),
 		withThanosQueryOperationDurationGroup(datasource, clusterLabelMatcher),
 		withThanosStoreSentGroup(datasource, clusterLabelMatcher),
+		withThanosResourcesGroup(datasource, clusterLabelMatcher),
 	)
 }

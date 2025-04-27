@@ -73,24 +73,6 @@ func withThanosWriteGRPCUnaryGroup(datasource string, labelMatcher promql.LabelM
 	)
 }
 
-func withThanosReadGRPCUnaryGroup(datasource string, labelMatcher promql.LabelMatcher) dashboard.Option {
-	return dashboard.AddPanelGroup("Read gRPC Unary (StoreAPI Info/Labels)",
-		panelgroup.PanelsPerLine(3),
-		panels.ReadGRPCUnaryRate(datasource, labelMatcher),
-		panels.ReadGRPCUnaryErrRate(datasource, labelMatcher),
-		panels.ReadGPRCUnaryDuration(datasource, labelMatcher),
-	)
-}
-
-func withThanosReadGRPCStreamGroup(datasource string, labelMatcher promql.LabelMatcher) dashboard.Option {
-	return dashboard.AddPanelGroup("Read gRPC Stream (StoreAPI Series/Exemplars)",
-		panelgroup.PanelsPerLine(3),
-		panels.ReadGRPCStreamRate(datasource, labelMatcher),
-		panels.ReadGRPCStreamErrRate(datasource, labelMatcher),
-		panels.ReadGPRCStreamDuration(datasource, labelMatcher),
-	)
-}
-
 func withThanosBucketUploadGroup(datasource string, labelMatcher promql.LabelMatcher) dashboard.Option {
 	return dashboard.AddPanelGroup("Last Bucket Upload",
 		panelgroup.PanelsPerLine(1),
@@ -158,5 +140,6 @@ func BuildThanosReceiveOverview(project string, datasource string, clusterLabelN
 		withThanosReadGRPCStreamGroup(datasource, clusterLabelMatcher),
 		withThanosBucketUploadGroup(datasource, clusterLabelMatcher),
 		withPrometheusStorageGroup(datasource, clusterLabelMatcher),
+		withThanosResourcesGroup(datasource, clusterLabelMatcher),
 	)
 }
