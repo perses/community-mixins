@@ -11,6 +11,7 @@ import (
 	"github.com/perses/perses/go-sdk/dashboard"
 	"gopkg.in/yaml.v3"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	"k8s.io/apimachinery/pkg/runtime"
 	k8syaml "sigs.k8s.io/yaml"
 )
 
@@ -38,27 +39,7 @@ func executeDashboardBuilder(builder dashboard.Builder, outputFormat string, out
 		output, err = json.Marshal(builder.Dashboard)
 		ext = JSONOutput
 	case OperatorOutput:
-		op := persesv1.PersesDashboard{
-			TypeMeta: metav1.TypeMeta{
-				Kind:       "PersesDashboard",
-				APIVersion: "perses.dev/v1alpha1",
-			},
-			ObjectMeta: metav1.ObjectMeta{
-				Name:      builder.Dashboard.Metadata.Name,
-				Namespace: builder.Dashboard.Metadata.Project,
-				Labels: map[string]string{
-					"app.kubernetes.io/name":      "perses-dashboard",
-					"app.kubernetes.io/instance":  builder.Dashboard.Metadata.Name,
-					"app.kubernetes.io/part-of":   "perses-operator",
-					"app.kubernetes.io/component": "dashboard",
-				},
-			},
-			Spec: persesv1.Dashboard{
-				DashboardSpec: builder.Dashboard.Spec,
-			},
-		}
-
-		output, err = k8syaml.Marshal(op)
+		output, err = k8syaml.Marshal(builderToOperatorResource(builder))
 		ext = YAMLOutput
 	default:
 		err = fmt.Errorf("--output must be %q, %q or %q", JSONOutput, YAMLOutput, OperatorOutput)
@@ -87,6 +68,28 @@ func executeDashboardBuilder(builder dashboard.Builder, outputFormat string, out
 	_ = os.WriteFile(fmt.Sprintf("%s/%s.%s", outputDir, builder.Dashboard.Metadata.Name, ext), output, os.ModePerm)
 }
 
+func builderToOperatorResource(builder dashboard.Builder) runtime.Object {
+	return &persesv1.PersesDashboard{
+		TypeMeta: metav1.TypeMeta{
+			Kind:       "PersesDashboard",
+			APIVersion: "perses.dev/v1alpha1",
+		},
+		ObjectMeta: metav1.ObjectMeta{
+			Name:      builder.Dashboard.Metadata.Name,
+			Namespace: builder.Dashboard.Metadata.Project,
+			Labels: map[string]string{
+				"app.kubernetes.io/name":      "perses-dashboard",
+				"app.kubernetes.io/instance":  builder.Dashboard.Metadata.Name,
+				"app.kubernetes.io/part-of":   "perses-operator",
+				"app.kubernetes.io/component": "dashboard",
+			},
+		},
+		Spec: persesv1.Dashboard{
+			DashboardSpec: builder.Dashboard.Spec,
+		},
+	}
+}
+
 func NewExec() Exec {
 	output := flag.Lookup("output").Value.String()
 	outputDir := flag.Lookup("output-dir").Value.String()
@@ -109,4 +112,9 @@ func (b *Exec) BuildDashboard(builder dashboard.Builder, err error) {
 		os.Exit(-1)
 	}
 	executeDashboardBuilder(builder, b.outputFormat, b.outputDir, os.Stdout)
+}
+
+// BuildDashboardOperatorResource is a helper to return the operator resource of a dashboard builder as a runtime.Object.
+func (b *Exec) BuildDashboardOperatorResource(builder dashboard.Builder) runtime.Object {
+	return builderToOperatorResource(builder)
 }
