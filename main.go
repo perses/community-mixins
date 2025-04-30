@@ -7,6 +7,7 @@ import (
 	"github.com/perses/community-dashboards/pkg/dashboards/alertmanager"
 	nodeexporter "github.com/perses/community-dashboards/pkg/dashboards/node_exporter"
 	"github.com/perses/community-dashboards/pkg/dashboards/prometheus"
+	"github.com/perses/community-dashboards/pkg/dashboards/thanos"
 )
 
 var (
@@ -29,6 +30,11 @@ func main() {
 	dashboardWriter.Add(nodeexporter.BuildNodeExporterNodes(project, datasource, clusterLabelName))
 	dashboardWriter.Add(nodeexporter.BuildNodeExporterClusterUseMethod(project, datasource, clusterLabelName))
 	dashboardWriter.Add(alertmanager.BuildAlertManagerOverview(project, datasource, clusterLabelName))
-
+	dashboardWriter.Add(thanos.BuildThanosReceiveOverview(project, datasource, clusterLabelName))
+	dashboardWriter.Add(thanos.BuildThanosQueryOverview(project, datasource, clusterLabelName))
+	dashboardWriter.Add(thanos.BuildThanosStoreOverview(project, datasource, clusterLabelName))
+	dashboardWriter.Add(thanos.BuildThanosRulerOverview(project, datasource, clusterLabelName))
+	dashboardWriter.Add(thanos.BuildThanosQueryFrontendOverview(project, datasource, clusterLabelName))
+	dashboardWriter.Add(thanos.BuildThanosCompactOverview(project, datasource, clusterLabelName))
 	dashboardWriter.Write()
 }
