@@ -49,9 +49,13 @@ This command initializes a local Perses instance that includes predefined resour
 
 ### Applying Dashboards with `percli`
 
-To apply the dashboards to your Perses instance, use the [percli](https://pkg.go.dev/github.com/perses/perses/cmd/percli) tool with the following command:
+You can use `percli` to apply the dashboards to your Perses instance. Use the [percli](https://pkg.go.dev/github.com/perses/perses/cmd/percli) tool with the following commands:
 
 ```bash
+# Connect to your perses instance, for example if you want to use the demo perses
+percli login http://localhost:8080/
+
+# Add the dashboards to your instance
 percli apply -d examples/dashboards/perses/
 ```
 
