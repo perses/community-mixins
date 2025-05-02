@@ -12,7 +12,7 @@ import (
 
 func ProbeDurationSeconds(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
 	return panelgroup.AddPanel("Probe Duration",
-		panel.Description("Shows Probe duration in secns"),
+		panel.Description("Shows Probe duration in seconds"),
 		timeSeriesPanel.Chart(
 			timeSeriesPanel.WithYAxis(timeSeriesPanel.YAxis{
 				Format: &commonSdk.Format{

@@ -49,7 +49,7 @@ spec:
             spec:
                 display:
                     name: Probe Duration
-                    description: Shows Probe duration in secns
+                    description: Shows Probe duration in seconds
                 plugin:
                     kind: TimeSeriesChart
                     spec:

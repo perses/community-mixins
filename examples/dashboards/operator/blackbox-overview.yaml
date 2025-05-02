@@ -30,7 +30,7 @@ spec:
       kind: Panel
       spec:
         display:
-          description: Shows Probe duration in secns
+          description: Shows Probe duration in seconds
           name: Probe Duration
         plugin:
           kind: TimeSeriesChart
