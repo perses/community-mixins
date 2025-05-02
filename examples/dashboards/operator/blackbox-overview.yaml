@@ -1,0 +1,105 @@
+apiVersion: perses.dev/v1alpha1
+kind: PersesDashboard
+metadata:
+  creationTimestamp: null
+  labels:
+    app.kubernetes.io/component: dashboard
+    app.kubernetes.io/instance: blackbox-overview
+    app.kubernetes.io/name: perses-dashboard
+    app.kubernetes.io/part-of: perses-operator
+  name: blackbox-overview
+  namespace: perses-dev
+spec:
+  display:
+    name: Blackbox Exporter / Overview
+  duration: 1h
+  layouts:
+  - kind: Grid
+    spec:
+      display:
+        title: Probes
+      items:
+      - content:
+          $ref: '#/spec/panels/0_0'
+        height: 6
+        width: 24
+        x: 0
+        "y": 0
+  panels:
+    "0_0":
+      kind: Panel
+      spec:
+        display:
+          description: Shows Probe duration in secns
+          name: Probe Duration
+        plugin:
+          kind: TimeSeriesChart
+          spec:
+            legend:
+              mode: table
+              position: bottom
+              values:
+              - last
+            yAxis:
+              format:
+                unit: seconds
+        queries:
+        - kind: TimeSeriesQuery
+          spec:
+            plugin:
+              kind: PrometheusTimeSeriesQuery
+              spec:
+                datasource:
+                  kind: PrometheusDatasource
+                  name: prometheus-datasource
+                query: |-
+                  sum by (instance) (
+                    avg by (phase, instance) (probe_http_duration_seconds{instance=~"$instance",job=~"$job"})
+                  )
+                seriesNameFormat: HTTP duration
+        - kind: TimeSeriesQuery
+          spec:
+            plugin:
+              kind: PrometheusTimeSeriesQuery
+              spec:
+                datasource:
+                  kind: PrometheusDatasource
+                  name: prometheus-datasource
+                query: avg by (instance) (probe_duration_seconds{instance=~"$instance",job=~"$job"})
+                seriesNameFormat: Total probe duration
+  variables:
+  - kind: ListVariable
+    spec:
+      allowAllValue: false
+      allowMultiple: false
+      display:
+        hidden: false
+        name: job
+      name: job
+      plugin:
+        kind: PrometheusLabelValuesVariable
+        spec:
+          datasource:
+            kind: PrometheusDatasource
+            name: prometheus-datasource
+          labelName: job
+          matchers:
+          - probe_success{}
+  - kind: ListVariable
+    spec:
+      allowAllValue: false
+      allowMultiple: false
+      display:
+        hidden: false
+        name: instance
+      name: instance
+      plugin:
+        kind: PrometheusLabelValuesVariable
+        spec:
+          datasource:
+            kind: PrometheusDatasource
+            name: prometheus-datasource
+          labelName: instance
+          matchers:
+          - probe_success{job="$job"}
+status: {}

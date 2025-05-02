@@ -5,10 +5,10 @@ import (
 
 	dashboards "github.com/perses/community-dashboards/pkg/dashboards"
 	"github.com/perses/community-dashboards/pkg/dashboards/alertmanager"
+	"github.com/perses/community-dashboards/pkg/dashboards/blackbox"
 	nodeexporter "github.com/perses/community-dashboards/pkg/dashboards/node_exporter"
 	"github.com/perses/community-dashboards/pkg/dashboards/prometheus"
 	"github.com/perses/community-dashboards/pkg/dashboards/thanos"
-	"github.com/perses/community-dashboards/pkg/dashboards/blackbox"
 )
 
 var (
@@ -37,6 +37,6 @@ func main() {
 	dashboardWriter.Add(thanos.BuildThanosRulerOverview(project, datasource, clusterLabelName))
 	dashboardWriter.Add(thanos.BuildThanosQueryFrontendOverview(project, datasource, clusterLabelName))
 	dashboardWriter.Add(thanos.BuildThanosCompactOverview(project, datasource, clusterLabelName))
-	dashboardWriter.Add(blackbox.BuildBlackboxExporter(project,datasource,clusterLabelName))
+	dashboardWriter.Add(blackbox.BuildBlackboxExporter(project, datasource, clusterLabelName))
 	dashboardWriter.Write()
 }

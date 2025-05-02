@@ -1,0 +1,100 @@
+kind: Dashboard
+metadata:
+    name: blackbox-overview
+    createdAt: 0001-01-01T00:00:00Z
+    updatedAt: 0001-01-01T00:00:00Z
+    version: 0
+    project: perses-dev
+spec:
+    display:
+        name: Blackbox Exporter / Overview
+    variables:
+        - kind: ListVariable
+          spec:
+            display:
+                name: job
+                hidden: false
+            allowAllValue: false
+            allowMultiple: false
+            plugin:
+                kind: PrometheusLabelValuesVariable
+                spec:
+                    datasource:
+                        kind: PrometheusDatasource
+                        name: prometheus-datasource
+                    labelName: job
+                    matchers:
+                        - probe_success{}
+            name: job
+        - kind: ListVariable
+          spec:
+            display:
+                name: instance
+                hidden: false
+            allowAllValue: false
+            allowMultiple: false
+            plugin:
+                kind: PrometheusLabelValuesVariable
+                spec:
+                    datasource:
+                        kind: PrometheusDatasource
+                        name: prometheus-datasource
+                    labelName: instance
+                    matchers:
+                        - probe_success{job="$job"}
+            name: instance
+    panels:
+        "0_0":
+            kind: Panel
+            spec:
+                display:
+                    name: Probe Duration
+                    description: Shows Probe duration in secns
+                plugin:
+                    kind: TimeSeriesChart
+                    spec:
+                        legend:
+                            position: bottom
+                            mode: table
+                            values:
+                                - last
+                        yAxis:
+                            format:
+                                unit: seconds
+                queries:
+                    - kind: TimeSeriesQuery
+                      spec:
+                        plugin:
+                            kind: PrometheusTimeSeriesQuery
+                            spec:
+                                datasource:
+                                    kind: PrometheusDatasource
+                                    name: prometheus-datasource
+                                query: |-
+                                    sum by (instance) (
+                                      avg by (phase, instance) (probe_http_duration_seconds{instance=~"$instance",job=~"$job"})
+                                    )
+                                seriesNameFormat: HTTP duration
+                    - kind: TimeSeriesQuery
+                      spec:
+                        plugin:
+                            kind: PrometheusTimeSeriesQuery
+                            spec:
+                                datasource:
+                                    kind: PrometheusDatasource
+                                    name: prometheus-datasource
+                                query: avg by (instance) (probe_duration_seconds{instance=~"$instance",job=~"$job"})
+                                seriesNameFormat: Total probe duration
+    layouts:
+        - kind: Grid
+          spec:
+            display:
+                title: Probes
+            items:
+                - x: 0
+                  "y": 0
+                  width: 24
+                  height: 6
+                  content:
+                    $ref: '#/spec/panels/0_0'
+    duration: 1h

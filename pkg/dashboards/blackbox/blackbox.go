@@ -2,12 +2,21 @@ package blackbox
 
 import (
 	"github.com/perses/community-dashboards/pkg/dashboards"
+	panels "github.com/perses/community-dashboards/pkg/panels/blackbox"
 	"github.com/perses/community-dashboards/pkg/promql"
 	"github.com/perses/perses/go-sdk/dashboard"
+	panelgroup "github.com/perses/perses/go-sdk/panel-group"
 
 	labelValuesVar "github.com/perses/perses/go-sdk/prometheus/variable/label-values"
 	listVar "github.com/perses/perses/go-sdk/variable/list-variable"
 )
+
+func withBlackboxProbes(datasource string, labelMatcher promql.LabelMatcher) dashboard.Option {
+	return dashboard.AddPanelGroup("Probes",
+		panelgroup.PanelsPerLine(1),
+		panels.ProbeDurationSeconds(datasource, labelMatcher),
+	)
+}
 
 func BuildBlackboxExporter(project string, datasource string, clusterLabelName string) (dashboard.Builder, error) {
 	clusterLabelMatcher := dashboards.GetClusterLabelMatcher(clusterLabelName)
@@ -38,5 +47,6 @@ func BuildBlackboxExporter(project string, datasource string, clusterLabelName s
 				listVar.DisplayName("instance"),
 			),
 		),
+		withBlackboxProbes(datasource, clusterLabelMatcher),
 	)
 }
