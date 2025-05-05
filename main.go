@@ -41,6 +41,7 @@ func main() {
 	dashboardWriter.Add(thanos.BuildThanosQueryFrontendOverview(project, datasource, clusterLabelName))
 	dashboardWriter.Add(thanos.BuildThanosCompactOverview(project, datasource, clusterLabelName))
 	dashboardWriter.Add(kubernetes.BuildKubernetesNodeResourcesOverview(project, datasource, clusterLabelName))
+	dashboardWriter.Add(kubernetes.BuildKubernetesClusterOverview(project, datasource, clusterLabelName))
 	dashboardWriter.Add(blackbox.BuildBlackboxExporter(project, datasource, clusterLabelName))
 
 	dashboardWriter.Write()
