@@ -1,25 +1,24 @@
 package perses
 
 import (
-	"fmt"
-
 	"github.com/perses/community-dashboards/pkg/dashboards"
+	"github.com/perses/community-dashboards/pkg/panels/perses"
 	"github.com/perses/community-dashboards/pkg/promql"
 	"github.com/perses/perses/go-sdk/dashboard"
+	panelgroup "github.com/perses/perses/go-sdk/panel-group"
 	labelvalues "github.com/perses/perses/go-sdk/prometheus/variable/label-values"
 	listvariable "github.com/perses/perses/go-sdk/variable/list-variable"
 )
 
 func BuildPersesOverview(project string, datasource string, clusterLabelName string) (dashboard.Builder, error) {
 	clusterLabelMatcher := dashboards.GetClusterLabelMatcher(clusterLabelName)
-	fmt.Println("clusterLabelMatcher", clusterLabelMatcher.Name)
 	return dashboard.New("perses-overview",
 		dashboard.ProjectName(project),
 		dashboard.Name("Perses / Overview"),
 		dashboard.AddVariable("job",
 			listvariable.List(
 				labelvalues.PrometheusLabelValues("job",
-					labelvalues.Matchers("prometheus_build_info{}"),
+					labelvalues.Matchers("perses_build_info{}"),
 					dashboards.AddVariableDatasource(datasource),
 				),
 				listvariable.DisplayName("job"),
@@ -30,7 +29,7 @@ func BuildPersesOverview(project string, datasource string, clusterLabelName str
 				labelvalues.PrometheusLabelValues("instance",
 					labelvalues.Matchers(
 						promql.SetLabelMatchers(
-							"prometheus_build_info",
+							"perses_build_info",
 							[]promql.LabelMatcher{clusterLabelMatcher, {Name: "job", Type: "=", Value: "$job"}},
 						),
 					),
@@ -39,5 +38,10 @@ func BuildPersesOverview(project string, datasource string, clusterLabelName str
 				listvariable.DisplayName("instance"),
 			),
 		),
+		withPersesOverviewStatsGroup(datasource, clusterLabelMatcher),
 	)
+}
+
+func withPersesOverviewStatsGroup(datasource string, clusterLabelMatcher promql.LabelMatcher) dashboard.Option {
+	return dashboard.AddPanelGroup("Perses Stats", panelgroup.PanelsPerLine(1), perses.PersesStatsTable(datasource, clusterLabelMatcher))
 }
