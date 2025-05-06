@@ -11,7 +11,7 @@ import (
 	"github.com/perses/perses/go-sdk/prometheus/query"
 )
 
-// ProbeStatusMapfunc creates a panel option for displaying Blackbox Probe Success for all instances
+// ProbeStatusMap creates a panel option for displaying Blackbox Probe Success for all instances
 //
 // The panel uses the following Prometheus metrics:
 // - probe_success: indicates if the probe succeeded
@@ -26,7 +26,7 @@ import (
 // Returns:
 //   - panelgroup.Option: A panel option that can be added to a panel group.
 
-func ProbeStatusMapfunc(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
+func ProbeStatusMap(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
 	return panelgroup.AddPanel("Status Map",
 		panel.Description("Shows Probe success, either 1 if up, or 0 if down"),
 		stat.Chart(

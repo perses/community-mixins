@@ -14,7 +14,7 @@ import (
 func withBlackboxSummary(datasource string, labelMatcher promql.LabelMatcher) dashboard.Option {
 	return dashboard.AddPanelGroup("Summary",
 		panelgroup.PanelsPerLine(1),
-		panels.ProbeStatusMapfunc(datasource, labelMatcher),
+		panels.ProbeStatusMap(datasource, labelMatcher),
 	)
 }
 
