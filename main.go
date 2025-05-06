@@ -6,6 +6,7 @@ import (
 	dashboards "github.com/perses/community-dashboards/pkg/dashboards"
 	"github.com/perses/community-dashboards/pkg/dashboards/alertmanager"
 	nodeexporter "github.com/perses/community-dashboards/pkg/dashboards/node_exporter"
+	"github.com/perses/community-dashboards/pkg/dashboards/perses"
 	"github.com/perses/community-dashboards/pkg/dashboards/prometheus"
 	"github.com/perses/community-dashboards/pkg/dashboards/thanos"
 )
@@ -25,6 +26,7 @@ func main() {
 
 	dashboardWriter := dashboards.NewDashboardWriter()
 
+	dashboardWriter.Add(perses.BuildPersesOverview(project, datasource, clusterLabelName))
 	dashboardWriter.Add(prometheus.BuildPrometheusOverview(project, datasource, clusterLabelName))
 	dashboardWriter.Add(prometheus.BuildPrometheusRemoteWrite(project, datasource, clusterLabelName))
 	dashboardWriter.Add(nodeexporter.BuildNodeExporterNodes(project, datasource, clusterLabelName))
