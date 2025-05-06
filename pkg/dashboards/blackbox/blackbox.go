@@ -44,6 +44,25 @@ func withBlackboxProbes(datasource string, labelMatcher promql.LabelMatcher) das
 	)
 }
 
+func withBlackboxProbesAdditionalStats(datasource string, labelMatcher promql.LabelMatcher) dashboard.Option {
+	return dashboard.AddPanelGroup("Probes Additional Stats",
+		panelgroup.PanelsPerLine(5),
+		panels.ProbeStatusCode(datasource, labelMatcher),
+		panels.ProbeTLSVersion(datasource, labelMatcher),
+		panels.ProbeSSLExpiry(datasource, labelMatcher),
+		panels.ProbeRedirects(datasource, labelMatcher),
+		panels.ProbeHTTPVersion(datasource, labelMatcher),
+	)
+}
+
+func withBlackboxProbesAvgTime(datasource string, labelMatcher promql.LabelMatcher) dashboard.Option {
+	return dashboard.AddPanelGroup("Probes Avg Duration Stats",
+		panelgroup.PanelsPerLine(2),
+		panels.ProbeAverageDurationInstance(datasource, labelMatcher),
+		panels.ProbeAverageDNSLookupPerInstance(datasource, labelMatcher),
+	)
+}
+
 func BuildBlackboxExporter(project string, datasource string, clusterLabelName string) (dashboard.Builder, error) {
 	clusterLabelMatcher := dashboards.GetClusterLabelMatcher(clusterLabelName)
 	return dashboard.New("blackbox-overview",
@@ -77,5 +96,7 @@ func BuildBlackboxExporter(project string, datasource string, clusterLabelName s
 		withBlackboxProbesStats(datasource, clusterLabelMatcher),
 		withBlackboxProbesUptime(datasource, clusterLabelMatcher),
 		withBlackboxProbes(datasource, clusterLabelMatcher),
+		withBlackboxProbesAdditionalStats(datasource, clusterLabelMatcher),
+		withBlackboxProbesAvgTime(datasource, clusterLabelMatcher),
 	)
 }

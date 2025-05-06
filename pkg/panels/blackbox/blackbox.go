@@ -335,3 +335,228 @@ func ProbePhases(datasourceName string, labelMatchers ...promql.LabelMatcher) pa
 		),
 	)
 }
+
+func ProbeStatusCode(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
+	return panelgroup.AddPanel("Latest Response Code",
+		panel.Description("Shows Probe Last Status Code"),
+		stat.Chart(
+			stat.Calculation(commonSdk.LastCalculation),
+			stat.Format(commonSdk.Format{
+				Unit: string(commonSdk.DecimalUnit),
+			}),
+			stat.WithSparkline(stat.Sparkline{
+				Width: 1,
+			}),
+			stat.Thresholds(commonSdk.Thresholds{
+				Mode:         commonSdk.AbsoluteMode,
+				DefaultColor: "green",
+				Steps: []commonSdk.StepOption{
+					{
+						Color: "red",
+						Value: 500,
+					},
+					{
+						Color: "yellow",
+						Value: 400,
+					},
+					{
+						Color: "blue",
+						Value: 300,
+					},
+				},
+			}),
+		),
+		panel.AddQuery(
+			query.PromQL(
+				promql.SetLabelMatchers(
+					"max by (instance) (probe_http_status_code{job=~'$job',instance=~'$instance'})",
+					labelMatchers,
+				),
+				dashboards.AddQueryDataSource(datasourceName),
+				query.SeriesNameFormat("{{instance}}"),
+			),
+		),
+	)
+}
+
+func ProbeTLSVersion(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
+	return panelgroup.AddPanel("SSL Version",
+		panel.Description("Shows Probe TLS Version"),
+		stat.Chart(
+			stat.Calculation(commonSdk.LastCalculation),
+			stat.Format(commonSdk.Format{
+				Unit: string(commonSdk.DecimalUnit),
+			}),
+			stat.WithSparkline(stat.Sparkline{
+				Width: 1,
+			}),
+			stat.Thresholds(commonSdk.Thresholds{
+				Mode:         commonSdk.AbsoluteMode,
+				DefaultColor: "green",
+			}),
+		),
+		panel.AddQuery(
+			query.PromQL(
+				promql.SetLabelMatchers(
+					"max by (instance, version) (probe_tls_version_info{job=~'$job',instance=~'$instance'})",
+					labelMatchers,
+				),
+				dashboards.AddQueryDataSource(datasourceName),
+				query.SeriesNameFormat("{{version}}"),
+			),
+		),
+	)
+}
+
+func ProbeSSLExpiry(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
+	return panelgroup.AddPanel("SSL Certificate Expiry",
+		panel.Description("Shows When SSL Cert Will Expire"),
+		stat.Chart(
+			stat.Calculation(commonSdk.LastCalculation),
+			stat.Format(commonSdk.Format{
+				Unit: string(commonSdk.DecimalUnit),
+			}),
+			stat.WithSparkline(stat.Sparkline{
+				Width: 1,
+			}),
+			stat.Thresholds(commonSdk.Thresholds{
+				Mode:         commonSdk.AbsoluteMode,
+				DefaultColor: "green",
+			}),
+		),
+		panel.AddQuery(
+			query.PromQL(
+				promql.SetLabelMatchers(
+					"min by (instance) (probe_ssl_earliest_cert_expiry{job=~'$job',instance=~'$instance'}) - time()",
+					labelMatchers,
+				),
+				dashboards.AddQueryDataSource(datasourceName),
+			),
+		),
+	)
+}
+
+func ProbeRedirects(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
+	return panelgroup.AddPanel("Redirects",
+		panel.Description("Shows Probes HTTP Redirects"),
+		stat.Chart(
+			stat.Calculation(commonSdk.LastCalculation),
+			stat.Format(commonSdk.Format{
+				Unit: string(commonSdk.DecimalUnit),
+			}),
+			stat.WithSparkline(stat.Sparkline{
+				Width: 1,
+			}),
+			stat.Thresholds(commonSdk.Thresholds{
+				Mode:         commonSdk.AbsoluteMode,
+				DefaultColor: "blue",
+				Steps: []commonSdk.StepOption{
+					{
+						Color: "green",
+						Value: 0,
+						Name:  "No",
+					},
+					{
+						Color: "blue",
+						Value: 1,
+						Name:  "Yes",
+					},
+				},
+			}),
+		),
+		panel.AddQuery(
+			query.PromQL(
+				promql.SetLabelMatchers(
+					"max by (instance) (probe_http_redirects{job=~'$job',instance=~'$instance'})",
+					labelMatchers,
+				),
+				dashboards.AddQueryDataSource(datasourceName),
+			),
+		),
+	)
+}
+
+func ProbeHTTPVersion(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
+	return panelgroup.AddPanel("HTTP Version",
+		panel.Description("Shows Probes HTTP Version"),
+		stat.Chart(
+			stat.Calculation(commonSdk.LastCalculation),
+			stat.Format(commonSdk.Format{
+				Unit: string(commonSdk.DecimalUnit),
+			}),
+			stat.WithSparkline(stat.Sparkline{
+				Width: 1,
+			}),
+			stat.Thresholds(commonSdk.Thresholds{
+				Mode:         commonSdk.AbsoluteMode,
+				DefaultColor: "blue",
+			}),
+		),
+		panel.AddQuery(
+			query.PromQL(
+				promql.SetLabelMatchers(
+					"max by (instance) (probe_http_version{job=~'$job',instance=~'$instance'})",
+					labelMatchers,
+				),
+				dashboards.AddQueryDataSource(datasourceName),
+				query.SeriesNameFormat("{{version}}"),
+			),
+		),
+	)
+}
+
+func ProbeAverageDurationInstance(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
+	return panelgroup.AddPanel("Average Latency",
+		panel.Description("Average Duration in Seconds by Instance"),
+		stat.Chart(
+			stat.Calculation(commonSdk.MeanCalculation),
+			stat.Format(commonSdk.Format{
+				Unit: string(commonSdk.SecondsUnit),
+			}),
+			stat.WithSparkline(stat.Sparkline{
+				Width: 1,
+			}),
+			stat.Thresholds(commonSdk.Thresholds{
+				Mode:         commonSdk.AbsoluteMode,
+				DefaultColor: "green",
+			}),
+		),
+		panel.AddQuery(
+			query.PromQL(
+				promql.SetLabelMatchers(
+					"avg by (instance)(probe_duration_seconds{job=~'$job',instance=~'$instance'})",
+					labelMatchers,
+				),
+				dashboards.AddQueryDataSource(datasourceName),
+			),
+		),
+	)
+}
+
+func ProbeAverageDNSLookupPerInstance(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
+	return panelgroup.AddPanel("Average DNS Lookup Time",
+		panel.Description("Average DNS lookup Time per instance"),
+		stat.Chart(
+			stat.Calculation(commonSdk.MeanCalculation),
+			stat.Format(commonSdk.Format{
+				Unit: string(commonSdk.SecondsUnit),
+			}),
+			stat.WithSparkline(stat.Sparkline{
+				Width: 1,
+			}),
+			stat.Thresholds(commonSdk.Thresholds{
+				Mode:         commonSdk.AbsoluteMode,
+				DefaultColor: "green",
+			}),
+		),
+		panel.AddQuery(
+			query.PromQL(
+				promql.SetLabelMatchers(
+					"avg by (instance)(probe_dns_lookup_time_seconds{job=~'$job',instance=~'$instance'})",
+					labelMatchers,
+				),
+				dashboards.AddQueryDataSource(datasourceName),
+			),
+		),
+	)
+}
