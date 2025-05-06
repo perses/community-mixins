@@ -11,10 +11,36 @@ import (
 	listVar "github.com/perses/perses/go-sdk/variable/list-variable"
 )
 
+func withBlackboxSummary(datasource string, labelMatcher promql.LabelMatcher) dashboard.Option {
+	return dashboard.AddPanelGroup("Summary",
+		panelgroup.PanelsPerLine(1),
+		panels.ProbeStatusMapfunc(datasource, labelMatcher),
+	)
+}
+
+func withBlackboxProbesStats(datasource string, labelMatcher promql.LabelMatcher) dashboard.Option {
+	return dashboard.AddPanelGroup("Probes Stats",
+		panelgroup.PanelsPerLine(4),
+		panels.ProbeSuccessCount(datasource, labelMatcher),
+		panels.ProbeSuccessPercent(datasource, labelMatcher),
+		panels.ProbeHTTPSSL(datasource, labelMatcher),
+		panels.ProbeAverageDuration(datasource, labelMatcher),
+	)
+}
+
+func withBlackboxProbesUptime(datasource string, labelMatcher promql.LabelMatcher) dashboard.Option {
+	return dashboard.AddPanelGroup("Probes Uptimes Stats",
+		panelgroup.PanelsPerLine(2),
+		panels.ProbeUptimeSuccess(datasource, labelMatcher),
+		panels.ProbeUptimeMonthly(datasource, labelMatcher),
+	)
+}
+
 func withBlackboxProbes(datasource string, labelMatcher promql.LabelMatcher) dashboard.Option {
 	return dashboard.AddPanelGroup("Probes",
-		panelgroup.PanelsPerLine(1),
+		panelgroup.PanelsPerLine(2),
 		panels.ProbeDurationSeconds(datasource, labelMatcher),
+		panels.ProbePhases(datasource, labelMatcher),
 	)
 }
 
@@ -47,6 +73,9 @@ func BuildBlackboxExporter(project string, datasource string, clusterLabelName s
 				listVar.DisplayName("instance"),
 			),
 		),
+		withBlackboxSummary(datasource, clusterLabelMatcher),
+		withBlackboxProbesStats(datasource, clusterLabelMatcher),
+		withBlackboxProbesUptime(datasource, clusterLabelMatcher),
 		withBlackboxProbes(datasource, clusterLabelMatcher),
 	)
 }
