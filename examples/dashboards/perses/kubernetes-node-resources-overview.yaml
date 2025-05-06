@@ -199,7 +199,7 @@ spec:
             kind: Panel
             spec:
                 display:
-                    name: Memory Usage with Cache
+                    name: Memory Usage
                     description: Shows the memory usage of the node by pod, and the memory capacity of the node.
                 plugin:
                     kind: TimeSeriesChart
@@ -248,7 +248,7 @@ spec:
             kind: Panel
             spec:
                 display:
-                    name: Memory Usage Without Cache
+                    name: Memory Usage
                     description: Shows the memory usage (RSS) of the node by pod, and the memory capacity of the node.
                 plugin:
                     kind: TimeSeriesChart

@@ -28,7 +28,7 @@ func withClusterCPUUsageGroup(datasource string, labelMatcher promql.LabelMatche
 	return dashboard.AddPanelGroup("CPU Usage",
 		panelgroup.PanelsPerLine(1),
 		panelgroup.PanelHeight(8),
-		panels.ClusterCPUUsage(datasource, labelMatcher),
+		panels.KubernetesCPUUsage("cluster", datasource, labelMatcher),
 	)
 }
 
@@ -44,7 +44,7 @@ func withClusterMemoryUsageGroup(datasource string, labelMatcher promql.LabelMat
 	return dashboard.AddPanelGroup("Memory Usage",
 		panelgroup.PanelsPerLine(1),
 		panelgroup.PanelHeight(8),
-		panels.ClusterMemoryUsage(datasource, labelMatcher),
+		panels.KubernetesMemoryUsage("cluster", datasource, labelMatcher),
 	)
 }
 

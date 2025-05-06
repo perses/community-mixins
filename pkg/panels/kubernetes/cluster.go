@@ -145,41 +145,6 @@ func MemoryLimitsCommitmentStat(datasourceName string, labelMatchers ...promql.L
 	)
 }
 
-func ClusterCPUUsage(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
-	return panelgroup.AddPanel("CPU Usage",
-		panel.Description("Shows the CPU usage of the cluster by namespace."),
-		timeSeriesPanel.Chart(
-			timeSeriesPanel.WithYAxis(timeSeriesPanel.YAxis{
-				Format: &commonSdk.Format{
-					Unit: string(commonSdk.DecimalUnit),
-				},
-			}),
-			timeSeriesPanel.WithLegend(timeSeriesPanel.Legend{
-				Position: timeSeriesPanel.BottomPosition,
-				Mode:     timeSeriesPanel.ListMode,
-				Size:     timeSeriesPanel.SmallSize,
-			}),
-			timeSeriesPanel.WithVisual(timeSeriesPanel.Visual{
-				Display:      timeSeriesPanel.LineDisplay,
-				ConnectNulls: false,
-				LineWidth:    0.25,
-				AreaOpacity:  1,
-				Palette:      timeSeriesPanel.Palette{Mode: timeSeriesPanel.AutoMode},
-			}),
-		),
-		panel.AddQuery(
-			query.PromQL(
-				promql.SetLabelMatchers(
-					"sum(node_namespace_pod_container:container_cpu_usage_seconds_total:sum_rate5m{cluster=\"$cluster\"}) by (namespace)",
-					labelMatchers,
-				),
-				dashboards.AddQueryDataSource(datasourceName),
-				query.SeriesNameFormat("{{namespace}}"),
-			),
-		),
-	)
-}
-
 func ClusterCPUUsageQuota(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
 	return panelgroup.AddPanel("CPU Quota",
 		panel.Description("Shows the CPU requests, limits, and usage of workloads by namespace in tabular format."),
@@ -300,41 +265,6 @@ func ClusterCPUUsageQuota(datasourceName string, labelMatchers ...promql.LabelMa
 					labelMatchers,
 				),
 				dashboards.AddQueryDataSource(datasourceName),
-			),
-		),
-	)
-}
-
-func ClusterMemoryUsage(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
-	return panelgroup.AddPanel("Memory Usage",
-		panel.Description("Shows the memory usage of the cluster by namespace."),
-		timeSeriesPanel.Chart(
-			timeSeriesPanel.WithYAxis(timeSeriesPanel.YAxis{
-				Format: &commonSdk.Format{
-					Unit: string(commonSdk.BytesUnit),
-				},
-			}),
-			timeSeriesPanel.WithLegend(timeSeriesPanel.Legend{
-				Position: timeSeriesPanel.BottomPosition,
-				Mode:     timeSeriesPanel.ListMode,
-				Size:     timeSeriesPanel.SmallSize,
-			}),
-			timeSeriesPanel.WithVisual(timeSeriesPanel.Visual{
-				Display:      timeSeriesPanel.LineDisplay,
-				ConnectNulls: false,
-				LineWidth:    0.25,
-				AreaOpacity:  1,
-				Palette:      timeSeriesPanel.Palette{Mode: timeSeriesPanel.AutoMode},
-			}),
-		),
-		panel.AddQuery(
-			query.PromQL(
-				promql.SetLabelMatchers(
-					"sum(container_memory_rss{job=\"cadvisor\", cluster=\"$cluster\", container!=\"\"}) by (namespace)",
-					labelMatchers,
-				),
-				dashboards.AddQueryDataSource(datasourceName),
-				query.SeriesNameFormat("{{namespace}}"),
 			),
 		),
 	)

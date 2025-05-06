@@ -15,7 +15,7 @@ func withNodeCPUUsageGroup(datasource string, labelMatcher promql.LabelMatcher) 
 	return dashboard.AddPanelGroup("CPU Usage",
 		panelgroup.PanelsPerLine(1),
 		panelgroup.PanelHeight(8),
-		panels.NodeCPUUsage(datasource, labelMatcher),
+		panels.KubernetesCPUUsage("node", datasource, labelMatcher),
 	)
 }
 
@@ -31,7 +31,7 @@ func withNodeMemoryUsageGroup(datasource string, labelMatcher promql.LabelMatche
 	return dashboard.AddPanelGroup("Memory Usage with Cache",
 		panelgroup.PanelsPerLine(1),
 		panelgroup.PanelHeight(8),
-		panels.NodeMemoryUsage(datasource, labelMatcher),
+		panels.KubernetesMemoryUsage("node-with-cache", datasource, labelMatcher),
 	)
 }
 
@@ -39,7 +39,7 @@ func withNodeMemoryUsageWithoutCacheGroup(datasource string, labelMatcher promql
 	return dashboard.AddPanelGroup("Memory Usage without Cache",
 		panelgroup.PanelsPerLine(1),
 		panelgroup.PanelHeight(8),
-		panels.NodeMemoryUsageWithoutCache(datasource, labelMatcher),
+		panels.KubernetesMemoryUsage("node-without-cache", datasource, labelMatcher),
 	)
 }
 
