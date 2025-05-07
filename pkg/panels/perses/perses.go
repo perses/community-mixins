@@ -12,15 +12,7 @@ import (
 	tablePanel "github.com/perses/perses/go-sdk/panel/table"
 )
 
-// PersesStatsTable creates a panel option for displaying Perses statistics.
-//
-// The panel uses the following Prometheus metrics:
-// - perses_build_info: Build information about Perses instances
-//
-// The panel shows:
-// - Instance count by job and version
-// - Version information per instance
-func PersesStatsTable(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
+func StatsTable(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
 	return panelgroup.AddPanel("Perses Stats",
 		tablePanel.Table(
 			tablePanel.WithColumnSettings([]tablePanel.ColumnSettings{
@@ -117,7 +109,7 @@ func HTTPRequestsRatePanel(datasourceName string, labelMatchers ...promql.LabelM
 	)
 }
 
-func PersesMemoryUsage(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
+func MemoryUsage(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
 	return panelgroup.AddPanel("Memory Usage",
 		panel.Description("Shows various memory usage metrics"),
 		timeSeriesPanel.Chart(
@@ -175,7 +167,7 @@ func PersesMemoryUsage(datasourceName string, labelMatchers ...promql.LabelMatch
 	)
 }
 
-func PersesCPUUsage(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
+func CPUUsage(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
 	return panelgroup.AddPanel("CPU Usage",
 		panel.Description("Shows CPU usage metrics"),
 		timeSeriesPanel.Chart(
@@ -203,7 +195,7 @@ func PersesCPUUsage(datasourceName string, labelMatchers ...promql.LabelMatcher)
 	)
 }
 
-func PersesGoRoutines(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
+func GoRoutines(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
 	return panelgroup.AddPanel("Goroutines",
 		panel.Description("Shows the number of goroutines currently in use"),
 		timeSeriesPanel.Chart(
@@ -231,7 +223,7 @@ func PersesGoRoutines(datasourceName string, labelMatchers ...promql.LabelMatche
 	)
 }
 
-func PersesGarbageCollectionPauseTime(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
+func GarbageCollectionPauseTime(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
 	return panelgroup.AddPanel("Garbage Collection Pause Time",
 		panel.Description("Displays the pause time for garbage collection events."),
 		timeSeriesPanel.Chart(
@@ -259,7 +251,7 @@ func PersesGarbageCollectionPauseTime(datasourceName string, labelMatchers ...pr
 	)
 }
 
-func PersesFileDescriptors(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
+func FileDescriptors(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
 	return panelgroup.AddPanel("File Descriptors",
 		panel.Description("Displays the number of open and max file descriptors."),
 		timeSeriesPanel.Chart(
@@ -292,6 +284,34 @@ func PersesFileDescriptors(datasourceName string, labelMatchers ...promql.LabelM
 				),
 				dashboards.AddQueryDataSource(datasourceName),
 				query.SeriesNameFormat("{{instance}} - {{pod}} - Max FDs"),
+			),
+		),
+	)
+}
+
+func PluginSchemaLoadAttempts(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
+	return panelgroup.AddPanel("Plugin Schema Load Attempts",
+		panel.Description("Displays the success and failure attempts to load plugin schemas."),
+		timeSeriesPanel.Chart(
+			timeSeriesPanel.WithYAxis(timeSeriesPanel.YAxis{
+				Format: &common.Format{
+					Unit: string(common.DecimalUnit),
+				},
+			}),
+			timeSeriesPanel.WithLegend(timeSeriesPanel.Legend{
+				Position: timeSeriesPanel.BottomPosition,
+				Mode:     timeSeriesPanel.TableMode,
+				Values:   []common.Calculation{common.LastCalculation},
+			}),
+		),
+		panel.AddQuery(
+			query.PromQL(
+				promql.SetLabelMatchers(
+					"perses_plugin_schemas_load_attempts{job=~'$job', instance=~'$instance'}",
+					labelMatchers,
+				),
+				dashboards.AddQueryDataSource(datasourceName),
+				query.SeriesNameFormat("{{pod}} - {{schema}} - {{status}}"),
 			),
 		),
 	)

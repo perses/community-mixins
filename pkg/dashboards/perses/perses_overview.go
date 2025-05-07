@@ -41,11 +41,12 @@ func BuildPersesOverview(project string, datasource string, clusterLabelName str
 		withPersesOverviewStatsGroup(datasource, clusterLabelMatcher),
 		withPersesAPiRequestGroup(datasource, clusterLabelMatcher),
 		withPersesResources(datasource, clusterLabelMatcher),
+		withPersesPlugins(datasource, clusterLabelMatcher),
 	)
 }
 
 func withPersesOverviewStatsGroup(datasource string, clusterLabelMatcher promql.LabelMatcher) dashboard.Option {
-	return dashboard.AddPanelGroup("Perses Stats", panelgroup.PanelsPerLine(1), perses.PersesStatsTable(datasource, clusterLabelMatcher))
+	return dashboard.AddPanelGroup("Perses Stats", panelgroup.PanelsPerLine(1), perses.StatsTable(datasource, clusterLabelMatcher))
 }
 
 func withPersesAPiRequestGroup(datasource string, clusterLabelMatcher promql.LabelMatcher) dashboard.Option {
@@ -54,9 +55,14 @@ func withPersesAPiRequestGroup(datasource string, clusterLabelMatcher promql.Lab
 
 func withPersesResources(datasource string, clusterLabelMatcher promql.LabelMatcher) dashboard.Option {
 	return dashboard.AddPanelGroup("Resource Usage", panelgroup.PanelsPerLine(3), panelgroup.PanelHeight(10),
-		perses.PersesMemoryUsage(datasource, clusterLabelMatcher),
-		perses.PersesCPUUsage(datasource, clusterLabelMatcher),
-		perses.PersesGoRoutines(datasource, clusterLabelMatcher),
-		perses.PersesGarbageCollectionPauseTime(datasource, clusterLabelMatcher),
-		perses.PersesFileDescriptors(datasource, clusterLabelMatcher))
+		perses.MemoryUsage(datasource, clusterLabelMatcher),
+		perses.CPUUsage(datasource, clusterLabelMatcher),
+		perses.GoRoutines(datasource, clusterLabelMatcher),
+		perses.GarbageCollectionPauseTime(datasource, clusterLabelMatcher),
+		perses.FileDescriptors(datasource, clusterLabelMatcher))
+}
+
+func withPersesPlugins(datasource string, clusterLabelMatcher promql.LabelMatcher) dashboard.Option {
+	return dashboard.AddPanelGroup("Plugins Usage", panelgroup.PanelsPerLine(1), panelgroup.PanelHeight(8),
+		perses.PluginSchemaLoadAttempts(datasource, clusterLabelMatcher))
 }
