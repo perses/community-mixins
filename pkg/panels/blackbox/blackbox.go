@@ -571,6 +571,20 @@ func ProbeTLSVersion(datasourceName string, labelMatchers ...promql.LabelMatcher
 	)
 }
 
+// ProbeSSLExpiry creates a panel that will show when SSL Cert Will Expire
+//
+// The panel uses the following Prometheus metrics:
+// - probe_tls_version_info: shows the Unix timestamp (in seconds) of the earliest expiring certificate in the SSL/TLS
+//
+// The panel shows:
+// - The time until the certificate expirates
+//
+// Parameters:
+//   - datasourceName: The name of the Prometheus data source.
+//   - labelMatchers: A variadic parameter for Prometheus label matchers to filter the query.
+//
+// Returns:
+//   - panelgroup.Option: A panel option that can be added to a panel group.
 func ProbeSSLExpiry(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
 	return panelgroup.AddPanel("SSL Certificate Expiry",
 		panel.Description("Shows When SSL Cert Will Expire"),
