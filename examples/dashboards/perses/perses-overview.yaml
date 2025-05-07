@@ -1,0 +1,460 @@
+kind: Dashboard
+metadata:
+    name: perses-overview
+    createdAt: 0001-01-01T00:00:00Z
+    updatedAt: 0001-01-01T00:00:00Z
+    version: 0
+    project: perses-dev
+spec:
+    display:
+        name: Perses / Overview
+    variables:
+        - kind: ListVariable
+          spec:
+            display:
+                name: job
+                hidden: false
+            allowAllValue: false
+            allowMultiple: false
+            plugin:
+                kind: PrometheusLabelValuesVariable
+                spec:
+                    datasource:
+                        kind: PrometheusDatasource
+                        name: prometheus-datasource
+                    labelName: job
+                    matchers:
+                        - perses_build_info{}
+            name: job
+        - kind: ListVariable
+          spec:
+            display:
+                name: instance
+                hidden: false
+            allowAllValue: false
+            allowMultiple: false
+            plugin:
+                kind: PrometheusLabelValuesVariable
+                spec:
+                    datasource:
+                        kind: PrometheusDatasource
+                        name: prometheus-datasource
+                    labelName: instance
+                    matchers:
+                        - perses_build_info{job="$job"}
+            name: instance
+    panels:
+        "0_0":
+            kind: Panel
+            spec:
+                display:
+                    name: Perses Stats
+                plugin:
+                    kind: Table
+                    spec:
+                        columnSettings:
+                            - name: job
+                              header: Job
+                            - name: instance
+                              header: Instance
+                            - name: version
+                              header: Version
+                            - name: namespace
+                              header: Namespace
+                            - name: pod
+                              header: Pod
+                            - name: value
+                              hide: true
+                            - name: timestamp
+                              hide: true
+                queries:
+                    - kind: TimeSeriesQuery
+                      spec:
+                        plugin:
+                            kind: PrometheusTimeSeriesQuery
+                            spec:
+                                datasource:
+                                    kind: PrometheusDatasource
+                                    name: prometheus-datasource
+                                query: |-
+                                    count by (job, instance, version, namespace, pod) (
+                                      perses_build_info{instance=~"$instance",job=~"$job"}
+                                    )
+        "1_0":
+            kind: Panel
+            spec:
+                display:
+                    name: HTTP Requests Latency
+                    description: Displays the latency of HTTP requests over a 5-minute window.
+                plugin:
+                    kind: TimeSeriesChart
+                    spec:
+                        legend:
+                            position: right
+                            mode: table
+                        yAxis:
+                            format:
+                                unit: milliseconds
+                queries:
+                    - kind: TimeSeriesQuery
+                      spec:
+                        plugin:
+                            kind: PrometheusTimeSeriesQuery
+                            spec:
+                                datasource:
+                                    kind: PrometheusDatasource
+                                    name: prometheus-datasource
+                                query: |4-
+                                      sum by (handler, method) (
+                                        rate(perses_http_request_duration_second_sum{instance=~"$instance",job=~"$job"}[5m])
+                                      )
+                                    /
+                                      sum by (handler, method) (
+                                        rate(perses_http_request_duration_second_count{instance=~"$instance",job=~"$job"}[5m])
+                                      )
+                                seriesNameFormat: '{{handler}} {{method}}'
+        "1_1":
+            kind: Panel
+            spec:
+                display:
+                    name: HTTP Requests Rate
+                    description: Displays the rate of HTTP requests over a 5-minute window.
+                plugin:
+                    kind: TimeSeriesChart
+                    spec:
+                        legend:
+                            position: right
+                            mode: table
+                        yAxis:
+                            format:
+                                unit: decimal
+                queries:
+                    - kind: TimeSeriesQuery
+                      spec:
+                        plugin:
+                            kind: PrometheusTimeSeriesQuery
+                            spec:
+                                datasource:
+                                    kind: PrometheusDatasource
+                                    name: prometheus-datasource
+                                query: sum by (handler, code) (rate(perses_http_request_total{instance=~"$instance",job=~"$job"}[5m]))
+                                seriesNameFormat: '{{handler}} {{method}} {{code}}'
+        "1_2":
+            kind: Panel
+            spec:
+                display:
+                    name: HTTP Errors Rate
+                    description: Displays the rate of all HTTP errors over a 5-minute window.
+                plugin:
+                    kind: TimeSeriesChart
+                    spec:
+                        legend:
+                            position: right
+                            mode: table
+                        yAxis:
+                            format:
+                                unit: decimal
+                queries:
+                    - kind: TimeSeriesQuery
+                      spec:
+                        plugin:
+                            kind: PrometheusTimeSeriesQuery
+                            spec:
+                                datasource:
+                                    kind: PrometheusDatasource
+                                    name: prometheus-datasource
+                                query: |-
+                                    sum by (handler, code) (
+                                      rate(perses_http_request_total{code=~"4..|5..",instance=~"$instance",job=~"$job"}[5m])
+                                    )
+                                seriesNameFormat: '{{handler}} {{method}} {{code}}'
+        "2_0":
+            kind: Panel
+            spec:
+                display:
+                    name: Memory Usage
+                    description: Shows various memory usage metrics
+                plugin:
+                    kind: TimeSeriesChart
+                    spec:
+                        legend:
+                            position: bottom
+                            mode: table
+                            values:
+                                - last
+                        yAxis:
+                            format:
+                                unit: bytes
+                queries:
+                    - kind: TimeSeriesQuery
+                      spec:
+                        plugin:
+                            kind: PrometheusTimeSeriesQuery
+                            spec:
+                                datasource:
+                                    kind: PrometheusDatasource
+                                    name: prometheus-datasource
+                                query: go_memstats_alloc_bytes{instance=~"$instance",job=~"$job"}
+                                seriesNameFormat: Heap Allocated
+                    - kind: TimeSeriesQuery
+                      spec:
+                        plugin:
+                            kind: PrometheusTimeSeriesQuery
+                            spec:
+                                datasource:
+                                    kind: PrometheusDatasource
+                                    name: prometheus-datasource
+                                query: go_memstats_heap_inuse_bytes{instance=~"$instance",job=~"$job"}
+                                seriesNameFormat: Heap In Use
+                    - kind: TimeSeriesQuery
+                      spec:
+                        plugin:
+                            kind: PrometheusTimeSeriesQuery
+                            spec:
+                                datasource:
+                                    kind: PrometheusDatasource
+                                    name: prometheus-datasource
+                                query: go_memstats_stack_inuse_bytes{instance=~"$instance",job=~"$job"}
+                                seriesNameFormat: Stack In Use
+                    - kind: TimeSeriesQuery
+                      spec:
+                        plugin:
+                            kind: PrometheusTimeSeriesQuery
+                            spec:
+                                datasource:
+                                    kind: PrometheusDatasource
+                                    name: prometheus-datasource
+                                query: process_resident_memory_bytes{instance=~"$instance",job=~"$job"}
+                                seriesNameFormat: Resident Memory
+        "2_1":
+            kind: Panel
+            spec:
+                display:
+                    name: CPU Usage
+                    description: Shows CPU usage metrics
+                plugin:
+                    kind: TimeSeriesChart
+                    spec:
+                        legend:
+                            position: bottom
+                            mode: table
+                            values:
+                                - last
+                        yAxis:
+                            format:
+                                unit: percent
+                queries:
+                    - kind: TimeSeriesQuery
+                      spec:
+                        plugin:
+                            kind: PrometheusTimeSeriesQuery
+                            spec:
+                                datasource:
+                                    kind: PrometheusDatasource
+                                    name: prometheus-datasource
+                                query: rate(process_cpu_seconds_total{instance=~"$instance",job=~"$job"}[5m])
+                                seriesNameFormat: '{{pod}}'
+        "2_2":
+            kind: Panel
+            spec:
+                display:
+                    name: Goroutines
+                    description: Shows the number of goroutines currently in use
+                plugin:
+                    kind: TimeSeriesChart
+                    spec:
+                        legend:
+                            position: bottom
+                            mode: table
+                            values:
+                                - last
+                        yAxis:
+                            format:
+                                unit: decimal
+                queries:
+                    - kind: TimeSeriesQuery
+                      spec:
+                        plugin:
+                            kind: PrometheusTimeSeriesQuery
+                            spec:
+                                datasource:
+                                    kind: PrometheusDatasource
+                                    name: prometheus-datasource
+                                query: go_goroutines{instance=~"$instance",job=~"$job"}
+                                seriesNameFormat: '{{pod}}'
+        "2_3":
+            kind: Panel
+            spec:
+                display:
+                    name: Garbage Collection Pause Time
+                    description: Displays the pause time for garbage collection events.
+                plugin:
+                    kind: TimeSeriesChart
+                    spec:
+                        legend:
+                            position: bottom
+                            mode: table
+                            values:
+                                - last
+                        yAxis:
+                            format:
+                                unit: seconds
+                queries:
+                    - kind: TimeSeriesQuery
+                      spec:
+                        plugin:
+                            kind: PrometheusTimeSeriesQuery
+                            spec:
+                                datasource:
+                                    kind: PrometheusDatasource
+                                    name: prometheus-datasource
+                                query: go_gc_duration_seconds{instance=~"$instance",job=~"$job"}
+                                seriesNameFormat: '{{quantile}} - {{instance}} - {{pod}}'
+        "2_4":
+            kind: Panel
+            spec:
+                display:
+                    name: File Descriptors
+                    description: Displays the number of open and max file descriptors.
+                plugin:
+                    kind: TimeSeriesChart
+                    spec:
+                        legend:
+                            position: bottom
+                            mode: table
+                            values:
+                                - last
+                        yAxis:
+                            format:
+                                unit: decimal
+                queries:
+                    - kind: TimeSeriesQuery
+                      spec:
+                        plugin:
+                            kind: PrometheusTimeSeriesQuery
+                            spec:
+                                datasource:
+                                    kind: PrometheusDatasource
+                                    name: prometheus-datasource
+                                query: process_open_fds{instance=~"$instance",job=~"$job"}
+                                seriesNameFormat: '{{instance}} - {{pod}} Open FDs'
+                    - kind: TimeSeriesQuery
+                      spec:
+                        plugin:
+                            kind: PrometheusTimeSeriesQuery
+                            spec:
+                                datasource:
+                                    kind: PrometheusDatasource
+                                    name: prometheus-datasource
+                                query: process_max_fds{instance=~"$instance",job=~"$job"}
+                                seriesNameFormat: '{{instance}} - {{pod}} - Max FDs'
+        "3_0":
+            kind: Panel
+            spec:
+                display:
+                    name: Plugin Schema Load Attempts
+                    description: Displays the success and failure attempts to load plugin schemas.
+                plugin:
+                    kind: TimeSeriesChart
+                    spec:
+                        legend:
+                            position: bottom
+                            mode: table
+                            values:
+                                - last
+                        yAxis:
+                            format:
+                                unit: decimal
+                queries:
+                    - kind: TimeSeriesQuery
+                      spec:
+                        plugin:
+                            kind: PrometheusTimeSeriesQuery
+                            spec:
+                                datasource:
+                                    kind: PrometheusDatasource
+                                    name: prometheus-datasource
+                                query: perses_plugin_schemas_load_attempts{instance=~"$instance",job=~"$job"}
+                                seriesNameFormat: '{{pod}} - {{schema}} - {{status}}'
+    layouts:
+        - kind: Grid
+          spec:
+            display:
+                title: Perses Stats
+            items:
+                - x: 0
+                  "y": 0
+                  width: 24
+                  height: 6
+                  content:
+                    $ref: '#/spec/panels/0_0'
+        - kind: Grid
+          spec:
+            display:
+                title: API Requests
+            items:
+                - x: 0
+                  "y": 0
+                  width: 12
+                  height: 6
+                  content:
+                    $ref: '#/spec/panels/1_0'
+                - x: 12
+                  "y": 0
+                  width: 12
+                  height: 6
+                  content:
+                    $ref: '#/spec/panels/1_1'
+                - x: 0
+                  "y": 6
+                  width: 12
+                  height: 6
+                  content:
+                    $ref: '#/spec/panels/1_2'
+        - kind: Grid
+          spec:
+            display:
+                title: Resource Usage
+            items:
+                - x: 0
+                  "y": 0
+                  width: 8
+                  height: 10
+                  content:
+                    $ref: '#/spec/panels/2_0'
+                - x: 8
+                  "y": 0
+                  width: 8
+                  height: 10
+                  content:
+                    $ref: '#/spec/panels/2_1'
+                - x: 16
+                  "y": 0
+                  width: 8
+                  height: 10
+                  content:
+                    $ref: '#/spec/panels/2_2'
+                - x: 0
+                  "y": 10
+                  width: 8
+                  height: 10
+                  content:
+                    $ref: '#/spec/panels/2_3'
+                - x: 8
+                  "y": 10
+                  width: 8
+                  height: 10
+                  content:
+                    $ref: '#/spec/panels/2_4'
+        - kind: Grid
+          spec:
+            display:
+                title: Plugins Usage
+            items:
+                - x: 0
+                  "y": 0
+                  width: 24
+                  height: 8
+                  content:
+                    $ref: '#/spec/panels/3_0'
+    duration: 1h
