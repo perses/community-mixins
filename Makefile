@@ -17,8 +17,8 @@ GOOS?=$(shell go env GOOS)
 ENVVARS=GOOS=$(GOOS) CGO_ENABLED=0
 
 # Dashboard build configuration with defaults
-OUTPUT_DIR_OPERATOR ?= ./dist/dashboards/operator
-OUTPUT_DIR_PERSES ?= ./dist/dashboards/perses
+OUTPUT_DIR_OPERATOR ?= ./built/dashboards/operator
+OUTPUT_DIR_PERSES ?= ./built/dashboards/perses
 OUTPUT_FORMAT_PERSES ?= json
 PROJECT ?= default
 DATASOURCE ?= prometheus-datasource
