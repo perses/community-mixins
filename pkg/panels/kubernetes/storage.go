@@ -1,0 +1,222 @@
+package kubernetes
+
+import (
+	"github.com/perses/community-dashboards/pkg/dashboards"
+	"github.com/perses/community-dashboards/pkg/promql"
+	"github.com/perses/perses/go-sdk/panel"
+	panelgroup "github.com/perses/perses/go-sdk/panel-group"
+	"github.com/perses/perses/go-sdk/prometheus/query"
+
+	commonSdk "github.com/perses/perses/go-sdk/common"
+	timeSeriesPanel "github.com/perses/perses/go-sdk/panel/time-series"
+)
+
+func KubernetesIOPS(granularity, datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
+	var panelName, description string
+	var queries []panel.Option
+
+	switch granularity {
+	case "cluster":
+		panelName = "IOPS(Reads+Writes)"
+		description = "Shows IOPS(Reads+Writes) by namespace."
+		queries = []panel.Option{
+			panel.AddQuery(
+				query.PromQL(
+					promql.SetLabelMatchers(
+						"ceil(sum by(namespace) (rate(container_fs_reads_total{job=\"cadvisor\", container!=\"\", device=~\"(/dev.+)|mmcblk.p.+|nvme.+|rbd.+|sd.+|vd.+|xvd.+|dm-.+|dasd.+\", cluster=\"$cluster\", namespace!=\"\"}[5m]) + rate(container_fs_writes_total{job=\"cadvisor\", container!=\"\", cluster=\"$cluster\", namespace!=\"\"}[5m])))",
+						labelMatchers,
+					),
+					dashboards.AddQueryDataSource(datasourceName),
+					query.SeriesNameFormat("{{namespace}}"),
+				),
+			),
+		}
+
+	case "namespace":
+		panelName = "IOPS(Reads+Writes)"
+		description = "Shows IOPS(Reads+Writes) by pods in a namespace."
+		queries = []panel.Option{
+			panel.AddQuery(
+				query.PromQL(
+					promql.SetLabelMatchers(
+						"ceil(sum by(pod) (rate(container_fs_reads_total{container!=\"\", device=~\"(/dev.+)|mmcblk.p.+|nvme.+|rbd.+|sd.+|vd.+|xvd.+|dm-.+|dasd.+\", cluster=\"$cluster\", namespace=\"$namespace\"}[5m]) + rate(container_fs_writes_total{container!=\"\", device=~\"(/dev.+)|mmcblk.p.+|nvme.+|rbd.+|sd.+|vd.+|xvd.+|dm-.+|dasd.+\", cluster=\"$cluster\", namespace=\"$namespace\"}[5m])))",
+						labelMatchers,
+					),
+					dashboards.AddQueryDataSource(datasourceName),
+					query.SeriesNameFormat("{{pod}}"),
+				),
+			),
+		}
+	case "pod":
+		panelName = "IOPS(Pod)"
+		description = "Shows IOPS of a pod, split by read and write."
+		queries = []panel.Option{
+			panel.AddQuery(
+				query.PromQL(
+					promql.SetLabelMatchers(
+						"ceil(sum by(pod) (rate(container_fs_writes_total{job=\"cadvisor\", device=~\"(/dev.+)|mmcblk.p.+|nvme.+|rbd.+|sd.+|vd.+|xvd.+|dm-.+|dasd.+\", container!=\"\", cluster=\"$cluster\",namespace=\"$namespace\", pod=~\"$pod\"}[5m])))",
+						labelMatchers,
+					),
+					dashboards.AddQueryDataSource(datasourceName),
+					query.SeriesNameFormat("Writes"),
+				),
+			),
+			panel.AddQuery(
+				query.PromQL(
+					promql.SetLabelMatchers(
+						"ceil(sum by(pod) (rate(container_fs_reads_total{job=\"cadvisor\", device=~\"(/dev.+)|mmcblk.p.+|nvme.+|rbd.+|sd.+|vd.+|xvd.+|dm-.+|dasd.+\", container!=\"\", cluster=\"$cluster\", namespace=\"$namespace\", pod=~\"$pod\"}[5m])))",
+						labelMatchers,
+					),
+					dashboards.AddQueryDataSource(datasourceName),
+					query.SeriesNameFormat("Reads"),
+				),
+			),
+		}
+	case "pod-container":
+		panelName = "IOPS(Reads+Writes Containers) "
+		description = "Shows IOPS(Reads+Writes) by containers in a pod."
+		queries = []panel.Option{
+			panel.AddQuery(
+				query.PromQL(
+					promql.SetLabelMatchers(
+						"ceil(sum by(container) (rate(container_fs_reads_total{job=\"cadvisor\", container!=\"\", cluster=\"$cluster\", namespace=\"$namespace\", pod=\"$pod\"}[5m]) + rate(container_fs_writes_total{job=\"cadvisor\", container!=\"\", cluster=\"$cluster\", namespace=\"$namespace\", pod=\"$pod\"}[5m])))",
+						labelMatchers,
+					),
+					dashboards.AddQueryDataSource(datasourceName),
+					query.SeriesNameFormat("{{container}}"),
+				),
+			),
+		}
+	}
+
+	panelOpts := []panel.Option{
+		panel.Description(description),
+		timeSeriesPanel.Chart(
+			timeSeriesPanel.WithYAxis(timeSeriesPanel.YAxis{
+				Format: &commonSdk.Format{
+					Unit: string(commonSdk.OpsPerSecondsUnit),
+				},
+			}),
+			timeSeriesPanel.WithLegend(timeSeriesPanel.Legend{
+				Position: timeSeriesPanel.BottomPosition,
+				Mode:     timeSeriesPanel.ListMode,
+				Size:     timeSeriesPanel.SmallSize,
+			}),
+			timeSeriesPanel.WithVisual(timeSeriesPanel.Visual{
+				Display:      timeSeriesPanel.LineDisplay,
+				ConnectNulls: false,
+				LineWidth:    0.25,
+				AreaOpacity:  0.75,
+				Palette:      timeSeriesPanel.Palette{Mode: timeSeriesPanel.AutoMode},
+			}),
+		),
+	}
+	panelOpts = append(panelOpts, queries...)
+
+	return panelgroup.AddPanel(panelName, panelOpts...)
+}
+
+func KubernetesThroughput(granularity, datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
+	var panelName, description string
+	var queries []panel.Option
+
+	switch granularity {
+	case "cluster":
+		panelName = "ThroughPut(Read+Write)"
+		description = "Shows Throughput(Read+Write) by namespace."
+		queries = []panel.Option{
+			panel.AddQuery(
+				query.PromQL(
+					promql.SetLabelMatchers(
+						"sum by(namespace) (rate(container_fs_reads_bytes_total{job=\"cadvisor\", container!=\"\", device=~\"(/dev.+)|mmcblk.p.+|nvme.+|rbd.+|sd.+|vd.+|xvd.+|dm-.+|dasd.+\", cluster=\"$cluster\", namespace!=\"\"}[5m]) + rate(container_fs_writes_bytes_total{job=\"cadvisor\", container!=\"\", cluster=\"$cluster\", namespace!=\"\"}[5m]))",
+						labelMatchers,
+					),
+					dashboards.AddQueryDataSource(datasourceName),
+					query.SeriesNameFormat("{{namespace}}"),
+				),
+			),
+		}
+
+	case "namespace":
+		panelName = "ThroughPut(Read+Write)"
+		description = "Shows Throughput(Read+Write) by pods in a namespace."
+		queries = []panel.Option{
+			panel.AddQuery(
+				query.PromQL(
+					promql.SetLabelMatchers(
+						"sum by(pod) (rate(container_fs_reads_bytes_total{container!=\"\", device=~\"(/dev.+)|mmcblk.p.+|nvme.+|rbd.+|sd.+|vd.+|xvd.+|dm-.+|dasd.+\", cluster=\"$cluster\", namespace=\"$namespace\"}[5m]) + rate(container_fs_writes_bytes_total{container!=\"\", device=~\"(/dev.+)|mmcblk.p.+|nvme.+|rbd.+|sd.+|vd.+|xvd.+|dm-.+|dasd.+\", cluster=\"$cluster\", namespace=\"$namespace\"}[5m]))",
+						labelMatchers,
+					),
+					dashboards.AddQueryDataSource(datasourceName),
+					query.SeriesNameFormat("{{pod}}"),
+				),
+			),
+		}
+	case "pod":
+		panelName = "ThroughPut(Pod)"
+		description = "Shows Throughput of a pod, split by read and write."
+		queries = []panel.Option{
+			panel.AddQuery(
+				query.PromQL(
+					promql.SetLabelMatchers(
+						"sum by(pod) (rate(container_fs_writes_bytes_total{job=\"cadvisor\", device=~\"(/dev.+)|mmcblk.p.+|nvme.+|rbd.+|sd.+|vd.+|xvd.+|dm-.+|dasd.+\", container!=\"\", cluster=\"$cluster\", namespace=\"$namespace\", pod=~\"$pod\"}[5m]))",
+						labelMatchers,
+					),
+					dashboards.AddQueryDataSource(datasourceName),
+					query.SeriesNameFormat("Writes"),
+				),
+			),
+			panel.AddQuery(
+				query.PromQL(
+					promql.SetLabelMatchers(
+						"sum by(pod) (rate(container_fs_reads_bytes_total{job=\"cadvisor\", device=~\"(/dev.+)|mmcblk.p.+|nvme.+|rbd.+|sd.+|vd.+|xvd.+|dm-.+|dasd.+\", container!=\"\", cluster=\"$cluster\", namespace=\"$namespace\", pod=~\"$pod\"}[5m]))",
+						labelMatchers,
+					),
+					dashboards.AddQueryDataSource(datasourceName),
+					query.SeriesNameFormat("Reads"),
+				),
+			),
+		}
+	case "pod-container":
+		panelName = "ThroughPut(Reads+Writes Containers) "
+		description = "Shows Throughput(Reads+Writes) by containers in a pod."
+		queries = []panel.Option{
+			panel.AddQuery(
+				query.PromQL(
+					promql.SetLabelMatchers(
+						"sum by(container) (rate(container_fs_reads_bytes_total{job=\"cadvisor\", container!=\"\", cluster=\"$cluster\", namespace=\"$namespace\", pod=\"$pod\"}[5m]) + rate(container_fs_writes_bytes_total{job=\"cadvisor\", container!=\"\", cluster=\"$cluster\", namespace=\"$namespace\", pod=\"$pod\"}[5m]))",
+						labelMatchers,
+					),
+					dashboards.AddQueryDataSource(datasourceName),
+					query.SeriesNameFormat("{{container}}"),
+				),
+			),
+		}
+	}
+
+	panelOpts := []panel.Option{
+		panel.Description(description),
+		timeSeriesPanel.Chart(
+			timeSeriesPanel.WithYAxis(timeSeriesPanel.YAxis{
+				Format: &commonSdk.Format{
+					Unit: string(commonSdk.BytesPerSecondsUnit),
+				},
+			}),
+			timeSeriesPanel.WithLegend(timeSeriesPanel.Legend{
+				Position: timeSeriesPanel.BottomPosition,
+				Mode:     timeSeriesPanel.ListMode,
+				Size:     timeSeriesPanel.SmallSize,
+			}),
+			timeSeriesPanel.WithVisual(timeSeriesPanel.Visual{
+				Display:      timeSeriesPanel.LineDisplay,
+				ConnectNulls: false,
+				LineWidth:    0.25,
+				AreaOpacity:  0.75,
+				Palette:      timeSeriesPanel.Palette{Mode: timeSeriesPanel.AutoMode},
+			}),
+		),
+	}
+	panelOpts = append(panelOpts, queries...)
+
+	return panelgroup.AddPanel(panelName, panelOpts...)
+}

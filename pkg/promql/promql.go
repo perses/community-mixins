@@ -1,6 +1,8 @@
 package promql
 
 import (
+	"fmt"
+
 	"github.com/prometheus/prometheus/model/labels"
 	"github.com/prometheus/prometheus/promql/parser"
 )
@@ -21,6 +23,7 @@ func SetLabelMatchers(query string, labelMatchers []LabelMatcher) string {
 func LabelsSetPromQL(query, labelMatchType, name, value string) string {
 	expr, err := parser.ParseExpr(query)
 	if err != nil {
+		fmt.Println("Error parsing query:", err)
 		return ""
 	}
 

@@ -68,8 +68,8 @@ func withClusterBandwidthGroup(datasource string, labelMatcher promql.LabelMatch
 	return dashboard.AddPanelGroup("Bandwidth",
 		panelgroup.PanelsPerLine(2),
 		panelgroup.PanelHeight(8),
-		panels.ClusterReceiveBandwidth(datasource, labelMatcher),
-		panels.ClusterTransmitBandwidth(datasource, labelMatcher),
+		panels.KubernetesReceiveBandwidth("cluster", datasource, labelMatcher),
+		panels.KubernetesTransmitBandwidth("cluster", datasource, labelMatcher),
 	)
 }
 
@@ -77,8 +77,8 @@ func withClusterAvgBandwidthGroup(datasource string, labelMatcher promql.LabelMa
 	return dashboard.AddPanelGroup("Average Container Bandwidth",
 		panelgroup.PanelsPerLine(2),
 		panelgroup.PanelHeight(8),
-		panels.ClusterAvgContainerBandwidthReceived(datasource, labelMatcher),
-		panels.ClusterAvgContainerBandwidthTransmitted(datasource, labelMatcher),
+		panels.KubernetesAvgContainerBandwidthReceived("cluster", datasource, labelMatcher),
+		panels.KubernetesAvgContainerBandwidthTransmitted("cluster", datasource, labelMatcher),
 	)
 }
 
@@ -86,8 +86,8 @@ func withClusterRateOfPacketsGroup(datasource string, labelMatcher promql.LabelM
 	return dashboard.AddPanelGroup("Rate of Packets",
 		panelgroup.PanelsPerLine(2),
 		panelgroup.PanelHeight(8),
-		panels.ClusterReceivedPackets(datasource, labelMatcher),
-		panels.ClusterTransmittedPackets(datasource, labelMatcher),
+		panels.KubernetesReceivedPackets("cluster", datasource, labelMatcher),
+		panels.KubernetesTransmittedPackets("cluster", datasource, labelMatcher),
 	)
 }
 
@@ -95,8 +95,8 @@ func withClusterRateOfPacketsDroppedGroup(datasource string, labelMatcher promql
 	return dashboard.AddPanelGroup("Rate of Packets Dropped",
 		panelgroup.PanelsPerLine(2),
 		panelgroup.PanelHeight(8),
-		panels.ClusterReceivedPacketsDropped(datasource, labelMatcher),
-		panels.ClusterTransmittedPacketsDropped(datasource, labelMatcher),
+		panels.KubernetesReceivedPacketsDropped("cluster", datasource, labelMatcher),
+		panels.KubernetesTransmittedPacketsDropped("cluster", datasource, labelMatcher),
 	)
 }
 
@@ -104,8 +104,8 @@ func withClusterStorageIOGroup(datasource string, labelMatcher promql.LabelMatch
 	return dashboard.AddPanelGroup("Storage IO",
 		panelgroup.PanelsPerLine(2),
 		panelgroup.PanelHeight(8),
-		panels.ClusterIOPS(datasource, labelMatcher),
-		panels.ClusterThroughput(datasource, labelMatcher),
+		panels.KubernetesIOPS("cluster", datasource, labelMatcher),
+		panels.KubernetesThroughput("cluster", datasource, labelMatcher),
 	)
 }
 

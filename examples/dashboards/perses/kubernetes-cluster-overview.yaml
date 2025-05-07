@@ -945,8 +945,8 @@ spec:
             kind: Panel
             spec:
                 display:
-                    name: ThroughPut(Reads+Writes)
-                    description: Shows ThroughPut(Reads+Writes) by namespace.
+                    name: ThroughPut(Read+Write)
+                    description: Shows Throughput(Read+Write) by namespace.
                 plugin:
                     kind: TimeSeriesChart
                     spec:
