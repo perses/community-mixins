@@ -106,7 +106,7 @@ func withPodCurrentStorageIOGroup(datasource string, labelMatcher promql.LabelMa
 
 func BuildKubernetesPodOverview(project string, datasource string, clusterLabelName string) (dashboard.Builder, error) {
 	clusterLabelMatcher := dashboards.GetClusterLabelMatcher(clusterLabelName)
-	return dashboard.New("kubernetes-pod-overview",
+	return dashboard.New("kubernetes-pod-resources-overview",
 		dashboard.ProjectName(project),
 		dashboard.Name("Kubernetes / Compute Resources / Pod"),
 		dashboard.AddVariable("cluster",

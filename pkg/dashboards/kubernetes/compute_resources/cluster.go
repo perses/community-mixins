@@ -119,7 +119,7 @@ func withClusterCurrentStorageIOGroup(datasource string, labelMatcher promql.Lab
 
 func BuildKubernetesClusterOverview(project string, datasource string, clusterLabelName string) (dashboard.Builder, error) {
 	clusterLabelMatcher := dashboards.GetClusterLabelMatcher(clusterLabelName)
-	return dashboard.New("kubernetes-cluster-overview",
+	return dashboard.New("kubernetes-cluster-resources-overview",
 		dashboard.ProjectName(project),
 		dashboard.Name("Kubernetes / Compute Resources / Cluster"),
 		dashboard.AddVariable("cluster",

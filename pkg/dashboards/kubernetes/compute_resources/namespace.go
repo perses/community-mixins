@@ -108,7 +108,7 @@ func withNamespaceCurrentStorageIOGroup(datasource string, labelMatcher promql.L
 
 func BuildKubernetesNamespaceOverview(project string, datasource string, clusterLabelName string) (dashboard.Builder, error) {
 	clusterLabelMatcher := dashboards.GetClusterLabelMatcher(clusterLabelName)
-	return dashboard.New("kubernetes-namespace-overview",
+	return dashboard.New("kubernetes-namespace-resources-overview",
 		dashboard.ProjectName(project),
 		dashboard.Name("Kubernetes / Compute Resources / Namespace (Pods)"),
 		dashboard.AddVariable("cluster",
