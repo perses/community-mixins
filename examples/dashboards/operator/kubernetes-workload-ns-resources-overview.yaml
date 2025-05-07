@@ -221,7 +221,7 @@ spec:
               name: workload
             - align: left
               header: Type
-              name: 'workload_type #1'
+              name: workload_type
             - align: right
               header: Running Pods
               name: 'value #1'
@@ -425,7 +425,7 @@ spec:
               name: workload
             - align: left
               header: Type
-              name: 'workload_type #1'
+              name: workload_type
             - align: right
               header: Running Pods
               name: 'value #1'

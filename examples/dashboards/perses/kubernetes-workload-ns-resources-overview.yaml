@@ -140,7 +140,7 @@ spec:
                             - name: workload
                               header: Workload
                               align: left
-                            - name: 'workload_type #1'
+                            - name: workload_type
                               header: Type
                               align: left
                             - name: 'value #1'
@@ -342,7 +342,7 @@ spec:
                             - name: workload
                               header: Workload
                               align: left
-                            - name: 'workload_type #1'
+                            - name: workload_type
                               header: Type
                               align: left
                             - name: 'value #1'

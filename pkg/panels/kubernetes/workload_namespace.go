@@ -30,7 +30,7 @@ func WorkloadNamespaceCPUUsageQuota(datasourceName string, labelMatchers ...prom
 					Align:  tablePanel.LeftAlign,
 				},
 				{
-					Name:   "workload_type #1",
+					Name:   "workload_type",
 					Header: "Type",
 					Align:  tablePanel.LeftAlign,
 				},
@@ -146,7 +146,7 @@ func WorkloadNamespaceMemoryUsageQuota(datasourceName string, labelMatchers ...p
 					Align:  tablePanel.LeftAlign,
 				},
 				{
-					Name:   "workload_type #1",
+					Name:   "workload_type",
 					Header: "Type",
 					Align:  tablePanel.LeftAlign,
 				},
