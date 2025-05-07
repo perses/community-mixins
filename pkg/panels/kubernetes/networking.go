@@ -22,7 +22,7 @@ func KubernetesReceiveBandwidth(granularity, datasourceName string, labelMatcher
 			panel.AddQuery(
 				query.PromQL(
 					promql.SetLabelMatchers(
-						"sum(rate(container_network_receive_bytes_total{job=\"cadvisor\", cluster=\"$cluster\", namespace=~\".+\"}[5m])) by (namespace)",
+						"sum(rate(container_network_receive_bytes_total{"+GetCAdvisorMatcher()+", cluster=\"$cluster\", namespace=~\".+\"}[5m])) by (namespace)",
 						labelMatchers,
 					),
 					dashboards.AddQueryDataSource(datasourceName),
@@ -64,7 +64,7 @@ func KubernetesReceiveBandwidth(granularity, datasourceName string, labelMatcher
 			panel.AddQuery(
 				query.PromQL(
 					promql.SetLabelMatchers(
-						"(sum(rate(container_network_receive_bytes_total{job=\"cadvisor\", cluster=\"$cluster\", namespace=\"$namespace\"}[5m])\n* on (namespace,pod)\ngroup_left(workload,workload_type) namespace_workload_pod:kube_pod_owner:relabel{cluster=\"$cluster\", namespace=\"$namespace\", workload=~\".+\", workload_type=~\"$type\"}) by (workload))\n",
+						"(sum(rate(container_network_receive_bytes_total{"+GetCAdvisorMatcher()+", cluster=\"$cluster\", namespace=\"$namespace\"}[5m])\n* on (namespace,pod)\ngroup_left(workload,workload_type) namespace_workload_pod:kube_pod_owner:relabel{cluster=\"$cluster\", namespace=\"$namespace\", workload=~\".+\", workload_type=~\"$type\"}) by (workload))\n",
 						labelMatchers,
 					),
 					dashboards.AddQueryDataSource(datasourceName),
@@ -106,7 +106,7 @@ func KubernetesReceiveBandwidth(granularity, datasourceName string, labelMatcher
 			panel.AddQuery(
 				query.PromQL(
 					promql.SetLabelMatchers(
-						"(sum(rate(container_network_receive_bytes_total{job=\"cadvisor\", cluster=\"$cluster\", namespace=\"$namespace\"}[5m])\n* on (namespace,pod)\ngroup_left(workload,workload_type) namespace_workload_pod:kube_pod_owner:relabel{cluster=\"$cluster\", namespace=\"$namespace\", workload=~\"$workload\", workload_type=~\"$type\"}) by (pod))\n",
+						"(sum(rate(container_network_receive_bytes_total{"+GetCAdvisorMatcher()+", cluster=\"$cluster\", namespace=\"$namespace\"}[5m])\n* on (namespace,pod)\ngroup_left(workload,workload_type) namespace_workload_pod:kube_pod_owner:relabel{cluster=\"$cluster\", namespace=\"$namespace\", workload=~\"$workload\", workload_type=~\"$type\"}) by (pod))\n",
 						labelMatchers,
 					),
 					dashboards.AddQueryDataSource(datasourceName),
@@ -120,7 +120,7 @@ func KubernetesReceiveBandwidth(granularity, datasourceName string, labelMatcher
 			panel.AddQuery(
 				query.PromQL(
 					promql.SetLabelMatchers(
-						"sort_desc(sum(rate(container_network_receive_bytes_total{job=\"cadvisor\", cluster=\"$cluster\",namespace=~\"$namespace\"}[5m])\n* on (namespace,pod)\ngroup_left(workload,workload_type) namespace_workload_pod:kube_pod_owner:relabel{cluster=\"$cluster\",namespace=~\"$namespace\", workload=~\"$workload\", workload_type=~\"$type\"}) by (pod))\n",
+						"sort_desc(sum(rate(container_network_receive_bytes_total{"+GetCAdvisorMatcher()+", cluster=\"$cluster\",namespace=~\"$namespace\"}[5m])\n* on (namespace,pod)\ngroup_left(workload,workload_type) namespace_workload_pod:kube_pod_owner:relabel{cluster=\"$cluster\",namespace=~\"$namespace\", workload=~\"$workload\", workload_type=~\"$type\"}) by (pod))\n",
 						labelMatchers,
 					),
 					dashboards.AddQueryDataSource(datasourceName),
@@ -134,7 +134,7 @@ func KubernetesReceiveBandwidth(granularity, datasourceName string, labelMatcher
 			panel.AddQuery(
 				query.PromQL(
 					promql.SetLabelMatchers(
-						"sum(irate(container_network_receive_bytes_total{job=\"cadvisor\", cluster=\"$cluster\", namespace=\"$namespace\", pod=~\"$pod\"}[5m])) by (pod)",
+						"sum(irate(container_network_receive_bytes_total{"+GetCAdvisorMatcher()+", cluster=\"$cluster\", namespace=\"$namespace\", pod=~\"$pod\"}[5m])) by (pod)",
 						labelMatchers,
 					),
 					dashboards.AddQueryDataSource(datasourceName),
@@ -197,7 +197,7 @@ func KubernetesTransmitBandwidth(granularity, datasourceName string, labelMatche
 			panel.AddQuery(
 				query.PromQL(
 					promql.SetLabelMatchers(
-						"sum(rate(container_network_transmit_bytes_total{job=\"cadvisor\", cluster=\"$cluster\", namespace=~\".+\"}[5m])) by (namespace)",
+						"sum(rate(container_network_transmit_bytes_total{"+GetCAdvisorMatcher()+", cluster=\"$cluster\", namespace=~\".+\"}[5m])) by (namespace)",
 						labelMatchers,
 					),
 					dashboards.AddQueryDataSource(datasourceName),
@@ -239,7 +239,7 @@ func KubernetesTransmitBandwidth(granularity, datasourceName string, labelMatche
 			panel.AddQuery(
 				query.PromQL(
 					promql.SetLabelMatchers(
-						"(sum(rate(container_network_transmit_bytes_total{job=\"cadvisor\", cluster=\"$cluster\", namespace=\"$namespace\"}[5m])\n* on (namespace,pod)\ngroup_left(workload,workload_type) namespace_workload_pod:kube_pod_owner:relabel{cluster=\"$cluster\", namespace=\"$namespace\", workload=~\".+\", workload_type=~\"$type\"}) by (workload))\n",
+						"(sum(rate(container_network_transmit_bytes_total{"+GetCAdvisorMatcher()+", cluster=\"$cluster\", namespace=\"$namespace\"}[5m])\n* on (namespace,pod)\ngroup_left(workload,workload_type) namespace_workload_pod:kube_pod_owner:relabel{cluster=\"$cluster\", namespace=\"$namespace\", workload=~\".+\", workload_type=~\"$type\"}) by (workload))\n",
 						labelMatchers,
 					),
 					dashboards.AddQueryDataSource(datasourceName),
@@ -281,7 +281,7 @@ func KubernetesTransmitBandwidth(granularity, datasourceName string, labelMatche
 			panel.AddQuery(
 				query.PromQL(
 					promql.SetLabelMatchers(
-						"(sum(rate(container_network_transmit_bytes_total{job=\"cadvisor\", cluster=\"$cluster\", namespace=\"$namespace\"}[5m])\n* on (namespace,pod)\ngroup_left(workload,workload_type) namespace_workload_pod:kube_pod_owner:relabel{cluster=\"$cluster\", namespace=\"$namespace\", workload=~\"$workload\", workload_type=~\"$type\"}) by (pod))\n",
+						"(sum(rate(container_network_transmit_bytes_total{"+GetCAdvisorMatcher()+", cluster=\"$cluster\", namespace=\"$namespace\"}[5m])\n* on (namespace,pod)\ngroup_left(workload,workload_type) namespace_workload_pod:kube_pod_owner:relabel{cluster=\"$cluster\", namespace=\"$namespace\", workload=~\"$workload\", workload_type=~\"$type\"}) by (pod))\n",
 						labelMatchers,
 					),
 					dashboards.AddQueryDataSource(datasourceName),
@@ -295,7 +295,7 @@ func KubernetesTransmitBandwidth(granularity, datasourceName string, labelMatche
 			panel.AddQuery(
 				query.PromQL(
 					promql.SetLabelMatchers(
-						"sort_desc(sum(rate(container_network_transmit_bytes_total{job=\"cadvisor\", cluster=\"$cluster\",namespace=~\"$namespace\"}[5m])\n* on (namespace,pod)\ngroup_left(workload,workload_type) namespace_workload_pod:kube_pod_owner:relabel{cluster=\"$cluster\",namespace=~\"$namespace\", workload=~\"$workload\", workload_type=~\"$type\"}) by (pod))\n",
+						"sort_desc(sum(rate(container_network_transmit_bytes_total{"+GetCAdvisorMatcher()+", cluster=\"$cluster\",namespace=~\"$namespace\"}[5m])\n* on (namespace,pod)\ngroup_left(workload,workload_type) namespace_workload_pod:kube_pod_owner:relabel{cluster=\"$cluster\",namespace=~\"$namespace\", workload=~\"$workload\", workload_type=~\"$type\"}) by (pod))\n",
 						labelMatchers,
 					),
 					dashboards.AddQueryDataSource(datasourceName),
@@ -309,7 +309,7 @@ func KubernetesTransmitBandwidth(granularity, datasourceName string, labelMatche
 			panel.AddQuery(
 				query.PromQL(
 					promql.SetLabelMatchers(
-						"sum(rate(container_network_transmit_bytes_total{job=\"cadvisor\", cluster=\"$cluster\", namespace=\"$namespace\", pod=~\"$pod\"}[5m])) by (pod)",
+						"sum(rate(container_network_transmit_bytes_total{"+GetCAdvisorMatcher()+", cluster=\"$cluster\", namespace=\"$namespace\", pod=~\"$pod\"}[5m])) by (pod)",
 						labelMatchers,
 					),
 					dashboards.AddQueryDataSource(datasourceName),
@@ -373,7 +373,7 @@ func KubernetesAvgContainerBandwidthTransmitted(granularity, datasourceName stri
 			panel.AddQuery(
 				query.PromQL(
 					promql.SetLabelMatchers(
-						"avg(irate(container_network_transmit_bytes_total{job=\"cadvisor\", cluster=\"$cluster\", namespace=~\".+\"}[5m])) by (namespace)",
+						"avg(irate(container_network_transmit_bytes_total{"+GetCAdvisorMatcher()+", cluster=\"$cluster\", namespace=~\".+\"}[5m])) by (namespace)",
 						labelMatchers,
 					),
 					dashboards.AddQueryDataSource(datasourceName),
@@ -388,7 +388,7 @@ func KubernetesAvgContainerBandwidthTransmitted(granularity, datasourceName stri
 			panel.AddQuery(
 				query.PromQL(
 					promql.SetLabelMatchers(
-						"(avg(rate(container_network_transmit_bytes_total{job=\"cadvisor\", cluster=\"$cluster\", namespace=\"$namespace\"}[5m])\n* on (namespace,pod)\ngroup_left(workload,workload_type) namespace_workload_pod:kube_pod_owner:relabel{cluster=\"$cluster\", namespace=\"$namespace\", workload=~\".+\", workload_type=~\"$type\"}) by (workload))\n",
+						"(avg(rate(container_network_transmit_bytes_total{"+GetCAdvisorMatcher()+", cluster=\"$cluster\", namespace=\"$namespace\"}[5m])\n* on (namespace,pod)\ngroup_left(workload,workload_type) namespace_workload_pod:kube_pod_owner:relabel{cluster=\"$cluster\", namespace=\"$namespace\", workload=~\".+\", workload_type=~\"$type\"}) by (workload))\n",
 						labelMatchers,
 					),
 					dashboards.AddQueryDataSource(datasourceName),
@@ -418,7 +418,7 @@ func KubernetesAvgContainerBandwidthTransmitted(granularity, datasourceName stri
 			panel.AddQuery(
 				query.PromQL(
 					promql.SetLabelMatchers(
-						"(avg(rate(container_network_transmit_bytes_total{job=\"cadvisor\", cluster=\"$cluster\", namespace=\"$namespace\"}[5m])\n* on (namespace,pod)\ngroup_left(workload,workload_type) namespace_workload_pod:kube_pod_owner:relabel{cluster=\"$cluster\", namespace=\"$namespace\", workload=~\"$workload\", workload_type=~\"$type\"}) by (pod))\n",
+						"(avg(rate(container_network_transmit_bytes_total{"+GetCAdvisorMatcher()+", cluster=\"$cluster\", namespace=\"$namespace\"}[5m])\n* on (namespace,pod)\ngroup_left(workload,workload_type) namespace_workload_pod:kube_pod_owner:relabel{cluster=\"$cluster\", namespace=\"$namespace\", workload=~\"$workload\", workload_type=~\"$type\"}) by (pod))\n",
 						labelMatchers,
 					),
 					dashboards.AddQueryDataSource(datasourceName),
@@ -467,7 +467,7 @@ func KubernetesAvgContainerBandwidthReceived(granularity, datasourceName string,
 			panel.AddQuery(
 				query.PromQL(
 					promql.SetLabelMatchers(
-						"avg(irate(container_network_receive_bytes_total{job=\"cadvisor\", cluster=\"$cluster\", namespace=~\".+\"}[5m])) by (namespace)",
+						"avg(irate(container_network_receive_bytes_total{"+GetCAdvisorMatcher()+", cluster=\"$cluster\", namespace=~\".+\"}[5m])) by (namespace)",
 						labelMatchers,
 					),
 					dashboards.AddQueryDataSource(datasourceName),
@@ -482,7 +482,7 @@ func KubernetesAvgContainerBandwidthReceived(granularity, datasourceName string,
 			panel.AddQuery(
 				query.PromQL(
 					promql.SetLabelMatchers(
-						"(avg(rate(container_network_receive_bytes_total{job=\"cadvisor\", cluster=\"$cluster\", namespace=\"$namespace\"}[5m])\n* on (namespace,pod)\ngroup_left(workload,workload_type) namespace_workload_pod:kube_pod_owner:relabel{cluster=\"$cluster\", namespace=\"$namespace\", workload=~\".+\", workload_type=~\"$type\"}) by (workload))\n",
+						"(avg(rate(container_network_receive_bytes_total{"+GetCAdvisorMatcher()+", cluster=\"$cluster\", namespace=\"$namespace\"}[5m])\n* on (namespace,pod)\ngroup_left(workload,workload_type) namespace_workload_pod:kube_pod_owner:relabel{cluster=\"$cluster\", namespace=\"$namespace\", workload=~\".+\", workload_type=~\"$type\"}) by (workload))\n",
 						labelMatchers,
 					),
 					dashboards.AddQueryDataSource(datasourceName),
@@ -512,7 +512,7 @@ func KubernetesAvgContainerBandwidthReceived(granularity, datasourceName string,
 			panel.AddQuery(
 				query.PromQL(
 					promql.SetLabelMatchers(
-						"(avg(rate(container_network_receive_bytes_total{job=\"cadvisor\", cluster=\"$cluster\", namespace=\"$namespace\"}[5m])\n* on (namespace,pod)\ngroup_left(workload,workload_type) namespace_workload_pod:kube_pod_owner:relabel{cluster=\"$cluster\", namespace=\"$namespace\", workload=~\"$workload\", workload_type=~\"$type\"}) by (pod))\n",
+						"(avg(rate(container_network_receive_bytes_total{"+GetCAdvisorMatcher()+", cluster=\"$cluster\", namespace=\"$namespace\"}[5m])\n* on (namespace,pod)\ngroup_left(workload,workload_type) namespace_workload_pod:kube_pod_owner:relabel{cluster=\"$cluster\", namespace=\"$namespace\", workload=~\"$workload\", workload_type=~\"$type\"}) by (pod))\n",
 						labelMatchers,
 					),
 					dashboards.AddQueryDataSource(datasourceName),
@@ -560,7 +560,7 @@ func KubernetesReceivedPackets(granularity, datasourceName string, labelMatchers
 			panel.AddQuery(
 				query.PromQL(
 					promql.SetLabelMatchers(
-						"sum(irate(container_network_receive_packets_total{job=\"cadvisor\", cluster=\"$cluster\", namespace=~\".+\"}[5m])) by (namespace)",
+						"sum(irate(container_network_receive_packets_total{"+GetCAdvisorMatcher()+", cluster=\"$cluster\", namespace=~\".+\"}[5m])) by (namespace)",
 						labelMatchers,
 					),
 					dashboards.AddQueryDataSource(datasourceName),
@@ -588,7 +588,7 @@ func KubernetesReceivedPackets(granularity, datasourceName string, labelMatchers
 			panel.AddQuery(
 				query.PromQL(
 					promql.SetLabelMatchers(
-						"sum(rate(container_network_receive_packets_total{job=\"cadvisor\", cluster=\"$cluster\", namespace=\"$namespace\", pod=~\"$pod\"}[5m])) by (pod)",
+						"sum(rate(container_network_receive_packets_total{"+GetCAdvisorMatcher()+", cluster=\"$cluster\", namespace=\"$namespace\", pod=~\"$pod\"}[5m])) by (pod)",
 						labelMatchers,
 					),
 					dashboards.AddQueryDataSource(datasourceName),
@@ -602,7 +602,7 @@ func KubernetesReceivedPackets(granularity, datasourceName string, labelMatchers
 			panel.AddQuery(
 				query.PromQL(
 					promql.SetLabelMatchers(
-						"(sum(rate(container_network_receive_packets_total{job=\"cadvisor\", cluster=\"$cluster\", namespace=\"$namespace\"}[5m])\n* on (namespace,pod)\ngroup_left(workload,workload_type) namespace_workload_pod:kube_pod_owner:relabel{cluster=\"$cluster\", namespace=\"$namespace\", workload=~\"$workload\", workload_type=~\"$type\"}) by (pod))\n",
+						"(sum(rate(container_network_receive_packets_total{"+GetCAdvisorMatcher()+", cluster=\"$cluster\", namespace=\"$namespace\"}[5m])\n* on (namespace,pod)\ngroup_left(workload,workload_type) namespace_workload_pod:kube_pod_owner:relabel{cluster=\"$cluster\", namespace=\"$namespace\", workload=~\"$workload\", workload_type=~\"$type\"}) by (pod))\n",
 						labelMatchers,
 					),
 					dashboards.AddQueryDataSource(datasourceName),
@@ -616,7 +616,7 @@ func KubernetesReceivedPackets(granularity, datasourceName string, labelMatchers
 			panel.AddQuery(
 				query.PromQL(
 					promql.SetLabelMatchers(
-						"(sum(rate(container_network_receive_packets_total{job=\"cadvisor\", cluster=\"$cluster\", namespace=\"$namespace\"}[5m])\n* on (namespace,pod)\ngroup_left(workload,workload_type) namespace_workload_pod:kube_pod_owner:relabel{cluster=\"$cluster\", namespace=\"$namespace\", workload=~\".+\", workload_type=~\"$type\"}) by (workload))\n",
+						"(sum(rate(container_network_receive_packets_total{"+GetCAdvisorMatcher()+", cluster=\"$cluster\", namespace=\"$namespace\"}[5m])\n* on (namespace,pod)\ngroup_left(workload,workload_type) namespace_workload_pod:kube_pod_owner:relabel{cluster=\"$cluster\", namespace=\"$namespace\", workload=~\".+\", workload_type=~\"$type\"}) by (workload))\n",
 						labelMatchers,
 					),
 					dashboards.AddQueryDataSource(datasourceName),
@@ -672,7 +672,7 @@ func KubernetesReceivedPackets(granularity, datasourceName string, labelMatchers
 			panel.AddQuery(
 				query.PromQL(
 					promql.SetLabelMatchers(
-						"sort_desc(sum(rate(container_network_receive_packets_total{job=\"cadvisor\", cluster=\"$cluster\",namespace=~\"$namespace\"}[5m])\n* on (namespace,pod)\ngroup_left(workload,workload_type) namespace_workload_pod:kube_pod_owner:relabel{cluster=\"$cluster\",namespace=~\"$namespace\", workload=~\"$workload\", workload_type=~\"$type\"}) by (pod))\n",
+						"sort_desc(sum(rate(container_network_receive_packets_total{"+GetCAdvisorMatcher()+", cluster=\"$cluster\",namespace=~\"$namespace\"}[5m])\n* on (namespace,pod)\ngroup_left(workload,workload_type) namespace_workload_pod:kube_pod_owner:relabel{cluster=\"$cluster\",namespace=~\"$namespace\", workload=~\"$workload\", workload_type=~\"$type\"}) by (pod))\n",
 						labelMatchers,
 					),
 					dashboards.AddQueryDataSource(datasourceName),
@@ -734,7 +734,7 @@ func KubernetesReceivedPacketsDropped(granularity, datasourceName string, labelM
 			panel.AddQuery(
 				query.PromQL(
 					promql.SetLabelMatchers(
-						"sum(irate(container_network_receive_packets_dropped_total{job=\"cadvisor\", cluster=\"$cluster\", namespace=~\".+\"}[5m])) by (namespace)",
+						"sum(irate(container_network_receive_packets_dropped_total{"+GetCAdvisorMatcher()+", cluster=\"$cluster\", namespace=~\".+\"}[5m])) by (namespace)",
 						labelMatchers,
 					),
 					dashboards.AddQueryDataSource(datasourceName),
@@ -762,7 +762,7 @@ func KubernetesReceivedPacketsDropped(granularity, datasourceName string, labelM
 			panel.AddQuery(
 				query.PromQL(
 					promql.SetLabelMatchers(
-						"sum(rate(container_network_receive_packets_dropped_total{job=\"cadvisor\", cluster=\"$cluster\", namespace=\"$namespace\", pod=~\"$pod\"}[5m])) by (pod)",
+						"sum(rate(container_network_receive_packets_dropped_total{"+GetCAdvisorMatcher()+", cluster=\"$cluster\", namespace=\"$namespace\", pod=~\"$pod\"}[5m])) by (pod)",
 						labelMatchers,
 					),
 					dashboards.AddQueryDataSource(datasourceName),
@@ -776,7 +776,7 @@ func KubernetesReceivedPacketsDropped(granularity, datasourceName string, labelM
 			panel.AddQuery(
 				query.PromQL(
 					promql.SetLabelMatchers(
-						"(sum(rate(container_network_receive_packets_dropped_total{job=\"cadvisor\", cluster=\"$cluster\", namespace=\"$namespace\"}[5m])\n* on (namespace,pod)\ngroup_left(workload,workload_type) namespace_workload_pod:kube_pod_owner:relabel{cluster=\"$cluster\", namespace=\"$namespace\", workload=~\"$workload\", workload_type=~\"$type\"}) by (pod))\n",
+						"(sum(rate(container_network_receive_packets_dropped_total{"+GetCAdvisorMatcher()+", cluster=\"$cluster\", namespace=\"$namespace\"}[5m])\n* on (namespace,pod)\ngroup_left(workload,workload_type) namespace_workload_pod:kube_pod_owner:relabel{cluster=\"$cluster\", namespace=\"$namespace\", workload=~\"$workload\", workload_type=~\"$type\"}) by (pod))\n",
 						labelMatchers,
 					),
 					dashboards.AddQueryDataSource(datasourceName),
@@ -790,7 +790,7 @@ func KubernetesReceivedPacketsDropped(granularity, datasourceName string, labelM
 			panel.AddQuery(
 				query.PromQL(
 					promql.SetLabelMatchers(
-						"(sum(rate(container_network_receive_packets_dropped_total{job=\"cadvisor\", cluster=\"$cluster\", namespace=\"$namespace\"}[5m])\n* on (namespace,pod)\ngroup_left(workload,workload_type) namespace_workload_pod:kube_pod_owner:relabel{cluster=\"$cluster\", namespace=\"$namespace\", workload=~\".+\", workload_type=~\"$type\"}) by (workload))\n",
+						"(sum(rate(container_network_receive_packets_dropped_total{"+GetCAdvisorMatcher()+", cluster=\"$cluster\", namespace=\"$namespace\"}[5m])\n* on (namespace,pod)\ngroup_left(workload,workload_type) namespace_workload_pod:kube_pod_owner:relabel{cluster=\"$cluster\", namespace=\"$namespace\", workload=~\".+\", workload_type=~\"$type\"}) by (workload))\n",
 						labelMatchers,
 					),
 					dashboards.AddQueryDataSource(datasourceName),
@@ -846,7 +846,7 @@ func KubernetesReceivedPacketsDropped(granularity, datasourceName string, labelM
 			panel.AddQuery(
 				query.PromQL(
 					promql.SetLabelMatchers(
-						"sort_desc(sum(rate(container_network_receive_packets_dropped_total{job=\"cadvisor\", cluster=\"$cluster\",namespace=~\"$namespace\"}[5m])\n* on (namespace,pod)\ngroup_left(workload,workload_type) namespace_workload_pod:kube_pod_owner:relabel{cluster=\"$cluster\",namespace=~\"$namespace\", workload=~\"$workload\", workload_type=~\"$type\"}) by (pod))\n",
+						"sort_desc(sum(rate(container_network_receive_packets_dropped_total{"+GetCAdvisorMatcher()+", cluster=\"$cluster\",namespace=~\"$namespace\"}[5m])\n* on (namespace,pod)\ngroup_left(workload,workload_type) namespace_workload_pod:kube_pod_owner:relabel{cluster=\"$cluster\",namespace=~\"$namespace\", workload=~\"$workload\", workload_type=~\"$type\"}) by (pod))\n",
 						labelMatchers,
 					),
 					dashboards.AddQueryDataSource(datasourceName),
@@ -908,7 +908,7 @@ func KubernetesTransmittedPackets(granularity, datasourceName string, labelMatch
 			panel.AddQuery(
 				query.PromQL(
 					promql.SetLabelMatchers(
-						"sum(irate(container_network_transmit_packets_total{job=\"cadvisor\", cluster=\"$cluster\", namespace=~\".+\"}[5m])) by (namespace)",
+						"sum(irate(container_network_transmit_packets_total{"+GetCAdvisorMatcher()+", cluster=\"$cluster\", namespace=~\".+\"}[5m])) by (namespace)",
 						labelMatchers,
 					),
 					dashboards.AddQueryDataSource(datasourceName),
@@ -936,7 +936,7 @@ func KubernetesTransmittedPackets(granularity, datasourceName string, labelMatch
 			panel.AddQuery(
 				query.PromQL(
 					promql.SetLabelMatchers(
-						"sum(rate(container_network_transmit_packets_total{job=\"cadvisor\", cluster=\"$cluster\", namespace=\"$namespace\", pod=~\"$pod\"}[5m])) by (pod)",
+						"sum(rate(container_network_transmit_packets_total{"+GetCAdvisorMatcher()+", cluster=\"$cluster\", namespace=\"$namespace\", pod=~\"$pod\"}[5m])) by (pod)",
 						labelMatchers,
 					),
 					dashboards.AddQueryDataSource(datasourceName),
@@ -950,7 +950,7 @@ func KubernetesTransmittedPackets(granularity, datasourceName string, labelMatch
 			panel.AddQuery(
 				query.PromQL(
 					promql.SetLabelMatchers(
-						"(sum(rate(container_network_transmit_packets_total{job=\"cadvisor\", cluster=\"$cluster\", namespace=\"$namespace\"}[5m])\n* on (namespace,pod)\ngroup_left(workload,workload_type) namespace_workload_pod:kube_pod_owner:relabel{cluster=\"$cluster\", namespace=\"$namespace\", workload=~\"$workload\", workload_type=~\"$type\"}) by (pod))\n",
+						"(sum(rate(container_network_transmit_packets_total{"+GetCAdvisorMatcher()+", cluster=\"$cluster\", namespace=\"$namespace\"}[5m])\n* on (namespace,pod)\ngroup_left(workload,workload_type) namespace_workload_pod:kube_pod_owner:relabel{cluster=\"$cluster\", namespace=\"$namespace\", workload=~\"$workload\", workload_type=~\"$type\"}) by (pod))\n",
 						labelMatchers,
 					),
 					dashboards.AddQueryDataSource(datasourceName),
@@ -964,7 +964,7 @@ func KubernetesTransmittedPackets(granularity, datasourceName string, labelMatch
 			panel.AddQuery(
 				query.PromQL(
 					promql.SetLabelMatchers(
-						"(sum(rate(container_network_transmit_packets_total{job=\"cadvisor\", cluster=\"$cluster\", namespace=\"$namespace\"}[5m])\n* on (namespace,pod)\ngroup_left(workload,workload_type) namespace_workload_pod:kube_pod_owner:relabel{cluster=\"$cluster\", namespace=\"$namespace\", workload=~\".+\", workload_type=~\"$type\"}) by (workload))\n",
+						"(sum(rate(container_network_transmit_packets_total{"+GetCAdvisorMatcher()+", cluster=\"$cluster\", namespace=\"$namespace\"}[5m])\n* on (namespace,pod)\ngroup_left(workload,workload_type) namespace_workload_pod:kube_pod_owner:relabel{cluster=\"$cluster\", namespace=\"$namespace\", workload=~\".+\", workload_type=~\"$type\"}) by (workload))\n",
 						labelMatchers,
 					),
 					dashboards.AddQueryDataSource(datasourceName),
@@ -1020,7 +1020,7 @@ func KubernetesTransmittedPackets(granularity, datasourceName string, labelMatch
 			panel.AddQuery(
 				query.PromQL(
 					promql.SetLabelMatchers(
-						"sort_desc(sum(rate(container_network_transmit_packets_total{job=\"cadvisor\", cluster=\"$cluster\",namespace=~\"$namespace\"}[5m])\n* on (namespace,pod)\ngroup_left(workload,workload_type) namespace_workload_pod:kube_pod_owner:relabel{cluster=\"$cluster\",namespace=~\"$namespace\", workload=~\"$workload\", workload_type=~\"$type\"}) by (pod))\n",
+						"sort_desc(sum(rate(container_network_transmit_packets_total{"+GetCAdvisorMatcher()+", cluster=\"$cluster\",namespace=~\"$namespace\"}[5m])\n* on (namespace,pod)\ngroup_left(workload,workload_type) namespace_workload_pod:kube_pod_owner:relabel{cluster=\"$cluster\",namespace=~\"$namespace\", workload=~\"$workload\", workload_type=~\"$type\"}) by (pod))\n",
 						labelMatchers,
 					),
 					dashboards.AddQueryDataSource(datasourceName),
@@ -1082,7 +1082,7 @@ func KubernetesTransmittedPacketsDropped(granularity, datasourceName string, lab
 			panel.AddQuery(
 				query.PromQL(
 					promql.SetLabelMatchers(
-						"sum(irate(container_network_transmit_packets_dropped_total{job=\"cadvisor\", cluster=\"$cluster\", namespace=~\".+\"}[5m])) by (namespace)",
+						"sum(irate(container_network_transmit_packets_dropped_total{"+GetCAdvisorMatcher()+", cluster=\"$cluster\", namespace=~\".+\"}[5m])) by (namespace)",
 						labelMatchers,
 					),
 					dashboards.AddQueryDataSource(datasourceName),
@@ -1110,7 +1110,7 @@ func KubernetesTransmittedPacketsDropped(granularity, datasourceName string, lab
 			panel.AddQuery(
 				query.PromQL(
 					promql.SetLabelMatchers(
-						"sum(rate(container_network_transmit_packets_dropped_total{job=\"cadvisor\", cluster=\"$cluster\", namespace=\"$namespace\", pod=~\"$pod\"}[5m])) by (pod)",
+						"sum(rate(container_network_transmit_packets_dropped_total{"+GetCAdvisorMatcher()+", cluster=\"$cluster\", namespace=\"$namespace\", pod=~\"$pod\"}[5m])) by (pod)",
 						labelMatchers,
 					),
 					dashboards.AddQueryDataSource(datasourceName),
@@ -1124,7 +1124,7 @@ func KubernetesTransmittedPacketsDropped(granularity, datasourceName string, lab
 			panel.AddQuery(
 				query.PromQL(
 					promql.SetLabelMatchers(
-						"(sum(rate(container_network_transmit_packets_dropped_total{job=\"cadvisor\", cluster=\"$cluster\", namespace=\"$namespace\"}[5m])\n* on (namespace,pod)\ngroup_left(workload,workload_type) namespace_workload_pod:kube_pod_owner:relabel{cluster=\"$cluster\", namespace=\"$namespace\", workload=~\"$workload\", workload_type=~\"$type\"}) by (pod))\n",
+						"(sum(rate(container_network_transmit_packets_dropped_total{"+GetCAdvisorMatcher()+", cluster=\"$cluster\", namespace=\"$namespace\"}[5m])\n* on (namespace,pod)\ngroup_left(workload,workload_type) namespace_workload_pod:kube_pod_owner:relabel{cluster=\"$cluster\", namespace=\"$namespace\", workload=~\"$workload\", workload_type=~\"$type\"}) by (pod))\n",
 						labelMatchers,
 					),
 					dashboards.AddQueryDataSource(datasourceName),
@@ -1138,7 +1138,7 @@ func KubernetesTransmittedPacketsDropped(granularity, datasourceName string, lab
 			panel.AddQuery(
 				query.PromQL(
 					promql.SetLabelMatchers(
-						"(sum(rate(container_network_transmit_packets_dropped_total{job=\"cadvisor\", cluster=\"$cluster\", namespace=\"$namespace\"}[5m])\n* on (namespace,pod)\ngroup_left(workload,workload_type) namespace_workload_pod:kube_pod_owner:relabel{cluster=\"$cluster\", namespace=\"$namespace\", workload=~\".+\", workload_type=~\"$type\"}) by (workload))\n",
+						"(sum(rate(container_network_transmit_packets_dropped_total{"+GetCAdvisorMatcher()+", cluster=\"$cluster\", namespace=\"$namespace\"}[5m])\n* on (namespace,pod)\ngroup_left(workload,workload_type) namespace_workload_pod:kube_pod_owner:relabel{cluster=\"$cluster\", namespace=\"$namespace\", workload=~\".+\", workload_type=~\"$type\"}) by (workload))\n",
 						labelMatchers,
 					),
 					dashboards.AddQueryDataSource(datasourceName),
@@ -1194,7 +1194,7 @@ func KubernetesTransmittedPacketsDropped(granularity, datasourceName string, lab
 			panel.AddQuery(
 				query.PromQL(
 					promql.SetLabelMatchers(
-						"sort_desc(sum(rate(container_network_transmit_packets_dropped_total{job=\"cadvisor\", cluster=\"$cluster\",namespace=~\"$namespace\"}[5m])\n* on (namespace,pod)\ngroup_left(workload,workload_type) namespace_workload_pod:kube_pod_owner:relabel{cluster=\"$cluster\",namespace=~\"$namespace\", workload=~\"$workload\", workload_type=~\"$type\"}) by (pod))\n",
+						"sort_desc(sum(rate(container_network_transmit_packets_dropped_total{"+GetCAdvisorMatcher()+", cluster=\"$cluster\",namespace=~\"$namespace\"}[5m])\n* on (namespace,pod)\ngroup_left(workload,workload_type) namespace_workload_pod:kube_pod_owner:relabel{cluster=\"$cluster\",namespace=~\"$namespace\", workload=~\"$workload\", workload_type=~\"$type\"}) by (pod))\n",
 						labelMatchers,
 					),
 					dashboards.AddQueryDataSource(datasourceName),

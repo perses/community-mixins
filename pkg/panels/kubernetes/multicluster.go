@@ -72,7 +72,7 @@ func MultiClusterCPUUsageQuota(datasourceName string, labelMatchers ...promql.La
 		panel.AddQuery(
 			query.PromQL(
 				promql.SetLabelMatchers(
-					"sum(kube_pod_container_resource_requests{job=\"kube-state-metrics\", resource=\"cpu\"}) by (cluster)",
+					"sum(kube_pod_container_resource_requests{"+GetKubeStateMetricsMatcher()+", resource=\"cpu\"}) by (cluster)",
 					labelMatchers,
 				),
 				dashboards.AddQueryDataSource(datasourceName),
@@ -81,7 +81,7 @@ func MultiClusterCPUUsageQuota(datasourceName string, labelMatchers ...promql.La
 		panel.AddQuery(
 			query.PromQL(
 				promql.SetLabelMatchers(
-					"sum(node_namespace_pod_container:container_cpu_usage_seconds_total:sum_rate5m) by (cluster) / sum(kube_pod_container_resource_requests{job=\"kube-state-metrics\", resource=\"cpu\"}) by (cluster)",
+					"sum(node_namespace_pod_container:container_cpu_usage_seconds_total:sum_rate5m) by (cluster) / sum(kube_pod_container_resource_requests{"+GetKubeStateMetricsMatcher()+", resource=\"cpu\"}) by (cluster)",
 					labelMatchers,
 				),
 				dashboards.AddQueryDataSource(datasourceName),
@@ -90,7 +90,7 @@ func MultiClusterCPUUsageQuota(datasourceName string, labelMatchers ...promql.La
 		panel.AddQuery(
 			query.PromQL(
 				promql.SetLabelMatchers(
-					"sum(kube_pod_container_resource_limits{job=\"kube-state-metrics\", resource=\"cpu\"}) by (cluster)",
+					"sum(kube_pod_container_resource_limits{"+GetKubeStateMetricsMatcher()+", resource=\"cpu\"}) by (cluster)",
 					labelMatchers,
 				),
 				dashboards.AddQueryDataSource(datasourceName),
@@ -99,7 +99,7 @@ func MultiClusterCPUUsageQuota(datasourceName string, labelMatchers ...promql.La
 		panel.AddQuery(
 			query.PromQL(
 				promql.SetLabelMatchers(
-					"sum(node_namespace_pod_container:container_cpu_usage_seconds_total:sum_rate5m) by (cluster) / sum(kube_pod_container_resource_limits{job=\"kube-state-metrics\", resource=\"cpu\"}) by (cluster)",
+					"sum(node_namespace_pod_container:container_cpu_usage_seconds_total:sum_rate5m) by (cluster) / sum(kube_pod_container_resource_limits{"+GetKubeStateMetricsMatcher()+", resource=\"cpu\"}) by (cluster)",
 					labelMatchers,
 				),
 				dashboards.AddQueryDataSource(datasourceName),
@@ -160,7 +160,7 @@ func MultiClusterMemoryUsageQuota(datasourceName string, labelMatchers ...promql
 		panel.AddQuery(
 			query.PromQL(
 				promql.SetLabelMatchers(
-					"sum(container_memory_rss{job=\"cadvisor\", container!=\"\"}) by (cluster)",
+					"sum(container_memory_rss{"+GetCAdvisorMatcher()+", container!=\"\"}) by (cluster)",
 					labelMatchers,
 				),
 				dashboards.AddQueryDataSource(datasourceName),
@@ -169,7 +169,7 @@ func MultiClusterMemoryUsageQuota(datasourceName string, labelMatchers ...promql
 		panel.AddQuery(
 			query.PromQL(
 				promql.SetLabelMatchers(
-					"sum(kube_pod_container_resource_requests{job=\"kube-state-metrics\", resource=\"memory\"}) by (cluster)",
+					"sum(kube_pod_container_resource_requests{"+GetKubeStateMetricsMatcher()+", resource=\"memory\"}) by (cluster)",
 					labelMatchers,
 				),
 				dashboards.AddQueryDataSource(datasourceName),
@@ -178,7 +178,7 @@ func MultiClusterMemoryUsageQuota(datasourceName string, labelMatchers ...promql
 		panel.AddQuery(
 			query.PromQL(
 				promql.SetLabelMatchers(
-					"sum(container_memory_rss{job=\"cadvisor\", container!=\"\"}) by (cluster) / sum(kube_pod_container_resource_requests{job=\"kube-state-metrics\", resource=\"memory\"}) by (cluster)",
+					"sum(container_memory_rss{"+GetCAdvisorMatcher()+", container!=\"\"}) by (cluster) / sum(kube_pod_container_resource_requests{"+GetKubeStateMetricsMatcher()+", resource=\"memory\"}) by (cluster)",
 					labelMatchers,
 				),
 				dashboards.AddQueryDataSource(datasourceName),
@@ -187,7 +187,7 @@ func MultiClusterMemoryUsageQuota(datasourceName string, labelMatchers ...promql
 		panel.AddQuery(
 			query.PromQL(
 				promql.SetLabelMatchers(
-					"sum(kube_pod_container_resource_limits{job=\"kube-state-metrics\", resource=\"memory\"}) by (cluster)",
+					"sum(kube_pod_container_resource_limits{"+GetKubeStateMetricsMatcher()+", resource=\"memory\"}) by (cluster)",
 					labelMatchers,
 				),
 				dashboards.AddQueryDataSource(datasourceName),
@@ -196,7 +196,7 @@ func MultiClusterMemoryUsageQuota(datasourceName string, labelMatchers ...promql
 		panel.AddQuery(
 			query.PromQL(
 				promql.SetLabelMatchers(
-					"sum(container_memory_rss{job=\"cadvisor\", container!=\"\"}) by (cluster) / sum(kube_pod_container_resource_limits{job=\"kube-state-metrics\", resource=\"memory\"}) by (cluster)",
+					"sum(container_memory_rss{"+GetCAdvisorMatcher()+", container!=\"\"}) by (cluster) / sum(kube_pod_container_resource_limits{"+GetKubeStateMetricsMatcher()+", resource=\"memory\"}) by (cluster)",
 					labelMatchers,
 				),
 				dashboards.AddQueryDataSource(datasourceName),

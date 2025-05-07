@@ -114,7 +114,7 @@ func BuildKubernetesNamespaceOverview(project string, datasource string, cluster
 		dashboard.AddVariable("cluster",
 			listVar.List(
 				labelValuesVar.PrometheusLabelValues("cluster",
-					labelValuesVar.Matchers("up{job=\"kubelet\", metrics_path=\"/metrics/cadvisor\"}"),
+					labelValuesVar.Matchers("up{"+panels.GetKubeletMatcher()+", metrics_path=\"/metrics/cadvisor\"}"),
 					dashboards.AddVariableDatasource(datasource),
 				),
 				listVar.DisplayName("cluster"),
@@ -125,7 +125,7 @@ func BuildKubernetesNamespaceOverview(project string, datasource string, cluster
 				labelValuesVar.PrometheusLabelValues("namespace",
 					labelValuesVar.Matchers(
 						promql.SetLabelMatchers(
-							"kube_namespace_status_phase{job=\"kube-state-metrics\"}",
+							"kube_namespace_status_phase{"+panels.GetKubeStateMetricsMatcher()+"}",
 							[]promql.LabelMatcher{{Name: "cluster", Type: "=", Value: "$cluster"}},
 						),
 					),
