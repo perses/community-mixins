@@ -127,7 +127,7 @@ func PersesMemoryUsage(datasourceName string, labelMatchers ...promql.LabelMatch
 				},
 			}),
 			timeSeriesPanel.WithLegend(timeSeriesPanel.Legend{
-				Position: timeSeriesPanel.RightPosition,
+				Position: timeSeriesPanel.BottomPosition,
 				Mode:     timeSeriesPanel.TableMode,
 				Values:   []common.Calculation{common.LastCalculation},
 			}),
@@ -185,7 +185,7 @@ func PersesCPUUsage(datasourceName string, labelMatchers ...promql.LabelMatcher)
 				},
 			}),
 			timeSeriesPanel.WithLegend(timeSeriesPanel.Legend{
-				Position: timeSeriesPanel.RightPosition,
+				Position: timeSeriesPanel.BottomPosition,
 				Mode:     timeSeriesPanel.TableMode,
 				Values:   []common.Calculation{common.LastCalculation},
 			}),
@@ -197,7 +197,35 @@ func PersesCPUUsage(datasourceName string, labelMatchers ...promql.LabelMatcher)
 					labelMatchers,
 				),
 				dashboards.AddQueryDataSource(datasourceName),
-				query.SeriesNameFormat("{{instance}}"),
+				query.SeriesNameFormat("{{pod}}"),
+			),
+		),
+	)
+}
+
+func PersesGoRoutines(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
+	return panelgroup.AddPanel("Goroutines",
+		panel.Description("Shows the number of goroutines currently in use"),
+		timeSeriesPanel.Chart(
+			timeSeriesPanel.WithYAxis(timeSeriesPanel.YAxis{
+				Format: &common.Format{
+					Unit: string(common.DecimalUnit),
+				},
+			}),
+			timeSeriesPanel.WithLegend(timeSeriesPanel.Legend{
+				Position: timeSeriesPanel.BottomPosition,
+				Mode:     timeSeriesPanel.TableMode,
+				Values:   []common.Calculation{common.LastCalculation},
+			}),
+		),
+		panel.AddQuery(
+			query.PromQL(
+				promql.SetLabelMatchers(
+					"go_goroutines{job=~'$job', instance=~'$instance'}",
+					labelMatchers,
+				),
+				dashboards.AddQueryDataSource(datasourceName),
+				query.SeriesNameFormat("{{pod}}"),
 			),
 		),
 	)

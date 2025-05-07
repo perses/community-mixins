@@ -53,7 +53,8 @@ func withPersesAPiRequestGroup(datasource string, clusterLabelMatcher promql.Lab
 }
 
 func withPersesResources(datasource string, clusterLabelMatcher promql.LabelMatcher) dashboard.Option {
-	return dashboard.AddPanelGroup("Resource Usage", panelgroup.PanelsPerLine(2),
+	return dashboard.AddPanelGroup("Resource Usage", panelgroup.PanelsPerLine(3), panelgroup.PanelHeight(8),
 		perses.PersesMemoryUsage(datasource, clusterLabelMatcher),
-		perses.PersesCPUUsage(datasource, clusterLabelMatcher))
+		perses.PersesCPUUsage(datasource, clusterLabelMatcher),
+		perses.PersesGoRoutines(datasource, clusterLabelMatcher))
 }
