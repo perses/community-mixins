@@ -49,12 +49,14 @@ func withPersesOverviewStatsGroup(datasource string, clusterLabelMatcher promql.
 }
 
 func withPersesAPiRequestGroup(datasource string, clusterLabelMatcher promql.LabelMatcher) dashboard.Option {
-	return dashboard.AddPanelGroup("API Requests", panelgroup.PanelsPerLine(2), perses.PersesHTTPRequestsLatency(datasource, clusterLabelMatcher), perses.PersesTotalHTTPRequests(datasource, clusterLabelMatcher))
+	return dashboard.AddPanelGroup("API Requests", panelgroup.PanelsPerLine(2), perses.HTTPRequestsLatencyPanel(datasource, clusterLabelMatcher), perses.HTTPRequestsRatePanel(datasource, clusterLabelMatcher))
 }
 
 func withPersesResources(datasource string, clusterLabelMatcher promql.LabelMatcher) dashboard.Option {
-	return dashboard.AddPanelGroup("Resource Usage", panelgroup.PanelsPerLine(3), panelgroup.PanelHeight(8),
+	return dashboard.AddPanelGroup("Resource Usage", panelgroup.PanelsPerLine(3), panelgroup.PanelHeight(10),
 		perses.PersesMemoryUsage(datasource, clusterLabelMatcher),
 		perses.PersesCPUUsage(datasource, clusterLabelMatcher),
-		perses.PersesGoRoutines(datasource, clusterLabelMatcher))
+		perses.PersesGoRoutines(datasource, clusterLabelMatcher),
+		perses.PersesGarbageCollectionPauseTime(datasource, clusterLabelMatcher),
+		perses.PersesFileDescriptors(datasource, clusterLabelMatcher))
 }

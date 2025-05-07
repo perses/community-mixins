@@ -63,9 +63,9 @@ func PersesStatsTable(datasourceName string, labelMatchers ...promql.LabelMatche
 	)
 }
 
-func PersesHTTPRequestsLatency(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
+func HTTPRequestsLatencyPanel(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
 	return panelgroup.AddPanel("HTTP Requests Latency",
-		panel.Description("Shows latency of HTTP Requests per endpoint"),
+		panel.Description("Displays the latency of HTTP requests over a 5-minute window."),
 		timeSeriesPanel.Chart(
 			timeSeriesPanel.WithYAxis(timeSeriesPanel.YAxis{
 				Format: &common.Format{
@@ -90,9 +90,9 @@ func PersesHTTPRequestsLatency(datasourceName string, labelMatchers ...promql.La
 	)
 }
 
-func PersesTotalHTTPRequests(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
-	return panelgroup.AddPanel("Total HTTP Requests",
-		panel.Description("Shows total count of HTTP Requests by endpoint"),
+func HTTPRequestsRatePanel(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
+	return panelgroup.AddPanel("HTTP Requests Rate",
+		panel.Description("Displays the rate of HTTP requests over a 5-minute window."),
 		timeSeriesPanel.Chart(
 			timeSeriesPanel.WithYAxis(timeSeriesPanel.YAxis{
 				Format: &common.Format{
@@ -226,6 +226,72 @@ func PersesGoRoutines(datasourceName string, labelMatchers ...promql.LabelMatche
 				),
 				dashboards.AddQueryDataSource(datasourceName),
 				query.SeriesNameFormat("{{pod}}"),
+			),
+		),
+	)
+}
+
+func PersesGarbageCollectionPauseTime(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
+	return panelgroup.AddPanel("Garbage Collection Pause Time",
+		panel.Description("Displays the pause time for garbage collection events."),
+		timeSeriesPanel.Chart(
+			timeSeriesPanel.WithYAxis(timeSeriesPanel.YAxis{
+				Format: &common.Format{
+					Unit: string(common.SecondsUnit),
+				},
+			}),
+			timeSeriesPanel.WithLegend(timeSeriesPanel.Legend{
+				Position: timeSeriesPanel.BottomPosition,
+				Mode:     timeSeriesPanel.TableMode,
+				Values:   []common.Calculation{common.LastCalculation},
+			}),
+		),
+		panel.AddQuery(
+			query.PromQL(
+				promql.SetLabelMatchers(
+					"go_gc_duration_seconds{job=~'$job', instance=~'$instance'}",
+					labelMatchers,
+				),
+				dashboards.AddQueryDataSource(datasourceName),
+				query.SeriesNameFormat("{{quantile}} - {{instance}} - {{pod}}"),
+			),
+		),
+	)
+}
+
+func PersesFileDescriptors(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
+	return panelgroup.AddPanel("File Descriptors",
+		panel.Description("Displays the number of open and max file descriptors."),
+		timeSeriesPanel.Chart(
+			timeSeriesPanel.WithYAxis(timeSeriesPanel.YAxis{
+				Format: &common.Format{
+					Unit: string(common.DecimalUnit),
+				},
+			}),
+			timeSeriesPanel.WithLegend(timeSeriesPanel.Legend{
+				Position: timeSeriesPanel.BottomPosition,
+				Mode:     timeSeriesPanel.TableMode,
+				Values:   []common.Calculation{common.LastCalculation},
+			}),
+		),
+		panel.AddQuery(
+			query.PromQL(
+				promql.SetLabelMatchers(
+					"process_open_fds{job=~'$job', instance=~'$instance'}",
+					labelMatchers,
+				),
+				dashboards.AddQueryDataSource(datasourceName),
+				query.SeriesNameFormat("{{instance}} - {{pod}} Open FDs"),
+			),
+		),
+		panel.AddQuery(
+			query.PromQL(
+				promql.SetLabelMatchers(
+					"process_max_fds{job=~'$job', instance=~'$instance'}",
+					labelMatchers,
+				),
+				dashboards.AddQueryDataSource(datasourceName),
+				query.SeriesNameFormat("{{instance}} - {{pod}} - Max FDs"),
 			),
 		),
 	)
