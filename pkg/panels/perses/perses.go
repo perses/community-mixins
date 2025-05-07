@@ -109,6 +109,33 @@ func HTTPRequestsRatePanel(datasourceName string, labelMatchers ...promql.LabelM
 	)
 }
 
+func HTTPErrorsRatePanel(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
+	return panelgroup.AddPanel("HTTP Errors Rate",
+		panel.Description("Displays the rate of all HTTP errors over a 5-minute window."),
+		timeSeriesPanel.Chart(
+			timeSeriesPanel.WithYAxis(timeSeriesPanel.YAxis{
+				Format: &common.Format{
+					Unit: string(common.DecimalUnit),
+				},
+			}),
+			timeSeriesPanel.WithLegend(timeSeriesPanel.Legend{
+				Position: timeSeriesPanel.RightPosition,
+				Mode:     timeSeriesPanel.TableMode,
+			}),
+		),
+		panel.AddQuery(
+			query.PromQL(
+				promql.SetLabelMatchers(
+					"sum by (handler, code) (rate(perses_http_request_total{job=~'$job', instance=~'$instance', code=~'4..|5..'}[5m]))",
+					labelMatchers,
+				),
+				dashboards.AddQueryDataSource(datasourceName),
+				query.SeriesNameFormat("{{handler}} {{method}} {{code}}"),
+			),
+		),
+	)
+}
+
 func MemoryUsage(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
 	return panelgroup.AddPanel("Memory Usage",
 		panel.Description("Shows various memory usage metrics"),

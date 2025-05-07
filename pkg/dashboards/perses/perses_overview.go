@@ -46,11 +46,16 @@ func BuildPersesOverview(project string, datasource string, clusterLabelName str
 }
 
 func withPersesOverviewStatsGroup(datasource string, clusterLabelMatcher promql.LabelMatcher) dashboard.Option {
-	return dashboard.AddPanelGroup("Perses Stats", panelgroup.PanelsPerLine(1), perses.StatsTable(datasource, clusterLabelMatcher))
+	return dashboard.AddPanelGroup("Perses Stats", panelgroup.PanelsPerLine(1),
+		perses.StatsTable(datasource, clusterLabelMatcher))
 }
 
 func withPersesAPiRequestGroup(datasource string, clusterLabelMatcher promql.LabelMatcher) dashboard.Option {
-	return dashboard.AddPanelGroup("API Requests", panelgroup.PanelsPerLine(2), perses.HTTPRequestsLatencyPanel(datasource, clusterLabelMatcher), perses.HTTPRequestsRatePanel(datasource, clusterLabelMatcher))
+	return dashboard.AddPanelGroup("API Requests", panelgroup.PanelsPerLine(2),
+		perses.HTTPRequestsLatencyPanel(datasource, clusterLabelMatcher),
+		perses.HTTPRequestsRatePanel(datasource, clusterLabelMatcher),
+		perses.HTTPErrorsRatePanel(datasource, clusterLabelMatcher),
+	)
 }
 
 func withPersesResources(datasource string, clusterLabelMatcher promql.LabelMatcher) dashboard.Option {
