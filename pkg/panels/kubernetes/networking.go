@@ -110,7 +110,7 @@ func KubernetesReceiveBandwidth(granularity, datasourceName string, labelMatcher
 						labelMatchers,
 					),
 					dashboards.AddQueryDataSource(datasourceName),
-					query.SeriesNameFormat("{{workload}}"),
+					query.SeriesNameFormat("{{pod}}"),
 				),
 			),
 		}
@@ -285,7 +285,7 @@ func KubernetesTransmitBandwidth(granularity, datasourceName string, labelMatche
 						labelMatchers,
 					),
 					dashboards.AddQueryDataSource(datasourceName),
-					query.SeriesNameFormat("{{workload}}"),
+					query.SeriesNameFormat("{{pod}}"),
 				),
 			),
 		}
