@@ -289,7 +289,7 @@ spec:
       kind: Panel
       spec:
         display:
-          description: Shows the memory utilization of the cluster.
+          description: Shows the Memory utilization of the cluster.
           name: Memory Utilization
         plugin:
           kind: StatChart
@@ -318,7 +318,7 @@ spec:
       kind: Panel
       spec:
         display:
-          description: Shows the memory requests commitment of the cluster.
+          description: Shows the Memory requests commitment of the cluster.
           name: Memory Requests Commitment
         plugin:
           kind: StatChart
@@ -345,7 +345,7 @@ spec:
       kind: Panel
       spec:
         display:
-          description: Shows the memory limits commitment of the cluster.
+          description: Shows the Memory limits commitment of the cluster.
           name: Memory Limits Commitment
         plugin:
           kind: StatChart

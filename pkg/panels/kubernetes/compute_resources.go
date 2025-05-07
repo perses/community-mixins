@@ -8,8 +8,357 @@ import (
 	"github.com/perses/perses/go-sdk/prometheus/query"
 
 	commonSdk "github.com/perses/perses/go-sdk/common"
+	statPanel "github.com/perses/perses/go-sdk/panel/stat"
 	timeSeriesPanel "github.com/perses/perses/go-sdk/panel/time-series"
 )
+
+func KubernetesCPUUtilizationStat(granularity, datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
+	var panelName, description string
+	var queries []panel.Option
+
+	switch granularity {
+	case "multicluster":
+		panelName = "CPU Utilization"
+		description = "Shows the CPU utilization of all clusters."
+		queries = []panel.Option{
+			panel.AddQuery(
+				query.PromQL(
+					promql.SetLabelMatchers(
+						"sum(cluster:node_cpu:ratio_rate5m) / count(cluster:node_cpu:ratio_rate5m)",
+						labelMatchers,
+					),
+					dashboards.AddQueryDataSource(datasourceName),
+				),
+			),
+		}
+	case "cluster":
+		panelName = "CPU Utilization"
+		description = "Shows the CPU utilization of the cluster."
+		queries = []panel.Option{
+			panel.AddQuery(
+				query.PromQL(
+					promql.SetLabelMatchers(
+						"cluster:node_cpu:ratio_rate5m{cluster=\"$cluster\"}",
+						labelMatchers,
+					),
+					dashboards.AddQueryDataSource(datasourceName),
+				),
+			),
+		}
+	case "namespace-requests":
+		panelName = "CPU Utilization (from requests)"
+		description = "Shows the CPU utilization of the namespace from pod CPU requests."
+		queries = []panel.Option{
+			panel.AddQuery(
+				query.PromQL(
+					promql.SetLabelMatchers(
+						"sum(node_namespace_pod_container:container_cpu_usage_seconds_total:sum_rate5m{cluster=\"$cluster\", namespace=\"$namespace\"}) / sum(kube_pod_container_resource_requests{job=\"kube-state-metrics\", cluster=\"$cluster\", namespace=\"$namespace\", resource=\"cpu\"})",
+						labelMatchers,
+					),
+					dashboards.AddQueryDataSource(datasourceName),
+				),
+			),
+		}
+	case "namespace-limits":
+		panelName = "CPU Utilization (from limits)"
+		description = "Shows the CPU utilization of the namespace from pod CPU limits."
+		queries = []panel.Option{
+			panel.AddQuery(
+				query.PromQL(
+					promql.SetLabelMatchers(
+						"sum(node_namespace_pod_container:container_cpu_usage_seconds_total:sum_rate5m{cluster=\"$cluster\", namespace=\"$namespace\"}) / sum(kube_pod_container_resource_limits{job=\"kube-state-metrics\", cluster=\"$cluster\", namespace=\"$namespace\", resource=\"cpu\"})",
+						labelMatchers,
+					),
+					dashboards.AddQueryDataSource(datasourceName),
+				),
+			),
+		}
+	}
+
+	panelOpts := []panel.Option{
+		panel.Description(description),
+		statPanel.Chart(
+			statPanel.Format(commonSdk.Format{
+				Unit:          string(commonSdk.PercentUnit),
+				DecimalPlaces: 2,
+			}),
+			statPanel.ValueFontSize(50),
+		),
+	}
+	panelOpts = append(panelOpts, queries...)
+
+	return panelgroup.AddPanel(panelName, panelOpts...)
+}
+
+func KubernetesCPURequestsCommitmentStat(granularity, datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
+	var description string
+	var queries []panel.Option
+
+	switch granularity {
+	case "multicluster":
+		description = "Shows the CPU requests commitment of all clusters."
+		queries = []panel.Option{
+			panel.AddQuery(
+				query.PromQL(
+					promql.SetLabelMatchers(
+						"sum(kube_pod_container_resource_requests{job=\"kube-state-metrics\", resource=\"cpu\"}) / sum(kube_node_status_allocatable{job=\"kube-state-metrics\", resource=\"cpu\"})",
+						labelMatchers,
+					),
+					dashboards.AddQueryDataSource(datasourceName),
+				),
+			),
+		}
+	case "cluster":
+		description = "Shows the CPU requests commitment of the cluster."
+		queries = []panel.Option{
+			panel.AddQuery(
+				query.PromQL(
+					promql.SetLabelMatchers(
+						"sum(namespace_cpu:kube_pod_container_resource_requests:sum{cluster=\"$cluster\"}) / sum(kube_node_status_allocatable{job=\"kube-state-metrics\",resource=\"cpu\",cluster=\"$cluster\"})",
+						labelMatchers,
+					),
+					dashboards.AddQueryDataSource(datasourceName),
+				),
+			),
+		}
+	}
+
+	panelOpts := []panel.Option{
+		panel.Description(description),
+		statPanel.Chart(
+			statPanel.Format(commonSdk.Format{
+				Unit:          string(commonSdk.PercentUnit),
+				DecimalPlaces: 2,
+			}),
+			statPanel.ValueFontSize(50),
+		),
+	}
+	panelOpts = append(panelOpts, queries...)
+
+	return panelgroup.AddPanel("CPU Requests Commitment", panelOpts...)
+}
+
+func KubernetesCPULimitsCommitmentStat(granularity, datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
+	var description string
+	var queries []panel.Option
+
+	switch granularity {
+	case "multicluster":
+		description = "Shows the CPU limits commitment of all clusters."
+		queries = []panel.Option{
+			panel.AddQuery(
+				query.PromQL(
+					promql.SetLabelMatchers(
+						"sum(kube_pod_container_resource_limits{job=\"kube-state-metrics\", resource=\"cpu\"}) / sum(kube_node_status_allocatable{job=\"kube-state-metrics\", resource=\"cpu\"})",
+						labelMatchers,
+					),
+					dashboards.AddQueryDataSource(datasourceName),
+				),
+			),
+		}
+	case "cluster":
+		description = "Shows the CPU limits commitment of the cluster."
+		queries = []panel.Option{
+			panel.AddQuery(
+				query.PromQL(
+					promql.SetLabelMatchers(
+						"sum(namespace_cpu:kube_pod_container_resource_limits:sum{cluster=\"$cluster\"}) / sum(kube_node_status_allocatable{job=\"kube-state-metrics\",resource=\"cpu\",cluster=\"$cluster\"})",
+						labelMatchers,
+					),
+					dashboards.AddQueryDataSource(datasourceName),
+				),
+			),
+		}
+	}
+
+	panelOpts := []panel.Option{
+		panel.Description(description),
+		statPanel.Chart(
+			statPanel.Format(commonSdk.Format{
+				Unit:          string(commonSdk.PercentUnit),
+				DecimalPlaces: 2,
+			}),
+			statPanel.ValueFontSize(50),
+		),
+	}
+	panelOpts = append(panelOpts, queries...)
+
+	return panelgroup.AddPanel("CPU Limits Commitment", panelOpts...)
+}
+
+func KubernetesMemoryUtilizationStat(granularity, datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
+	var panelName, description string
+	var queries []panel.Option
+
+	switch granularity {
+	case "multicluster":
+		panelName = "Memory Utilization"
+		description = "Shows the Memory utilization of all clusters."
+		queries = []panel.Option{
+			panel.AddQuery(
+				query.PromQL(
+					promql.SetLabelMatchers(
+						"1 - sum(:node_memory_MemAvailable_bytes:sum) / sum(node_memory_MemTotal_bytes{job=\"node-exporter\"})",
+						labelMatchers,
+					),
+					dashboards.AddQueryDataSource(datasourceName),
+				),
+			),
+		}
+	case "cluster":
+		panelName = "Memory Utilization"
+		description = "Shows the Memory utilization of the cluster."
+		queries = []panel.Option{
+			panel.AddQuery(
+				query.PromQL(
+					promql.SetLabelMatchers(
+						"1 - sum(:node_memory_MemAvailable_bytes:sum{cluster=\"$cluster\"}) / sum(node_memory_MemTotal_bytes{job=\"node-exporter\",cluster=\"$cluster\"})",
+						labelMatchers,
+					),
+					dashboards.AddQueryDataSource(datasourceName),
+				),
+			),
+		}
+	case "namespace-requests":
+		panelName = "Memory Utilization (from requests)"
+		description = "Shows the Memory utilization of the namespace from pod memory requests."
+		queries = []panel.Option{
+			panel.AddQuery(
+				query.PromQL(
+					promql.SetLabelMatchers(
+						"sum(container_memory_working_set_bytes{job=\"cadvisor\", cluster=\"$cluster\", namespace=\"$namespace\",container!=\"\", image!=\"\"}) / sum(kube_pod_container_resource_requests{job=\"kube-state-metrics\", cluster=\"$cluster\", namespace=\"$namespace\", resource=\"memory\"})",
+						labelMatchers,
+					),
+					dashboards.AddQueryDataSource(datasourceName),
+				),
+			),
+		}
+	case "namespace-limits":
+		panelName = "Memory Utilization (from limits)"
+		description = "Shows the Memory utilization of the namespace from pod memory limits."
+		queries = []panel.Option{
+			panel.AddQuery(
+				query.PromQL(
+					promql.SetLabelMatchers(
+						"sum(container_memory_working_set_bytes{job=\"cadvisor\", cluster=\"$cluster\", namespace=\"$namespace\",container!=\"\", image!=\"\"}) / sum(kube_pod_container_resource_limits{job=\"kube-state-metrics\", cluster=\"$cluster\", namespace=\"$namespace\", resource=\"memory\"})",
+						labelMatchers,
+					),
+					dashboards.AddQueryDataSource(datasourceName),
+				),
+			),
+		}
+	}
+
+	panelOpts := []panel.Option{
+		panel.Description(description),
+		statPanel.Chart(
+			statPanel.Format(commonSdk.Format{
+				Unit:          string(commonSdk.PercentUnit),
+				DecimalPlaces: 2,
+			}),
+			statPanel.ValueFontSize(50),
+		),
+	}
+	panelOpts = append(panelOpts, queries...)
+
+	return panelgroup.AddPanel(panelName, panelOpts...)
+}
+
+func KubernetesMemoryRequestsCommitmentStat(granularity, datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
+	var description string
+	var queries []panel.Option
+
+	switch granularity {
+	case "multicluster":
+		description = "Shows the Memory requests commitment of all clusters."
+		queries = []panel.Option{
+			panel.AddQuery(
+				query.PromQL(
+					promql.SetLabelMatchers(
+						"sum(kube_pod_container_resource_requests{job=\"kube-state-metrics\", resource=\"memory\"}) / sum(kube_node_status_allocatable{job=\"kube-state-metrics\", resource=\"memory\"})",
+						labelMatchers,
+					),
+					dashboards.AddQueryDataSource(datasourceName),
+				),
+			),
+		}
+	case "cluster":
+		description = "Shows the Memory requests commitment of the cluster."
+		queries = []panel.Option{
+			panel.AddQuery(
+				query.PromQL(
+					promql.SetLabelMatchers(
+						"sum(namespace_memory:kube_pod_container_resource_requests:sum{cluster=\"$cluster\"}) / sum(kube_node_status_allocatable{job=\"kube-state-metrics\",resource=\"memory\",cluster=\"$cluster\"})",
+						labelMatchers,
+					),
+					dashboards.AddQueryDataSource(datasourceName),
+				),
+			),
+		}
+	}
+
+	panelOpts := []panel.Option{
+		panel.Description(description),
+		statPanel.Chart(
+			statPanel.Format(commonSdk.Format{
+				Unit:          string(commonSdk.PercentUnit),
+				DecimalPlaces: 2,
+			}),
+			statPanel.ValueFontSize(50),
+		),
+	}
+	panelOpts = append(panelOpts, queries...)
+
+	return panelgroup.AddPanel("Memory Requests Commitment", panelOpts...)
+}
+
+func KubernetesMemoryLimitsCommitmentStat(granularity, datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
+	var description string
+	var queries []panel.Option
+
+	switch granularity {
+	case "multicluster":
+		description = "Shows the Memory limits commitment of all clusters."
+		queries = []panel.Option{
+			panel.AddQuery(
+				query.PromQL(
+					promql.SetLabelMatchers(
+						"sum(kube_pod_container_resource_limits{job=\"kube-state-metrics\", resource=\"memory\"}) / sum(kube_node_status_allocatable{job=\"kube-state-metrics\", resource=\"memory\"})",
+						labelMatchers,
+					),
+					dashboards.AddQueryDataSource(datasourceName),
+				),
+			),
+		}
+	case "cluster":
+		description = "Shows the Memory limits commitment of the cluster."
+		queries = []panel.Option{
+			panel.AddQuery(
+				query.PromQL(
+					promql.SetLabelMatchers(
+						"sum(namespace_memory:kube_pod_container_resource_limits:sum{cluster=\"$cluster\"}) / sum(kube_node_status_allocatable{job=\"kube-state-metrics\",resource=\"memory\",cluster=\"$cluster\"})",
+						labelMatchers,
+					),
+					dashboards.AddQueryDataSource(datasourceName),
+				),
+			),
+		}
+	}
+
+	panelOpts := []panel.Option{
+		panel.Description(description),
+		statPanel.Chart(
+			statPanel.Format(commonSdk.Format{
+				Unit:          string(commonSdk.PercentUnit),
+				DecimalPlaces: 2,
+			}),
+			statPanel.ValueFontSize(50),
+		),
+	}
+	panelOpts = append(panelOpts, queries...)
+
+	return panelgroup.AddPanel("Memory Limits Commitment", panelOpts...)
+}
 
 func KubernetesCPUUsage(granularity, datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
 	var queries []panel.Option

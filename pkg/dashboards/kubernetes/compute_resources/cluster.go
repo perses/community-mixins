@@ -15,12 +15,12 @@ func withClusterStatsGroup(datasource string, labelMatcher promql.LabelMatcher) 
 	return dashboard.AddPanelGroup("Cluster Stats",
 		panelgroup.PanelsPerLine(6),
 		panelgroup.PanelHeight(4),
-		panels.CPUUtilizationStat(datasource, labelMatcher),
-		panels.CPURequestsCommitmentStat(datasource, labelMatcher),
-		panels.CPULimitsCommitmentStat(datasource, labelMatcher),
-		panels.MemoryUtilizationStat(datasource, labelMatcher),
-		panels.MemoryRequestsCommitmentStat(datasource, labelMatcher),
-		panels.MemoryLimitsCommitmentStat(datasource, labelMatcher),
+		panels.KubernetesCPUUtilizationStat("cluster", datasource, labelMatcher),
+		panels.KubernetesCPURequestsCommitmentStat("cluster", datasource, labelMatcher),
+		panels.KubernetesCPULimitsCommitmentStat("cluster", datasource, labelMatcher),
+		panels.KubernetesMemoryUtilizationStat("cluster", datasource, labelMatcher),
+		panels.KubernetesMemoryRequestsCommitmentStat("cluster", datasource, labelMatcher),
+		panels.KubernetesMemoryLimitsCommitmentStat("cluster", datasource, labelMatcher),
 	)
 }
 
