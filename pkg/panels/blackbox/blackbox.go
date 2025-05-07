@@ -32,7 +32,8 @@ func ProbeStatusMap(datasourceName string, labelMatchers ...promql.LabelMatcher)
 		stat.Chart(
 			stat.Calculation(commonSdk.LastCalculation),
 			stat.Format(commonSdk.Format{
-				Unit: string(commonSdk.DecimalUnit),
+				Unit:          string(commonSdk.DecimalUnit),
+				DecimalPlaces: 0,
 			}),
 			stat.WithSparkline(stat.Sparkline{
 				Width: 1,
@@ -85,7 +86,8 @@ func ProbeSuccessCount(datasourceName string, labelMatchers ...promql.LabelMatch
 		stat.Chart(
 			stat.Calculation(commonSdk.LastCalculation),
 			stat.Format(commonSdk.Format{
-				Unit: string(commonSdk.DecimalUnit),
+				Unit:          string(commonSdk.DecimalUnit),
+				DecimalPlaces: 0,
 			}),
 			stat.WithSparkline(stat.Sparkline{
 				Width: 1,
@@ -274,7 +276,8 @@ func ProbeUptimeSuccess(datasourceName string, labelMatchers ...promql.LabelMatc
 		stat.Chart(
 			stat.Calculation(commonSdk.LastCalculation),
 			stat.Format(commonSdk.Format{
-				Unit: string(commonSdk.PercentDecimalUnit),
+				Unit:          string(commonSdk.PercentDecimalUnit),
+				DecimalPlaces: 0,
 			}),
 			stat.WithSparkline(stat.Sparkline{
 				Width: 1,
@@ -487,7 +490,8 @@ func ProbeStatusCode(datasourceName string, labelMatchers ...promql.LabelMatcher
 		stat.Chart(
 			stat.Calculation(commonSdk.LastCalculation),
 			stat.Format(commonSdk.Format{
-				Unit: string(commonSdk.DecimalUnit),
+				Unit:          string(commonSdk.DecimalUnit),
+				DecimalPlaces: 0,
 			}),
 			stat.WithSparkline(stat.Sparkline{
 				Width: 1,
@@ -615,7 +619,8 @@ func ProbeRedirects(datasourceName string, labelMatchers ...promql.LabelMatcher)
 		stat.Chart(
 			stat.Calculation(commonSdk.LastCalculation),
 			stat.Format(commonSdk.Format{
-				Unit: string(commonSdk.DecimalUnit),
+				Unit:          string(commonSdk.DecimalUnit),
+				DecimalPlaces: 0,
 			}),
 			stat.WithSparkline(stat.Sparkline{
 				Width: 1,
