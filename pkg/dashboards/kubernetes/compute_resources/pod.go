@@ -138,7 +138,10 @@ func BuildKubernetesPodOverview(project string, datasource string, clusterLabelN
 					labelValuesVar.Matchers(
 						promql.SetLabelMatchers(
 							"kube_pod_info{job=\"kube-state-metrics\"}",
-							[]promql.LabelMatcher{{Name: "cluster", Type: "=", Value: "$cluster"}, {Name: "namespace", Type: "=", Value: "$namespace"}},
+							[]promql.LabelMatcher{
+								{Name: "cluster", Type: "=", Value: "$cluster"},
+								{Name: "namespace", Type: "=", Value: "$namespace"},
+							},
 						),
 					),
 					dashboards.AddVariableDatasource(datasource),
