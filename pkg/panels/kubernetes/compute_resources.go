@@ -52,7 +52,7 @@ func KubernetesCPUUtilizationStat(granularity, datasourceName string, labelMatch
 			panel.AddQuery(
 				query.PromQL(
 					promql.SetLabelMatchers(
-						"sum(node_namespace_pod_container:container_cpu_usage_seconds_total:sum_rate5m{cluster=\"$cluster\", namespace=\"$namespace\"}) / sum(kube_pod_container_resource_requests{"+GetKubeStateMetricsMatcher()+", cluster=\"$cluster\", namespace=\"$namespace\", resource=\"cpu\"})",
+						"sum("+GetNodeNSCPUSecondsRecordingRule()+"{cluster=\"$cluster\", namespace=\"$namespace\"}) / sum(kube_pod_container_resource_requests{"+GetKubeStateMetricsMatcher()+", cluster=\"$cluster\", namespace=\"$namespace\", resource=\"cpu\"})",
 						labelMatchers,
 					),
 					dashboards.AddQueryDataSource(datasourceName),
@@ -66,7 +66,7 @@ func KubernetesCPUUtilizationStat(granularity, datasourceName string, labelMatch
 			panel.AddQuery(
 				query.PromQL(
 					promql.SetLabelMatchers(
-						"sum(node_namespace_pod_container:container_cpu_usage_seconds_total:sum_rate5m{cluster=\"$cluster\", namespace=\"$namespace\"}) / sum(kube_pod_container_resource_limits{"+GetKubeStateMetricsMatcher()+", cluster=\"$cluster\", namespace=\"$namespace\", resource=\"cpu\"})",
+						"sum("+GetNodeNSCPUSecondsRecordingRule()+"{cluster=\"$cluster\", namespace=\"$namespace\"}) / sum(kube_pod_container_resource_limits{"+GetKubeStateMetricsMatcher()+", cluster=\"$cluster\", namespace=\"$namespace\", resource=\"cpu\"})",
 						labelMatchers,
 					),
 					dashboards.AddQueryDataSource(datasourceName),
@@ -198,7 +198,7 @@ func KubernetesMemoryUtilizationStat(granularity, datasourceName string, labelMa
 			panel.AddQuery(
 				query.PromQL(
 					promql.SetLabelMatchers(
-						"1 - sum(:node_memory_MemAvailable_bytes:sum) / sum(node_memory_MemTotal_bytes{job=\"node-exporter\"})",
+						"1 - sum(:node_memory_MemAvailable_bytes:sum) / sum(node_memory_MemTotal_bytes{"+GetNodeExporterMatcher()+"})",
 						labelMatchers,
 					),
 					dashboards.AddQueryDataSource(datasourceName),
@@ -212,7 +212,7 @@ func KubernetesMemoryUtilizationStat(granularity, datasourceName string, labelMa
 			panel.AddQuery(
 				query.PromQL(
 					promql.SetLabelMatchers(
-						"1 - sum(:node_memory_MemAvailable_bytes:sum{cluster=\"$cluster\"}) / sum(node_memory_MemTotal_bytes{job=\"node-exporter\",cluster=\"$cluster\"})",
+						"1 - sum(:node_memory_MemAvailable_bytes:sum{cluster=\"$cluster\"}) / sum(node_memory_MemTotal_bytes{"+GetNodeExporterMatcher()+",cluster=\"$cluster\"})",
 						labelMatchers,
 					),
 					dashboards.AddQueryDataSource(datasourceName),
@@ -371,7 +371,7 @@ func KubernetesCPUUsage(granularity, datasourceName string, labelMatchers ...pro
 			panel.AddQuery(
 				query.PromQL(
 					promql.SetLabelMatchers(
-						"sum(node_namespace_pod_container:container_cpu_usage_seconds_total:sum_rate5m) by (cluster)",
+						"sum("+GetNodeNSCPUSecondsRecordingRule()+") by (cluster)",
 						labelMatchers,
 					),
 					dashboards.AddQueryDataSource(datasourceName),
@@ -385,7 +385,7 @@ func KubernetesCPUUsage(granularity, datasourceName string, labelMatchers ...pro
 			panel.AddQuery(
 				query.PromQL(
 					promql.SetLabelMatchers(
-						"sum(node_namespace_pod_container:container_cpu_usage_seconds_total:sum_rate5m{cluster=\"$cluster\"}) by (namespace)",
+						"sum("+GetNodeNSCPUSecondsRecordingRule()+"{cluster=\"$cluster\"}) by (namespace)",
 						labelMatchers,
 					),
 					dashboards.AddQueryDataSource(datasourceName),
@@ -409,7 +409,7 @@ func KubernetesCPUUsage(granularity, datasourceName string, labelMatchers ...pro
 			panel.AddQuery(
 				query.PromQL(
 					promql.SetLabelMatchers(
-						"sum(node_namespace_pod_container:container_cpu_usage_seconds_total:sum_rate5m{cluster=\"$cluster\", node=~\"$node\"}) by (pod)",
+						"sum("+GetNodeNSCPUSecondsRecordingRule()+"{cluster=\"$cluster\", node=~\"$node\"}) by (pod)",
 						labelMatchers,
 					),
 					dashboards.AddQueryDataSource(datasourceName),
@@ -423,7 +423,7 @@ func KubernetesCPUUsage(granularity, datasourceName string, labelMatchers ...pro
 			panel.AddQuery(
 				query.PromQL(
 					promql.SetLabelMatchers(
-						"sum(node_namespace_pod_container:container_cpu_usage_seconds_total:sum_rate5m{cluster=\"$cluster\", namespace=\"$namespace\"}) by (pod)",
+						"sum("+GetNodeNSCPUSecondsRecordingRule()+"{cluster=\"$cluster\", namespace=\"$namespace\"}) by (pod)",
 						labelMatchers,
 					),
 					dashboards.AddQueryDataSource(datasourceName),
@@ -457,7 +457,7 @@ func KubernetesCPUUsage(granularity, datasourceName string, labelMatchers ...pro
 			panel.AddQuery(
 				query.PromQL(
 					promql.SetLabelMatchers(
-						"sum(\n  node_namespace_pod_container:container_cpu_usage_seconds_total:sum_rate5m{cluster=\"$cluster\", namespace=\"$namespace\"}\n* on(namespace,pod)\n  group_left(workload, workload_type) namespace_workload_pod:kube_pod_owner:relabel{cluster=\"$cluster\", namespace=\"$namespace\", workload_type=~\"$type\"}\n) by (workload, workload_type)\n",
+						"sum(\n  "+GetNodeNSCPUSecondsRecordingRule()+"{cluster=\"$cluster\", namespace=\"$namespace\"}\n* on(namespace,pod)\n  group_left(workload, workload_type) namespace_workload_pod:kube_pod_owner:relabel{cluster=\"$cluster\", namespace=\"$namespace\", workload_type=~\"$type\"}\n) by (workload, workload_type)\n",
 						labelMatchers,
 					),
 					dashboards.AddQueryDataSource(datasourceName),
@@ -491,7 +491,7 @@ func KubernetesCPUUsage(granularity, datasourceName string, labelMatchers ...pro
 			panel.AddQuery(
 				query.PromQL(
 					promql.SetLabelMatchers(
-						"sum(\n    node_namespace_pod_container:container_cpu_usage_seconds_total:sum_rate5m{cluster=\"$cluster\", namespace=\"$namespace\"}\n  * on(namespace,pod)\n    group_left(workload, workload_type) namespace_workload_pod:kube_pod_owner:relabel{cluster=\"$cluster\", namespace=\"$namespace\", workload=\"$workload\", workload_type=~\"$type\"}\n) by (pod)\n",
+						"sum(\n    "+GetNodeNSCPUSecondsRecordingRule()+"{cluster=\"$cluster\", namespace=\"$namespace\"}\n  * on(namespace,pod)\n    group_left(workload, workload_type) namespace_workload_pod:kube_pod_owner:relabel{cluster=\"$cluster\", namespace=\"$namespace\", workload=\"$workload\", workload_type=~\"$type\"}\n) by (pod)\n",
 						labelMatchers,
 					),
 					dashboards.AddQueryDataSource(datasourceName),
@@ -505,7 +505,7 @@ func KubernetesCPUUsage(granularity, datasourceName string, labelMatchers ...pro
 			panel.AddQuery(
 				query.PromQL(
 					promql.SetLabelMatchers(
-						"sum(node_namespace_pod_container:container_cpu_usage_seconds_total:sum_rate5m{namespace=\"$namespace\", pod=\"$pod\", cluster=\"$cluster\", container!=\"\"}) by (container)",
+						"sum("+GetNodeNSCPUSecondsRecordingRule()+"{namespace=\"$namespace\", pod=\"$pod\", cluster=\"$cluster\", container!=\"\"}) by (container)",
 						labelMatchers,
 					),
 					dashboards.AddQueryDataSource(datasourceName),

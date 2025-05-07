@@ -494,22 +494,4 @@ spec:
                     sum by (cluster) (container_memory_rss{container!="",job="cadvisor"})
                   /
                     sum by (cluster) (kube_pod_container_resource_limits{job="kube-state-metrics",resource="memory"})
-  variables:
-  - kind: ListVariable
-    spec:
-      allowAllValue: false
-      allowMultiple: false
-      display:
-        hidden: false
-        name: cluster
-      name: cluster
-      plugin:
-        kind: PrometheusLabelValuesVariable
-        spec:
-          datasource:
-            kind: PrometheusDatasource
-            name: prometheus-datasource
-          labelName: cluster
-          matchers:
-          - up{job="kubelet", metrics_path="/metrics/cadvisor"}
 status: {}

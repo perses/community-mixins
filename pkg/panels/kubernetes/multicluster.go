@@ -63,7 +63,7 @@ func MultiClusterCPUUsageQuota(datasourceName string, labelMatchers ...promql.La
 		panel.AddQuery(
 			query.PromQL(
 				promql.SetLabelMatchers(
-					"sum(node_namespace_pod_container:container_cpu_usage_seconds_total:sum_rate5m) by (cluster)",
+					"sum("+GetNodeNSCPUSecondsRecordingRule()+") by (cluster)",
 					labelMatchers,
 				),
 				dashboards.AddQueryDataSource(datasourceName),
@@ -81,7 +81,7 @@ func MultiClusterCPUUsageQuota(datasourceName string, labelMatchers ...promql.La
 		panel.AddQuery(
 			query.PromQL(
 				promql.SetLabelMatchers(
-					"sum(node_namespace_pod_container:container_cpu_usage_seconds_total:sum_rate5m) by (cluster) / sum(kube_pod_container_resource_requests{"+GetKubeStateMetricsMatcher()+", resource=\"cpu\"}) by (cluster)",
+					"sum("+GetNodeNSCPUSecondsRecordingRule()+") by (cluster) / sum(kube_pod_container_resource_requests{"+GetKubeStateMetricsMatcher()+", resource=\"cpu\"}) by (cluster)",
 					labelMatchers,
 				),
 				dashboards.AddQueryDataSource(datasourceName),
@@ -99,7 +99,7 @@ func MultiClusterCPUUsageQuota(datasourceName string, labelMatchers ...promql.La
 		panel.AddQuery(
 			query.PromQL(
 				promql.SetLabelMatchers(
-					"sum(node_namespace_pod_container:container_cpu_usage_seconds_total:sum_rate5m) by (cluster) / sum(kube_pod_container_resource_limits{"+GetKubeStateMetricsMatcher()+", resource=\"cpu\"}) by (cluster)",
+					"sum("+GetNodeNSCPUSecondsRecordingRule()+") by (cluster) / sum(kube_pod_container_resource_limits{"+GetKubeStateMetricsMatcher()+", resource=\"cpu\"}) by (cluster)",
 					labelMatchers,
 				),
 				dashboards.AddQueryDataSource(datasourceName),

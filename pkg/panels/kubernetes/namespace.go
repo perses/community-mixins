@@ -63,7 +63,7 @@ func NamespaceCPUUsageQuota(datasourceName string, labelMatchers ...promql.Label
 		panel.AddQuery(
 			query.PromQL(
 				promql.SetLabelMatchers(
-					"sum(node_namespace_pod_container:container_cpu_usage_seconds_total:sum_rate5m{cluster=\"$cluster\", namespace=\"$namespace\"}) by (pod)",
+					"sum("+GetNodeNSCPUSecondsRecordingRule()+"{cluster=\"$cluster\", namespace=\"$namespace\"}) by (pod)",
 					labelMatchers,
 				),
 				dashboards.AddQueryDataSource(datasourceName),
@@ -81,7 +81,7 @@ func NamespaceCPUUsageQuota(datasourceName string, labelMatchers ...promql.Label
 		panel.AddQuery(
 			query.PromQL(
 				promql.SetLabelMatchers(
-					"sum(node_namespace_pod_container:container_cpu_usage_seconds_total:sum_rate5m{cluster=\"$cluster\", namespace=\"$namespace\"}) by (pod) / sum(cluster:namespace:pod_cpu:active:kube_pod_container_resource_requests{cluster=\"$cluster\", namespace=\"$namespace\"}) by (pod)",
+					"sum("+GetNodeNSCPUSecondsRecordingRule()+"{cluster=\"$cluster\", namespace=\"$namespace\"}) by (pod) / sum(cluster:namespace:pod_cpu:active:kube_pod_container_resource_requests{cluster=\"$cluster\", namespace=\"$namespace\"}) by (pod)",
 					labelMatchers,
 				),
 				dashboards.AddQueryDataSource(datasourceName),
@@ -99,7 +99,7 @@ func NamespaceCPUUsageQuota(datasourceName string, labelMatchers ...promql.Label
 		panel.AddQuery(
 			query.PromQL(
 				promql.SetLabelMatchers(
-					"sum(node_namespace_pod_container:container_cpu_usage_seconds_total:sum_rate5m{cluster=\"$cluster\", namespace=\"$namespace\"}) by (pod) / sum(cluster:namespace:pod_cpu:active:kube_pod_container_resource_limits{cluster=\"$cluster\", namespace=\"$namespace\"}) by (pod)",
+					"sum("+GetNodeNSCPUSecondsRecordingRule()+"{cluster=\"$cluster\", namespace=\"$namespace\"}) by (pod) / sum(cluster:namespace:pod_cpu:active:kube_pod_container_resource_limits{cluster=\"$cluster\", namespace=\"$namespace\"}) by (pod)",
 					labelMatchers,
 				),
 				dashboards.AddQueryDataSource(datasourceName),

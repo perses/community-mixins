@@ -8,24 +8,6 @@ metadata:
 spec:
     display:
         name: Kubernetes / Compute Resources / Multi-Cluster
-    variables:
-        - kind: ListVariable
-          spec:
-            display:
-                name: cluster
-                hidden: false
-            allowAllValue: false
-            allowMultiple: false
-            plugin:
-                kind: PrometheusLabelValuesVariable
-                spec:
-                    datasource:
-                        kind: PrometheusDatasource
-                        name: prometheus-datasource
-                    labelName: cluster
-                    matchers:
-                        - up{job="kubelet", metrics_path="/metrics/cadvisor"}
-            name: cluster
     panels:
         "0_0":
             kind: Panel

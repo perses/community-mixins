@@ -6,9 +6,6 @@ import (
 	"github.com/perses/community-dashboards/pkg/promql"
 	"github.com/perses/perses/go-sdk/dashboard"
 	panelgroup "github.com/perses/perses/go-sdk/panel-group"
-
-	labelValuesVar "github.com/perses/perses/go-sdk/prometheus/variable/label-values"
-	listVar "github.com/perses/perses/go-sdk/variable/list-variable"
 )
 
 func withMultiClusterStatsGroup(datasource string, labelMatcher promql.LabelMatcher) dashboard.Option {
@@ -61,15 +58,6 @@ func BuildKubernetesMultiClusterOverview(project string, datasource string, clus
 	return dashboard.New("kubernetes-multi-cluster-resources-overview",
 		dashboard.ProjectName(project),
 		dashboard.Name("Kubernetes / Compute Resources / Multi-Cluster"),
-		dashboard.AddVariable("cluster",
-			listVar.List(
-				labelValuesVar.PrometheusLabelValues("cluster",
-					labelValuesVar.Matchers("up{"+panels.GetKubeletMatcher()+", metrics_path=\"/metrics/cadvisor\"}"),
-					dashboards.AddVariableDatasource(datasource),
-				),
-				listVar.DisplayName("cluster"),
-			),
-		),
 		withMultiClusterStatsGroup(datasource, clusterLabelMatcher),
 		withMultiClusterCPUUsageGroup(datasource, clusterLabelMatcher),
 		withMultiClusterCPUUsageQuotaGroup(datasource, clusterLabelMatcher),

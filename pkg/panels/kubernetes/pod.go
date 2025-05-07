@@ -99,7 +99,7 @@ func PodCPUUsageQuota(datasourceName string, labelMatchers ...promql.LabelMatche
 		panel.AddQuery(
 			query.PromQL(
 				promql.SetLabelMatchers(
-					"sum(node_namespace_pod_container:container_cpu_usage_seconds_total:sum_rate5m{cluster=\"$cluster\", namespace=\"$namespace\", pod=\"$pod\", container!=\"\"}) by (container)",
+					"sum("+GetNodeNSCPUSecondsRecordingRule()+"{cluster=\"$cluster\", namespace=\"$namespace\", pod=\"$pod\", container!=\"\"}) by (container)",
 					labelMatchers,
 				),
 				dashboards.AddQueryDataSource(datasourceName),
@@ -117,7 +117,7 @@ func PodCPUUsageQuota(datasourceName string, labelMatchers ...promql.LabelMatche
 		panel.AddQuery(
 			query.PromQL(
 				promql.SetLabelMatchers(
-					"sum(node_namespace_pod_container:container_cpu_usage_seconds_total:sum_rate5m{cluster=\"$cluster\", namespace=\"$namespace\", pod=\"$pod\", container!=\"\"}) by (container) / sum(cluster:namespace:pod_cpu:active:kube_pod_container_resource_requests{cluster=\"$cluster\", namespace=\"$namespace\", pod=\"$pod\", container!=\"\"}) by (container)",
+					"sum("+GetNodeNSCPUSecondsRecordingRule()+"{cluster=\"$cluster\", namespace=\"$namespace\", pod=\"$pod\", container!=\"\"}) by (container) / sum(cluster:namespace:pod_cpu:active:kube_pod_container_resource_requests{cluster=\"$cluster\", namespace=\"$namespace\", pod=\"$pod\", container!=\"\"}) by (container)",
 					labelMatchers,
 				),
 				dashboards.AddQueryDataSource(datasourceName),
@@ -135,7 +135,7 @@ func PodCPUUsageQuota(datasourceName string, labelMatchers ...promql.LabelMatche
 		panel.AddQuery(
 			query.PromQL(
 				promql.SetLabelMatchers(
-					"sum(node_namespace_pod_container:container_cpu_usage_seconds_total:sum_rate5m{cluster=\"$cluster\", namespace=\"$namespace\", pod=\"$pod\", container!=\"\"}) by (container) / sum(cluster:namespace:pod_cpu:active:kube_pod_container_resource_limits{cluster=\"$cluster\", namespace=\"$namespace\", pod=\"$pod\", container!=\"\"}) by (container)",
+					"sum("+GetNodeNSCPUSecondsRecordingRule()+"{cluster=\"$cluster\", namespace=\"$namespace\", pod=\"$pod\", container!=\"\"}) by (container) / sum(cluster:namespace:pod_cpu:active:kube_pod_container_resource_limits{cluster=\"$cluster\", namespace=\"$namespace\", pod=\"$pod\", container!=\"\"}) by (container)",
 					labelMatchers,
 				),
 				dashboards.AddQueryDataSource(datasourceName),
