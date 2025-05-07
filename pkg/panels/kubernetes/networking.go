@@ -1034,7 +1034,7 @@ func KubernetesTransmittedPackets(granularity, datasourceName string, labelMatch
 			panel.AddQuery(
 				query.PromQL(
 					promql.SetLabelMatchers(
-						"sum(rate(container_network_transmit_packets_total{cluster=\"$cluster\",namespace=~\"$namespace\", pod=~\"$pod\"}[$__rate_interval])) by (pod)",
+						"sum(rate(container_network_transmit_packets_total{cluster=\"$cluster\",namespace=~\"$namespace\", pod=~\"$pod\"}[5m])) by (pod)",
 						labelMatchers,
 					),
 					dashboards.AddQueryDataSource(datasourceName),

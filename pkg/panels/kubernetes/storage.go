@@ -31,8 +31,7 @@ func KubernetesIOPS(granularity, datasourceName string, labelMatchers ...promql.
 				),
 			),
 		}
-
-	case "namespace":
+	case "namespace-pod":
 		panelName = "IOPS(Reads+Writes)"
 		description = "Shows IOPS(Reads+Writes) by pods in a namespace."
 		queries = []panel.Option{
@@ -136,8 +135,7 @@ func KubernetesThroughput(granularity, datasourceName string, labelMatchers ...p
 				),
 			),
 		}
-
-	case "namespace":
+	case "namespace-pod":
 		panelName = "ThroughPut(Read+Write)"
 		description = "Shows Throughput(Read+Write) by pods in a namespace."
 		queries = []panel.Option{

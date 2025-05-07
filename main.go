@@ -43,6 +43,7 @@ func main() {
 	dashboardWriter.Add(blackbox.BuildBlackboxExporter(project, datasource, clusterLabelName))
 	dashboardWriter.Add(k8sComputeResources.BuildKubernetesNodeResourcesOverview(project, datasource, clusterLabelName))
 	dashboardWriter.Add(k8sComputeResources.BuildKubernetesClusterOverview(project, datasource, clusterLabelName))
+	dashboardWriter.Add(k8sComputeResources.BuildKubernetesNamespaceOverview(project, datasource, clusterLabelName))
 
 	dashboardWriter.Write()
 }
