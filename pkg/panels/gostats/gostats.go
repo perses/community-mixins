@@ -26,6 +26,13 @@ func MemoryUsage(datasourceName string, labelMatchers ...promql.LabelMatcher) pa
 				Mode:     timeSeriesPanel.TableMode,
 				Values:   []commonSdk.Calculation{commonSdk.LastCalculation},
 			}),
+			timeSeriesPanel.WithVisual(timeSeriesPanel.Visual{
+				Display:      timeSeriesPanel.LineDisplay,
+				ConnectNulls: false,
+				LineWidth:    0.25,
+				AreaOpacity:  0.5,
+				Palette:      timeSeriesPanel.Palette{Mode: timeSeriesPanel.AutoMode},
+			}),
 		),
 		panel.AddQuery(
 			query.PromQL(
@@ -114,6 +121,13 @@ func Goroutines(datasourceName string, labelMatchers ...promql.LabelMatcher) pan
 				Mode:     timeSeriesPanel.TableMode,
 				Values:   []commonSdk.Calculation{commonSdk.LastCalculation},
 			}),
+			timeSeriesPanel.WithVisual(timeSeriesPanel.Visual{
+				Display:      timeSeriesPanel.LineDisplay,
+				ConnectNulls: false,
+				LineWidth:    0.25,
+				AreaOpacity:  0.5,
+				Palette:      timeSeriesPanel.Palette{Mode: timeSeriesPanel.AutoMode},
+			}),
 		),
 		panel.AddQuery(
 			query.PromQL(
@@ -141,6 +155,13 @@ func GarbageCollectionPauseTimeQuantiles(datasourceName string, labelMatchers ..
 				Position: timeSeriesPanel.BottomPosition,
 				Mode:     timeSeriesPanel.TableMode,
 				Values:   []commonSdk.Calculation{commonSdk.LastCalculation},
+			}),
+			timeSeriesPanel.WithVisual(timeSeriesPanel.Visual{
+				Display:      timeSeriesPanel.LineDisplay,
+				ConnectNulls: false,
+				LineWidth:    0.25,
+				AreaOpacity:  0.5,
+				Palette:      timeSeriesPanel.Palette{Mode: timeSeriesPanel.AutoMode},
 			}),
 		),
 		panel.AddQuery(

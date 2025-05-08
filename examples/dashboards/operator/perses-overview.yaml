@@ -233,6 +233,12 @@ spec:
               position: bottom
               values:
               - last
+            visual:
+              areaOpacity: 0.5
+              display: line
+              lineWidth: 0.25
+              palette:
+                mode: auto
             yAxis:
               format:
                 unit: bytes
@@ -349,6 +355,12 @@ spec:
               position: bottom
               values:
               - last
+            visual:
+              areaOpacity: 0.5
+              display: line
+              lineWidth: 0.25
+              palette:
+                mode: auto
             yAxis:
               format:
                 unit: decimal
@@ -377,6 +389,12 @@ spec:
               position: bottom
               values:
               - last
+            visual:
+              areaOpacity: 0.5
+              display: line
+              lineWidth: 0.25
+              palette:
+                mode: auto
             yAxis:
               format:
                 unit: milliseconds
