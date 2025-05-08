@@ -563,7 +563,7 @@ spec:
         display:
           description: Shows the memory requests, limits, and usage of workloads by
             namespace in tabular format.
-          name: Memory Quota
+          name: Memory Requests by Namespace
         plugin:
           kind: Table
           spec:

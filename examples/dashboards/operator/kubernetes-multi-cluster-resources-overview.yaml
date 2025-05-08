@@ -295,7 +295,7 @@ spec:
         display:
           description: Shows the CPU requests, limits, and usage of clusters in tabular
             format.
-          name: Multi-Cluster CPU Quota
+          name: CPU Quota
         plugin:
           kind: Table
           spec:
@@ -414,7 +414,7 @@ spec:
         display:
           description: Shows the memory requests, limits, and usage of clusters in
             tabular format.
-          name: Multi-Cluster Memory Quota
+          name: Memory Requests by Cluster
         plugin:
           kind: Table
           spec:

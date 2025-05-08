@@ -137,7 +137,7 @@ func ClusterCPUUsageQuota(datasourceName string, labelMatchers ...promql.LabelMa
 }
 
 func ClusterMemoryUsageQuota(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
-	return panelgroup.AddPanel("Memory Quota",
+	return panelgroup.AddPanel("Memory Requests by Namespace",
 		panel.Description("Shows the memory requests, limits, and usage of workloads by namespace in tabular format."),
 		tablePanel.Table(
 			tablePanel.Transform([]commonSdk.Transform{

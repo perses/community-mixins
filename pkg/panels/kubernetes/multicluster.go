@@ -12,7 +12,7 @@ import (
 )
 
 func MultiClusterCPUUsageQuota(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
-	return panelgroup.AddPanel("Multi-Cluster CPU Quota",
+	return panelgroup.AddPanel("CPU Quota",
 		panel.Description("Shows the CPU requests, limits, and usage of clusters in tabular format."),
 		tablePanel.Table(
 			tablePanel.Transform([]commonSdk.Transform{
@@ -109,7 +109,7 @@ func MultiClusterCPUUsageQuota(datasourceName string, labelMatchers ...promql.La
 }
 
 func MultiClusterMemoryUsageQuota(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
-	return panelgroup.AddPanel("Multi-Cluster Memory Quota",
+	return panelgroup.AddPanel("Memory Requests by Cluster",
 		panel.Description("Shows the memory requests, limits, and usage of clusters in tabular format."),
 		tablePanel.Table(
 			tablePanel.Transform([]commonSdk.Transform{
