@@ -150,7 +150,7 @@ $RECYCLE.BIN/
 # End of https://www.toptal.com/developers/gitignore/api/go,visualstudiocode,vim,linux,macos,windows,git
 
 # dashboard build directory
-dist/
+built/
 
 # tmp folder
 tmp/
