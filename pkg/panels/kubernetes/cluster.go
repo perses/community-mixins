@@ -318,7 +318,7 @@ func ClusterCurrentNetworkUsage(datasourceName string, labelMatchers ...promql.L
 		panel.AddQuery(
 			query.PromQL(
 				promql.SetLabelMatchers(
-					"sum(rate(container_network_receive_bytes_total{"+GetCAdvisorMatcher()+", cluster=\"$cluster\", namespace=~\".+\"}[5m])) by (namespace)",
+					"sum(rate(container_network_receive_bytes_total{"+GetCAdvisorMatcher()+", cluster=\"$cluster\", namespace=~\".+\"}[$__rate_interval])) by (namespace)",
 					labelMatchers,
 				),
 				dashboards.AddQueryDataSource(datasourceName),
@@ -327,7 +327,7 @@ func ClusterCurrentNetworkUsage(datasourceName string, labelMatchers ...promql.L
 		panel.AddQuery(
 			query.PromQL(
 				promql.SetLabelMatchers(
-					"sum(rate(container_network_transmit_bytes_total{"+GetCAdvisorMatcher()+", cluster=\"$cluster\", namespace=~\".+\"}[5m])) by (namespace)",
+					"sum(rate(container_network_transmit_bytes_total{"+GetCAdvisorMatcher()+", cluster=\"$cluster\", namespace=~\".+\"}[$__rate_interval])) by (namespace)",
 					labelMatchers,
 				),
 				dashboards.AddQueryDataSource(datasourceName),
@@ -336,7 +336,7 @@ func ClusterCurrentNetworkUsage(datasourceName string, labelMatchers ...promql.L
 		panel.AddQuery(
 			query.PromQL(
 				promql.SetLabelMatchers(
-					"sum(rate(container_network_receive_packets_total{"+GetCAdvisorMatcher()+", cluster=\"$cluster\", namespace=~\".+\"}[5m])) by (namespace)",
+					"sum(rate(container_network_receive_packets_total{"+GetCAdvisorMatcher()+", cluster=\"$cluster\", namespace=~\".+\"}[$__rate_interval])) by (namespace)",
 					labelMatchers,
 				),
 				dashboards.AddQueryDataSource(datasourceName),
@@ -345,7 +345,7 @@ func ClusterCurrentNetworkUsage(datasourceName string, labelMatchers ...promql.L
 		panel.AddQuery(
 			query.PromQL(
 				promql.SetLabelMatchers(
-					"sum(rate(container_network_transmit_packets_total{"+GetCAdvisorMatcher()+", cluster=\"$cluster\", namespace=~\".+\"}[5m])) by (namespace)",
+					"sum(rate(container_network_transmit_packets_total{"+GetCAdvisorMatcher()+", cluster=\"$cluster\", namespace=~\".+\"}[$__rate_interval])) by (namespace)",
 					labelMatchers,
 				),
 				dashboards.AddQueryDataSource(datasourceName),
@@ -354,7 +354,7 @@ func ClusterCurrentNetworkUsage(datasourceName string, labelMatchers ...promql.L
 		panel.AddQuery(
 			query.PromQL(
 				promql.SetLabelMatchers(
-					"sum(rate(container_network_receive_packets_dropped_total{"+GetCAdvisorMatcher()+", cluster=\"$cluster\", namespace=~\".+\"}[5m])) by (namespace)",
+					"sum(rate(container_network_receive_packets_dropped_total{"+GetCAdvisorMatcher()+", cluster=\"$cluster\", namespace=~\".+\"}[$__rate_interval])) by (namespace)",
 					labelMatchers,
 				),
 				dashboards.AddQueryDataSource(datasourceName),
@@ -363,7 +363,7 @@ func ClusterCurrentNetworkUsage(datasourceName string, labelMatchers ...promql.L
 		panel.AddQuery(
 			query.PromQL(
 				promql.SetLabelMatchers(
-					"sum(rate(container_network_transmit_packets_dropped_total{"+GetCAdvisorMatcher()+", cluster=\"$cluster\", namespace=~\".+\"}[5m])) by (namespace)",
+					"sum(rate(container_network_transmit_packets_dropped_total{"+GetCAdvisorMatcher()+", cluster=\"$cluster\", namespace=~\".+\"}[$__rate_interval])) by (namespace)",
 					labelMatchers,
 				),
 				dashboards.AddQueryDataSource(datasourceName),
@@ -429,7 +429,7 @@ func ClusterCurrentStorageIO(datasourceName string, labelMatchers ...promql.Labe
 		panel.AddQuery(
 			query.PromQL(
 				promql.SetLabelMatchers(
-					"sum by(namespace) (rate(container_fs_reads_total{"+GetCAdvisorMatcher()+", device=~\"(/dev.+)|mmcblk.p.+|nvme.+|rbd.+|sd.+|vd.+|xvd.+|dm-.+|dasd.+\", container!=\"\", cluster=\"$cluster\", namespace!=\"\"}[5m]))",
+					"sum by(namespace) (rate(container_fs_reads_total{"+GetCAdvisorMatcher()+", device=~\"(/dev.+)|mmcblk.p.+|nvme.+|rbd.+|sd.+|vd.+|xvd.+|dm-.+|dasd.+\", container!=\"\", cluster=\"$cluster\", namespace!=\"\"}[$__rate_interval]))",
 					labelMatchers,
 				),
 				dashboards.AddQueryDataSource(datasourceName),
@@ -438,7 +438,7 @@ func ClusterCurrentStorageIO(datasourceName string, labelMatchers ...promql.Labe
 		panel.AddQuery(
 			query.PromQL(
 				promql.SetLabelMatchers(
-					"sum by(namespace) (rate(container_fs_writes_total{"+GetCAdvisorMatcher()+", device=~\"(/dev.+)|mmcblk.p.+|nvme.+|rbd.+|sd.+|vd.+|xvd.+|dm-.+|dasd.+\", container!=\"\", cluster=\"$cluster\", namespace!=\"\"}[5m]))",
+					"sum by(namespace) (rate(container_fs_writes_total{"+GetCAdvisorMatcher()+", device=~\"(/dev.+)|mmcblk.p.+|nvme.+|rbd.+|sd.+|vd.+|xvd.+|dm-.+|dasd.+\", container!=\"\", cluster=\"$cluster\", namespace!=\"\"}[$__rate_interval]))",
 					labelMatchers,
 				),
 				dashboards.AddQueryDataSource(datasourceName),
@@ -447,7 +447,7 @@ func ClusterCurrentStorageIO(datasourceName string, labelMatchers ...promql.Labe
 		panel.AddQuery(
 			query.PromQL(
 				promql.SetLabelMatchers(
-					"sum by(namespace) (rate(container_fs_reads_total{"+GetCAdvisorMatcher()+", device=~\"(/dev.+)|mmcblk.p.+|nvme.+|rbd.+|sd.+|vd.+|xvd.+|dm-.+|dasd.+\", container!=\"\", cluster=\"$cluster\", namespace!=\"\"}[5m]) + rate(container_fs_writes_total{"+GetCAdvisorMatcher()+", device=~\"(/dev.+)|mmcblk.p.+|nvme.+|rbd.+|sd.+|vd.+|xvd.+|dm-.+|dasd.+\", container!=\"\", cluster=\"$cluster\", namespace!=\"\"}[5m]))",
+					"sum by(namespace) (rate(container_fs_reads_total{"+GetCAdvisorMatcher()+", device=~\"(/dev.+)|mmcblk.p.+|nvme.+|rbd.+|sd.+|vd.+|xvd.+|dm-.+|dasd.+\", container!=\"\", cluster=\"$cluster\", namespace!=\"\"}[$__rate_interval]) + rate(container_fs_writes_total{"+GetCAdvisorMatcher()+", device=~\"(/dev.+)|mmcblk.p.+|nvme.+|rbd.+|sd.+|vd.+|xvd.+|dm-.+|dasd.+\", container!=\"\", cluster=\"$cluster\", namespace!=\"\"}[$__rate_interval]))",
 					labelMatchers,
 				),
 				dashboards.AddQueryDataSource(datasourceName),
@@ -456,7 +456,7 @@ func ClusterCurrentStorageIO(datasourceName string, labelMatchers ...promql.Labe
 		panel.AddQuery(
 			query.PromQL(
 				promql.SetLabelMatchers(
-					"sum by(namespace) (rate(container_fs_reads_bytes_total{"+GetCAdvisorMatcher()+", device=~\"(/dev.+)|mmcblk.p.+|nvme.+|rbd.+|sd.+|vd.+|xvd.+|dm-.+|dasd.+\", container!=\"\", cluster=\"$cluster\", namespace!=\"\"}[5m]))",
+					"sum by(namespace) (rate(container_fs_reads_bytes_total{"+GetCAdvisorMatcher()+", device=~\"(/dev.+)|mmcblk.p.+|nvme.+|rbd.+|sd.+|vd.+|xvd.+|dm-.+|dasd.+\", container!=\"\", cluster=\"$cluster\", namespace!=\"\"}[$__rate_interval]))",
 					labelMatchers,
 				),
 				dashboards.AddQueryDataSource(datasourceName),
@@ -465,7 +465,7 @@ func ClusterCurrentStorageIO(datasourceName string, labelMatchers ...promql.Labe
 		panel.AddQuery(
 			query.PromQL(
 				promql.SetLabelMatchers(
-					"sum by(namespace) (rate(container_fs_writes_bytes_total{"+GetCAdvisorMatcher()+", device=~\"(/dev.+)|mmcblk.p.+|nvme.+|rbd.+|sd.+|vd.+|xvd.+|dm-.+|dasd.+\", container!=\"\", cluster=\"$cluster\", namespace!=\"\"}[5m]))",
+					"sum by(namespace) (rate(container_fs_writes_bytes_total{"+GetCAdvisorMatcher()+", device=~\"(/dev.+)|mmcblk.p.+|nvme.+|rbd.+|sd.+|vd.+|xvd.+|dm-.+|dasd.+\", container!=\"\", cluster=\"$cluster\", namespace!=\"\"}[$__rate_interval]))",
 					labelMatchers,
 				),
 				dashboards.AddQueryDataSource(datasourceName),
@@ -474,7 +474,7 @@ func ClusterCurrentStorageIO(datasourceName string, labelMatchers ...promql.Labe
 		panel.AddQuery(
 			query.PromQL(
 				promql.SetLabelMatchers(
-					"sum by(namespace) (rate(container_fs_reads_bytes_total{"+GetCAdvisorMatcher()+", device=~\"(/dev.+)|mmcblk.p.+|nvme.+|rbd.+|sd.+|vd.+|xvd.+|dm-.+|dasd.+\", container!=\"\", cluster=\"$cluster\", namespace!=\"\"}[5m]) + rate(container_fs_writes_bytes_total{"+GetCAdvisorMatcher()+", device=~\"(/dev.+)|mmcblk.p.+|nvme.+|rbd.+|sd.+|vd.+|xvd.+|dm-.+|dasd.+\", container!=\"\", cluster=\"$cluster\", namespace!=\"\"}[5m]))",
+					"sum by(namespace) (rate(container_fs_reads_bytes_total{"+GetCAdvisorMatcher()+", device=~\"(/dev.+)|mmcblk.p.+|nvme.+|rbd.+|sd.+|vd.+|xvd.+|dm-.+|dasd.+\", container!=\"\", cluster=\"$cluster\", namespace!=\"\"}[$__rate_interval]) + rate(container_fs_writes_bytes_total{"+GetCAdvisorMatcher()+", device=~\"(/dev.+)|mmcblk.p.+|nvme.+|rbd.+|sd.+|vd.+|xvd.+|dm-.+|dasd.+\", container!=\"\", cluster=\"$cluster\", namespace!=\"\"}[$__rate_interval]))",
 					labelMatchers,
 				),
 				dashboards.AddQueryDataSource(datasourceName),

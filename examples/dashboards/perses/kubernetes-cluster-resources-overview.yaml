@@ -535,44 +535,8 @@ spec:
                                     name: prometheus-datasource
                                 query: |-
                                     sum by (namespace) (
-                                      rate(container_network_receive_bytes_total{cluster="$cluster",job="cadvisor",namespace=~".+"}[5m])
-                                    )
-                    - kind: TimeSeriesQuery
-                      spec:
-                        plugin:
-                            kind: PrometheusTimeSeriesQuery
-                            spec:
-                                datasource:
-                                    kind: PrometheusDatasource
-                                    name: prometheus-datasource
-                                query: |-
-                                    sum by (namespace) (
-                                      rate(container_network_transmit_bytes_total{cluster="$cluster",job="cadvisor",namespace=~".+"}[5m])
-                                    )
-                    - kind: TimeSeriesQuery
-                      spec:
-                        plugin:
-                            kind: PrometheusTimeSeriesQuery
-                            spec:
-                                datasource:
-                                    kind: PrometheusDatasource
-                                    name: prometheus-datasource
-                                query: |-
-                                    sum by (namespace) (
-                                      rate(container_network_receive_packets_total{cluster="$cluster",job="cadvisor",namespace=~".+"}[5m])
-                                    )
-                    - kind: TimeSeriesQuery
-                      spec:
-                        plugin:
-                            kind: PrometheusTimeSeriesQuery
-                            spec:
-                                datasource:
-                                    kind: PrometheusDatasource
-                                    name: prometheus-datasource
-                                query: |-
-                                    sum by (namespace) (
                                       rate(
-                                        container_network_transmit_packets_total{cluster="$cluster",job="cadvisor",namespace=~".+"}[5m]
+                                        container_network_receive_bytes_total{cluster="$cluster",job="cadvisor",namespace=~".+"}[$__rate_interval]
                                       )
                                     )
                     - kind: TimeSeriesQuery
@@ -586,7 +550,7 @@ spec:
                                 query: |-
                                     sum by (namespace) (
                                       rate(
-                                        container_network_receive_packets_dropped_total{cluster="$cluster",job="cadvisor",namespace=~".+"}[5m]
+                                        container_network_transmit_bytes_total{cluster="$cluster",job="cadvisor",namespace=~".+"}[$__rate_interval]
                                       )
                                     )
                     - kind: TimeSeriesQuery
@@ -600,7 +564,49 @@ spec:
                                 query: |-
                                     sum by (namespace) (
                                       rate(
-                                        container_network_transmit_packets_dropped_total{cluster="$cluster",job="cadvisor",namespace=~".+"}[5m]
+                                        container_network_receive_packets_total{cluster="$cluster",job="cadvisor",namespace=~".+"}[$__rate_interval]
+                                      )
+                                    )
+                    - kind: TimeSeriesQuery
+                      spec:
+                        plugin:
+                            kind: PrometheusTimeSeriesQuery
+                            spec:
+                                datasource:
+                                    kind: PrometheusDatasource
+                                    name: prometheus-datasource
+                                query: |-
+                                    sum by (namespace) (
+                                      rate(
+                                        container_network_transmit_packets_total{cluster="$cluster",job="cadvisor",namespace=~".+"}[$__rate_interval]
+                                      )
+                                    )
+                    - kind: TimeSeriesQuery
+                      spec:
+                        plugin:
+                            kind: PrometheusTimeSeriesQuery
+                            spec:
+                                datasource:
+                                    kind: PrometheusDatasource
+                                    name: prometheus-datasource
+                                query: |-
+                                    sum by (namespace) (
+                                      rate(
+                                        container_network_receive_packets_dropped_total{cluster="$cluster",job="cadvisor",namespace=~".+"}[$__rate_interval]
+                                      )
+                                    )
+                    - kind: TimeSeriesQuery
+                      spec:
+                        plugin:
+                            kind: PrometheusTimeSeriesQuery
+                            spec:
+                                datasource:
+                                    kind: PrometheusDatasource
+                                    name: prometheus-datasource
+                                query: |-
+                                    sum by (namespace) (
+                                      rate(
+                                        container_network_transmit_packets_dropped_total{cluster="$cluster",job="cadvisor",namespace=~".+"}[$__rate_interval]
                                       )
                                     )
         "6_0":
@@ -636,7 +642,9 @@ spec:
                                     name: prometheus-datasource
                                 query: |-
                                     sum by (namespace) (
-                                      rate(container_network_receive_bytes_total{cluster="$cluster",job="cadvisor",namespace=~".+"}[5m])
+                                      rate(
+                                        container_network_receive_bytes_total{cluster="$cluster",job="cadvisor",namespace=~".+"}[$__rate_interval]
+                                      )
                                     )
                                 seriesNameFormat: '{{namespace}}'
         "6_1":
@@ -672,7 +680,9 @@ spec:
                                     name: prometheus-datasource
                                 query: |-
                                     sum by (namespace) (
-                                      rate(container_network_transmit_bytes_total{cluster="$cluster",job="cadvisor",namespace=~".+"}[5m])
+                                      rate(
+                                        container_network_transmit_bytes_total{cluster="$cluster",job="cadvisor",namespace=~".+"}[$__rate_interval]
+                                      )
                                     )
                                 seriesNameFormat: '{{namespace}}'
         "7_0":
@@ -708,7 +718,9 @@ spec:
                                     name: prometheus-datasource
                                 query: |-
                                     avg by (namespace) (
-                                      irate(container_network_receive_bytes_total{cluster="$cluster",job="cadvisor",namespace=~".+"}[5m])
+                                      irate(
+                                        container_network_receive_bytes_total{cluster="$cluster",job="cadvisor",namespace=~".+"}[$__rate_interval]
+                                      )
                                     )
                                 seriesNameFormat: '{{namespace}}'
         "7_1":
@@ -744,7 +756,9 @@ spec:
                                     name: prometheus-datasource
                                 query: |-
                                     avg by (namespace) (
-                                      irate(container_network_transmit_bytes_total{cluster="$cluster",job="cadvisor",namespace=~".+"}[5m])
+                                      irate(
+                                        container_network_transmit_bytes_total{cluster="$cluster",job="cadvisor",namespace=~".+"}[$__rate_interval]
+                                      )
                                     )
                                 seriesNameFormat: '{{namespace}}'
         "8_0":
@@ -781,7 +795,7 @@ spec:
                                 query: |-
                                     sum by (namespace) (
                                       irate(
-                                        container_network_receive_packets_total{cluster="$cluster",job="cadvisor",namespace=~".+"}[5m]
+                                        container_network_receive_packets_total{cluster="$cluster",job="cadvisor",namespace=~".+"}[$__rate_interval]
                                       )
                                     )
                                 seriesNameFormat: '{{namespace}}'
@@ -819,7 +833,7 @@ spec:
                                 query: |-
                                     sum by (namespace) (
                                       irate(
-                                        container_network_transmit_packets_total{cluster="$cluster",job="cadvisor",namespace=~".+"}[5m]
+                                        container_network_transmit_packets_total{cluster="$cluster",job="cadvisor",namespace=~".+"}[$__rate_interval]
                                       )
                                     )
                                 seriesNameFormat: '{{namespace}}'
@@ -857,7 +871,7 @@ spec:
                                 query: |-
                                     sum by (namespace) (
                                       irate(
-                                        container_network_receive_packets_dropped_total{cluster="$cluster",job="cadvisor",namespace=~".+"}[5m]
+                                        container_network_receive_packets_dropped_total{cluster="$cluster",job="cadvisor",namespace=~".+"}[$__rate_interval]
                                       )
                                     )
                                 seriesNameFormat: '{{namespace}}'
@@ -895,7 +909,7 @@ spec:
                                 query: |-
                                     sum by (namespace) (
                                       irate(
-                                        container_network_transmit_packets_dropped_total{cluster="$cluster",job="cadvisor",namespace=~".+"}[5m]
+                                        container_network_transmit_packets_dropped_total{cluster="$cluster",job="cadvisor",namespace=~".+"}[$__rate_interval]
                                       )
                                     )
                                 seriesNameFormat: '{{namespace}}'
@@ -934,10 +948,12 @@ spec:
                                     ceil(
                                       sum by (namespace) (
                                           rate(
-                                            container_fs_reads_total{cluster="$cluster",container!="",device=~"(/dev.+)|mmcblk.p.+|nvme.+|rbd.+|sd.+|vd.+|xvd.+|dm-.+|dasd.+",job="cadvisor",namespace!=""}[5m]
+                                            container_fs_reads_total{cluster="$cluster",container!="",device=~"(/dev.+)|mmcblk.p.+|nvme.+|rbd.+|sd.+|vd.+|xvd.+|dm-.+|dasd.+",job="cadvisor",namespace!=""}[$__rate_interval]
                                           )
                                         +
-                                          rate(container_fs_writes_total{cluster="$cluster",container!="",job="cadvisor",namespace!=""}[5m])
+                                          rate(
+                                            container_fs_writes_total{cluster="$cluster",container!="",job="cadvisor",namespace!=""}[$__rate_interval]
+                                          )
                                       )
                                     )
                                 seriesNameFormat: '{{namespace}}'
@@ -975,11 +991,11 @@ spec:
                                 query: |-
                                     sum by (namespace) (
                                         rate(
-                                          container_fs_reads_bytes_total{cluster="$cluster",container!="",device=~"(/dev.+)|mmcblk.p.+|nvme.+|rbd.+|sd.+|vd.+|xvd.+|dm-.+|dasd.+",job="cadvisor",namespace!=""}[5m]
+                                          container_fs_reads_bytes_total{cluster="$cluster",container!="",device=~"(/dev.+)|mmcblk.p.+|nvme.+|rbd.+|sd.+|vd.+|xvd.+|dm-.+|dasd.+",job="cadvisor",namespace!=""}[$__rate_interval]
                                         )
                                       +
                                         rate(
-                                          container_fs_writes_bytes_total{cluster="$cluster",container!="",job="cadvisor",namespace!=""}[5m]
+                                          container_fs_writes_bytes_total{cluster="$cluster",container!="",job="cadvisor",namespace!=""}[$__rate_interval]
                                         )
                                     )
                                 seriesNameFormat: '{{namespace}}'
@@ -1031,7 +1047,7 @@ spec:
                                 query: |-
                                     sum by (namespace) (
                                       rate(
-                                        container_fs_reads_total{cluster="$cluster",container!="",device=~"(/dev.+)|mmcblk.p.+|nvme.+|rbd.+|sd.+|vd.+|xvd.+|dm-.+|dasd.+",job="cadvisor",namespace!=""}[5m]
+                                        container_fs_reads_total{cluster="$cluster",container!="",device=~"(/dev.+)|mmcblk.p.+|nvme.+|rbd.+|sd.+|vd.+|xvd.+|dm-.+|dasd.+",job="cadvisor",namespace!=""}[$__rate_interval]
                                       )
                                     )
                     - kind: TimeSeriesQuery
@@ -1045,7 +1061,7 @@ spec:
                                 query: |-
                                     sum by (namespace) (
                                       rate(
-                                        container_fs_writes_total{cluster="$cluster",container!="",device=~"(/dev.+)|mmcblk.p.+|nvme.+|rbd.+|sd.+|vd.+|xvd.+|dm-.+|dasd.+",job="cadvisor",namespace!=""}[5m]
+                                        container_fs_writes_total{cluster="$cluster",container!="",device=~"(/dev.+)|mmcblk.p.+|nvme.+|rbd.+|sd.+|vd.+|xvd.+|dm-.+|dasd.+",job="cadvisor",namespace!=""}[$__rate_interval]
                                       )
                                     )
                     - kind: TimeSeriesQuery
@@ -1059,11 +1075,11 @@ spec:
                                 query: |-
                                     sum by (namespace) (
                                         rate(
-                                          container_fs_reads_total{cluster="$cluster",container!="",device=~"(/dev.+)|mmcblk.p.+|nvme.+|rbd.+|sd.+|vd.+|xvd.+|dm-.+|dasd.+",job="cadvisor",namespace!=""}[5m]
+                                          container_fs_reads_total{cluster="$cluster",container!="",device=~"(/dev.+)|mmcblk.p.+|nvme.+|rbd.+|sd.+|vd.+|xvd.+|dm-.+|dasd.+",job="cadvisor",namespace!=""}[$__rate_interval]
                                         )
                                       +
                                         rate(
-                                          container_fs_writes_total{cluster="$cluster",container!="",device=~"(/dev.+)|mmcblk.p.+|nvme.+|rbd.+|sd.+|vd.+|xvd.+|dm-.+|dasd.+",job="cadvisor",namespace!=""}[5m]
+                                          container_fs_writes_total{cluster="$cluster",container!="",device=~"(/dev.+)|mmcblk.p.+|nvme.+|rbd.+|sd.+|vd.+|xvd.+|dm-.+|dasd.+",job="cadvisor",namespace!=""}[$__rate_interval]
                                         )
                                     )
                     - kind: TimeSeriesQuery
@@ -1077,7 +1093,7 @@ spec:
                                 query: |-
                                     sum by (namespace) (
                                       rate(
-                                        container_fs_reads_bytes_total{cluster="$cluster",container!="",device=~"(/dev.+)|mmcblk.p.+|nvme.+|rbd.+|sd.+|vd.+|xvd.+|dm-.+|dasd.+",job="cadvisor",namespace!=""}[5m]
+                                        container_fs_reads_bytes_total{cluster="$cluster",container!="",device=~"(/dev.+)|mmcblk.p.+|nvme.+|rbd.+|sd.+|vd.+|xvd.+|dm-.+|dasd.+",job="cadvisor",namespace!=""}[$__rate_interval]
                                       )
                                     )
                     - kind: TimeSeriesQuery
@@ -1091,7 +1107,7 @@ spec:
                                 query: |-
                                     sum by (namespace) (
                                       rate(
-                                        container_fs_writes_bytes_total{cluster="$cluster",container!="",device=~"(/dev.+)|mmcblk.p.+|nvme.+|rbd.+|sd.+|vd.+|xvd.+|dm-.+|dasd.+",job="cadvisor",namespace!=""}[5m]
+                                        container_fs_writes_bytes_total{cluster="$cluster",container!="",device=~"(/dev.+)|mmcblk.p.+|nvme.+|rbd.+|sd.+|vd.+|xvd.+|dm-.+|dasd.+",job="cadvisor",namespace!=""}[$__rate_interval]
                                       )
                                     )
                     - kind: TimeSeriesQuery
@@ -1105,11 +1121,11 @@ spec:
                                 query: |-
                                     sum by (namespace) (
                                         rate(
-                                          container_fs_reads_bytes_total{cluster="$cluster",container!="",device=~"(/dev.+)|mmcblk.p.+|nvme.+|rbd.+|sd.+|vd.+|xvd.+|dm-.+|dasd.+",job="cadvisor",namespace!=""}[5m]
+                                          container_fs_reads_bytes_total{cluster="$cluster",container!="",device=~"(/dev.+)|mmcblk.p.+|nvme.+|rbd.+|sd.+|vd.+|xvd.+|dm-.+|dasd.+",job="cadvisor",namespace!=""}[$__rate_interval]
                                         )
                                       +
                                         rate(
-                                          container_fs_writes_bytes_total{cluster="$cluster",container!="",device=~"(/dev.+)|mmcblk.p.+|nvme.+|rbd.+|sd.+|vd.+|xvd.+|dm-.+|dasd.+",job="cadvisor",namespace!=""}[5m]
+                                          container_fs_writes_bytes_total{cluster="$cluster",container!="",device=~"(/dev.+)|mmcblk.p.+|nvme.+|rbd.+|sd.+|vd.+|xvd.+|dm-.+|dasd.+",job="cadvisor",namespace!=""}[$__rate_interval]
                                         )
                                     )
     layouts:

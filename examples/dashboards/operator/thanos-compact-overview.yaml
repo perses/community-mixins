@@ -341,7 +341,7 @@ spec:
                   name: prometheus-datasource
                 query: |-
                   sum by (namespace, job, resolution) (
-                    rate(thanos_compact_group_compactions_total{job=~"$job",namespace="$namespace"}[5m])
+                    rate(thanos_compact_group_compactions_total{job=~"$job",namespace="$namespace"}[$__rate_interval])
                   )
                 seriesNameFormat: 'Resolution: {{resolution}} - {{job}} {{namespace}}'
     "1_1":
@@ -372,11 +372,11 @@ spec:
                 query: |2-
                     (
                         sum by (namespace, job) (
-                          rate(thanos_compact_group_compactions_failures_total{job=~"$job",namespace="$namespace"}[5m])
+                          rate(thanos_compact_group_compactions_failures_total{job=~"$job",namespace="$namespace"}[$__rate_interval])
                         )
                       /
                         sum by (namespace, job) (
-                          rate(thanos_compact_group_compactions_total{job=~"$job",namespace="$namespace"}[5m])
+                          rate(thanos_compact_group_compactions_total{job=~"$job",namespace="$namespace"}[$__rate_interval])
                         )
                     )
                   *
@@ -409,7 +409,7 @@ spec:
                   name: prometheus-datasource
                 query: |-
                   sum by (namespace, job, resolution) (
-                    rate(thanos_compact_downsample_total{job=~"$job",namespace="$namespace"}[5m])
+                    rate(thanos_compact_downsample_total{job=~"$job",namespace="$namespace"}[$__rate_interval])
                   )
                 seriesNameFormat: 'Resolution: {{resolution}} - {{job}} {{namespace}}'
     "2_1":
@@ -440,11 +440,11 @@ spec:
                 query: |2-
                     (
                         sum by (namespace, job) (
-                          rate(thanos_compact_downsample_failed_total{job=~"$job",namespace="$namespace"}[5m])
+                          rate(thanos_compact_downsample_failed_total{job=~"$job",namespace="$namespace"}[$__rate_interval])
                         )
                       /
                         sum by (namespace, job) (
-                          rate(thanos_compact_downsample_total{job=~"$job",namespace="$namespace"}[5m])
+                          rate(thanos_compact_downsample_total{job=~"$job",namespace="$namespace"}[$__rate_interval])
                         )
                     )
                   *
@@ -479,7 +479,9 @@ spec:
                   histogram_quantile(
                     0.5,
                     sum by (namespace, job, resolution, le) (
-                      rate(thanos_compact_downsample_duration_seconds_bucket{job=~"$job",namespace="$namespace"}[5m])
+                      rate(
+                        thanos_compact_downsample_duration_seconds_bucket{job=~"$job",namespace="$namespace"}[$__rate_interval]
+                      )
                     )
                   )
                 seriesNameFormat: 'p50 Resolution: {{resolution}} - {{job}} {{namespace}}'
@@ -495,7 +497,9 @@ spec:
                   histogram_quantile(
                     0.9,
                     sum by (namespace, job, resolution, le) (
-                      rate(thanos_compact_downsample_duration_seconds_bucket{job=~"$job",namespace="$namespace"}[5m])
+                      rate(
+                        thanos_compact_downsample_duration_seconds_bucket{job=~"$job",namespace="$namespace"}[$__rate_interval]
+                      )
                     )
                   )
                 seriesNameFormat: 'p90 Resolution: {{resolution}} - {{job}} {{namespace}}'
@@ -511,7 +515,9 @@ spec:
                   histogram_quantile(
                     0.99,
                     sum by (namespace, job, resolution, le) (
-                      rate(thanos_compact_downsample_duration_seconds_bucket{job=~"$job",namespace="$namespace"}[5m])
+                      rate(
+                        thanos_compact_downsample_duration_seconds_bucket{job=~"$job",namespace="$namespace"}[$__rate_interval]
+                      )
                     )
                   )
                 seriesNameFormat: 'p99 Resolution: {{resolution}} - {{job}} {{namespace}}'
@@ -541,7 +547,7 @@ spec:
                   name: prometheus-datasource
                 query: |-
                   sum by (namespace, job) (
-                    rate(thanos_blocks_meta_syncs_total{job=~"$job",namespace="$namespace"}[5m])
+                    rate(thanos_blocks_meta_syncs_total{job=~"$job",namespace="$namespace"}[$__rate_interval])
                   )
                 seriesNameFormat: '{{job}} {{namespace}}'
     "3_1":
@@ -572,11 +578,11 @@ spec:
                 query: |2-
                     (
                         sum by (namespace, job) (
-                          rate(thanos_blocks_meta_sync_failures_total{job=~"$job",namespace="$namespace"}[5m])
+                          rate(thanos_blocks_meta_sync_failures_total{job=~"$job",namespace="$namespace"}[$__rate_interval])
                         )
                       /
                         sum by (namespace, job) (
-                          rate(thanos_blocks_meta_syncs_total{job=~"$job",namespace="$namespace"}[5m])
+                          rate(thanos_blocks_meta_syncs_total{job=~"$job",namespace="$namespace"}[$__rate_interval])
                         )
                     )
                   *
@@ -611,7 +617,7 @@ spec:
                   histogram_quantile(
                     0.5,
                     sum by (namespace, job, le) (
-                      rate(thanos_blocks_meta_sync_duration_seconds_bucket{job=~"$job",namespace="$namespace"}[5m])
+                      rate(thanos_blocks_meta_sync_duration_seconds_bucket{job=~"$job",namespace="$namespace"}[$__rate_interval])
                     )
                   )
                 seriesNameFormat: p50 {{job}} {{namespace}}
@@ -627,7 +633,7 @@ spec:
                   histogram_quantile(
                     0.9,
                     sum by (namespace, job, le) (
-                      rate(thanos_blocks_meta_sync_duration_seconds_bucket{job=~"$job",namespace="$namespace"}[5m])
+                      rate(thanos_blocks_meta_sync_duration_seconds_bucket{job=~"$job",namespace="$namespace"}[$__rate_interval])
                     )
                   )
                 seriesNameFormat: p90 {{job}} {{namespace}}
@@ -643,7 +649,7 @@ spec:
                   histogram_quantile(
                     0.99,
                     sum by (namespace, job, le) (
-                      rate(thanos_blocks_meta_sync_duration_seconds_bucket{job=~"$job",namespace="$namespace"}[5m])
+                      rate(thanos_blocks_meta_sync_duration_seconds_bucket{job=~"$job",namespace="$namespace"}[$__rate_interval])
                     )
                   )
                 seriesNameFormat: p99 {{job}} {{namespace}}
@@ -673,7 +679,7 @@ spec:
                   name: prometheus-datasource
                 query: |-
                   sum by (namespace, job) (
-                    rate(thanos_compact_blocks_cleaned_total{job=~"$job",namespace="$namespace"}[5m])
+                    rate(thanos_compact_blocks_cleaned_total{job=~"$job",namespace="$namespace"}[$__rate_interval])
                   )
                 seriesNameFormat: '{{job}} {{namespace}}'
     "4_1":
@@ -703,7 +709,7 @@ spec:
                   name: prometheus-datasource
                 query: |-
                   sum by (namespace, job) (
-                    rate(thanos_compact_block_cleanup_failures_total{job=~"$job",namespace="$namespace"}[5m])
+                    rate(thanos_compact_block_cleanup_failures_total{job=~"$job",namespace="$namespace"}[$__rate_interval])
                   )
                 seriesNameFormat: '{{job}} {{namespace}}'
     "4_2":
@@ -734,7 +740,7 @@ spec:
                 query: |-
                   sum by (namespace, job) (
                     rate(
-                      thanos_compact_blocks_marked_total{job=~"$job",marker="deletion-mark.json",namespace="$namespace"}[5m]
+                      thanos_compact_blocks_marked_total{job=~"$job",marker="deletion-mark.json",namespace="$namespace"}[$__rate_interval]
                     )
                   )
                 seriesNameFormat: '{{job}} {{namespace}}'
@@ -765,7 +771,7 @@ spec:
                   name: prometheus-datasource
                 query: |-
                   sum by (namespace, job, operation) (
-                    rate(thanos_objstore_bucket_operations_total{job=~"$job",namespace="$namespace"}[5m])
+                    rate(thanos_objstore_bucket_operations_total{job=~"$job",namespace="$namespace"}[$__rate_interval])
                   )
                 seriesNameFormat: '{{job}} {{operation}} {{namespace}}'
     "5_1":
@@ -796,11 +802,11 @@ spec:
                 query: |2-
                     (
                         sum by (namespace, job, operation) (
-                          rate(thanos_objstore_bucket_operation_failures_total{job=~"$job",namespace="$namespace"}[5m])
+                          rate(thanos_objstore_bucket_operation_failures_total{job=~"$job",namespace="$namespace"}[$__rate_interval])
                         )
                       /
                         sum by (namespace, job, operation) (
-                          rate(thanos_objstore_bucket_operations_total{job=~"$job",namespace="$namespace"}[5m])
+                          rate(thanos_objstore_bucket_operations_total{job=~"$job",namespace="$namespace"}[$__rate_interval])
                         )
                     )
                   *
@@ -835,7 +841,7 @@ spec:
                     0.99,
                     sum by (namespace, job, operation, le) (
                       rate(
-                        thanos_objstore_bucket_operation_duration_seconds_bucket{job=~"$job",namespace="$namespace"}[5m]
+                        thanos_objstore_bucket_operation_duration_seconds_bucket{job=~"$job",namespace="$namespace"}[$__rate_interval]
                       )
                     )
                   )
@@ -853,7 +859,7 @@ spec:
                     0.9,
                     sum by (namespace, job, operation, le) (
                       rate(
-                        thanos_objstore_bucket_operation_duration_seconds_bucket{job=~"$job",namespace="$namespace"}[5m]
+                        thanos_objstore_bucket_operation_duration_seconds_bucket{job=~"$job",namespace="$namespace"}[$__rate_interval]
                       )
                     )
                   )
@@ -871,7 +877,7 @@ spec:
                     0.5,
                     sum by (namespace, job, operation, le) (
                       rate(
-                        thanos_objstore_bucket_operation_duration_seconds_bucket{job=~"$job",namespace="$namespace"}[5m]
+                        thanos_objstore_bucket_operation_duration_seconds_bucket{job=~"$job",namespace="$namespace"}[$__rate_interval]
                       )
                     )
                   )
@@ -929,7 +935,7 @@ spec:
                   name: prometheus-datasource
                 query: |-
                   sum by (namespace, job) (
-                    rate(thanos_compact_garbage_collection_total{job=~"$job",namespace="$namespace"}[5m])
+                    rate(thanos_compact_garbage_collection_total{job=~"$job",namespace="$namespace"}[$__rate_interval])
                   )
                 seriesNameFormat: '{{job}} {{namespace}}'
     "7_1":
@@ -960,11 +966,13 @@ spec:
                 query: |2-
                     (
                         sum by (namespace, job) (
-                          rate(thanos_compact_garbage_collection_failures_total{job=~"$job",namespace="$namespace"}[5m])
+                          rate(
+                            thanos_compact_garbage_collection_failures_total{job=~"$job",namespace="$namespace"}[$__rate_interval]
+                          )
                         )
                       /
                         sum by (namespace, job) (
-                          rate(thanos_compact_garbage_collection_total{job=~"$job",namespace="$namespace"}[5m])
+                          rate(thanos_compact_garbage_collection_total{job=~"$job",namespace="$namespace"}[$__rate_interval])
                         )
                     )
                   *
@@ -1000,7 +1008,7 @@ spec:
                     0.5,
                     sum by (namespace, job, le) (
                       rate(
-                        thanos_compact_garbage_collection_duration_seconds_bucket{job=~"$job",namespace="$namespace"}[5m]
+                        thanos_compact_garbage_collection_duration_seconds_bucket{job=~"$job",namespace="$namespace"}[$__rate_interval]
                       )
                     )
                   )
@@ -1018,7 +1026,7 @@ spec:
                     0.9,
                     sum by (namespace, job, le) (
                       rate(
-                        thanos_compact_garbage_collection_duration_seconds_bucket{job=~"$job",namespace="$namespace"}[5m]
+                        thanos_compact_garbage_collection_duration_seconds_bucket{job=~"$job",namespace="$namespace"}[$__rate_interval]
                       )
                     )
                   )
@@ -1036,7 +1044,7 @@ spec:
                     0.99,
                     sum by (namespace, job, le) (
                       rate(
-                        thanos_compact_garbage_collection_duration_seconds_bucket{job=~"$job",namespace="$namespace"}[5m]
+                        thanos_compact_garbage_collection_duration_seconds_bucket{job=~"$job",namespace="$namespace"}[$__rate_interval]
                       )
                     )
                   )

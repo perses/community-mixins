@@ -46,7 +46,7 @@ func NodeCPUUsagePercentage(datasourceName string, labelMatchers ...promql.Label
 		panel.AddQuery(
 			query.PromQL(
 				promql.SetLabelMatchers(
-					"((1 - sum without (mode) (rate(node_cpu_seconds_total{job='node', mode=~'idle|iowait|steal', instance='$instance'}[5m]))) / ignoring(cpu) group_left count without (cpu, mode) (node_cpu_seconds_total{job='node', mode='idle', instance='$instance'}))",
+					"((1 - sum without (mode) (rate(node_cpu_seconds_total{job='node', mode=~'idle|iowait|steal', instance='$instance'}[$__rate_interval]))) / ignoring(cpu) group_left count without (cpu, mode) (node_cpu_seconds_total{job='node', mode='idle', instance='$instance'}))",
 					labelMatchers,
 				),
 				dashboards.AddQueryDataSource(datasourceName),
@@ -660,7 +660,7 @@ func NodeDiskIOBytes(datasourceName string, labelMatchers ...promql.LabelMatcher
 		panel.AddQuery(
 			query.PromQL(
 				promql.SetLabelMatchers(
-					"rate(node_disk_read_bytes_total{job='node', instance='$instance',device!=''}[5m])",
+					"rate(node_disk_read_bytes_total{job='node', instance='$instance',device!=''}[$__rate_interval])",
 					labelMatchers,
 				),
 				dashboards.AddQueryDataSource(datasourceName),
@@ -670,7 +670,7 @@ func NodeDiskIOBytes(datasourceName string, labelMatchers ...promql.LabelMatcher
 		panel.AddQuery(
 			query.PromQL(
 				promql.SetLabelMatchers(
-					"rate(node_disk_io_time_seconds_total{job='node', instance='$instance',device!=''}[5m])",
+					"rate(node_disk_io_time_seconds_total{job='node', instance='$instance',device!=''}[$__rate_interval])",
 					labelMatchers,
 				),
 				dashboards.AddQueryDataSource(datasourceName),
@@ -706,7 +706,7 @@ func NodeDiskIOSeconds(datasourceName string, labelMatchers ...promql.LabelMatch
 		panel.AddQuery(
 			query.PromQL(
 				promql.SetLabelMatchers(
-					"rate(node_disk_io_time_seconds_total{job='node', instance='$instance',device!=''}[5m])",
+					"rate(node_disk_io_time_seconds_total{job='node', instance='$instance',device!=''}[$__rate_interval])",
 					labelMatchers,
 				),
 				dashboards.AddQueryDataSource(datasourceName),
@@ -750,7 +750,7 @@ func NodeNetworkReceivedBytes(datasourceName string, labelMatchers ...promql.Lab
 		panel.AddQuery(
 			query.PromQL(
 				promql.SetLabelMatchers(
-					"rate(node_network_receive_bytes_total{job='node', instance='$instance',device!='lo'}[5m])",
+					"rate(node_network_receive_bytes_total{job='node', instance='$instance',device!='lo'}[$__rate_interval])",
 					labelMatchers,
 				),
 				dashboards.AddQueryDataSource(datasourceName),
@@ -794,7 +794,7 @@ func NodeNetworkTransmitedBytes(datasourceName string, labelMatchers ...promql.L
 		panel.AddQuery(
 			query.PromQL(
 				promql.SetLabelMatchers(
-					"rate(node_network_transmit_bytes_total{job='node', instance='$instance',device!='lo'}[5m])",
+					"rate(node_network_transmit_bytes_total{job='node', instance='$instance',device!='lo'}[$__rate_interval])",
 					labelMatchers,
 				),
 				dashboards.AddQueryDataSource(datasourceName),

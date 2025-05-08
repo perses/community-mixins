@@ -29,7 +29,7 @@ func RemoteWriteRequestRate(datasourceName string, labelMatchers ...promql.Label
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchers("sum by (namespace, job, handler, code) (rate(http_requests_total{namespace='$namespace', job=~'$job', handler=\"receive\"}[5m]))",
+				promql.SetLabelMatchers("sum by (namespace, job, handler, code) (rate(http_requests_total{namespace='$namespace', job=~'$job', handler=\"receive\"}[$__rate_interval]))",
 					labelMatchers,
 				),
 				dashboards.AddQueryDataSource(datasourceName),
@@ -56,7 +56,7 @@ func RemoteWriteRequestErrors(datasourceName string, labelMatchers ...promql.Lab
 		panel.AddQuery(
 			query.PromQL(
 				promql.SetLabelMatchers(
-					"(sum by (namespace, job, code) (rate(http_requests_total{namespace='$namespace', job=~'$job', handler=\"receive\",code=~\"5..\"}[5m])) / ignoring (code) group_left() sum by (namespace, job) (rate(http_requests_total{namespace='$namespace', job=~'$job', handler=\"receive\"}[5m]))) * 100",
+					"(sum by (namespace, job, code) (rate(http_requests_total{namespace='$namespace', job=~'$job', handler=\"receive\",code=~\"5..\"}[$__rate_interval])) / ignoring (code) group_left() sum by (namespace, job) (rate(http_requests_total{namespace='$namespace', job=~'$job', handler=\"receive\"}[$__rate_interval]))) * 100",
 					labelMatchers,
 				),
 				dashboards.AddQueryDataSource(datasourceName),
@@ -83,7 +83,7 @@ func RemoteWriteRequestDurations(datasourceName string, labelMatchers ...promql.
 		panel.AddQuery(
 			query.PromQL(
 				promql.SetLabelMatchers(
-					"histogram_quantile(0.50, sum by (namespace, job, le) (rate(http_request_duration_seconds_bucket{namespace='$namespace', job=~'$job', handler=\"receive\"}[5m])))",
+					"histogram_quantile(0.50, sum by (namespace, job, le) (rate(http_request_duration_seconds_bucket{namespace='$namespace', job=~'$job', handler=\"receive\"}[$__rate_interval])))",
 					labelMatchers,
 				),
 				dashboards.AddQueryDataSource(datasourceName),
@@ -93,7 +93,7 @@ func RemoteWriteRequestDurations(datasourceName string, labelMatchers ...promql.
 		panel.AddQuery(
 			query.PromQL(
 				promql.SetLabelMatchers(
-					"histogram_quantile(0.90, sum by (namespace, job, le) (rate(http_request_duration_seconds_bucket{namespace='$namespace', job=~'$job', handler=\"receive\"}[5m])))",
+					"histogram_quantile(0.90, sum by (namespace, job, le) (rate(http_request_duration_seconds_bucket{namespace='$namespace', job=~'$job', handler=\"receive\"}[$__rate_interval])))",
 					labelMatchers,
 				),
 				dashboards.AddQueryDataSource(datasourceName),
@@ -103,7 +103,7 @@ func RemoteWriteRequestDurations(datasourceName string, labelMatchers ...promql.
 		panel.AddQuery(
 			query.PromQL(
 				promql.SetLabelMatchers(
-					"histogram_quantile(0.99, sum by (namespace, job, le) (rate(http_request_duration_seconds_bucket{namespace='$namespace', job=~'$job', handler=\"receive\"}[5m])))",
+					"histogram_quantile(0.99, sum by (namespace, job, le) (rate(http_request_duration_seconds_bucket{namespace='$namespace', job=~'$job', handler=\"receive\"}[$__rate_interval])))",
 					labelMatchers,
 				),
 				dashboards.AddQueryDataSource(datasourceName),
@@ -130,7 +130,7 @@ func TenantedRemoteWriteRequestRate(datasourceName string, labelMatchers ...prom
 		panel.AddQuery(
 			query.PromQL(
 				promql.SetLabelMatchers(
-					"sum by (tenant, job, handler, code) (rate(http_requests_total{namespace='$namespace', job=~'$job', tenant=~'$tenant', handler=\"receive\"}[5m]))",
+					"sum by (tenant, job, handler, code) (rate(http_requests_total{namespace='$namespace', job=~'$job', tenant=~'$tenant', handler=\"receive\"}[$__rate_interval]))",
 					labelMatchers,
 				),
 				dashboards.AddQueryDataSource(datasourceName),
@@ -157,7 +157,7 @@ func TenantedRemoteWriteRequestErrors(datasourceName string, labelMatchers ...pr
 		panel.AddQuery(
 			query.PromQL(
 				promql.SetLabelMatchers(
-					"(sum by (tenant, namespace, job, code) (rate(http_requests_total{namespace='$namespace', job=~'$job', handler=\"receive\", code!~\"2..\", tenant=~'$tenant'}[5m])) / ignoring (code) group_left() sum by (tenant, namespace, job) (rate(http_requests_total{namespace='$namespace', job=~'$job', handler=\"receive\", tenant=~'$tenant'}[5m]))) * 100",
+					"(sum by (tenant, namespace, job, code) (rate(http_requests_total{namespace='$namespace', job=~'$job', handler=\"receive\", code!~\"2..\", tenant=~'$tenant'}[$__rate_interval])) / ignoring (code) group_left() sum by (tenant, namespace, job) (rate(http_requests_total{namespace='$namespace', job=~'$job', handler=\"receive\", tenant=~'$tenant'}[$__rate_interval]))) * 100",
 					labelMatchers,
 				),
 				dashboards.AddQueryDataSource(datasourceName),
@@ -184,7 +184,7 @@ func TenantedRemoteWriteRequestDurations(datasourceName string, labelMatchers ..
 		panel.AddQuery(
 			query.PromQL(
 				promql.SetLabelMatchers(
-					"sum by (namespace, job, tenant) (rate(http_request_duration_seconds_sum{namespace='$namespace', job=~'$job', tenant=~'$tenant', handler=\"receive\"}[5m])) / sum by (namespace, job, tenant) (http_request_duration_seconds_count{namespace='$namespace', job=~'$job', tenant=~'$tenant', handler=\"receive\"})",
+					"sum by (namespace, job, tenant) (rate(http_request_duration_seconds_sum{namespace='$namespace', job=~'$job', tenant=~'$tenant', handler=\"receive\"}[$__rate_interval])) / sum by (namespace, job, tenant) (http_request_duration_seconds_count{namespace='$namespace', job=~'$job', tenant=~'$tenant', handler=\"receive\"})",
 					labelMatchers,
 				),
 				dashboards.AddQueryDataSource(datasourceName),
@@ -211,7 +211,7 @@ func AvgRemoteWriteRequestSize(datasourceName string, labelMatchers ...promql.La
 		panel.AddQuery(
 			query.PromQL(
 				promql.SetLabelMatchers(
-					"sum by (namespace, job, tenant) (rate(http_request_size_bytes_sum{namespace='$namespace', job=~'$job', tenant=~'$tenant', handler=\"receive\", code=~\"2..\"}[5m])) / sum by (namespace, job, tenant) (rate(http_request_size_bytes_count{namespace='$namespace', job=~'$job', tenant=~'$tenant', handler=\"receive\", code=~\"2..\"}[5m]))",
+					"sum by (namespace, job, tenant) (rate(http_request_size_bytes_sum{namespace='$namespace', job=~'$job', tenant=~'$tenant', handler=\"receive\", code=~\"2..\"}[$__rate_interval])) / sum by (namespace, job, tenant) (rate(http_request_size_bytes_count{namespace='$namespace', job=~'$job', tenant=~'$tenant', handler=\"receive\", code=~\"2..\"}[$__rate_interval]))",
 					labelMatchers,
 				),
 				dashboards.AddQueryDataSource(datasourceName),
@@ -238,7 +238,7 @@ func AvgFailedRemoteWriteRequestSize(datasourceName string, labelMatchers ...pro
 		panel.AddQuery(
 			query.PromQL(
 				promql.SetLabelMatchers(
-					"sum by (namespace, job, tenant) (rate(http_request_size_bytes_sum{namespace='$namespace', job=~'$job', tenant=~'$tenant', handler=\"receive\", code!~\"2..\"}[5m])) / sum by (namespace, job, tenant) (rate(http_request_size_bytes_count{namespace='$namespace', job=~'$job', tenant=~'$tenant', handler=\"receive\", code!~\"2..\"}[5m]))",
+					"sum by (namespace, job, tenant) (rate(http_request_size_bytes_sum{namespace='$namespace', job=~'$job', tenant=~'$tenant', handler=\"receive\", code!~\"2..\"}[$__rate_interval])) / sum by (namespace, job, tenant) (rate(http_request_size_bytes_count{namespace='$namespace', job=~'$job', tenant=~'$tenant', handler=\"receive\", code!~\"2..\"}[$__rate_interval]))",
 					labelMatchers,
 				),
 				dashboards.AddQueryDataSource(datasourceName),
@@ -287,7 +287,7 @@ func RemoteWriteSeriesRate(datasourceName string, labelMatchers ...promql.LabelM
 		panel.AddQuery(
 			query.PromQL(
 				promql.SetLabelMatchers(
-					"sum(rate(thanos_receive_write_timeseries_sum{namespace='$namespace', job=~'$job', tenant=~'$tenant', code=~\"2..\"}[5m])) by (namespace, job, tenant)",
+					"sum(rate(thanos_receive_write_timeseries_sum{namespace='$namespace', job=~'$job', tenant=~'$tenant', code=~\"2..\"}[$__rate_interval])) by (namespace, job, tenant)",
 					labelMatchers,
 				),
 				dashboards.AddQueryDataSource(datasourceName),
@@ -309,7 +309,7 @@ func RemoteWriteSeriesNotWrittenRate(datasourceName string, labelMatchers ...pro
 		panel.AddQuery(
 			query.PromQL(
 				promql.SetLabelMatchers(
-					"sum(rate(thanos_receive_write_timeseries_sum{namespace='$namespace', job=~'$job', tenant=~'$tenant', code!~\"2..\"}[5m])) by (namespace, job, tenant)",
+					"sum(rate(thanos_receive_write_timeseries_sum{namespace='$namespace', job=~'$job', tenant=~'$tenant', code!~\"2..\"}[$__rate_interval])) by (namespace, job, tenant)",
 					labelMatchers,
 				),
 				dashboards.AddQueryDataSource(datasourceName),
@@ -331,7 +331,7 @@ func RemoteWriteSamplesRate(datasourceName string, labelMatchers ...promql.Label
 		panel.AddQuery(
 			query.PromQL(
 				promql.SetLabelMatchers(
-					"sum(rate(thanos_receive_write_samples_sum{namespace='$namespace', job=~'$job', tenant=~'$tenant', code=~\"2..\"}[5m])) by (namespace, job, tenant) ",
+					"sum(rate(thanos_receive_write_samples_sum{namespace='$namespace', job=~'$job', tenant=~'$tenant', code=~\"2..\"}[$__rate_interval])) by (namespace, job, tenant) ",
 					labelMatchers,
 				),
 				dashboards.AddQueryDataSource(datasourceName),
@@ -353,7 +353,7 @@ func RemoteWriteSamplesNotWrittenRate(datasourceName string, labelMatchers ...pr
 		panel.AddQuery(
 			query.PromQL(
 				promql.SetLabelMatchers(
-					"sum(rate(thanos_receive_write_samples_sum{namespace='$namespace', job=~'$job', tenant=~'$tenant', code!~\"2..\"}[5m])) by (namespace, job, tenant) ",
+					"sum(rate(thanos_receive_write_samples_sum{namespace='$namespace', job=~'$job', tenant=~'$tenant', code!~\"2..\"}[$__rate_interval])) by (namespace, job, tenant) ",
 					labelMatchers,
 				),
 				dashboards.AddQueryDataSource(datasourceName),
@@ -380,7 +380,7 @@ func RemoteWriteReplicationRate(datasourceName string, labelMatchers ...promql.L
 		panel.AddQuery(
 			query.PromQL(
 				promql.SetLabelMatchers(
-					"sum by (namespace, job) (rate(thanos_receive_replications_total{namespace='$namespace', job=~'$job'}[5m]))",
+					"sum by (namespace, job) (rate(thanos_receive_replications_total{namespace='$namespace', job=~'$job'}[$__rate_interval]))",
 					labelMatchers,
 				),
 				dashboards.AddQueryDataSource(datasourceName),
@@ -407,7 +407,7 @@ func RemoteWriteReplicationErrorRate(datasourceName string, labelMatchers ...pro
 		panel.AddQuery(
 			query.PromQL(
 				promql.SetLabelMatchers(
-					"sum by (namespace, job) (rate(thanos_receive_replications_total{namespace='$namespace', job=~'$job', result=\"error\"}[5m]))",
+					"sum by (namespace, job) (rate(thanos_receive_replications_total{namespace='$namespace', job=~'$job', result=\"error\"}[$__rate_interval]))",
 					labelMatchers,
 				),
 				dashboards.AddQueryDataSource(datasourceName),
@@ -434,7 +434,7 @@ func RemoteWriteForwardRate(datasourceName string, labelMatchers ...promql.Label
 		panel.AddQuery(
 			query.PromQL(
 				promql.SetLabelMatchers(
-					"sum by (namespace, job) (rate(thanos_receive_forward_requests_total{namespace='$namespace', job=~'$job'}[5m]))",
+					"sum by (namespace, job) (rate(thanos_receive_forward_requests_total{namespace='$namespace', job=~'$job'}[$__rate_interval]))",
 					labelMatchers,
 				),
 				dashboards.AddQueryDataSource(datasourceName),
@@ -461,7 +461,7 @@ func RemoteWriteForwardErrorRate(datasourceName string, labelMatchers ...promql.
 		panel.AddQuery(
 			query.PromQL(
 				promql.SetLabelMatchers(
-					"sum by (namespace, job) (rate(thanos_receive_forward_requests_total{namespace='$namespace', job=~'$job', result=\"error\"}[5m]))",
+					"sum by (namespace, job) (rate(thanos_receive_forward_requests_total{namespace='$namespace', job=~'$job', result=\"error\"}[$__rate_interval]))",
 					labelMatchers,
 				),
 				dashboards.AddQueryDataSource(datasourceName),
@@ -488,7 +488,7 @@ func WriteGRPCUnaryRate(datasourceName string, labelMatchers ...promql.LabelMatc
 		panel.AddQuery(
 			query.PromQL(
 				promql.SetLabelMatchers(
-					"sum by (namespace, job, grpc_method, grpc_code) (rate(grpc_server_handled_total{namespace='$namespace', job=~'$job', grpc_type=\"unary\", grpc_method=\"RemoteWrite\"}[5m]))",
+					"sum by (namespace, job, grpc_method, grpc_code) (rate(grpc_server_handled_total{namespace='$namespace', job=~'$job', grpc_type=\"unary\", grpc_method=\"RemoteWrite\"}[$__rate_interval]))",
 					labelMatchers,
 				),
 				dashboards.AddQueryDataSource(datasourceName),
@@ -515,7 +515,7 @@ func WriteGRPCUnaryErrors(datasourceName string, labelMatchers ...promql.LabelMa
 		panel.AddQuery(
 			query.PromQL(
 				promql.SetLabelMatchers(
-					"sum by (namespace, job, grpc_code) (rate(grpc_server_handled_total{grpc_code=~\"Unknown|ResourceExhausted|Internal|Unavailable|DataLoss\",namespace='$namespace', job=~'$job', grpc_type=\"unary\", grpc_method=\"RemoteWrite\"}[5m])) / ignoring (grpc_code) group_left() sum by (namespace, job) (rate(grpc_server_handled_total{namespace='$namespace', job=~'$job', grpc_type=\"unary\", grpc_method=\"RemoteWrite\"}[5m]))",
+					"sum by (namespace, job, grpc_code) (rate(grpc_server_handled_total{grpc_code=~\"Unknown|ResourceExhausted|Internal|Unavailable|DataLoss\",namespace='$namespace', job=~'$job', grpc_type=\"unary\", grpc_method=\"RemoteWrite\"}[$__rate_interval])) / ignoring (grpc_code) group_left() sum by (namespace, job) (rate(grpc_server_handled_total{namespace='$namespace', job=~'$job', grpc_type=\"unary\", grpc_method=\"RemoteWrite\"}[$__rate_interval]))",
 					labelMatchers,
 				),
 				dashboards.AddQueryDataSource(datasourceName),
@@ -542,7 +542,7 @@ func WriteGPRCUnaryDurations(datasourceName string, labelMatchers ...promql.Labe
 		panel.AddQuery(
 			query.PromQL(
 				promql.SetLabelMatchers(
-					"histogram_quantile(0.50, sum by (namespace, job, le) (rate(grpc_server_handling_seconds_bucket{namespace='$namespace', job=~'$job', grpc_type=\"unary\", grpc_method=\"RemoteWrite\"}[5m])))",
+					"histogram_quantile(0.50, sum by (namespace, job, le) (rate(grpc_server_handling_seconds_bucket{namespace='$namespace', job=~'$job', grpc_type=\"unary\", grpc_method=\"RemoteWrite\"}[$__rate_interval])))",
 					labelMatchers,
 				),
 				dashboards.AddQueryDataSource(datasourceName),
@@ -552,7 +552,7 @@ func WriteGPRCUnaryDurations(datasourceName string, labelMatchers ...promql.Labe
 		panel.AddQuery(
 			query.PromQL(
 				promql.SetLabelMatchers(
-					"histogram_quantile(0.90, sum by (namespace, job, le) (rate(grpc_server_handling_seconds_bucket{namespace='$namespace', job=~'$job', grpc_type=\"unary\", grpc_method=\"RemoteWrite\"}[5m])))",
+					"histogram_quantile(0.90, sum by (namespace, job, le) (rate(grpc_server_handling_seconds_bucket{namespace='$namespace', job=~'$job', grpc_type=\"unary\", grpc_method=\"RemoteWrite\"}[$__rate_interval])))",
 					labelMatchers,
 				),
 				dashboards.AddQueryDataSource(datasourceName),
@@ -562,7 +562,7 @@ func WriteGPRCUnaryDurations(datasourceName string, labelMatchers ...promql.Labe
 		panel.AddQuery(
 			query.PromQL(
 				promql.SetLabelMatchers(
-					"histogram_quantile(0.99, sum by (namespace, job, le) (rate(grpc_server_handling_seconds_bucket{namespace='$namespace', job=~'$job', grpc_type=\"unary\", grpc_method=\"RemoteWrite\"}[5m])))",
+					"histogram_quantile(0.99, sum by (namespace, job, le) (rate(grpc_server_handling_seconds_bucket{namespace='$namespace', job=~'$job', grpc_type=\"unary\", grpc_method=\"RemoteWrite\"}[$__rate_interval])))",
 					labelMatchers,
 				),
 				dashboards.AddQueryDataSource(datasourceName),
@@ -583,7 +583,7 @@ func ReceiveAppendedSampleRate(datasourceName string, labelMatchers ...promql.La
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchers("rate(prometheus_tsdb_head_samples_appended_total{job=~'$job',namespace=~'$namespace'}[5m])", labelMatchers),
+				promql.SetLabelMatchers("rate(prometheus_tsdb_head_samples_appended_total{job=~'$job',namespace=~'$namespace'}[$__rate_interval])", labelMatchers),
 				dashboards.AddQueryDataSource(datasourceName),
 				query.SeriesNameFormat("{{job}} - {{namespace}}"),
 			),

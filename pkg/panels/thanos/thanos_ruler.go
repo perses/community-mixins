@@ -29,7 +29,7 @@ func RuleEvaluationRate(datasourceName string, labelMatchers ...promql.LabelMatc
 		panel.AddQuery(
 			query.PromQL(
 				promql.SetLabelMatchers(
-					"sum by (namespace, job, rule_group, strategy) (rate(prometheus_rule_evaluations_total{namespace='$namespace', job=~'$job'}[5m]))",
+					"sum by (namespace, job, rule_group, strategy) (rate(prometheus_rule_evaluations_total{namespace='$namespace', job=~'$job'}[$__rate_interval]))",
 					labelMatchers,
 				),
 				dashboards.AddQueryDataSource(datasourceName),
@@ -56,7 +56,7 @@ func RuleEvaluationFailureRate(datasourceName string, labelMatchers ...promql.La
 		panel.AddQuery(
 			query.PromQL(
 				promql.SetLabelMatchers(
-					"sum by (namespace, job, rule_group, strategy) (rate(prometheus_rule_evaluation_failures_total{namespace='$namespace', job=~'$job'}[5m]))",
+					"sum by (namespace, job, rule_group, strategy) (rate(prometheus_rule_evaluation_failures_total{namespace='$namespace', job=~'$job'}[$__rate_interval]))",
 					labelMatchers,
 				),
 				dashboards.AddQueryDataSource(datasourceName),
@@ -83,7 +83,7 @@ func RuleGroupEvaluationsMissRate(datasourceName string, labelMatchers ...promql
 		panel.AddQuery(
 			query.PromQL(
 				promql.SetLabelMatchers(
-					"sum by (namespace, job, rule_group, strategy) (rate(prometheus_rule_group_iterations_missed_total{namespace='$namespace', job=~'$job'}[5m]))",
+					"sum by (namespace, job, rule_group, strategy) (rate(prometheus_rule_group_iterations_missed_total{namespace='$namespace', job=~'$job'}[$__rate_interval]))",
 					labelMatchers,
 				),
 				dashboards.AddQueryDataSource(datasourceName),
@@ -141,7 +141,7 @@ func AlertsDroppedRate(datasourceName string, labelMatchers ...promql.LabelMatch
 		panel.AddQuery(
 			query.PromQL(
 				promql.SetLabelMatchers(
-					"sum by (namespace, job, alertmanager) (rate(thanos_alert_sender_alerts_dropped_total{namespace='$namespace', job=~'$job'}[5m]))",
+					"sum by (namespace, job, alertmanager) (rate(thanos_alert_sender_alerts_dropped_total{namespace='$namespace', job=~'$job'}[$__rate_interval]))",
 					labelMatchers,
 				),
 				dashboards.AddQueryDataSource(datasourceName),
@@ -168,7 +168,7 @@ func AlertsSentRate(datasourceName string, labelMatchers ...promql.LabelMatcher)
 		panel.AddQuery(
 			query.PromQL(
 				promql.SetLabelMatchers(
-					"sum by (namespace, job, alertmanager) (rate(thanos_alert_sender_alerts_sent_total{namespace='$namespace', job=~'$job'}[5m]))",
+					"sum by (namespace, job, alertmanager) (rate(thanos_alert_sender_alerts_sent_total{namespace='$namespace', job=~'$job'}[$__rate_interval]))",
 					labelMatchers,
 				),
 				dashboards.AddQueryDataSource(datasourceName),
@@ -195,7 +195,7 @@ func AlertSendingErrors(datasourceName string, labelMatchers ...promql.LabelMatc
 		panel.AddQuery(
 			query.PromQL(
 				promql.SetLabelMatchers(
-					`sum by (namespace, job) (rate(thanos_alert_sender_errors_total{namespace='$namespace', job=~'$job'}[5m])) / sum by (namespace, job) (rate(thanos_alert_sender_alerts_sent_total{namespace='$namespace', job=~'$job'}[5m]))`,
+					`sum by (namespace, job) (rate(thanos_alert_sender_errors_total{namespace='$namespace', job=~'$job'}[$__rate_interval])) / sum by (namespace, job) (rate(thanos_alert_sender_alerts_sent_total{namespace='$namespace', job=~'$job'}[$__rate_interval]))`,
 					labelMatchers,
 				),
 				dashboards.AddQueryDataSource(datasourceName),
@@ -222,7 +222,7 @@ func AlertSendingDurations(datasourceName string, labelMatchers ...promql.LabelM
 		panel.AddQuery(
 			query.PromQL(
 				promql.SetLabelMatchers(
-					"histogram_quantile(0.50, sum by (namespace, job, le) (rate(thanos_alert_sender_latency_seconds_bucket{namespace='$namespace', job=~'$job'}[5m])))",
+					"histogram_quantile(0.50, sum by (namespace, job, le) (rate(thanos_alert_sender_latency_seconds_bucket{namespace='$namespace', job=~'$job'}[$__rate_interval])))",
 					labelMatchers,
 				),
 				dashboards.AddQueryDataSource(datasourceName),
@@ -232,7 +232,7 @@ func AlertSendingDurations(datasourceName string, labelMatchers ...promql.LabelM
 		panel.AddQuery(
 			query.PromQL(
 				promql.SetLabelMatchers(
-					"histogram_quantile(0.90, sum by (namespace, job, le) (rate(thanos_alert_sender_latency_seconds_bucket{namespace='$namespace', job=~'$job'}[5m])))",
+					"histogram_quantile(0.90, sum by (namespace, job, le) (rate(thanos_alert_sender_latency_seconds_bucket{namespace='$namespace', job=~'$job'}[$__rate_interval])))",
 					labelMatchers,
 				),
 				dashboards.AddQueryDataSource(datasourceName),
@@ -242,7 +242,7 @@ func AlertSendingDurations(datasourceName string, labelMatchers ...promql.LabelM
 		panel.AddQuery(
 			query.PromQL(
 				promql.SetLabelMatchers(
-					"histogram_quantile(0.99, sum by (namespace, job, le) (rate(thanos_alert_sender_latency_seconds_bucket{namespace='$namespace', job=~'$job'}[5m])))",
+					"histogram_quantile(0.99, sum by (namespace, job, le) (rate(thanos_alert_sender_latency_seconds_bucket{namespace='$namespace', job=~'$job'}[$__rate_interval])))",
 					labelMatchers,
 				),
 				dashboards.AddQueryDataSource(datasourceName),
@@ -269,7 +269,7 @@ func AlertQueuePushedRate(datasourceName string, labelMatchers ...promql.LabelMa
 		panel.AddQuery(
 			query.PromQL(
 				promql.SetLabelMatchers(
-					"sum by (namespace, job) (rate(thanos_alert_queue_alerts_pushed_total{namespace='$namespace', job=~'$job'}[5m]))",
+					"sum by (namespace, job) (rate(thanos_alert_queue_alerts_pushed_total{namespace='$namespace', job=~'$job'}[$__rate_interval]))",
 					labelMatchers,
 				),
 				dashboards.AddQueryDataSource(datasourceName),
@@ -296,7 +296,7 @@ func AlertQueuePoppedRate(datasourceName string, labelMatchers ...promql.LabelMa
 		panel.AddQuery(
 			query.PromQL(
 				promql.SetLabelMatchers(
-					"sum by (namespace, job) (rate(thanos_alert_queue_alerts_popped_total{namespace='$namespace', job=~'$job'}[5m]))",
+					"sum by (namespace, job) (rate(thanos_alert_queue_alerts_popped_total{namespace='$namespace', job=~'$job'}[$__rate_interval]))",
 					labelMatchers,
 				),
 				dashboards.AddQueryDataSource(datasourceName),
@@ -323,7 +323,7 @@ func DroppedRatio(datasourceName string, labelMatchers ...promql.LabelMatcher) p
 		panel.AddQuery(
 			query.PromQL(
 				promql.SetLabelMatchers(
-					`sum by (namespace, job) (rate(thanos_alert_queue_alerts_dropped_total{namespace='$namespace', job=~'$job'}[5m])) / sum by (namespace, job) (rate(thanos_alert_queue_alerts_pushed_total{namespace='$namespace', job=~'$job'}[5m]))`,
+					`sum by (namespace, job) (rate(thanos_alert_queue_alerts_dropped_total{namespace='$namespace', job=~'$job'}[$__rate_interval])) / sum by (namespace, job) (rate(thanos_alert_queue_alerts_pushed_total{namespace='$namespace', job=~'$job'}[$__rate_interval]))`,
 					labelMatchers,
 				),
 				dashboards.AddQueryDataSource(datasourceName),
