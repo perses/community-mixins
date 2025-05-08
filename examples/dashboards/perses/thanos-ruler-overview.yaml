@@ -59,6 +59,12 @@ spec:
                         yAxis:
                             format:
                                 unit: counts/sec
+                        visual:
+                            display: line
+                            lineWidth: 0.25
+                            areaOpacity: 0.5
+                            palette:
+                                mode: auto
                 queries:
                     - kind: TimeSeriesQuery
                       spec:
@@ -88,6 +94,13 @@ spec:
                         yAxis:
                             format:
                                 unit: counts/sec
+                        visual:
+                            display: line
+                            lineWidth: 0.25
+                            areaOpacity: 1
+                            palette:
+                                mode: auto
+                            stack: all
                 queries:
                     - kind: TimeSeriesQuery
                       spec:
@@ -117,6 +130,13 @@ spec:
                         yAxis:
                             format:
                                 unit: counts/sec
+                        visual:
+                            display: line
+                            lineWidth: 0.25
+                            areaOpacity: 1
+                            palette:
+                                mode: auto
+                            stack: all
                 queries:
                     - kind: TimeSeriesQuery
                       spec:
@@ -146,6 +166,12 @@ spec:
                         yAxis:
                             format:
                                 unit: seconds
+                        visual:
+                            display: line
+                            lineWidth: 0.25
+                            areaOpacity: 0.5
+                            palette:
+                                mode: auto
                 queries:
                     - kind: TimeSeriesQuery
                       spec:
@@ -181,6 +207,13 @@ spec:
                         yAxis:
                             format:
                                 unit: counts/sec
+                        visual:
+                            display: line
+                            lineWidth: 0.25
+                            areaOpacity: 1
+                            palette:
+                                mode: auto
+                            stack: all
                 queries:
                     - kind: TimeSeriesQuery
                       spec:
@@ -210,6 +243,13 @@ spec:
                         yAxis:
                             format:
                                 unit: counts/sec
+                        visual:
+                            display: line
+                            lineWidth: 0.25
+                            areaOpacity: 1
+                            palette:
+                                mode: auto
+                            stack: all
                 queries:
                     - kind: TimeSeriesQuery
                       spec:
@@ -239,6 +279,13 @@ spec:
                         yAxis:
                             format:
                                 unit: percent
+                        visual:
+                            display: line
+                            lineWidth: 0.25
+                            areaOpacity: 1
+                            palette:
+                                mode: auto
+                            stack: all
                 queries:
                     - kind: TimeSeriesQuery
                       spec:
@@ -272,6 +319,12 @@ spec:
                         yAxis:
                             format:
                                 unit: milliseconds
+                        visual:
+                            display: line
+                            lineWidth: 0.25
+                            areaOpacity: 0.5
+                            palette:
+                                mode: auto
                 queries:
                     - kind: TimeSeriesQuery
                       spec:
@@ -336,6 +389,12 @@ spec:
                         yAxis:
                             format:
                                 unit: counts/sec
+                        visual:
+                            display: line
+                            lineWidth: 0.25
+                            areaOpacity: 0.5
+                            palette:
+                                mode: auto
                 queries:
                     - kind: TimeSeriesQuery
                       spec:
@@ -365,6 +424,12 @@ spec:
                         yAxis:
                             format:
                                 unit: counts/sec
+                        visual:
+                            display: line
+                            lineWidth: 0.25
+                            areaOpacity: 0.5
+                            palette:
+                                mode: auto
                 queries:
                     - kind: TimeSeriesQuery
                       spec:
@@ -394,6 +459,13 @@ spec:
                         yAxis:
                             format:
                                 unit: percent
+                        visual:
+                            display: line
+                            lineWidth: 0.25
+                            areaOpacity: 1
+                            palette:
+                                mode: auto
+                            stack: all
                 queries:
                     - kind: TimeSeriesQuery
                       spec:
@@ -427,6 +499,13 @@ spec:
                         yAxis:
                             format:
                                 unit: requests/sec
+                        visual:
+                            display: line
+                            lineWidth: 0.25
+                            areaOpacity: 1
+                            palette:
+                                mode: auto
+                            stack: all
                 queries:
                     - kind: TimeSeriesQuery
                       spec:
@@ -458,6 +537,13 @@ spec:
                         yAxis:
                             format:
                                 unit: percent
+                        visual:
+                            display: line
+                            lineWidth: 0.25
+                            areaOpacity: 1
+                            palette:
+                                mode: auto
+                            stack: all
                 queries:
                     - kind: TimeSeriesQuery
                       spec:
@@ -495,6 +581,12 @@ spec:
                         yAxis:
                             format:
                                 unit: milliseconds
+                        visual:
+                            display: line
+                            lineWidth: 0.25
+                            areaOpacity: 0.5
+                            palette:
+                                mode: auto
                 queries:
                     - kind: TimeSeriesQuery
                       spec:
@@ -565,6 +657,13 @@ spec:
                         yAxis:
                             format:
                                 unit: requests/sec
+                        visual:
+                            display: line
+                            lineWidth: 0.25
+                            areaOpacity: 1
+                            palette:
+                                mode: auto
+                            stack: all
                 queries:
                     - kind: TimeSeriesQuery
                       spec:
@@ -596,6 +695,13 @@ spec:
                         yAxis:
                             format:
                                 unit: percent
+                        visual:
+                            display: line
+                            lineWidth: 0.25
+                            areaOpacity: 1
+                            palette:
+                                mode: auto
+                            stack: all
                 queries:
                     - kind: TimeSeriesQuery
                       spec:
@@ -633,6 +739,12 @@ spec:
                         yAxis:
                             format:
                                 unit: milliseconds
+                        visual:
+                            display: line
+                            lineWidth: 0.25
+                            areaOpacity: 0.5
+                            palette:
+                                mode: auto
                 queries:
                     - kind: TimeSeriesQuery
                       spec:
@@ -859,25 +971,25 @@ spec:
                 - x: 0
                   "y": 0
                   width: 6
-                  height: 6
+                  height: 8
                   content:
                     $ref: '#/spec/panels/0_0'
                 - x: 6
                   "y": 0
                   width: 6
-                  height: 6
+                  height: 8
                   content:
                     $ref: '#/spec/panels/0_1'
                 - x: 12
                   "y": 0
                   width: 6
-                  height: 6
+                  height: 8
                   content:
                     $ref: '#/spec/panels/0_2'
                 - x: 18
                   "y": 0
                   width: 6
-                  height: 6
+                  height: 8
                   content:
                     $ref: '#/spec/panels/0_3'
         - kind: Grid
@@ -888,25 +1000,25 @@ spec:
                 - x: 0
                   "y": 0
                   width: 6
-                  height: 6
+                  height: 8
                   content:
                     $ref: '#/spec/panels/1_0'
                 - x: 6
                   "y": 0
                   width: 6
-                  height: 6
+                  height: 8
                   content:
                     $ref: '#/spec/panels/1_1'
                 - x: 12
                   "y": 0
                   width: 6
-                  height: 6
+                  height: 8
                   content:
                     $ref: '#/spec/panels/1_2'
                 - x: 18
                   "y": 0
                   width: 6
-                  height: 6
+                  height: 8
                   content:
                     $ref: '#/spec/panels/1_3'
         - kind: Grid
@@ -940,19 +1052,19 @@ spec:
                 - x: 0
                   "y": 0
                   width: 8
-                  height: 6
+                  height: 8
                   content:
                     $ref: '#/spec/panels/3_0'
                 - x: 8
                   "y": 0
                   width: 8
-                  height: 6
+                  height: 8
                   content:
                     $ref: '#/spec/panels/3_1'
                 - x: 16
                   "y": 0
                   width: 8
-                  height: 6
+                  height: 8
                   content:
                     $ref: '#/spec/panels/3_2'
         - kind: Grid
@@ -963,19 +1075,19 @@ spec:
                 - x: 0
                   "y": 0
                   width: 8
-                  height: 6
+                  height: 8
                   content:
                     $ref: '#/spec/panels/4_0'
                 - x: 8
                   "y": 0
                   width: 8
-                  height: 6
+                  height: 8
                   content:
                     $ref: '#/spec/panels/4_1'
                 - x: 16
                   "y": 0
                   width: 8
-                  height: 6
+                  height: 8
                   content:
                     $ref: '#/spec/panels/4_2'
         - kind: Grid
@@ -986,19 +1098,19 @@ spec:
                 - x: 0
                   "y": 0
                   width: 8
-                  height: 6
+                  height: 8
                   content:
                     $ref: '#/spec/panels/5_0'
                 - x: 8
                   "y": 0
                   width: 8
-                  height: 6
+                  height: 8
                   content:
                     $ref: '#/spec/panels/5_1'
                 - x: 16
                   "y": 0
                   width: 8
-                  height: 6
+                  height: 8
                   content:
                     $ref: '#/spec/panels/5_2'
     duration: 1h

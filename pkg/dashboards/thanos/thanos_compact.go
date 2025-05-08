@@ -14,6 +14,7 @@ import (
 func withThanosCompactTODOGroup(datasource string, labelMatcher promql.LabelMatcher) dashboard.Option {
 	return dashboard.AddPanelGroup("TODO Operations",
 		panelgroup.PanelsPerLine(4),
+		panelgroup.PanelHeight(6),
 		panels.TodoCompactionBlocks(datasource, labelMatcher),
 		panels.TodoCompactions(datasource, labelMatcher),
 		panels.TodoDeletions(datasource, labelMatcher),
@@ -24,6 +25,7 @@ func withThanosCompactTODOGroup(datasource string, labelMatcher promql.LabelMatc
 func withThanosCompactGroupCompactionGroup(datasource string, labelMatcher promql.LabelMatcher) dashboard.Option {
 	return dashboard.AddPanelGroup("Group Compactions",
 		panelgroup.PanelsPerLine(2),
+		panelgroup.PanelHeight(8),
 		panels.GroupCompactionRate(datasource, labelMatcher),
 		panels.GroupCompactionErrors(datasource, labelMatcher),
 	)
@@ -32,6 +34,7 @@ func withThanosCompactGroupCompactionGroup(datasource string, labelMatcher promq
 func withThanosCompactDownsampleGroup(datasource string, labelMatcher promql.LabelMatcher) dashboard.Option {
 	return dashboard.AddPanelGroup("Downsample Operations",
 		panelgroup.PanelsPerLine(3),
+		panelgroup.PanelHeight(8),
 		panels.DownsampleRate(datasource, labelMatcher),
 		panels.DownsampleErrors(datasource, labelMatcher),
 		panels.DownsampleDurations(datasource, labelMatcher),
@@ -41,6 +44,7 @@ func withThanosCompactDownsampleGroup(datasource string, labelMatcher promql.Lab
 func withThanosCompactSyncMetaGroup(datasource string, labelMatcher promql.LabelMatcher) dashboard.Option {
 	return dashboard.AddPanelGroup("Sync Meta",
 		panelgroup.PanelsPerLine(3),
+		panelgroup.PanelHeight(8),
 		panels.SyncMetaRate(datasource, labelMatcher),
 		panels.SyncMetaErrors(datasource, labelMatcher),
 		panels.SyncMetaDurations(datasource, labelMatcher),
@@ -50,6 +54,7 @@ func withThanosCompactSyncMetaGroup(datasource string, labelMatcher promql.Label
 func withThanosCompactBlockDeletionGroup(datasource string, labelMatcher promql.LabelMatcher) dashboard.Option {
 	return dashboard.AddPanelGroup("Block Deletion",
 		panelgroup.PanelsPerLine(3),
+		panelgroup.PanelHeight(8),
 		panels.DeletionRate(datasource, labelMatcher),
 		panels.DeletionErrors(datasource, labelMatcher),
 		panels.MarkingRate(datasource, labelMatcher),
@@ -59,6 +64,7 @@ func withThanosCompactBlockDeletionGroup(datasource string, labelMatcher promql.
 func withThanosCompactHaltedGroup(datasource string, labelMatcher promql.LabelMatcher) dashboard.Option {
 	return dashboard.AddPanelGroup("Halted Compactors",
 		panelgroup.PanelsPerLine(1),
+		panelgroup.PanelHeight(8),
 		panels.HaltedCompactors(datasource, labelMatcher),
 	)
 }
@@ -66,6 +72,7 @@ func withThanosCompactHaltedGroup(datasource string, labelMatcher promql.LabelMa
 func withThanosCompactGarbageCollectionGroup(datasource string, labelMatcher promql.LabelMatcher) dashboard.Option {
 	return dashboard.AddPanelGroup("Garbage Collection",
 		panelgroup.PanelsPerLine(3),
+		panelgroup.PanelHeight(8),
 		panels.GarbageCollectionRate(datasource, labelMatcher),
 		panels.GarbageCollectionErrors(datasource, labelMatcher),
 		panels.GarbageCollectionDurations(datasource, labelMatcher),

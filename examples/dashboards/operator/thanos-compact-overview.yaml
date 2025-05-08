@@ -50,13 +50,13 @@ spec:
       items:
       - content:
           $ref: '#/spec/panels/1_0'
-        height: 6
+        height: 8
         width: 12
         x: 0
         "y": 0
       - content:
           $ref: '#/spec/panels/1_1'
-        height: 6
+        height: 8
         width: 12
         x: 12
         "y": 0
@@ -67,19 +67,19 @@ spec:
       items:
       - content:
           $ref: '#/spec/panels/2_0'
-        height: 6
+        height: 8
         width: 8
         x: 0
         "y": 0
       - content:
           $ref: '#/spec/panels/2_1'
-        height: 6
+        height: 8
         width: 8
         x: 8
         "y": 0
       - content:
           $ref: '#/spec/panels/2_2'
-        height: 6
+        height: 8
         width: 8
         x: 16
         "y": 0
@@ -90,19 +90,19 @@ spec:
       items:
       - content:
           $ref: '#/spec/panels/3_0'
-        height: 6
+        height: 8
         width: 8
         x: 0
         "y": 0
       - content:
           $ref: '#/spec/panels/3_1'
-        height: 6
+        height: 8
         width: 8
         x: 8
         "y": 0
       - content:
           $ref: '#/spec/panels/3_2'
-        height: 6
+        height: 8
         width: 8
         x: 16
         "y": 0
@@ -113,19 +113,19 @@ spec:
       items:
       - content:
           $ref: '#/spec/panels/4_0'
-        height: 6
+        height: 8
         width: 8
         x: 0
         "y": 0
       - content:
           $ref: '#/spec/panels/4_1'
-        height: 6
+        height: 8
         width: 8
         x: 8
         "y": 0
       - content:
           $ref: '#/spec/panels/4_2'
-        height: 6
+        height: 8
         width: 8
         x: 16
         "y": 0
@@ -136,19 +136,19 @@ spec:
       items:
       - content:
           $ref: '#/spec/panels/5_0'
-        height: 6
+        height: 8
         width: 8
         x: 0
         "y": 0
       - content:
           $ref: '#/spec/panels/5_1'
-        height: 6
+        height: 8
         width: 8
         x: 8
         "y": 0
       - content:
           $ref: '#/spec/panels/5_2'
-        height: 6
+        height: 8
         width: 8
         x: 16
         "y": 0
@@ -159,7 +159,7 @@ spec:
       items:
       - content:
           $ref: '#/spec/panels/6_0'
-        height: 6
+        height: 8
         width: 24
         x: 0
         "y": 0
@@ -170,19 +170,19 @@ spec:
       items:
       - content:
           $ref: '#/spec/panels/7_0'
-        height: 6
+        height: 8
         width: 8
         x: 0
         "y": 0
       - content:
           $ref: '#/spec/panels/7_1'
-        height: 6
+        height: 8
         width: 8
         x: 8
         "y": 0
       - content:
           $ref: '#/spec/panels/7_2'
-        height: 6
+        height: 8
         width: 8
         x: 16
         "y": 0
@@ -193,19 +193,19 @@ spec:
       items:
       - content:
           $ref: '#/spec/panels/8_0'
-        height: 6
+        height: 8
         width: 8
         x: 0
         "y": 0
       - content:
           $ref: '#/spec/panels/8_1'
-        height: 6
+        height: 8
         width: 8
         x: 8
         "y": 0
       - content:
           $ref: '#/spec/panels/8_2'
-        height: 6
+        height: 8
         width: 8
         x: 16
         "y": 0
@@ -222,6 +222,13 @@ spec:
             legend:
               mode: table
               position: bottom
+            visual:
+              areaOpacity: 1
+              display: line
+              lineWidth: 0.25
+              palette:
+                mode: auto
+              stack: all
             yAxis:
               format:
                 unit: decimal
@@ -248,6 +255,13 @@ spec:
             legend:
               mode: table
               position: bottom
+            visual:
+              areaOpacity: 1
+              display: line
+              lineWidth: 0.25
+              palette:
+                mode: auto
+              stack: all
             yAxis:
               format:
                 unit: decimal
@@ -274,6 +288,13 @@ spec:
             legend:
               mode: table
               position: bottom
+            visual:
+              areaOpacity: 1
+              display: line
+              lineWidth: 0.25
+              palette:
+                mode: auto
+              stack: all
             yAxis:
               format:
                 unit: decimal
@@ -300,6 +321,13 @@ spec:
             legend:
               mode: table
               position: bottom
+            visual:
+              areaOpacity: 1
+              display: line
+              lineWidth: 0.25
+              palette:
+                mode: auto
+              stack: all
             yAxis:
               format:
                 unit: decimal
@@ -327,6 +355,13 @@ spec:
             legend:
               mode: table
               position: bottom
+            visual:
+              areaOpacity: 1
+              display: line
+              lineWidth: 0.25
+              palette:
+                mode: auto
+              stack: all
             yAxis:
               format:
                 unit: counts/sec
@@ -357,6 +392,13 @@ spec:
             legend:
               mode: table
               position: bottom
+            visual:
+              areaOpacity: 1
+              display: line
+              lineWidth: 0.25
+              palette:
+                mode: auto
+              stack: all
             yAxis:
               format:
                 unit: percent
@@ -395,6 +437,13 @@ spec:
             legend:
               mode: table
               position: bottom
+            visual:
+              areaOpacity: 1
+              display: line
+              lineWidth: 0.25
+              palette:
+                mode: auto
+              stack: all
             yAxis:
               format:
                 unit: counts/sec
@@ -425,6 +474,13 @@ spec:
             legend:
               mode: table
               position: bottom
+            visual:
+              areaOpacity: 1
+              display: line
+              lineWidth: 0.25
+              palette:
+                mode: auto
+              stack: all
             yAxis:
               format:
                 unit: percent
@@ -463,6 +519,12 @@ spec:
             legend:
               mode: table
               position: bottom
+            visual:
+              areaOpacity: 0.5
+              display: line
+              lineWidth: 0.25
+              palette:
+                mode: auto
             yAxis:
               format:
                 unit: milliseconds
@@ -533,6 +595,13 @@ spec:
             legend:
               mode: table
               position: bottom
+            visual:
+              areaOpacity: 1
+              display: line
+              lineWidth: 0.25
+              palette:
+                mode: auto
+              stack: all
             yAxis:
               format:
                 unit: counts/sec
@@ -563,6 +632,13 @@ spec:
             legend:
               mode: table
               position: bottom
+            visual:
+              areaOpacity: 1
+              display: line
+              lineWidth: 0.25
+              palette:
+                mode: auto
+              stack: all
             yAxis:
               format:
                 unit: percent
@@ -601,6 +677,12 @@ spec:
             legend:
               mode: table
               position: bottom
+            visual:
+              areaOpacity: 0.5
+              display: line
+              lineWidth: 0.25
+              palette:
+                mode: auto
             yAxis:
               format:
                 unit: milliseconds
@@ -665,6 +747,13 @@ spec:
             legend:
               mode: table
               position: bottom
+            visual:
+              areaOpacity: 1
+              display: line
+              lineWidth: 0.25
+              palette:
+                mode: auto
+              stack: all
             yAxis:
               format:
                 unit: counts/sec
@@ -695,6 +784,13 @@ spec:
             legend:
               mode: table
               position: bottom
+            visual:
+              areaOpacity: 1
+              display: line
+              lineWidth: 0.25
+              palette:
+                mode: auto
+              stack: all
             yAxis:
               format:
                 unit: counts/sec
@@ -725,6 +821,13 @@ spec:
             legend:
               mode: table
               position: bottom
+            visual:
+              areaOpacity: 1
+              display: line
+              lineWidth: 0.25
+              palette:
+                mode: auto
+              stack: all
             yAxis:
               format:
                 unit: counts/sec
@@ -757,6 +860,13 @@ spec:
             legend:
               mode: table
               position: bottom
+            visual:
+              areaOpacity: 1
+              display: line
+              lineWidth: 0.25
+              palette:
+                mode: auto
+              stack: all
             yAxis:
               format:
                 unit: requests/sec
@@ -787,6 +897,13 @@ spec:
             legend:
               mode: table
               position: bottom
+            visual:
+              areaOpacity: 1
+              display: line
+              lineWidth: 0.25
+              palette:
+                mode: auto
+              stack: all
             yAxis:
               format:
                 unit: percent
@@ -824,6 +941,12 @@ spec:
             legend:
               mode: table
               position: bottom
+            visual:
+              areaOpacity: 0.5
+              display: line
+              lineWidth: 0.25
+              palette:
+                mode: auto
             yAxis:
               format:
                 unit: milliseconds
@@ -894,6 +1017,13 @@ spec:
             legend:
               mode: table
               position: bottom
+            visual:
+              areaOpacity: 1
+              display: line
+              lineWidth: 0.25
+              palette:
+                mode: auto
+              stack: all
             yAxis:
               format:
                 unit: decimal
@@ -921,6 +1051,13 @@ spec:
             legend:
               mode: table
               position: bottom
+            visual:
+              areaOpacity: 1
+              display: line
+              lineWidth: 0.25
+              palette:
+                mode: auto
+              stack: all
             yAxis:
               format:
                 unit: counts/sec
@@ -951,6 +1088,13 @@ spec:
             legend:
               mode: table
               position: bottom
+            visual:
+              areaOpacity: 1
+              display: line
+              lineWidth: 0.25
+              palette:
+                mode: auto
+              stack: all
             yAxis:
               format:
                 unit: percent
@@ -991,6 +1135,12 @@ spec:
             legend:
               mode: table
               position: bottom
+            visual:
+              areaOpacity: 0.5
+              display: line
+              lineWidth: 0.25
+              palette:
+                mode: auto
             yAxis:
               format:
                 unit: milliseconds
