@@ -4,16 +4,23 @@ import (
 	"github.com/perses/perses/go-sdk/dashboard"
 	panelgroup "github.com/perses/perses/go-sdk/panel-group"
 
+	panelsGostats "github.com/perses/community-dashboards/pkg/panels/gostats"
 	panels "github.com/perses/community-dashboards/pkg/panels/thanos"
 	"github.com/perses/community-dashboards/pkg/promql"
 )
 
 func withThanosResourcesGroup(datasource string, labelMatcher promql.LabelMatcher) dashboard.Option {
+	labelMatchersToUse := []promql.LabelMatcher{
+		promql.NamespaceVar,
+		promql.JobVar,
+	}
+	labelMatchersToUse = append(labelMatchersToUse, labelMatcher)
+
 	return dashboard.AddPanelGroup("Resources",
 		panelgroup.PanelsPerLine(3),
-		panels.MemoryUsage(datasource, labelMatcher),
-		panels.Goroutines(datasource, labelMatcher),
-		panels.GCDurationQuantiles(datasource, labelMatcher),
+		panelsGostats.MemoryUsage(datasource, labelMatchersToUse...),
+		panelsGostats.Goroutines(datasource, labelMatchersToUse...),
+		panelsGostats.GarbageCollectionPauseTimeQuantiles(datasource, labelMatchersToUse...),
 	)
 }
 

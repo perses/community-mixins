@@ -2,6 +2,7 @@ package perses
 
 import (
 	"github.com/perses/community-dashboards/pkg/dashboards"
+	panelsGostats "github.com/perses/community-dashboards/pkg/panels/gostats"
 	"github.com/perses/community-dashboards/pkg/panels/perses"
 	"github.com/perses/community-dashboards/pkg/promql"
 	"github.com/perses/perses/go-sdk/dashboard"
@@ -59,12 +60,21 @@ func withPersesAPiRequestGroup(datasource string, clusterLabelMatcher promql.Lab
 }
 
 func withPersesResources(datasource string, clusterLabelMatcher promql.LabelMatcher) dashboard.Option {
-	return dashboard.AddPanelGroup("Resource Usage", panelgroup.PanelsPerLine(3), panelgroup.PanelHeight(10),
-		perses.MemoryUsage(datasource, clusterLabelMatcher),
+	labelMatchersToUse := []promql.LabelMatcher{
+		promql.InstanceVar,
+		promql.JobVar,
+	}
+	labelMatchersToUse = append(labelMatchersToUse, clusterLabelMatcher)
+
+	return dashboard.AddPanelGroup("Resource Usage",
+		panelgroup.PanelsPerLine(3),
+		panelgroup.PanelHeight(10),
+		panelsGostats.MemoryUsage(datasource, labelMatchersToUse...),
 		perses.CPUUsage(datasource, clusterLabelMatcher),
-		perses.GoRoutines(datasource, clusterLabelMatcher),
-		perses.GarbageCollectionPauseTime(datasource, clusterLabelMatcher),
-		perses.FileDescriptors(datasource, clusterLabelMatcher))
+		panelsGostats.Goroutines(datasource, labelMatchersToUse...),
+		panelsGostats.GarbageCollectionPauseTimeQuantiles(datasource, labelMatchersToUse...),
+		perses.FileDescriptors(datasource, clusterLabelMatcher),
+	)
 }
 
 func withPersesPlugins(datasource string, clusterLabelMatcher promql.LabelMatcher) dashboard.Option {

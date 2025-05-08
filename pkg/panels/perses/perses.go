@@ -136,64 +136,6 @@ func HTTPErrorsRatePanel(datasourceName string, labelMatchers ...promql.LabelMat
 	)
 }
 
-func MemoryUsage(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
-	return panelgroup.AddPanel("Memory Usage",
-		panel.Description("Shows various memory usage metrics"),
-		timeSeriesPanel.Chart(
-			timeSeriesPanel.WithYAxis(timeSeriesPanel.YAxis{
-				Format: &common.Format{
-					Unit: string(common.BytesUnit),
-				},
-			}),
-			timeSeriesPanel.WithLegend(timeSeriesPanel.Legend{
-				Position: timeSeriesPanel.BottomPosition,
-				Mode:     timeSeriesPanel.TableMode,
-				Values:   []common.Calculation{common.LastCalculation},
-			}),
-		),
-		panel.AddQuery(
-			query.PromQL(
-				promql.SetLabelMatchers(
-					"go_memstats_alloc_bytes{job=~'$job', instance=~'$instance'}",
-					labelMatchers,
-				),
-				dashboards.AddQueryDataSource(datasourceName),
-				query.SeriesNameFormat("Heap Allocated"),
-			),
-		),
-		panel.AddQuery(
-			query.PromQL(
-				promql.SetLabelMatchers(
-					"go_memstats_heap_inuse_bytes{job=~'$job', instance=~'$instance'}",
-					labelMatchers,
-				),
-				dashboards.AddQueryDataSource(datasourceName),
-				query.SeriesNameFormat("Heap In Use"),
-			),
-		),
-		panel.AddQuery(
-			query.PromQL(
-				promql.SetLabelMatchers(
-					"go_memstats_stack_inuse_bytes{job=~'$job', instance=~'$instance'}",
-					labelMatchers,
-				),
-				dashboards.AddQueryDataSource(datasourceName),
-				query.SeriesNameFormat("Stack In Use"),
-			),
-		),
-		panel.AddQuery(
-			query.PromQL(
-				promql.SetLabelMatchers(
-					"process_resident_memory_bytes{job=~'$job', instance=~'$instance'}",
-					labelMatchers,
-				),
-				dashboards.AddQueryDataSource(datasourceName),
-				query.SeriesNameFormat("Resident Memory"),
-			),
-		),
-	)
-}
-
 func CPUUsage(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
 	return panelgroup.AddPanel("CPU Usage",
 		panel.Description("Shows CPU usage metrics"),
@@ -217,62 +159,6 @@ func CPUUsage(datasourceName string, labelMatchers ...promql.LabelMatcher) panel
 				),
 				dashboards.AddQueryDataSource(datasourceName),
 				query.SeriesNameFormat("{{pod}}"),
-			),
-		),
-	)
-}
-
-func GoRoutines(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
-	return panelgroup.AddPanel("Goroutines",
-		panel.Description("Shows the number of goroutines currently in use"),
-		timeSeriesPanel.Chart(
-			timeSeriesPanel.WithYAxis(timeSeriesPanel.YAxis{
-				Format: &common.Format{
-					Unit: string(common.DecimalUnit),
-				},
-			}),
-			timeSeriesPanel.WithLegend(timeSeriesPanel.Legend{
-				Position: timeSeriesPanel.BottomPosition,
-				Mode:     timeSeriesPanel.TableMode,
-				Values:   []common.Calculation{common.LastCalculation},
-			}),
-		),
-		panel.AddQuery(
-			query.PromQL(
-				promql.SetLabelMatchers(
-					"go_goroutines{job=~'$job', instance=~'$instance'}",
-					labelMatchers,
-				),
-				dashboards.AddQueryDataSource(datasourceName),
-				query.SeriesNameFormat("{{pod}}"),
-			),
-		),
-	)
-}
-
-func GarbageCollectionPauseTime(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
-	return panelgroup.AddPanel("Garbage Collection Pause Time",
-		panel.Description("Displays the pause time for garbage collection events."),
-		timeSeriesPanel.Chart(
-			timeSeriesPanel.WithYAxis(timeSeriesPanel.YAxis{
-				Format: &common.Format{
-					Unit: string(common.SecondsUnit),
-				},
-			}),
-			timeSeriesPanel.WithLegend(timeSeriesPanel.Legend{
-				Position: timeSeriesPanel.BottomPosition,
-				Mode:     timeSeriesPanel.TableMode,
-				Values:   []common.Calculation{common.LastCalculation},
-			}),
-		),
-		panel.AddQuery(
-			query.PromQL(
-				promql.SetLabelMatchers(
-					"go_gc_duration_seconds{job=~'$job', instance=~'$instance'}",
-					labelMatchers,
-				),
-				dashboards.AddQueryDataSource(datasourceName),
-				query.SeriesNameFormat("{{quantile}} - {{instance}} - {{pod}}"),
 			),
 		),
 	)

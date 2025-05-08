@@ -173,7 +173,7 @@ spec:
             spec:
                 display:
                     name: Memory Usage
-                    description: Shows various memory usage metrics
+                    description: Shows various memory usage metrics of the component.
                 plugin:
                     kind: TimeSeriesChart
                     spec:
@@ -185,6 +185,12 @@ spec:
                         yAxis:
                             format:
                                 unit: bytes
+                        visual:
+                            display: line
+                            lineWidth: 0.25
+                            areaOpacity: 0.5
+                            palette:
+                                mode: auto
                 queries:
                     - kind: TimeSeriesQuery
                       spec:
@@ -195,7 +201,7 @@ spec:
                                     kind: PrometheusDatasource
                                     name: prometheus-datasource
                                 query: go_memstats_alloc_bytes{instance=~"$instance",job=~"$job"}
-                                seriesNameFormat: Heap Allocated
+                                seriesNameFormat: Alloc All {{pod}}
                     - kind: TimeSeriesQuery
                       spec:
                         plugin:
@@ -204,8 +210,28 @@ spec:
                                 datasource:
                                     kind: PrometheusDatasource
                                     name: prometheus-datasource
-                                query: go_memstats_heap_inuse_bytes{instance=~"$instance",job=~"$job"}
-                                seriesNameFormat: Heap In Use
+                                query: go_memstats_heap_alloc_bytes{instance=~"$instance",job=~"$job"}
+                                seriesNameFormat: Alloc Heap {{pod}}
+                    - kind: TimeSeriesQuery
+                      spec:
+                        plugin:
+                            kind: PrometheusTimeSeriesQuery
+                            spec:
+                                datasource:
+                                    kind: PrometheusDatasource
+                                    name: prometheus-datasource
+                                query: rate(go_memstats_alloc_bytes_total{instance=~"$instance",job=~"$job"}[5m])
+                                seriesNameFormat: Alloc Rate All {{pod}}
+                    - kind: TimeSeriesQuery
+                      spec:
+                        plugin:
+                            kind: PrometheusTimeSeriesQuery
+                            spec:
+                                datasource:
+                                    kind: PrometheusDatasource
+                                    name: prometheus-datasource
+                                query: rate(go_memstats_heap_alloc_bytes{instance=~"$instance",job=~"$job"}[5m])
+                                seriesNameFormat: Alloc Rate Heap {{pod}}
                     - kind: TimeSeriesQuery
                       spec:
                         plugin:
@@ -215,7 +241,17 @@ spec:
                                     kind: PrometheusDatasource
                                     name: prometheus-datasource
                                 query: go_memstats_stack_inuse_bytes{instance=~"$instance",job=~"$job"}
-                                seriesNameFormat: Stack In Use
+                                seriesNameFormat: Inuse Stack {{pod}}
+                    - kind: TimeSeriesQuery
+                      spec:
+                        plugin:
+                            kind: PrometheusTimeSeriesQuery
+                            spec:
+                                datasource:
+                                    kind: PrometheusDatasource
+                                    name: prometheus-datasource
+                                query: go_memstats_heap_inuse_bytes{instance=~"$instance",job=~"$job"}
+                                seriesNameFormat: Inuse Heap {{pod}}
                     - kind: TimeSeriesQuery
                       spec:
                         plugin:
@@ -225,7 +261,7 @@ spec:
                                     kind: PrometheusDatasource
                                     name: prometheus-datasource
                                 query: process_resident_memory_bytes{instance=~"$instance",job=~"$job"}
-                                seriesNameFormat: Resident Memory
+                                seriesNameFormat: Resident Memory {{pod}}
         "2_1":
             kind: Panel
             spec:
@@ -259,7 +295,7 @@ spec:
             spec:
                 display:
                     name: Goroutines
-                    description: Shows the number of goroutines currently in use
+                    description: Shows the number of goroutines being used by the component.
                 plugin:
                     kind: TimeSeriesChart
                     spec:
@@ -271,6 +307,12 @@ spec:
                         yAxis:
                             format:
                                 unit: decimal
+                        visual:
+                            display: line
+                            lineWidth: 0.25
+                            areaOpacity: 0.5
+                            palette:
+                                mode: auto
                 queries:
                     - kind: TimeSeriesQuery
                       spec:
@@ -286,8 +328,8 @@ spec:
             kind: Panel
             spec:
                 display:
-                    name: Garbage Collection Pause Time
-                    description: Displays the pause time for garbage collection events.
+                    name: GC Duration
+                    description: Shows the Go garbage collection pause durations for the component.
                 plugin:
                     kind: TimeSeriesChart
                     spec:
@@ -298,7 +340,13 @@ spec:
                                 - last
                         yAxis:
                             format:
-                                unit: seconds
+                                unit: milliseconds
+                        visual:
+                            display: line
+                            lineWidth: 0.25
+                            areaOpacity: 0.5
+                            palette:
+                                mode: auto
                 queries:
                     - kind: TimeSeriesQuery
                       spec:
@@ -309,7 +357,7 @@ spec:
                                     kind: PrometheusDatasource
                                     name: prometheus-datasource
                                 query: go_gc_duration_seconds{instance=~"$instance",job=~"$job"}
-                                seriesNameFormat: '{{quantile}} - {{instance}} - {{pod}}'
+                                seriesNameFormat: '{{quantile}} - {{pod}}'
         "2_4":
             kind: Panel
             spec:
