@@ -861,7 +861,7 @@ spec:
                 datasource:
                   kind: PrometheusDatasource
                   name: prometheus-datasource
-                query: rate(go_memstats_alloc_bytes_total{job=~"$job",namespace="$namespace"}[5m])
+                query: rate(go_memstats_alloc_bytes_total{job=~"$job",namespace="$namespace"}[$__rate_interval])
                 seriesNameFormat: Alloc Rate All {{pod}}
         - kind: TimeSeriesQuery
           spec:
@@ -871,7 +871,7 @@ spec:
                 datasource:
                   kind: PrometheusDatasource
                   name: prometheus-datasource
-                query: rate(go_memstats_heap_alloc_bytes{job=~"$job",namespace="$namespace"}[5m])
+                query: rate(go_memstats_heap_alloc_bytes{job=~"$job",namespace="$namespace"}[$__rate_interval])
                 seriesNameFormat: Alloc Rate Heap {{pod}}
         - kind: TimeSeriesQuery
           spec:

@@ -57,7 +57,7 @@ func MemoryUsage(datasourceName string, labelMatchers ...promql.LabelMatcher) pa
 		panel.AddQuery(
 			query.PromQL(
 				promql.SetLabelMatchers(
-					"rate(go_memstats_alloc_bytes_total[5m])",
+					"rate(go_memstats_alloc_bytes_total[$__rate_interval])",
 					labelMatchers,
 				),
 				dashboards.AddQueryDataSource(datasourceName),
@@ -67,7 +67,7 @@ func MemoryUsage(datasourceName string, labelMatchers ...promql.LabelMatcher) pa
 		panel.AddQuery(
 			query.PromQL(
 				promql.SetLabelMatchers(
-					"rate(go_memstats_heap_alloc_bytes[5m])",
+					"rate(go_memstats_heap_alloc_bytes[$__rate_interval])",
 					labelMatchers,
 				),
 				dashboards.AddQueryDataSource(datasourceName),
