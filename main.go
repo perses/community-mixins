@@ -6,6 +6,7 @@ import (
 	dashboards "github.com/perses/community-dashboards/pkg/dashboards"
 	"github.com/perses/community-dashboards/pkg/dashboards/alertmanager"
 	"github.com/perses/community-dashboards/pkg/dashboards/blackbox"
+	k8sComputeResources "github.com/perses/community-dashboards/pkg/dashboards/kubernetes/compute_resources"
 	nodeexporter "github.com/perses/community-dashboards/pkg/dashboards/node_exporter"
 	"github.com/perses/community-dashboards/pkg/dashboards/perses"
 	"github.com/perses/community-dashboards/pkg/dashboards/prometheus"
@@ -40,5 +41,13 @@ func main() {
 	dashboardWriter.Add(thanos.BuildThanosQueryFrontendOverview(project, datasource, clusterLabelName))
 	dashboardWriter.Add(thanos.BuildThanosCompactOverview(project, datasource, clusterLabelName))
 	dashboardWriter.Add(blackbox.BuildBlackboxExporter(project, datasource, clusterLabelName))
+	dashboardWriter.Add(k8sComputeResources.BuildKubernetesNodeResourcesOverview(project, datasource, clusterLabelName))
+	dashboardWriter.Add(k8sComputeResources.BuildKubernetesClusterOverview(project, datasource, clusterLabelName))
+	dashboardWriter.Add(k8sComputeResources.BuildKubernetesNamespaceOverview(project, datasource, clusterLabelName))
+	dashboardWriter.Add(k8sComputeResources.BuildKubernetesPodOverview(project, datasource, clusterLabelName))
+	dashboardWriter.Add(k8sComputeResources.BuildKubernetesWorkloadOverview(project, datasource, clusterLabelName))
+	dashboardWriter.Add(k8sComputeResources.BuildKubernetesWorkloadNamespaceOverview(project, datasource, clusterLabelName))
+	dashboardWriter.Add(k8sComputeResources.BuildKubernetesMultiClusterOverview(project, datasource, clusterLabelName))
+
 	dashboardWriter.Write()
 }
