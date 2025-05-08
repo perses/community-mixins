@@ -29,7 +29,7 @@ func QueryFrontendRequestRate(datasourceName string, labelMatchers ...promql.Lab
 		panel.AddQuery(
 			query.PromQL(
 				promql.SetLabelMatchers(
-					"sum by (namespace, job, handler, code) (rate(http_requests_total{namespace='$namespace', job=~'$job', handler=\"query-frontend\"}[5m]))",
+					"sum by (namespace, job, handler, code) (rate(http_requests_total{namespace='$namespace', job=~'$job', handler=\"query-frontend\"}[$__rate_interval]))",
 					labelMatchers,
 				),
 				dashboards.AddQueryDataSource(datasourceName),
@@ -56,7 +56,7 @@ func QueryFrontendQueryRate(datasourceName string, labelMatchers ...promql.Label
 		panel.AddQuery(
 			query.PromQL(
 				promql.SetLabelMatchers(
-					"sum by (namespace, job, handler, code) (rate(thanos_query_frontend_queries_total{namespace='$namespace', job=~'$job', op=\"query_range\"}[5m]))",
+					"sum by (namespace, job, handler, code) (rate(thanos_query_frontend_queries_total{namespace='$namespace', job=~'$job', op=\"query_range\"}[$__rate_interval]))",
 					labelMatchers,
 				),
 				dashboards.AddQueryDataSource(datasourceName),
@@ -83,7 +83,7 @@ func QueryFrontendErrors(datasourceName string, labelMatchers ...promql.LabelMat
 		panel.AddQuery(
 			query.PromQL(
 				promql.SetLabelMatchers(
-					`sum by (namespace, job, code) (rate(http_requests_total{namespace='$namespace', job=~'$job', handler="query-frontend",code=~"5.."}[5m])) / ignoring (code) group_left() sum by (namespace, job) (rate(http_requests_total{namespace='$namespace', job=~'$job', handler="query-frontend"}[5m]))`,
+					`sum by (namespace, job, code) (rate(http_requests_total{namespace='$namespace', job=~'$job', handler="query-frontend",code=~"5.."}[$__rate_interval])) / ignoring (code) group_left() sum by (namespace, job) (rate(http_requests_total{namespace='$namespace', job=~'$job', handler="query-frontend"}[$__rate_interval]))`,
 					labelMatchers,
 				),
 				dashboards.AddQueryDataSource(datasourceName),
@@ -110,7 +110,7 @@ func QueryFrontendDurations(datasourceName string, labelMatchers ...promql.Label
 		panel.AddQuery(
 			query.PromQL(
 				promql.SetLabelMatchers(
-					"histogram_quantile(0.50, sum by (namespace, job, le) (rate(http_request_duration_seconds_bucket{namespace='$namespace', job=~'$job', handler=\"query-frontend\"}[5m])))",
+					"histogram_quantile(0.50, sum by (namespace, job, le) (rate(http_request_duration_seconds_bucket{namespace='$namespace', job=~'$job', handler=\"query-frontend\"}[$__rate_interval])))",
 					labelMatchers,
 				),
 				dashboards.AddQueryDataSource(datasourceName),
@@ -120,7 +120,7 @@ func QueryFrontendDurations(datasourceName string, labelMatchers ...promql.Label
 		panel.AddQuery(
 			query.PromQL(
 				promql.SetLabelMatchers(
-					"histogram_quantile(0.90, sum by (namespace, job, le) (rate(http_request_duration_seconds_bucket{namespace='$namespace', job=~'$job', handler=\"query-frontend\"}[5m])))",
+					"histogram_quantile(0.90, sum by (namespace, job, le) (rate(http_request_duration_seconds_bucket{namespace='$namespace', job=~'$job', handler=\"query-frontend\"}[$__rate_interval])))",
 					labelMatchers,
 				),
 				dashboards.AddQueryDataSource(datasourceName),
@@ -130,7 +130,7 @@ func QueryFrontendDurations(datasourceName string, labelMatchers ...promql.Label
 		panel.AddQuery(
 			query.PromQL(
 				promql.SetLabelMatchers(
-					"histogram_quantile(0.99, sum by (namespace, job, le) (rate(http_request_duration_seconds_bucket{namespace='$namespace', job=~'$job', handler=\"query-frontend\"}[5m])))",
+					"histogram_quantile(0.99, sum by (namespace, job, le) (rate(http_request_duration_seconds_bucket{namespace='$namespace', job=~'$job', handler=\"query-frontend\"}[$__rate_interval])))",
 					labelMatchers,
 				),
 				dashboards.AddQueryDataSource(datasourceName),
@@ -157,7 +157,7 @@ func QueryFrontendCacheRequestRate(datasourceName string, labelMatchers ...promq
 		panel.AddQuery(
 			query.PromQL(
 				promql.SetLabelMatchers(
-					"sum by (namespace, job, tripperware) (rate(cortex_cache_request_duration_seconds_count{namespace='$namespace', job=~'$job'}[5m]))",
+					"sum by (namespace, job, tripperware) (rate(cortex_cache_request_duration_seconds_count{namespace='$namespace', job=~'$job'}[$__rate_interval]))",
 					labelMatchers,
 				),
 				dashboards.AddQueryDataSource(datasourceName),
@@ -184,7 +184,7 @@ func QueryFrontendCacheHitRate(datasourceName string, labelMatchers ...promql.La
 		panel.AddQuery(
 			query.PromQL(
 				promql.SetLabelMatchers(
-					"sum by (namespace, job, tripperware) (rate(cortex_cache_hits_total{namespace='$namespace', job=~'$job'}[5m]))",
+					"sum by (namespace, job, tripperware) (rate(cortex_cache_hits_total{namespace='$namespace', job=~'$job'}[$__rate_interval]))",
 					labelMatchers,
 				),
 				dashboards.AddQueryDataSource(datasourceName),
@@ -211,7 +211,7 @@ func QueryFrontendCacheMissRate(datasourceName string, labelMatchers ...promql.L
 		panel.AddQuery(
 			query.PromQL(
 				promql.SetLabelMatchers(
-					"sum by (namespace, job, tripperware) (rate(querier_cache_misses_total{namespace='$namespace', job=~'$job'}[5m]))",
+					"sum by (namespace, job, tripperware) (rate(querier_cache_misses_total{namespace='$namespace', job=~'$job'}[$__rate_interval]))",
 					labelMatchers,
 				),
 				dashboards.AddQueryDataSource(datasourceName),
@@ -238,7 +238,7 @@ func QueryFrontendFetchedKeyRate(datasourceName string, labelMatchers ...promql.
 		panel.AddQuery(
 			query.PromQL(
 				promql.SetLabelMatchers(
-					"sum by (namespace, job, tripperware) (rate(cortex_cache_fetched_keys_total{namespace='$namespace', job=~'$job'}[5m]))",
+					"sum by (namespace, job, tripperware) (rate(cortex_cache_fetched_keys_total{namespace='$namespace', job=~'$job'}[$__rate_interval]))",
 					labelMatchers,
 				),
 				dashboards.AddQueryDataSource(datasourceName),

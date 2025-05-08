@@ -72,7 +72,7 @@ func HTTPRequestsLatencyPanel(datasourceName string, labelMatchers ...promql.Lab
 		panel.AddQuery(
 			query.PromQL(
 				promql.SetLabelMatchers(
-					"sum by (handler, method) (rate(perses_http_request_duration_second_sum{job=~'$job', instance=~'$instance'}[5m])) / sum by (handler, method) (rate(perses_http_request_duration_second_count{job=~'$job', instance=~'$instance'}[5m]))",
+					"sum by (handler, method) (rate(perses_http_request_duration_second_sum{job=~'$job', instance=~'$instance'}[$__rate_interval])) / sum by (handler, method) (rate(perses_http_request_duration_second_count{job=~'$job', instance=~'$instance'}[$__rate_interval]))",
 					labelMatchers,
 				),
 				dashboards.AddQueryDataSource(datasourceName),
@@ -99,7 +99,7 @@ func HTTPRequestsRatePanel(datasourceName string, labelMatchers ...promql.LabelM
 		panel.AddQuery(
 			query.PromQL(
 				promql.SetLabelMatchers(
-					"sum by (handler, code) (rate(perses_http_request_total{job=~'$job', instance=~'$instance'}[5m]))",
+					"sum by (handler, code) (rate(perses_http_request_total{job=~'$job', instance=~'$instance'}[$__rate_interval]))",
 					labelMatchers,
 				),
 				dashboards.AddQueryDataSource(datasourceName),
@@ -126,7 +126,7 @@ func HTTPErrorsRatePanel(datasourceName string, labelMatchers ...promql.LabelMat
 		panel.AddQuery(
 			query.PromQL(
 				promql.SetLabelMatchers(
-					"sum by (handler, code) (rate(perses_http_request_total{job=~'$job', instance=~'$instance', code=~'4..|5..'}[5m]))",
+					"sum by (handler, code) (rate(perses_http_request_total{job=~'$job', instance=~'$instance', code=~'4..|5..'}[$__rate_interval]))",
 					labelMatchers,
 				),
 				dashboards.AddQueryDataSource(datasourceName),
@@ -154,7 +154,7 @@ func CPUUsage(datasourceName string, labelMatchers ...promql.LabelMatcher) panel
 		panel.AddQuery(
 			query.PromQL(
 				promql.SetLabelMatchers(
-					"rate(process_cpu_seconds_total{job=~'$job', instance=~'$instance'}[5m])",
+					"rate(process_cpu_seconds_total{job=~'$job', instance=~'$instance'}[$__rate_interval])",
 					labelMatchers,
 				),
 				dashboards.AddQueryDataSource(datasourceName),

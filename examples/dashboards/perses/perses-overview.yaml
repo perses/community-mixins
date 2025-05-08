@@ -106,11 +106,11 @@ spec:
                                     name: prometheus-datasource
                                 query: |4-
                                       sum by (handler, method) (
-                                        rate(perses_http_request_duration_second_sum{instance=~"$instance",job=~"$job"}[5m])
+                                        rate(perses_http_request_duration_second_sum{instance=~"$instance",job=~"$job"}[$__rate_interval])
                                       )
                                     /
                                       sum by (handler, method) (
-                                        rate(perses_http_request_duration_second_count{instance=~"$instance",job=~"$job"}[5m])
+                                        rate(perses_http_request_duration_second_count{instance=~"$instance",job=~"$job"}[$__rate_interval])
                                       )
                                 seriesNameFormat: '{{handler}} {{method}}'
         "1_1":
@@ -137,7 +137,10 @@ spec:
                                 datasource:
                                     kind: PrometheusDatasource
                                     name: prometheus-datasource
-                                query: sum by (handler, code) (rate(perses_http_request_total{instance=~"$instance",job=~"$job"}[5m]))
+                                query: |-
+                                    sum by (handler, code) (
+                                      rate(perses_http_request_total{instance=~"$instance",job=~"$job"}[$__rate_interval])
+                                    )
                                 seriesNameFormat: '{{handler}} {{method}} {{code}}'
         "1_2":
             kind: Panel
@@ -165,7 +168,7 @@ spec:
                                     name: prometheus-datasource
                                 query: |-
                                     sum by (handler, code) (
-                                      rate(perses_http_request_total{code=~"4..|5..",instance=~"$instance",job=~"$job"}[5m])
+                                      rate(perses_http_request_total{code=~"4..|5..",instance=~"$instance",job=~"$job"}[$__rate_interval])
                                     )
                                 seriesNameFormat: '{{handler}} {{method}} {{code}}'
         "2_0":
@@ -220,7 +223,7 @@ spec:
                                 datasource:
                                     kind: PrometheusDatasource
                                     name: prometheus-datasource
-                                query: rate(go_memstats_alloc_bytes_total{instance=~"$instance",job=~"$job"}[5m])
+                                query: rate(go_memstats_alloc_bytes_total{instance=~"$instance",job=~"$job"}[$__rate_interval])
                                 seriesNameFormat: Alloc Rate All {{pod}}
                     - kind: TimeSeriesQuery
                       spec:
@@ -230,7 +233,7 @@ spec:
                                 datasource:
                                     kind: PrometheusDatasource
                                     name: prometheus-datasource
-                                query: rate(go_memstats_heap_alloc_bytes{instance=~"$instance",job=~"$job"}[5m])
+                                query: rate(go_memstats_heap_alloc_bytes{instance=~"$instance",job=~"$job"}[$__rate_interval])
                                 seriesNameFormat: Alloc Rate Heap {{pod}}
                     - kind: TimeSeriesQuery
                       spec:
@@ -288,7 +291,7 @@ spec:
                                 datasource:
                                     kind: PrometheusDatasource
                                     name: prometheus-datasource
-                                query: rate(process_cpu_seconds_total{instance=~"$instance",job=~"$job"}[5m])
+                                query: rate(process_cpu_seconds_total{instance=~"$instance",job=~"$job"}[$__rate_interval])
                                 seriesNameFormat: '{{pod}}'
         "2_2":
             kind: Panel

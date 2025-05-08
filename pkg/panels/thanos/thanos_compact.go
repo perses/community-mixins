@@ -29,7 +29,7 @@ func GroupCompactionRate(datasourceName string, labelMatchers ...promql.LabelMat
 		panel.AddQuery(
 			query.PromQL(
 				promql.SetLabelMatchers(
-					"sum by (namespace, job, resolution) (rate(thanos_compact_group_compactions_total{namespace='$namespace', job=~'$job'}[5m]))",
+					"sum by (namespace, job, resolution) (rate(thanos_compact_group_compactions_total{namespace='$namespace', job=~'$job'}[$__rate_interval]))",
 					labelMatchers,
 				),
 				dashboards.AddQueryDataSource(datasourceName),
@@ -56,7 +56,7 @@ func GroupCompactionErrors(datasourceName string, labelMatchers ...promql.LabelM
 		panel.AddQuery(
 			query.PromQL(
 				promql.SetLabelMatchers(
-					"(sum by (namespace, job) (rate(thanos_compact_group_compactions_failures_total{namespace='$namespace', job=~'$job'}[5m])) / sum by (namespace, job) (rate(thanos_compact_group_compactions_total{namespace='$namespace', job=~'$job'}[5m]))) * 100",
+					"(sum by (namespace, job) (rate(thanos_compact_group_compactions_failures_total{namespace='$namespace', job=~'$job'}[$__rate_interval])) / sum by (namespace, job) (rate(thanos_compact_group_compactions_total{namespace='$namespace', job=~'$job'}[$__rate_interval]))) * 100",
 					labelMatchers,
 				),
 				dashboards.AddQueryDataSource(datasourceName),
@@ -83,7 +83,7 @@ func DownsampleRate(datasourceName string, labelMatchers ...promql.LabelMatcher)
 		panel.AddQuery(
 			query.PromQL(
 				promql.SetLabelMatchers(
-					"sum by (namespace, job, resolution) (rate(thanos_compact_downsample_total{namespace='$namespace', job=~'$job'}[5m]))",
+					"sum by (namespace, job, resolution) (rate(thanos_compact_downsample_total{namespace='$namespace', job=~'$job'}[$__rate_interval]))",
 					labelMatchers,
 				),
 				dashboards.AddQueryDataSource(datasourceName),
@@ -110,7 +110,7 @@ func DownsampleErrors(datasourceName string, labelMatchers ...promql.LabelMatche
 		panel.AddQuery(
 			query.PromQL(
 				promql.SetLabelMatchers(
-					"(sum by (namespace, job) (rate(thanos_compact_downsample_failed_total{namespace='$namespace', job=~'$job'}[5m])) / sum by (namespace, job) (rate(thanos_compact_downsample_total{namespace='$namespace', job=~'$job'}[5m]))) * 100",
+					"(sum by (namespace, job) (rate(thanos_compact_downsample_failed_total{namespace='$namespace', job=~'$job'}[$__rate_interval])) / sum by (namespace, job) (rate(thanos_compact_downsample_total{namespace='$namespace', job=~'$job'}[$__rate_interval]))) * 100",
 					labelMatchers,
 				),
 				dashboards.AddQueryDataSource(datasourceName),
@@ -137,7 +137,7 @@ func DownsampleDurations(datasourceName string, labelMatchers ...promql.LabelMat
 		panel.AddQuery(
 			query.PromQL(
 				promql.SetLabelMatchers(
-					"histogram_quantile(0.50, sum by (namespace, job, resolution, le) (rate(thanos_compact_downsample_duration_seconds_bucket{namespace='$namespace', job=~'$job'}[5m])))",
+					"histogram_quantile(0.50, sum by (namespace, job, resolution, le) (rate(thanos_compact_downsample_duration_seconds_bucket{namespace='$namespace', job=~'$job'}[$__rate_interval])))",
 					labelMatchers,
 				),
 				dashboards.AddQueryDataSource(datasourceName),
@@ -147,7 +147,7 @@ func DownsampleDurations(datasourceName string, labelMatchers ...promql.LabelMat
 		panel.AddQuery(
 			query.PromQL(
 				promql.SetLabelMatchers(
-					"histogram_quantile(0.90, sum by (namespace, job, resolution, le) (rate(thanos_compact_downsample_duration_seconds_bucket{namespace='$namespace', job=~'$job'}[5m])))",
+					"histogram_quantile(0.90, sum by (namespace, job, resolution, le) (rate(thanos_compact_downsample_duration_seconds_bucket{namespace='$namespace', job=~'$job'}[$__rate_interval])))",
 					labelMatchers,
 				),
 				dashboards.AddQueryDataSource(datasourceName),
@@ -157,7 +157,7 @@ func DownsampleDurations(datasourceName string, labelMatchers ...promql.LabelMat
 		panel.AddQuery(
 			query.PromQL(
 				promql.SetLabelMatchers(
-					"histogram_quantile(0.99, sum by (namespace, job, resolution, le) (rate(thanos_compact_downsample_duration_seconds_bucket{namespace='$namespace', job=~'$job'}[5m])))",
+					"histogram_quantile(0.99, sum by (namespace, job, resolution, le) (rate(thanos_compact_downsample_duration_seconds_bucket{namespace='$namespace', job=~'$job'}[$__rate_interval])))",
 					labelMatchers,
 				),
 				dashboards.AddQueryDataSource(datasourceName),
@@ -184,7 +184,7 @@ func SyncMetaRate(datasourceName string, labelMatchers ...promql.LabelMatcher) p
 		panel.AddQuery(
 			query.PromQL(
 				promql.SetLabelMatchers(
-					"sum by (namespace, job) (rate(thanos_blocks_meta_syncs_total{namespace='$namespace', job=~'$job'}[5m]))",
+					"sum by (namespace, job) (rate(thanos_blocks_meta_syncs_total{namespace='$namespace', job=~'$job'}[$__rate_interval]))",
 					labelMatchers,
 				),
 				dashboards.AddQueryDataSource(datasourceName),
@@ -211,7 +211,7 @@ func SyncMetaErrors(datasourceName string, labelMatchers ...promql.LabelMatcher)
 		panel.AddQuery(
 			query.PromQL(
 				promql.SetLabelMatchers(
-					"(sum by (namespace, job) (rate(thanos_blocks_meta_sync_failures_total{namespace='$namespace', job=~'$job'}[5m])) / sum by (namespace, job) (rate(thanos_blocks_meta_syncs_total{namespace='$namespace', job=~'$job'}[5m]))) * 100",
+					"(sum by (namespace, job) (rate(thanos_blocks_meta_sync_failures_total{namespace='$namespace', job=~'$job'}[$__rate_interval])) / sum by (namespace, job) (rate(thanos_blocks_meta_syncs_total{namespace='$namespace', job=~'$job'}[$__rate_interval]))) * 100",
 					labelMatchers,
 				),
 				dashboards.AddQueryDataSource(datasourceName),
@@ -238,7 +238,7 @@ func SyncMetaDurations(datasourceName string, labelMatchers ...promql.LabelMatch
 		panel.AddQuery(
 			query.PromQL(
 				promql.SetLabelMatchers(
-					"histogram_quantile(0.50, sum by (namespace, job, le) (rate(thanos_blocks_meta_sync_duration_seconds_bucket{namespace='$namespace', job=~'$job'}[5m])))",
+					"histogram_quantile(0.50, sum by (namespace, job, le) (rate(thanos_blocks_meta_sync_duration_seconds_bucket{namespace='$namespace', job=~'$job'}[$__rate_interval])))",
 					labelMatchers,
 				),
 				dashboards.AddQueryDataSource(datasourceName),
@@ -248,7 +248,7 @@ func SyncMetaDurations(datasourceName string, labelMatchers ...promql.LabelMatch
 		panel.AddQuery(
 			query.PromQL(
 				promql.SetLabelMatchers(
-					"histogram_quantile(0.90, sum by (namespace, job, le) (rate(thanos_blocks_meta_sync_duration_seconds_bucket{namespace='$namespace', job=~'$job'}[5m])))",
+					"histogram_quantile(0.90, sum by (namespace, job, le) (rate(thanos_blocks_meta_sync_duration_seconds_bucket{namespace='$namespace', job=~'$job'}[$__rate_interval])))",
 					labelMatchers,
 				),
 				dashboards.AddQueryDataSource(datasourceName),
@@ -258,7 +258,7 @@ func SyncMetaDurations(datasourceName string, labelMatchers ...promql.LabelMatch
 		panel.AddQuery(
 			query.PromQL(
 				promql.SetLabelMatchers(
-					"histogram_quantile(0.99, sum by (namespace, job, le) (rate(thanos_blocks_meta_sync_duration_seconds_bucket{namespace='$namespace', job=~'$job'}[5m])))",
+					"histogram_quantile(0.99, sum by (namespace, job, le) (rate(thanos_blocks_meta_sync_duration_seconds_bucket{namespace='$namespace', job=~'$job'}[$__rate_interval])))",
 					labelMatchers,
 				),
 				dashboards.AddQueryDataSource(datasourceName),
@@ -285,7 +285,7 @@ func DeletionRate(datasourceName string, labelMatchers ...promql.LabelMatcher) p
 		panel.AddQuery(
 			query.PromQL(
 				promql.SetLabelMatchers(
-					"sum by (namespace, job) (rate(thanos_compact_blocks_cleaned_total{namespace='$namespace', job=~'$job'}[5m]))",
+					"sum by (namespace, job) (rate(thanos_compact_blocks_cleaned_total{namespace='$namespace', job=~'$job'}[$__rate_interval]))",
 					labelMatchers,
 				),
 				dashboards.AddQueryDataSource(datasourceName),
@@ -312,7 +312,7 @@ func DeletionErrors(datasourceName string, labelMatchers ...promql.LabelMatcher)
 		panel.AddQuery(
 			query.PromQL(
 				promql.SetLabelMatchers(
-					"sum by (namespace, job) (rate(thanos_compact_block_cleanup_failures_total{namespace='$namespace', job=~'$job'}[5m]))",
+					"sum by (namespace, job) (rate(thanos_compact_block_cleanup_failures_total{namespace='$namespace', job=~'$job'}[$__rate_interval]))",
 					labelMatchers,
 				),
 				dashboards.AddQueryDataSource(datasourceName),
@@ -339,7 +339,7 @@ func MarkingRate(datasourceName string, labelMatchers ...promql.LabelMatcher) pa
 		panel.AddQuery(
 			query.PromQL(
 				promql.SetLabelMatchers(
-					"sum by (namespace, job) (rate(thanos_compact_blocks_marked_total{namespace='$namespace', job=~'$job', marker=\"deletion-mark.json\"}[5m]))",
+					"sum by (namespace, job) (rate(thanos_compact_blocks_marked_total{namespace='$namespace', job=~'$job', marker=\"deletion-mark.json\"}[$__rate_interval]))",
 					labelMatchers,
 				),
 				dashboards.AddQueryDataSource(datasourceName),
@@ -366,7 +366,7 @@ func GarbageCollectionRate(datasourceName string, labelMatchers ...promql.LabelM
 		panel.AddQuery(
 			query.PromQL(
 				promql.SetLabelMatchers(
-					"sum by (namespace, job) (rate(thanos_compact_garbage_collection_total{namespace='$namespace', job=~'$job'}[5m]))",
+					"sum by (namespace, job) (rate(thanos_compact_garbage_collection_total{namespace='$namespace', job=~'$job'}[$__rate_interval]))",
 					labelMatchers,
 				),
 				dashboards.AddQueryDataSource(datasourceName),
@@ -393,7 +393,7 @@ func GarbageCollectionErrors(datasourceName string, labelMatchers ...promql.Labe
 		panel.AddQuery(
 			query.PromQL(
 				promql.SetLabelMatchers(
-					"(sum by (namespace, job) (rate(thanos_compact_garbage_collection_failures_total{namespace='$namespace', job=~'$job'}[5m])) / sum by (namespace, job) (rate(thanos_compact_garbage_collection_total{namespace='$namespace', job=~'$job'}[5m]))) * 100",
+					"(sum by (namespace, job) (rate(thanos_compact_garbage_collection_failures_total{namespace='$namespace', job=~'$job'}[$__rate_interval])) / sum by (namespace, job) (rate(thanos_compact_garbage_collection_total{namespace='$namespace', job=~'$job'}[$__rate_interval]))) * 100",
 					labelMatchers,
 				),
 				dashboards.AddQueryDataSource(datasourceName),
@@ -420,7 +420,7 @@ func GarbageCollectionDurations(datasourceName string, labelMatchers ...promql.L
 		panel.AddQuery(
 			query.PromQL(
 				promql.SetLabelMatchers(
-					"histogram_quantile(0.50, sum by (namespace, job, le) (rate(thanos_compact_garbage_collection_duration_seconds_bucket{namespace='$namespace', job=~'$job'}[5m])))",
+					"histogram_quantile(0.50, sum by (namespace, job, le) (rate(thanos_compact_garbage_collection_duration_seconds_bucket{namespace='$namespace', job=~'$job'}[$__rate_interval])))",
 					labelMatchers,
 				),
 				dashboards.AddQueryDataSource(datasourceName),
@@ -430,7 +430,7 @@ func GarbageCollectionDurations(datasourceName string, labelMatchers ...promql.L
 		panel.AddQuery(
 			query.PromQL(
 				promql.SetLabelMatchers(
-					"histogram_quantile(0.90, sum by (namespace, job, le) (rate(thanos_compact_garbage_collection_duration_seconds_bucket{namespace='$namespace', job=~'$job'}[5m])))",
+					"histogram_quantile(0.90, sum by (namespace, job, le) (rate(thanos_compact_garbage_collection_duration_seconds_bucket{namespace='$namespace', job=~'$job'}[$__rate_interval])))",
 					labelMatchers,
 				),
 				dashboards.AddQueryDataSource(datasourceName),
@@ -440,7 +440,7 @@ func GarbageCollectionDurations(datasourceName string, labelMatchers ...promql.L
 		panel.AddQuery(
 			query.PromQL(
 				promql.SetLabelMatchers(
-					"histogram_quantile(0.99, sum by (namespace, job, le) (rate(thanos_compact_garbage_collection_duration_seconds_bucket{namespace='$namespace', job=~'$job'}[5m])))",
+					"histogram_quantile(0.99, sum by (namespace, job, le) (rate(thanos_compact_garbage_collection_duration_seconds_bucket{namespace='$namespace', job=~'$job'}[$__rate_interval])))",
 					labelMatchers,
 				),
 				dashboards.AddQueryDataSource(datasourceName),

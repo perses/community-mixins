@@ -23,7 +23,7 @@ func KubernetesIOPS(granularity, datasourceName string, labelMatchers ...promql.
 			panel.AddQuery(
 				query.PromQL(
 					promql.SetLabelMatchers(
-						"ceil(sum by(namespace) (rate(container_fs_reads_total{"+GetCAdvisorMatcher()+", container!=\"\", device=~\"(/dev.+)|mmcblk.p.+|nvme.+|rbd.+|sd.+|vd.+|xvd.+|dm-.+|dasd.+\", cluster=\"$cluster\", namespace!=\"\"}[5m]) + rate(container_fs_writes_total{"+GetCAdvisorMatcher()+", container!=\"\", cluster=\"$cluster\", namespace!=\"\"}[5m])))",
+						"ceil(sum by(namespace) (rate(container_fs_reads_total{"+GetCAdvisorMatcher()+", container!=\"\", device=~\"(/dev.+)|mmcblk.p.+|nvme.+|rbd.+|sd.+|vd.+|xvd.+|dm-.+|dasd.+\", cluster=\"$cluster\", namespace!=\"\"}[$__rate_interval]) + rate(container_fs_writes_total{"+GetCAdvisorMatcher()+", container!=\"\", cluster=\"$cluster\", namespace!=\"\"}[$__rate_interval])))",
 						labelMatchers,
 					),
 					dashboards.AddQueryDataSource(datasourceName),
@@ -38,7 +38,7 @@ func KubernetesIOPS(granularity, datasourceName string, labelMatchers ...promql.
 			panel.AddQuery(
 				query.PromQL(
 					promql.SetLabelMatchers(
-						"ceil(sum by(pod) (rate(container_fs_reads_total{container!=\"\", device=~\"(/dev.+)|mmcblk.p.+|nvme.+|rbd.+|sd.+|vd.+|xvd.+|dm-.+|dasd.+\", cluster=\"$cluster\", namespace=\"$namespace\"}[5m]) + rate(container_fs_writes_total{container!=\"\", device=~\"(/dev.+)|mmcblk.p.+|nvme.+|rbd.+|sd.+|vd.+|xvd.+|dm-.+|dasd.+\", cluster=\"$cluster\", namespace=\"$namespace\"}[5m])))",
+						"ceil(sum by(pod) (rate(container_fs_reads_total{container!=\"\", device=~\"(/dev.+)|mmcblk.p.+|nvme.+|rbd.+|sd.+|vd.+|xvd.+|dm-.+|dasd.+\", cluster=\"$cluster\", namespace=\"$namespace\"}[$__rate_interval]) + rate(container_fs_writes_total{container!=\"\", device=~\"(/dev.+)|mmcblk.p.+|nvme.+|rbd.+|sd.+|vd.+|xvd.+|dm-.+|dasd.+\", cluster=\"$cluster\", namespace=\"$namespace\"}[$__rate_interval])))",
 						labelMatchers,
 					),
 					dashboards.AddQueryDataSource(datasourceName),
@@ -53,7 +53,7 @@ func KubernetesIOPS(granularity, datasourceName string, labelMatchers ...promql.
 			panel.AddQuery(
 				query.PromQL(
 					promql.SetLabelMatchers(
-						"ceil(sum by(pod) (rate(container_fs_writes_total{"+GetCAdvisorMatcher()+", device=~\"(/dev.+)|mmcblk.p.+|nvme.+|rbd.+|sd.+|vd.+|xvd.+|dm-.+|dasd.+\", container!=\"\", cluster=\"$cluster\",namespace=\"$namespace\", pod=~\"$pod\"}[5m])))",
+						"ceil(sum by(pod) (rate(container_fs_writes_total{"+GetCAdvisorMatcher()+", device=~\"(/dev.+)|mmcblk.p.+|nvme.+|rbd.+|sd.+|vd.+|xvd.+|dm-.+|dasd.+\", container!=\"\", cluster=\"$cluster\",namespace=\"$namespace\", pod=~\"$pod\"}[$__rate_interval])))",
 						labelMatchers,
 					),
 					dashboards.AddQueryDataSource(datasourceName),
@@ -63,7 +63,7 @@ func KubernetesIOPS(granularity, datasourceName string, labelMatchers ...promql.
 			panel.AddQuery(
 				query.PromQL(
 					promql.SetLabelMatchers(
-						"ceil(sum by(pod) (rate(container_fs_reads_total{"+GetCAdvisorMatcher()+", device=~\"(/dev.+)|mmcblk.p.+|nvme.+|rbd.+|sd.+|vd.+|xvd.+|dm-.+|dasd.+\", container!=\"\", cluster=\"$cluster\", namespace=\"$namespace\", pod=~\"$pod\"}[5m])))",
+						"ceil(sum by(pod) (rate(container_fs_reads_total{"+GetCAdvisorMatcher()+", device=~\"(/dev.+)|mmcblk.p.+|nvme.+|rbd.+|sd.+|vd.+|xvd.+|dm-.+|dasd.+\", container!=\"\", cluster=\"$cluster\", namespace=\"$namespace\", pod=~\"$pod\"}[$__rate_interval])))",
 						labelMatchers,
 					),
 					dashboards.AddQueryDataSource(datasourceName),
@@ -78,7 +78,7 @@ func KubernetesIOPS(granularity, datasourceName string, labelMatchers ...promql.
 			panel.AddQuery(
 				query.PromQL(
 					promql.SetLabelMatchers(
-						"ceil(sum by(container) (rate(container_fs_reads_total{"+GetCAdvisorMatcher()+", container!=\"\", cluster=\"$cluster\", namespace=\"$namespace\", pod=\"$pod\"}[5m]) + rate(container_fs_writes_total{"+GetCAdvisorMatcher()+", container!=\"\", cluster=\"$cluster\", namespace=\"$namespace\", pod=\"$pod\"}[5m])))",
+						"ceil(sum by(container) (rate(container_fs_reads_total{"+GetCAdvisorMatcher()+", container!=\"\", cluster=\"$cluster\", namespace=\"$namespace\", pod=\"$pod\"}[$__rate_interval]) + rate(container_fs_writes_total{"+GetCAdvisorMatcher()+", container!=\"\", cluster=\"$cluster\", namespace=\"$namespace\", pod=\"$pod\"}[$__rate_interval])))",
 						labelMatchers,
 					),
 					dashboards.AddQueryDataSource(datasourceName),
@@ -127,7 +127,7 @@ func KubernetesThroughput(granularity, datasourceName string, labelMatchers ...p
 			panel.AddQuery(
 				query.PromQL(
 					promql.SetLabelMatchers(
-						"sum by(namespace) (rate(container_fs_reads_bytes_total{"+GetCAdvisorMatcher()+", container!=\"\", device=~\"(/dev.+)|mmcblk.p.+|nvme.+|rbd.+|sd.+|vd.+|xvd.+|dm-.+|dasd.+\", cluster=\"$cluster\", namespace!=\"\"}[5m]) + rate(container_fs_writes_bytes_total{"+GetCAdvisorMatcher()+", container!=\"\", cluster=\"$cluster\", namespace!=\"\"}[5m]))",
+						"sum by(namespace) (rate(container_fs_reads_bytes_total{"+GetCAdvisorMatcher()+", container!=\"\", device=~\"(/dev.+)|mmcblk.p.+|nvme.+|rbd.+|sd.+|vd.+|xvd.+|dm-.+|dasd.+\", cluster=\"$cluster\", namespace!=\"\"}[$__rate_interval]) + rate(container_fs_writes_bytes_total{"+GetCAdvisorMatcher()+", container!=\"\", cluster=\"$cluster\", namespace!=\"\"}[$__rate_interval]))",
 						labelMatchers,
 					),
 					dashboards.AddQueryDataSource(datasourceName),
@@ -142,7 +142,7 @@ func KubernetesThroughput(granularity, datasourceName string, labelMatchers ...p
 			panel.AddQuery(
 				query.PromQL(
 					promql.SetLabelMatchers(
-						"sum by(pod) (rate(container_fs_reads_bytes_total{container!=\"\", device=~\"(/dev.+)|mmcblk.p.+|nvme.+|rbd.+|sd.+|vd.+|xvd.+|dm-.+|dasd.+\", cluster=\"$cluster\", namespace=\"$namespace\"}[5m]) + rate(container_fs_writes_bytes_total{container!=\"\", device=~\"(/dev.+)|mmcblk.p.+|nvme.+|rbd.+|sd.+|vd.+|xvd.+|dm-.+|dasd.+\", cluster=\"$cluster\", namespace=\"$namespace\"}[5m]))",
+						"sum by(pod) (rate(container_fs_reads_bytes_total{container!=\"\", device=~\"(/dev.+)|mmcblk.p.+|nvme.+|rbd.+|sd.+|vd.+|xvd.+|dm-.+|dasd.+\", cluster=\"$cluster\", namespace=\"$namespace\"}[$__rate_interval]) + rate(container_fs_writes_bytes_total{container!=\"\", device=~\"(/dev.+)|mmcblk.p.+|nvme.+|rbd.+|sd.+|vd.+|xvd.+|dm-.+|dasd.+\", cluster=\"$cluster\", namespace=\"$namespace\"}[$__rate_interval]))",
 						labelMatchers,
 					),
 					dashboards.AddQueryDataSource(datasourceName),
@@ -157,7 +157,7 @@ func KubernetesThroughput(granularity, datasourceName string, labelMatchers ...p
 			panel.AddQuery(
 				query.PromQL(
 					promql.SetLabelMatchers(
-						"sum by(pod) (rate(container_fs_writes_bytes_total{"+GetCAdvisorMatcher()+", device=~\"(/dev.+)|mmcblk.p.+|nvme.+|rbd.+|sd.+|vd.+|xvd.+|dm-.+|dasd.+\", container!=\"\", cluster=\"$cluster\", namespace=\"$namespace\", pod=~\"$pod\"}[5m]))",
+						"sum by(pod) (rate(container_fs_writes_bytes_total{"+GetCAdvisorMatcher()+", device=~\"(/dev.+)|mmcblk.p.+|nvme.+|rbd.+|sd.+|vd.+|xvd.+|dm-.+|dasd.+\", container!=\"\", cluster=\"$cluster\", namespace=\"$namespace\", pod=~\"$pod\"}[$__rate_interval]))",
 						labelMatchers,
 					),
 					dashboards.AddQueryDataSource(datasourceName),
@@ -167,7 +167,7 @@ func KubernetesThroughput(granularity, datasourceName string, labelMatchers ...p
 			panel.AddQuery(
 				query.PromQL(
 					promql.SetLabelMatchers(
-						"sum by(pod) (rate(container_fs_reads_bytes_total{"+GetCAdvisorMatcher()+", device=~\"(/dev.+)|mmcblk.p.+|nvme.+|rbd.+|sd.+|vd.+|xvd.+|dm-.+|dasd.+\", container!=\"\", cluster=\"$cluster\", namespace=\"$namespace\", pod=~\"$pod\"}[5m]))",
+						"sum by(pod) (rate(container_fs_reads_bytes_total{"+GetCAdvisorMatcher()+", device=~\"(/dev.+)|mmcblk.p.+|nvme.+|rbd.+|sd.+|vd.+|xvd.+|dm-.+|dasd.+\", container!=\"\", cluster=\"$cluster\", namespace=\"$namespace\", pod=~\"$pod\"}[$__rate_interval]))",
 						labelMatchers,
 					),
 					dashboards.AddQueryDataSource(datasourceName),
@@ -182,7 +182,7 @@ func KubernetesThroughput(granularity, datasourceName string, labelMatchers ...p
 			panel.AddQuery(
 				query.PromQL(
 					promql.SetLabelMatchers(
-						"sum by(container) (rate(container_fs_reads_bytes_total{"+GetCAdvisorMatcher()+", container!=\"\", cluster=\"$cluster\", namespace=\"$namespace\", pod=\"$pod\"}[5m]) + rate(container_fs_writes_bytes_total{"+GetCAdvisorMatcher()+", container!=\"\", cluster=\"$cluster\", namespace=\"$namespace\", pod=\"$pod\"}[5m]))",
+						"sum by(container) (rate(container_fs_reads_bytes_total{"+GetCAdvisorMatcher()+", container!=\"\", cluster=\"$cluster\", namespace=\"$namespace\", pod=\"$pod\"}[$__rate_interval]) + rate(container_fs_writes_bytes_total{"+GetCAdvisorMatcher()+", container!=\"\", cluster=\"$cluster\", namespace=\"$namespace\", pod=\"$pod\"}[$__rate_interval]))",
 						labelMatchers,
 					),
 					dashboards.AddQueryDataSource(datasourceName),

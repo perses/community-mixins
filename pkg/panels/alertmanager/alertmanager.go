@@ -74,7 +74,7 @@ func AlertsReceiveRate(datasourceName string, labelMatchers ...promql.LabelMatch
 		panel.AddQuery(
 			query.PromQL(
 				promql.SetLabelMatchers(
-					"sum(rate(alertmanager_alerts_received_total{job=~'$job'}[5m])) by (job,instance)",
+					"sum(rate(alertmanager_alerts_received_total{job=~'$job'}[$__rate_interval])) by (job,instance)",
 					labelMatchers,
 				),
 				dashboards.AddQueryDataSource(datasourceName),
@@ -84,7 +84,7 @@ func AlertsReceiveRate(datasourceName string, labelMatchers ...promql.LabelMatch
 		panel.AddQuery(
 			query.PromQL(
 				promql.SetLabelMatchers(
-					"sum(rate(alertmanager_alerts_invalid_total{job=~'$job'}[5m])) by (job,instance)",
+					"sum(rate(alertmanager_alerts_invalid_total{job=~'$job'}[$__rate_interval])) by (job,instance)",
 					labelMatchers,
 				),
 				dashboards.AddQueryDataSource(datasourceName),
@@ -128,7 +128,7 @@ func NotificationsSendRate(datasourceName string, labelMatchers ...promql.LabelM
 		panel.AddQuery(
 			query.PromQL(
 				promql.SetLabelMatchers(
-					"sum(rate(alertmanager_notifications_total{job=~'$job', integration=~'$integration'}[5m])) by (integration, instance)",
+					"sum(rate(alertmanager_notifications_total{job=~'$job', integration=~'$integration'}[$__rate_interval])) by (integration, instance)",
 					labelMatchers,
 				),
 				dashboards.AddQueryDataSource(datasourceName),
@@ -138,7 +138,7 @@ func NotificationsSendRate(datasourceName string, labelMatchers ...promql.LabelM
 		panel.AddQuery(
 			query.PromQL(
 				promql.SetLabelMatchers(
-					"sum(rate(alertmanager_notifications_failed_total{job=~'$job', integration=~'$integration'}[5m])) by (integration, instance)",
+					"sum(rate(alertmanager_notifications_failed_total{job=~'$job', integration=~'$integration'}[$__rate_interval])) by (integration, instance)",
 					labelMatchers,
 				),
 				dashboards.AddQueryDataSource(datasourceName),
@@ -186,7 +186,7 @@ func NotificationDuration(datasourceName string, labelMatchers ...promql.LabelMa
 		panel.AddQuery(
 			query.PromQL(
 				promql.SetLabelMatchers(
-					"histogram_quantile(0.99, sum(rate(alertmanager_notification_latency_seconds_bucket{job=~'$job', integration=~'$integration'}[5m])) by (le,integration,instance))",
+					"histogram_quantile(0.99, sum(rate(alertmanager_notification_latency_seconds_bucket{job=~'$job', integration=~'$integration'}[$__rate_interval])) by (le,integration,instance))",
 					labelMatchers,
 				),
 				dashboards.AddQueryDataSource(datasourceName),
@@ -196,7 +196,7 @@ func NotificationDuration(datasourceName string, labelMatchers ...promql.LabelMa
 		panel.AddQuery(
 			query.PromQL(
 				promql.SetLabelMatchers(
-					"histogram_quantile(0.50, sum(rate(alertmanager_notification_latency_seconds_bucket{job=~'$job', integration=~'$integration'}[5m])) by (le,integration,instance))",
+					"histogram_quantile(0.50, sum(rate(alertmanager_notification_latency_seconds_bucket{job=~'$job', integration=~'$integration'}[$__rate_interval])) by (le,integration,instance))",
 					labelMatchers,
 				),
 				dashboards.AddQueryDataSource(datasourceName),
@@ -206,7 +206,7 @@ func NotificationDuration(datasourceName string, labelMatchers ...promql.LabelMa
 		panel.AddQuery(
 			query.PromQL(
 				promql.SetLabelMatchers(
-					"sum(rate(alertmanager_notification_latency_seconds_sum{job=~'$job', integration=~'$integration'}[5m])) by (integration,instance) / sum(rate(alertmanager_notification_latency_seconds_count{job=~'$job', integration=~'$integration'}[5m])) by (integration,instance)",
+					"sum(rate(alertmanager_notification_latency_seconds_sum{job=~'$job', integration=~'$integration'}[$__rate_interval])) by (integration,instance) / sum(rate(alertmanager_notification_latency_seconds_count{job=~'$job', integration=~'$integration'}[$__rate_interval])) by (integration,instance)",
 					labelMatchers,
 				),
 				dashboards.AddQueryDataSource(datasourceName),

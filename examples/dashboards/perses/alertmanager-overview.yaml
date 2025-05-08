@@ -92,7 +92,7 @@ spec:
                                 datasource:
                                     kind: PrometheusDatasource
                                     name: prometheus-datasource
-                                query: sum by (job, instance) (rate(alertmanager_alerts_received_total{job=~"$job"}[5m]))
+                                query: sum by (job, instance) (rate(alertmanager_alerts_received_total{job=~"$job"}[$__rate_interval]))
                                 seriesNameFormat: '{{instance}} - Alertmanager - Received'
                     - kind: TimeSeriesQuery
                       spec:
@@ -102,7 +102,7 @@ spec:
                                 datasource:
                                     kind: PrometheusDatasource
                                     name: prometheus-datasource
-                                query: sum by (job, instance) (rate(alertmanager_alerts_invalid_total{job=~"$job"}[5m]))
+                                query: sum by (job, instance) (rate(alertmanager_alerts_invalid_total{job=~"$job"}[$__rate_interval]))
                                 seriesNameFormat: '{{instance}} - Alertmanager - Invalid'
         "1_0":
             kind: Panel
@@ -129,7 +129,7 @@ spec:
                                     name: prometheus-datasource
                                 query: |-
                                     sum by (integration, instance) (
-                                      rate(alertmanager_notifications_total{integration=~"$integration",job=~"$job"}[5m])
+                                      rate(alertmanager_notifications_total{integration=~"$integration",job=~"$job"}[$__rate_interval])
                                     )
                                 seriesNameFormat: '{{instance}} - {{integration}} - Total'
                     - kind: TimeSeriesQuery
@@ -142,7 +142,7 @@ spec:
                                     name: prometheus-datasource
                                 query: |-
                                     sum by (integration, instance) (
-                                      rate(alertmanager_notifications_failed_total{integration=~"$integration",job=~"$job"}[5m])
+                                      rate(alertmanager_notifications_failed_total{integration=~"$integration",job=~"$job"}[$__rate_interval])
                                     )
                                 seriesNameFormat: '{{instance}} - {{integration}} - Failed'
         "1_1":
@@ -175,7 +175,9 @@ spec:
                                     histogram_quantile(
                                       0.99,
                                       sum by (le, integration, instance) (
-                                        rate(alertmanager_notification_latency_seconds_bucket{integration=~"$integration",job=~"$job"}[5m])
+                                        rate(
+                                          alertmanager_notification_latency_seconds_bucket{integration=~"$integration",job=~"$job"}[$__rate_interval]
+                                        )
                                       )
                                     )
                                 seriesNameFormat: '{{instance}} - {{integration}} - 99th Percentile'
@@ -191,7 +193,9 @@ spec:
                                     histogram_quantile(
                                       0.5,
                                       sum by (le, integration, instance) (
-                                        rate(alertmanager_notification_latency_seconds_bucket{integration=~"$integration",job=~"$job"}[5m])
+                                        rate(
+                                          alertmanager_notification_latency_seconds_bucket{integration=~"$integration",job=~"$job"}[$__rate_interval]
+                                        )
                                       )
                                     )
                                 seriesNameFormat: '{{instance}} - {{integration}} - Median'
@@ -205,11 +209,15 @@ spec:
                                     name: prometheus-datasource
                                 query: |4-
                                       sum by (integration, instance) (
-                                        rate(alertmanager_notification_latency_seconds_sum{integration=~"$integration",job=~"$job"}[5m])
+                                        rate(
+                                          alertmanager_notification_latency_seconds_sum{integration=~"$integration",job=~"$job"}[$__rate_interval]
+                                        )
                                       )
                                     /
                                       sum by (integration, instance) (
-                                        rate(alertmanager_notification_latency_seconds_count{integration=~"$integration",job=~"$job"}[5m])
+                                        rate(
+                                          alertmanager_notification_latency_seconds_count{integration=~"$integration",job=~"$job"}[$__rate_interval]
+                                        )
                                       )
                                 seriesNameFormat: '{{instance}} - {{integration}} - Average'
     layouts:

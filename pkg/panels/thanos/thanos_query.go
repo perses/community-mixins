@@ -29,7 +29,7 @@ func InstantQueryRequestRate(datasourceName string, labelMatchers ...promql.Labe
 		panel.AddQuery(
 			query.PromQL(
 				promql.SetLabelMatchers(
-					"sum by (namespace,  job, handler, code) (rate(http_requests_total{namespace='$namespace', job=~'$job', handler=\"query\"}[5m]))",
+					"sum by (namespace,  job, handler, code) (rate(http_requests_total{namespace='$namespace', job=~'$job', handler=\"query\"}[$__rate_interval]))",
 					labelMatchers,
 				),
 				dashboards.AddQueryDataSource(datasourceName),
@@ -56,7 +56,7 @@ func InstantQueryRequestErrors(datasourceName string, labelMatchers ...promql.La
 		panel.AddQuery(
 			query.PromQL(
 				promql.SetLabelMatchers(
-					"(sum by (namespace, job, code) (rate(http_requests_total{namespace='$namespace', job=~'$job', handler=\"query\",code=~\"5..\"}[5m])) / ignoring (code) group_left() sum by (namespace, job) (rate(http_requests_total{namespace='$namespace', job=~'$job', handler=\"query\"}[5m]))) * 100",
+					"(sum by (namespace, job, code) (rate(http_requests_total{namespace='$namespace', job=~'$job', handler=\"query\",code=~\"5..\"}[$__rate_interval])) / ignoring (code) group_left() sum by (namespace, job) (rate(http_requests_total{namespace='$namespace', job=~'$job', handler=\"query\"}[$__rate_interval]))) * 100",
 					labelMatchers,
 				),
 				dashboards.AddQueryDataSource(datasourceName),
@@ -83,7 +83,7 @@ func InstantQueryRequestDurations(datasourceName string, labelMatchers ...promql
 		panel.AddQuery(
 			query.PromQL(
 				promql.SetLabelMatchers(
-					"histogram_quantile(0.50, sum by (namespace, job, le) (rate(http_request_duration_seconds_bucket{namespace='$namespace', job=~'$job', handler=\"query\"}[5m])))",
+					"histogram_quantile(0.50, sum by (namespace, job, le) (rate(http_request_duration_seconds_bucket{namespace='$namespace', job=~'$job', handler=\"query\"}[$__rate_interval])))",
 					labelMatchers,
 				),
 				dashboards.AddQueryDataSource(datasourceName),
@@ -93,7 +93,7 @@ func InstantQueryRequestDurations(datasourceName string, labelMatchers ...promql
 		panel.AddQuery(
 			query.PromQL(
 				promql.SetLabelMatchers(
-					"histogram_quantile(0.90, sum by (namespace, job, le) (rate(http_request_duration_seconds_bucket{namespace='$namespace', job=~'$job', handler=\"query\"}[5m])))",
+					"histogram_quantile(0.90, sum by (namespace, job, le) (rate(http_request_duration_seconds_bucket{namespace='$namespace', job=~'$job', handler=\"query\"}[$__rate_interval])))",
 					labelMatchers,
 				),
 				dashboards.AddQueryDataSource(datasourceName),
@@ -103,7 +103,7 @@ func InstantQueryRequestDurations(datasourceName string, labelMatchers ...promql
 		panel.AddQuery(
 			query.PromQL(
 				promql.SetLabelMatchers(
-					"histogram_quantile(0.99, sum by (namespace, job, le) (rate(http_request_duration_seconds_bucket{namespace='$namespace', job=~'$job', handler=\"query\"}[5m])))",
+					"histogram_quantile(0.99, sum by (namespace, job, le) (rate(http_request_duration_seconds_bucket{namespace='$namespace', job=~'$job', handler=\"query\"}[$__rate_interval])))",
 					labelMatchers,
 				),
 				dashboards.AddQueryDataSource(datasourceName),
@@ -130,7 +130,7 @@ func RangeQueryRequestRate(datasourceName string, labelMatchers ...promql.LabelM
 		panel.AddQuery(
 			query.PromQL(
 				promql.SetLabelMatchers(
-					"sum by (namespace,  job, handler, code) (rate(http_requests_total{namespace='$namespace', job=~'$job', handler=\"query_range\"}[5m]))",
+					"sum by (namespace,  job, handler, code) (rate(http_requests_total{namespace='$namespace', job=~'$job', handler=\"query_range\"}[$__rate_interval]))",
 					labelMatchers,
 				),
 				dashboards.AddQueryDataSource(datasourceName),
@@ -157,7 +157,7 @@ func RangeQueryRequestErrors(datasourceName string, labelMatchers ...promql.Labe
 		panel.AddQuery(
 			query.PromQL(
 				promql.SetLabelMatchers(
-					"(sum by (namespace, job, code) (rate(http_requests_total{namespace='$namespace', job=~'$job', handler=\"query_range\",code=~\"5..\"}[5m])) / ignoring (code) group_left() sum by (namespace, job) (rate(http_requests_total{namespace='$namespace', job=~'$job', handler=\"query_range\"}[5m]))) * 100",
+					"(sum by (namespace, job, code) (rate(http_requests_total{namespace='$namespace', job=~'$job', handler=\"query_range\",code=~\"5..\"}[$__rate_interval])) / ignoring (code) group_left() sum by (namespace, job) (rate(http_requests_total{namespace='$namespace', job=~'$job', handler=\"query_range\"}[$__rate_interval]))) * 100",
 					labelMatchers,
 				),
 				dashboards.AddQueryDataSource(datasourceName),
@@ -184,7 +184,7 @@ func RangeQueryRequestDurations(datasourceName string, labelMatchers ...promql.L
 		panel.AddQuery(
 			query.PromQL(
 				promql.SetLabelMatchers(
-					"histogram_quantile(0.50, sum by (namespace, job, le) (rate(http_request_duration_seconds_bucket{namespace='$namespace', job=~'$job', handler=\"query_range\"}[5m])))",
+					"histogram_quantile(0.50, sum by (namespace, job, le) (rate(http_request_duration_seconds_bucket{namespace='$namespace', job=~'$job', handler=\"query_range\"}[$__rate_interval])))",
 					labelMatchers,
 				),
 				dashboards.AddQueryDataSource(datasourceName),
@@ -194,7 +194,7 @@ func RangeQueryRequestDurations(datasourceName string, labelMatchers ...promql.L
 		panel.AddQuery(
 			query.PromQL(
 				promql.SetLabelMatchers(
-					"histogram_quantile(0.90, sum by (namespace, job, le) (rate(http_request_duration_seconds_bucket{namespace='$namespace', job=~'$job', handler=\"query_range\"}[5m])))",
+					"histogram_quantile(0.90, sum by (namespace, job, le) (rate(http_request_duration_seconds_bucket{namespace='$namespace', job=~'$job', handler=\"query_range\"}[$__rate_interval])))",
 					labelMatchers,
 				),
 				dashboards.AddQueryDataSource(datasourceName),
@@ -204,7 +204,7 @@ func RangeQueryRequestDurations(datasourceName string, labelMatchers ...promql.L
 		panel.AddQuery(
 			query.PromQL(
 				promql.SetLabelMatchers(
-					"histogram_quantile(0.99, sum by (namespace, job, le) (rate(http_request_duration_seconds_bucket{namespace='$namespace', job=~'$job', handler=\"query_range\"}[5m])))",
+					"histogram_quantile(0.99, sum by (namespace, job, le) (rate(http_request_duration_seconds_bucket{namespace='$namespace', job=~'$job', handler=\"query_range\"}[$__rate_interval])))",
 					labelMatchers,
 				),
 				dashboards.AddQueryDataSource(datasourceName),
@@ -226,7 +226,7 @@ func QueryConcurrency(datasourceName string, labelMatchers ...promql.LabelMatche
 		panel.AddQuery(
 			query.PromQL(
 				promql.SetLabelMatchers(
-					"max_over_time(thanos_query_concurrent_gate_queries_max{namespace='$namespace', job=~'$job'}[5m]) - avg_over_time(thanos_query_concurrent_gate_queries_in_flight{namespace='$namespace', job=~'$job'}[5m])",
+					"max_over_time(thanos_query_concurrent_gate_queries_max{namespace='$namespace', job=~'$job'}[$__rate_interval]) - avg_over_time(thanos_query_concurrent_gate_queries_in_flight{namespace='$namespace', job=~'$job'}[$__rate_interval])",
 					labelMatchers,
 				),
 				dashboards.AddQueryDataSource(datasourceName),
@@ -253,7 +253,7 @@ func DNSLookups(datasourceName string, labelMatchers ...promql.LabelMatcher) pan
 		panel.AddQuery(
 			query.PromQL(
 				promql.SetLabelMatchers(
-					"sum by (namespace, job) (rate(thanos_query_store_apis_dns_lookups_total{namespace='$namespace', job=~'$job'}[5m]))",
+					"sum by (namespace, job) (rate(thanos_query_store_apis_dns_lookups_total{namespace='$namespace', job=~'$job'}[$__rate_interval]))",
 					labelMatchers,
 				),
 				dashboards.AddQueryDataSource(datasourceName),
@@ -280,7 +280,7 @@ func DNSLookupsErrors(datasourceName string, labelMatchers ...promql.LabelMatche
 		panel.AddQuery(
 			query.PromQL(
 				promql.SetLabelMatchers(
-					"sum by (namespace, job) (rate(thanos_query_store_apis_dns_failures_total{namespace='$namespace', job=~'$job'}[5m])) / sum by (namespace, job) (rate(thanos_query_store_apis_dns_lookups_total{namespace='$namespace', job=~'$job'}[5m]))",
+					"sum by (namespace, job) (rate(thanos_query_store_apis_dns_failures_total{namespace='$namespace', job=~'$job'}[$__rate_interval])) / sum by (namespace, job) (rate(thanos_query_store_apis_dns_lookups_total{namespace='$namespace', job=~'$job'}[$__rate_interval]))",
 					labelMatchers,
 				),
 				dashboards.AddQueryDataSource(datasourceName),

@@ -80,7 +80,7 @@ spec:
             kind: Panel
             spec:
                 display:
-                    name: Rate[5m]
+                    name: Rate
                     description: Shows rate metrics over 5 minute intervals
                 plugin:
                     kind: TimeSeriesChart
@@ -99,10 +99,10 @@ spec:
                                     name: prometheus-datasource
                                 query: |-
                                     clamp_min(
-                                        rate(prometheus_remote_storage_highest_timestamp_in_seconds{instance=~"$instance"}[5m])
+                                        rate(prometheus_remote_storage_highest_timestamp_in_seconds{instance=~"$instance"}[$__rate_interval])
                                       - ignoring (remote_name, url) group_right (instance)
                                         rate(
-                                          prometheus_remote_storage_queue_highest_sent_timestamp_seconds{instance=~"$instance",url="$url"}[5m]
+                                          prometheus_remote_storage_queue_highest_sent_timestamp_seconds{instance=~"$instance",url="$url"}[$__rate_interval]
                                         ),
                                       0
                                     )
@@ -111,7 +111,7 @@ spec:
             kind: Panel
             spec:
                 display:
-                    name: Rate, in vs. succeeded or dropped [5m]
+                    name: Rate, in vs. succeeded or dropped
                     description: Shows rate of samples in remote storage
                 plugin:
                     kind: TimeSeriesChart
@@ -129,18 +129,18 @@ spec:
                                     kind: PrometheusDatasource
                                     name: prometheus-datasource
                                 query: |4-
-                                        rate(prometheus_remote_storage_samples_in_total{instance=~"$instance"}[5m])
+                                        rate(prometheus_remote_storage_samples_in_total{instance=~"$instance"}[$__rate_interval])
                                       - ignoring (remote_name, url) group_right (instance)
                                         (
-                                            rate(prometheus_remote_storage_succeeded_samples_total{instance=~"$instance",url="$url"}[5m])
+                                            rate(prometheus_remote_storage_succeeded_samples_total{instance=~"$instance",url="$url"}[$__rate_interval])
                                           or
-                                            rate(prometheus_remote_storage_samples_total{instance=~"$instance",url="$url"}[5m])
+                                            rate(prometheus_remote_storage_samples_total{instance=~"$instance",url="$url"}[$__rate_interval])
                                         )
                                     -
                                       (
-                                          rate(prometheus_remote_storage_dropped_samples_total{instance=~"$instance",url="$url"}[5m])
+                                          rate(prometheus_remote_storage_dropped_samples_total{instance=~"$instance",url="$url"}[$__rate_interval])
                                         or
-                                          rate(prometheus_remote_storage_samples_dropped_total{instance=~"$instance",url="$url"}[5m])
+                                          rate(prometheus_remote_storage_samples_dropped_total{instance=~"$instance",url="$url"}[$__rate_interval])
                                       )
                                 seriesNameFormat: '{{instance}} - {{remote_name}} - {{url}} - Metrics'
         "2_0":
@@ -352,9 +352,9 @@ spec:
                                     kind: PrometheusDatasource
                                     name: prometheus-datasource
                                 query: |4-
-                                      rate(prometheus_remote_storage_dropped_samples_total{instance=~"$instance",url="$url"}[5m])
+                                      rate(prometheus_remote_storage_dropped_samples_total{instance=~"$instance",url="$url"}[$__rate_interval])
                                     or
-                                      rate(prometheus_remote_storage_samples_dropped_total{instance=~"$instance",url="$url"}[5m])
+                                      rate(prometheus_remote_storage_samples_dropped_total{instance=~"$instance",url="$url"}[$__rate_interval])
                                 seriesNameFormat: '{{instance}} - {{remote_name}} - {{url}} - Metrics'
         "5_1":
             kind: Panel
@@ -378,9 +378,9 @@ spec:
                                     kind: PrometheusDatasource
                                     name: prometheus-datasource
                                 query: |4-
-                                      rate(prometheus_remote_storage_failed_samples_total{instance=~"$instance",url="$url"}[5m])
+                                      rate(prometheus_remote_storage_failed_samples_total{instance=~"$instance",url="$url"}[$__rate_interval])
                                     or
-                                      rate(prometheus_remote_storage_samples_failed_total{instance=~"$instance",url="$url"}[5m])
+                                      rate(prometheus_remote_storage_samples_failed_total{instance=~"$instance",url="$url"}[$__rate_interval])
                                 seriesNameFormat: '{{instance}} - {{remote_name}} - {{url}} - Metrics'
         "5_2":
             kind: Panel
@@ -404,9 +404,9 @@ spec:
                                     kind: PrometheusDatasource
                                     name: prometheus-datasource
                                 query: |4-
-                                      rate(prometheus_remote_storage_retried_samples_total{instance=~"$instance",url=~"$url"}[5m])
+                                      rate(prometheus_remote_storage_retried_samples_total{instance=~"$instance",url=~"$url"}[$__rate_interval])
                                     or
-                                      rate(prometheus_remote_storage_samples_retried_total{instance=~"$instance",url=~"$url"}[5m])
+                                      rate(prometheus_remote_storage_samples_retried_total{instance=~"$instance",url=~"$url"}[$__rate_interval])
                                 seriesNameFormat: '{{instance}} - {{remote_name}} - {{url}} - Metrics'
         "5_3":
             kind: Panel
@@ -429,7 +429,7 @@ spec:
                                 datasource:
                                     kind: PrometheusDatasource
                                     name: prometheus-datasource
-                                query: rate(prometheus_remote_storage_enqueue_retries_total{instance=~"$instance",url=~"$url"}[5m])
+                                query: rate(prometheus_remote_storage_enqueue_retries_total{instance=~"$instance",url=~"$url"}[$__rate_interval])
                                 seriesNameFormat: '{{instance}} - {{remote_name}} - {{url}} - Metrics'
     layouts:
         - kind: Grid

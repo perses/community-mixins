@@ -86,7 +86,7 @@ func PrometheusTargetSync(datasourceName string, labelMatchers ...promql.LabelMa
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchers("sum(rate(prometheus_target_sync_length_seconds_sum{job=~'$job',instance=~'$instance'}[5m])) by (job, scrape_job, instance)", labelMatchers),
+				promql.SetLabelMatchers("sum(rate(prometheus_target_sync_length_seconds_sum{job=~'$job',instance=~'$instance'}[$__rate_interval])) by (job, scrape_job, instance)", labelMatchers),
 				dashboards.AddQueryDataSource(datasourceName),
 				query.SeriesNameFormat("{{job}} - {{instance}} - Metrics"),
 			),
@@ -159,7 +159,7 @@ func PrometheusAverageScrapeIntervalDuration(datasourceName string, labelMatcher
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchers("rate(prometheus_target_interval_length_seconds_sum{job=~'$job',instance=~'$instance'}[5m]) / rate(prometheus_target_interval_length_seconds_count{job=~'$job',instance=~'$instance'}[5m])",
+				promql.SetLabelMatchers("rate(prometheus_target_interval_length_seconds_sum{job=~'$job',instance=~'$instance'}[$__rate_interval]) / rate(prometheus_target_interval_length_seconds_count{job=~'$job',instance=~'$instance'}[$__rate_interval])",
 					labelMatchers,
 				),
 				dashboards.AddQueryDataSource(datasourceName),
@@ -192,35 +192,35 @@ func PrometheusScrapeFailures(datasourceName string, labelMatchers ...promql.Lab
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchers("sum by (job, instance) (rate(prometheus_target_scrapes_exceeded_body_size_limit_total{job=~'$job',instance=~'$instance'}[1m]))", labelMatchers),
+				promql.SetLabelMatchers("sum by (job, instance) (rate(prometheus_target_scrapes_exceeded_body_size_limit_total{job=~'$job',instance=~'$instance'}[$__rate_interval]))", labelMatchers),
 				dashboards.AddQueryDataSource(datasourceName),
 				query.SeriesNameFormat("exceeded body size limit: {{job}} - {{instance}} - Metrics"),
 			),
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchers("sum by (job, instance) (rate(prometheus_target_scrapes_exceeded_sample_limit_total{job=~'$job',instance=~'$instance'}[1m]))", labelMatchers),
+				promql.SetLabelMatchers("sum by (job, instance) (rate(prometheus_target_scrapes_exceeded_sample_limit_total{job=~'$job',instance=~'$instance'}[$__rate_interval]))", labelMatchers),
 				dashboards.AddQueryDataSource(datasourceName),
 				query.SeriesNameFormat("exceeded sample limit: {{job}} - {{instance}} - Metrics"),
 			),
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchers("sum by (job, instance) (rate(prometheus_target_scrapes_sample_duplicate_timestamp_total{job=~'$job',instance=~'$instance'}[1m]))", labelMatchers),
+				promql.SetLabelMatchers("sum by (job, instance) (rate(prometheus_target_scrapes_sample_duplicate_timestamp_total{job=~'$job',instance=~'$instance'}[$__rate_interval]))", labelMatchers),
 				dashboards.AddQueryDataSource(datasourceName),
 				query.SeriesNameFormat("duplicate timestamp: {{job}} - {{instance}} - Metrics"),
 			),
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchers("sum by (job, instance) (rate(prometheus_target_scrapes_sample_out_of_bounds_total{job=~'$job',instance=~'$instance'}[1m]))", labelMatchers),
+				promql.SetLabelMatchers("sum by (job, instance) (rate(prometheus_target_scrapes_sample_out_of_bounds_total{job=~'$job',instance=~'$instance'}[$__rate_interval]))", labelMatchers),
 				dashboards.AddQueryDataSource(datasourceName),
 				query.SeriesNameFormat("out of bounds: {{job}} - {{instance}} - Metrics"),
 			),
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchers("sum by (job, instance) (rate(prometheus_target_scrapes_sample_out_of_order_total{job=~'$job',instance=~'$instance'}[1m]))", labelMatchers),
+				promql.SetLabelMatchers("sum by (job, instance) (rate(prometheus_target_scrapes_sample_out_of_order_total{job=~'$job',instance=~'$instance'}[$__rate_interval]))", labelMatchers),
 				dashboards.AddQueryDataSource(datasourceName),
 				query.SeriesNameFormat("out of order: {{job}} - {{instance}} - Metrics"),
 			),
@@ -247,7 +247,7 @@ func PrometheusAppendedSamples(datasourceName string, labelMatchers ...promql.La
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchers("rate(prometheus_tsdb_head_samples_appended_total{job=~'$job',instance=~'$instance'}[5m])", labelMatchers),
+				promql.SetLabelMatchers("rate(prometheus_tsdb_head_samples_appended_total{job=~'$job',instance=~'$instance'}[$__rate_interval])", labelMatchers),
 				dashboards.AddQueryDataSource(datasourceName),
 				query.SeriesNameFormat("{{job}} - {{instance}} - {{remote_name}} - {{url}}"),
 			),
@@ -333,7 +333,7 @@ func PrometheusQueryRate(datasourceName string, labelMatchers ...promql.LabelMat
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchers("rate(prometheus_engine_query_duration_seconds_count{job=~'$job',instance=~'$instance',slice='inner_eval'}[5m])", labelMatchers),
+				promql.SetLabelMatchers("rate(prometheus_engine_query_duration_seconds_count{job=~'$job',instance=~'$instance',slice='inner_eval'}[$__rate_interval])", labelMatchers),
 				dashboards.AddQueryDataSource(datasourceName),
 				query.SeriesNameFormat("{{job}} - {{instance}} - Query Rate"),
 			),
@@ -424,7 +424,7 @@ func PrometheusRemoteStorageTimestampLag(datasourceName string, labelMatchers ..
 // - Rate of lag between storage and queue timestamps
 // - 5-minute rate changes per target
 func PrometheusRemoteStorageRateLag(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
-	return panelgroup.AddPanel("Rate[5m]",
+	return panelgroup.AddPanel("Rate",
 		panel.Description("Shows rate metrics over 5 minute intervals"),
 		timeSeriesPanel.Chart(
 			timeSeriesPanel.WithLegend(timeSeriesPanel.Legend{
@@ -435,7 +435,7 @@ func PrometheusRemoteStorageRateLag(datasourceName string, labelMatchers ...prom
 		panel.AddQuery(
 			query.PromQL(
 				promql.SetLabelMatchers(
-					"clamp_min(rate(prometheus_remote_storage_highest_timestamp_in_seconds{instance=~'$instance'}[5m])  - ignoring (remote_name, url) group_right(instance) rate(prometheus_remote_storage_queue_highest_sent_timestamp_seconds{instance=~'$instance', url='$url'}[5m]), 0)",
+					"clamp_min(rate(prometheus_remote_storage_highest_timestamp_in_seconds{instance=~'$instance'}[$__rate_interval])  - ignoring (remote_name, url) group_right(instance) rate(prometheus_remote_storage_queue_highest_sent_timestamp_seconds{instance=~'$instance', url='$url'}[$__rate_interval]), 0)",
 					labelMatchers,
 				),
 				dashboards.AddQueryDataSource(datasourceName),
@@ -464,7 +464,7 @@ func PrometheusRemoteStorageRateLag(datasourceName string, labelMatchers ...prom
 // Returns:
 //   - panelgroup.Option: The configured panel option.
 func PrometheusRemoteStorageSampleRate(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
-	return panelgroup.AddPanel("Rate, in vs. succeeded or dropped [5m]",
+	return panelgroup.AddPanel("Rate, in vs. succeeded or dropped",
 		panel.Description("Shows rate of samples in remote storage"),
 		timeSeriesPanel.Chart(
 			timeSeriesPanel.WithLegend(timeSeriesPanel.Legend{
@@ -475,7 +475,7 @@ func PrometheusRemoteStorageSampleRate(datasourceName string, labelMatchers ...p
 		panel.AddQuery(
 			query.PromQL(
 				promql.SetLabelMatchers(
-					"rate(prometheus_remote_storage_samples_in_total{instance=~'$instance'}[5m]) - ignoring(remote_name, url) group_right(instance) (rate(prometheus_remote_storage_succeeded_samples_total{instance=~'$instance', url='$url'}[5m]) or rate(prometheus_remote_storage_samples_total{instance=~'$instance', url='$url'}[5m])) - (rate(prometheus_remote_storage_dropped_samples_total{instance=~'$instance', url='$url'}[5m]) or rate(prometheus_remote_storage_samples_dropped_total{instance=~'$instance', url='$url'}[5m]))",
+					"rate(prometheus_remote_storage_samples_in_total{instance=~'$instance'}[$__rate_interval]) - ignoring(remote_name, url) group_right(instance) (rate(prometheus_remote_storage_succeeded_samples_total{instance=~'$instance', url='$url'}[$__rate_interval]) or rate(prometheus_remote_storage_samples_total{instance=~'$instance', url='$url'}[$__rate_interval])) - (rate(prometheus_remote_storage_dropped_samples_total{instance=~'$instance', url='$url'}[$__rate_interval]) or rate(prometheus_remote_storage_samples_dropped_total{instance=~'$instance', url='$url'}[$__rate_interval]))",
 					labelMatchers,
 				),
 				dashboards.AddQueryDataSource(datasourceName),
@@ -756,7 +756,7 @@ func PrometheusRemoteStorageDroppedSamplesRate(datasourceName string, labelMatch
 		panel.AddQuery(
 			query.PromQL(
 				promql.SetLabelMatchers(
-					"rate(prometheus_remote_storage_dropped_samples_total{instance=~'$instance', url='$url'}[5m]) or rate(prometheus_remote_storage_samples_dropped_total{instance=~'$instance', url='$url'}[5m])",
+					"rate(prometheus_remote_storage_dropped_samples_total{instance=~'$instance', url='$url'}[$__rate_interval]) or rate(prometheus_remote_storage_samples_dropped_total{instance=~'$instance', url='$url'}[$__rate_interval])",
 					labelMatchers,
 				),
 				dashboards.AddQueryDataSource(datasourceName),
@@ -788,7 +788,7 @@ func PrometheusRemoteStorageFailedSamplesRate(datasourceName string, labelMatche
 		panel.AddQuery(
 			query.PromQL(
 				promql.SetLabelMatchers(
-					"rate(prometheus_remote_storage_failed_samples_total{instance=~'$instance', url='$url'}[5m]) or rate(prometheus_remote_storage_samples_failed_total{instance=~'$instance', url='$url'}[5m])",
+					"rate(prometheus_remote_storage_failed_samples_total{instance=~'$instance', url='$url'}[$__rate_interval]) or rate(prometheus_remote_storage_samples_failed_total{instance=~'$instance', url='$url'}[$__rate_interval])",
 					labelMatchers,
 				),
 				dashboards.AddQueryDataSource(datasourceName),
@@ -820,7 +820,7 @@ func PrometheusRemoteStorageRetriedSamplesRate(datasourceName string, labelMatch
 		panel.AddQuery(
 			query.PromQL(
 				promql.SetLabelMatchers(
-					"rate(prometheus_remote_storage_retried_samples_total{instance=~'$instance', url=~'$url'}[5m]) or rate(prometheus_remote_storage_samples_retried_total{instance=~'$instance', url=~'$url'}[5m])",
+					"rate(prometheus_remote_storage_retried_samples_total{instance=~'$instance', url=~'$url'}[$__rate_interval]) or rate(prometheus_remote_storage_samples_retried_total{instance=~'$instance', url=~'$url'}[$__rate_interval])",
 					labelMatchers,
 				),
 				dashboards.AddQueryDataSource(datasourceName),
@@ -851,7 +851,7 @@ func PrometheusRemoteStorageEnqueueRetriesRate(datasourceName string, labelMatch
 		panel.AddQuery(
 			query.PromQL(
 				promql.SetLabelMatchers(
-					"rate(prometheus_remote_storage_enqueue_retries_total{instance=~'$instance', url=~'$url'}[5m])",
+					"rate(prometheus_remote_storage_enqueue_retries_total{instance=~'$instance', url=~'$url'}[$__rate_interval])",
 					labelMatchers,
 				),
 				dashboards.AddQueryDataSource(datasourceName),

@@ -184,7 +184,7 @@ spec:
                   name: prometheus-datasource
                 query: |-
                   sum by (namespace, job, handler, code) (
-                    rate(http_requests_total{handler="query",job=~"$job",namespace="$namespace"}[5m])
+                    rate(http_requests_total{handler="query",job=~"$job",namespace="$namespace"}[$__rate_interval])
                   )
                 seriesNameFormat: '{{job}} {{namespace}} {{handler}} {{code}}'
     "0_1":
@@ -215,11 +215,11 @@ spec:
                 query: |2-
                     (
                         sum by (namespace, job, code) (
-                          rate(http_requests_total{code=~"5..",handler="query",job=~"$job",namespace="$namespace"}[5m])
+                          rate(http_requests_total{code=~"5..",handler="query",job=~"$job",namespace="$namespace"}[$__rate_interval])
                         )
                       / ignoring (code) group_left ()
                         sum by (namespace, job) (
-                          rate(http_requests_total{handler="query",job=~"$job",namespace="$namespace"}[5m])
+                          rate(http_requests_total{handler="query",job=~"$job",namespace="$namespace"}[$__rate_interval])
                         )
                     )
                   *
@@ -253,7 +253,9 @@ spec:
                   histogram_quantile(
                     0.5,
                     sum by (namespace, job, le) (
-                      rate(http_request_duration_seconds_bucket{handler="query",job=~"$job",namespace="$namespace"}[5m])
+                      rate(
+                        http_request_duration_seconds_bucket{handler="query",job=~"$job",namespace="$namespace"}[$__rate_interval]
+                      )
                     )
                   )
                 seriesNameFormat: p50 {{job}} - {{namespace}} duration
@@ -269,7 +271,9 @@ spec:
                   histogram_quantile(
                     0.9,
                     sum by (namespace, job, le) (
-                      rate(http_request_duration_seconds_bucket{handler="query",job=~"$job",namespace="$namespace"}[5m])
+                      rate(
+                        http_request_duration_seconds_bucket{handler="query",job=~"$job",namespace="$namespace"}[$__rate_interval]
+                      )
                     )
                   )
                 seriesNameFormat: p90 {{job}} - {{namespace}} duration
@@ -285,7 +289,9 @@ spec:
                   histogram_quantile(
                     0.99,
                     sum by (namespace, job, le) (
-                      rate(http_request_duration_seconds_bucket{handler="query",job=~"$job",namespace="$namespace"}[5m])
+                      rate(
+                        http_request_duration_seconds_bucket{handler="query",job=~"$job",namespace="$namespace"}[$__rate_interval]
+                      )
                     )
                   )
                 seriesNameFormat: p99 {{job}} {{namespace}} duration
@@ -315,7 +321,7 @@ spec:
                   name: prometheus-datasource
                 query: |-
                   sum by (namespace, job, handler, code) (
-                    rate(http_requests_total{handler="query_range",job=~"$job",namespace="$namespace"}[5m])
+                    rate(http_requests_total{handler="query_range",job=~"$job",namespace="$namespace"}[$__rate_interval])
                   )
                 seriesNameFormat: '{{job}} {{namespace}} {{handler}} {{code}}'
     "1_1":
@@ -346,11 +352,13 @@ spec:
                 query: |2-
                     (
                         sum by (namespace, job, code) (
-                          rate(http_requests_total{code=~"5..",handler="query_range",job=~"$job",namespace="$namespace"}[5m])
+                          rate(
+                            http_requests_total{code=~"5..",handler="query_range",job=~"$job",namespace="$namespace"}[$__rate_interval]
+                          )
                         )
                       / ignoring (code) group_left ()
                         sum by (namespace, job) (
-                          rate(http_requests_total{handler="query_range",job=~"$job",namespace="$namespace"}[5m])
+                          rate(http_requests_total{handler="query_range",job=~"$job",namespace="$namespace"}[$__rate_interval])
                         )
                     )
                   *
@@ -386,7 +394,7 @@ spec:
                     0.5,
                     sum by (namespace, job, le) (
                       rate(
-                        http_request_duration_seconds_bucket{handler="query_range",job=~"$job",namespace="$namespace"}[5m]
+                        http_request_duration_seconds_bucket{handler="query_range",job=~"$job",namespace="$namespace"}[$__rate_interval]
                       )
                     )
                   )
@@ -404,7 +412,7 @@ spec:
                     0.9,
                     sum by (namespace, job, le) (
                       rate(
-                        http_request_duration_seconds_bucket{handler="query_range",job=~"$job",namespace="$namespace"}[5m]
+                        http_request_duration_seconds_bucket{handler="query_range",job=~"$job",namespace="$namespace"}[$__rate_interval]
                       )
                     )
                   )
@@ -422,7 +430,7 @@ spec:
                     0.99,
                     sum by (namespace, job, le) (
                       rate(
-                        http_request_duration_seconds_bucket{handler="query_range",job=~"$job",namespace="$namespace"}[5m]
+                        http_request_duration_seconds_bucket{handler="query_range",job=~"$job",namespace="$namespace"}[$__rate_interval]
                       )
                     )
                   )
@@ -454,7 +462,7 @@ spec:
                 query: |-
                   sum by (namespace, job, grpc_method, grpc_code) (
                     rate(
-                      grpc_server_handled_total{grpc_method!="RemoteWrite",grpc_type="unary",job=~"$job",namespace="$namespace"}[5m]
+                      grpc_server_handled_total{grpc_method!="RemoteWrite",grpc_type="unary",job=~"$job",namespace="$namespace"}[$__rate_interval]
                     )
                   )
                 seriesNameFormat: '{{namespace}} {{job}} {{grpc_method}} {{grpc_code}}'
@@ -485,13 +493,13 @@ spec:
                 query: |2-
                     sum by (namespace, job, grpc_code) (
                       rate(
-                        grpc_server_handled_total{grpc_code=~"Unknown|ResourceExhausted|Internal|Unavailable|DataLoss",grpc_method!="RemoteWrite",grpc_type="unary",job=~"$job",namespace="$namespace"}[5m]
+                        grpc_server_handled_total{grpc_code=~"Unknown|ResourceExhausted|Internal|Unavailable|DataLoss",grpc_method!="RemoteWrite",grpc_type="unary",job=~"$job",namespace="$namespace"}[$__rate_interval]
                       )
                     )
                   / ignoring (grpc_code) group_left ()
                     sum by (namespace, job) (
                       rate(
-                        grpc_server_handled_total{grpc_method!="RemoteWrite",grpc_type="unary",job=~"$job",namespace="$namespace"}[5m]
+                        grpc_server_handled_total{grpc_method!="RemoteWrite",grpc_type="unary",job=~"$job",namespace="$namespace"}[$__rate_interval]
                       )
                     )
                 seriesNameFormat: '{{namespace}} {{job}} {{grpc_method}} {{grpc_code}}'
@@ -525,7 +533,7 @@ spec:
                     0.5,
                     sum by (namespace, job, le) (
                       rate(
-                        grpc_server_handling_seconds_bucket{grpc_method!="RemoteWrite",grpc_type="unary",job=~"$job",namespace="$namespace"}[5m]
+                        grpc_server_handling_seconds_bucket{grpc_method!="RemoteWrite",grpc_type="unary",job=~"$job",namespace="$namespace"}[$__rate_interval]
                       )
                     )
                   )
@@ -543,7 +551,7 @@ spec:
                     0.9,
                     sum by (namespace, job, le) (
                       rate(
-                        grpc_server_handling_seconds_bucket{grpc_method!="RemoteWrite",grpc_type="unary",job=~"$job",namespace="$namespace"}[5m]
+                        grpc_server_handling_seconds_bucket{grpc_method!="RemoteWrite",grpc_type="unary",job=~"$job",namespace="$namespace"}[$__rate_interval]
                       )
                     )
                   )
@@ -561,7 +569,7 @@ spec:
                     0.99,
                     sum by (namespace, job, le) (
                       rate(
-                        grpc_server_handling_seconds_bucket{grpc_method!="RemoteWrite",grpc_type="unary",job=~"$job",namespace="$namespace"}[5m]
+                        grpc_server_handling_seconds_bucket{grpc_method!="RemoteWrite",grpc_type="unary",job=~"$job",namespace="$namespace"}[$__rate_interval]
                       )
                     )
                   )
@@ -593,7 +601,9 @@ spec:
                   name: prometheus-datasource
                 query: |-
                   sum by (namespace, job, grpc_method, grpc_code) (
-                    rate(grpc_server_handled_total{grpc_type="server_stream",job=~"$job",namespace="$namespace"}[5m])
+                    rate(
+                      grpc_server_handled_total{grpc_type="server_stream",job=~"$job",namespace="$namespace"}[$__rate_interval]
+                    )
                   )
                 seriesNameFormat: '{{namespace}} {{job}} {{grpc_method}} {{grpc_code}}'
     "3_1":
@@ -624,12 +634,14 @@ spec:
                 query: |2-
                     sum by (namespace, job, grpc_code) (
                       rate(
-                        grpc_server_handled_total{grpc_code=~"Unknown|ResourceExhausted|Internal|Unavailable|DataLoss",grpc_type="server_stream",job=~"$job",namespace="$namespace"}[5m]
+                        grpc_server_handled_total{grpc_code=~"Unknown|ResourceExhausted|Internal|Unavailable|DataLoss",grpc_type="server_stream",job=~"$job",namespace="$namespace"}[$__rate_interval]
                       )
                     )
                   / ignoring (grpc_code) group_left ()
                     sum by (namespace, job) (
-                      rate(grpc_server_handled_total{grpc_type="server_stream",job=~"$job",namespace="$namespace"}[5m])
+                      rate(
+                        grpc_server_handled_total{grpc_type="server_stream",job=~"$job",namespace="$namespace"}[$__rate_interval]
+                      )
                     )
                 seriesNameFormat: '{{namespace}} {{job}} {{grpc_method}} {{grpc_code}}'
     "3_2":
@@ -662,7 +674,7 @@ spec:
                     0.5,
                     sum by (namespace, job, le) (
                       rate(
-                        grpc_server_handling_seconds_bucket{grpc_type="server_stream",job=~"$job",namespace="$namespace"}[5m]
+                        grpc_server_handling_seconds_bucket{grpc_type="server_stream",job=~"$job",namespace="$namespace"}[$__rate_interval]
                       )
                     )
                   )
@@ -680,7 +692,7 @@ spec:
                     0.9,
                     sum by (namespace, job, le) (
                       rate(
-                        grpc_server_handling_seconds_bucket{grpc_type="server_stream",job=~"$job",namespace="$namespace"}[5m]
+                        grpc_server_handling_seconds_bucket{grpc_type="server_stream",job=~"$job",namespace="$namespace"}[$__rate_interval]
                       )
                     )
                   )
@@ -698,7 +710,7 @@ spec:
                     0.99,
                     sum by (namespace, job, le) (
                       rate(
-                        grpc_server_handling_seconds_bucket{grpc_type="server_stream",job=~"$job",namespace="$namespace"}[5m]
+                        grpc_server_handling_seconds_bucket{grpc_type="server_stream",job=~"$job",namespace="$namespace"}[$__rate_interval]
                       )
                     )
                   )
@@ -726,10 +738,12 @@ spec:
                   kind: PrometheusDatasource
                   name: prometheus-datasource
                 query: |2-
-                    max_over_time(thanos_query_concurrent_gate_queries_max{job=~"$job",namespace="$namespace"}[5m])
+                    max_over_time(
+                      thanos_query_concurrent_gate_queries_max{job=~"$job",namespace="$namespace"}[$__rate_interval]
+                    )
                   -
                     avg_over_time(
-                      thanos_query_concurrent_gate_queries_in_flight{job=~"$job",namespace="$namespace"}[5m]
+                      thanos_query_concurrent_gate_queries_in_flight{job=~"$job",namespace="$namespace"}[$__rate_interval]
                     )
                 seriesNameFormat: '{{job}} {{pod}}'
     "5_0":
@@ -758,7 +772,7 @@ spec:
                   name: prometheus-datasource
                 query: |-
                   sum by (namespace, job) (
-                    rate(thanos_query_store_apis_dns_lookups_total{job=~"$job",namespace="$namespace"}[5m])
+                    rate(thanos_query_store_apis_dns_lookups_total{job=~"$job",namespace="$namespace"}[$__rate_interval])
                   )
                 seriesNameFormat: '{{job}}'
     "5_1":
@@ -788,11 +802,11 @@ spec:
                   name: prometheus-datasource
                 query: |2-
                     sum by (namespace, job) (
-                      rate(thanos_query_store_apis_dns_failures_total{job=~"$job",namespace="$namespace"}[5m])
+                      rate(thanos_query_store_apis_dns_failures_total{job=~"$job",namespace="$namespace"}[$__rate_interval])
                     )
                   /
                     sum by (namespace, job) (
-                      rate(thanos_query_store_apis_dns_lookups_total{job=~"$job",namespace="$namespace"}[5m])
+                      rate(thanos_query_store_apis_dns_lookups_total{job=~"$job",namespace="$namespace"}[$__rate_interval])
                     )
                 seriesNameFormat: '{{job}}'
     "6_0":
@@ -847,7 +861,7 @@ spec:
                 datasource:
                   kind: PrometheusDatasource
                   name: prometheus-datasource
-                query: rate(go_memstats_alloc_bytes_total{job=~"$job",namespace="$namespace"}[5m])
+                query: rate(go_memstats_alloc_bytes_total{job=~"$job",namespace="$namespace"}[$__rate_interval])
                 seriesNameFormat: Alloc Rate All {{pod}}
         - kind: TimeSeriesQuery
           spec:
@@ -857,7 +871,7 @@ spec:
                 datasource:
                   kind: PrometheusDatasource
                   name: prometheus-datasource
-                query: rate(go_memstats_heap_alloc_bytes{job=~"$job",namespace="$namespace"}[5m])
+                query: rate(go_memstats_heap_alloc_bytes{job=~"$job",namespace="$namespace"}[$__rate_interval])
                 seriesNameFormat: Alloc Rate Heap {{pod}}
         - kind: TimeSeriesQuery
           spec:
