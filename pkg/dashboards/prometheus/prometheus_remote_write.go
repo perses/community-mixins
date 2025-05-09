@@ -61,45 +61,47 @@ func withPrometheusRwMiscRates(datasource string, labelMatcher promql.LabelMatch
 	)
 }
 
-func BuildPrometheusRemoteWrite(project string, datasource string, clusterLabelName string) (dashboard.Builder, error) {
+func BuildPrometheusRemoteWrite(project string, datasource string, clusterLabelName string) dashboards.DashboardResult {
 	clusterLabelMatcher := dashboards.GetClusterLabelMatcher(clusterLabelName)
-	return dashboard.New("prometheus-remote-write",
-		dashboard.Name("Prometheus / Remote Write"),
-		dashboard.ProjectName(project),
-		dashboards.AddClusterVariable(datasource, clusterLabelName, "prometheus_remote_storage_shards"),
-		dashboard.AddVariable("instance",
-			listVar.List(
-				labelValuesVar.PrometheusLabelValues("instance",
-					labelValuesVar.Matchers(
-						promql.SetLabelMatchers(
-							"prometheus_remote_storage_shards",
-							[]promql.LabelMatcher{clusterLabelMatcher},
+	return dashboards.NewDashboardResult(
+		dashboard.New("prometheus-remote-write",
+			dashboard.Name("Prometheus / Remote Write"),
+			dashboard.ProjectName(project),
+			dashboards.AddClusterVariable(datasource, clusterLabelName, "prometheus_remote_storage_shards"),
+			dashboard.AddVariable("instance",
+				listVar.List(
+					labelValuesVar.PrometheusLabelValues("instance",
+						labelValuesVar.Matchers(
+							promql.SetLabelMatchers(
+								"prometheus_remote_storage_shards",
+								[]promql.LabelMatcher{clusterLabelMatcher},
+							),
 						),
+						dashboards.AddVariableDatasource(datasource),
 					),
-					dashboards.AddVariableDatasource(datasource),
+					listVar.DisplayName("instance"),
 				),
-				listVar.DisplayName("instance"),
 			),
-		),
-		dashboard.AddVariable("url",
-			listVar.List(
-				labelValuesVar.PrometheusLabelValues("url",
-					labelValuesVar.Matchers(
-						promql.SetLabelMatchers(
-							"prometheus_remote_storage_shards{instance='$instance'}",
-							[]promql.LabelMatcher{clusterLabelMatcher},
+			dashboard.AddVariable("url",
+				listVar.List(
+					labelValuesVar.PrometheusLabelValues("url",
+						labelValuesVar.Matchers(
+							promql.SetLabelMatchers(
+								"prometheus_remote_storage_shards{instance='$instance'}",
+								[]promql.LabelMatcher{clusterLabelMatcher},
+							),
 						),
+						dashboards.AddVariableDatasource(datasource),
 					),
-					dashboards.AddVariableDatasource(datasource),
+					listVar.DisplayName("url"),
 				),
-				listVar.DisplayName("url"),
 			),
+			withPrometheusRwTimestamps(datasource, clusterLabelMatcher),
+			withPrometheusRwSamples(datasource, clusterLabelMatcher),
+			withPrometheusRwShard(datasource, clusterLabelMatcher),
+			withPrometheusRwShardDetails(datasource, clusterLabelMatcher),
+			withPrometheusRwSegments(datasource, clusterLabelMatcher),
+			withPrometheusRwMiscRates(datasource, clusterLabelMatcher),
 		),
-		withPrometheusRwTimestamps(datasource, clusterLabelMatcher),
-		withPrometheusRwSamples(datasource, clusterLabelMatcher),
-		withPrometheusRwShard(datasource, clusterLabelMatcher),
-		withPrometheusRwShardDetails(datasource, clusterLabelMatcher),
-		withPrometheusRwSegments(datasource, clusterLabelMatcher),
-		withPrometheusRwMiscRates(datasource, clusterLabelMatcher),
-	)
+	).Component("prometheus")
 }

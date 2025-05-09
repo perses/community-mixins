@@ -49,36 +49,38 @@ func withClusterDiskSpace(datasource string, clusterLabelMatcher promql.LabelMat
 	)
 }
 
-func BuildNodeExporterClusterUseMethod(project string, datasource string, clusterLabelName string) (dashboard.Builder, error) {
+func BuildNodeExporterClusterUseMethod(project string, datasource string, clusterLabelName string) dashboards.DashboardResult {
 	clusterLabelMatcher := dashboards.GetClusterLabelMatcher(clusterLabelName)
 	instanceLabelMatcher := promql.LabelMatcher{
 		Name:  "instance",
 		Value: "$instance",
 		Type:  "=~",
 	}
-	return dashboard.New("node-exporter-cluster-use-method",
-		dashboard.ProjectName(project),
-		dashboard.Name("Node Exporter / USE Method / Cluster"),
-		dashboards.AddClusterVariable(datasource, clusterLabelName, "node_uname_info{job='node', sysname!='Darwin'}"),
-		dashboard.AddVariable("instance",
-			listVar.List(
-				labelValuesVar.PrometheusLabelValues("instance",
-					dashboards.AddVariableDatasource(datasource),
-					labelValuesVar.Matchers(
-						promql.SetLabelMatchers(
-							"node_uname_info{job='node', sysname!='Darwin'}",
-							[]promql.LabelMatcher{clusterLabelMatcher},
-						)),
+	return dashboards.NewDashboardResult(
+		dashboard.New("node-exporter-cluster-use-method",
+			dashboard.ProjectName(project),
+			dashboard.Name("Node Exporter / USE Method / Cluster"),
+			dashboards.AddClusterVariable(datasource, clusterLabelName, "node_uname_info{job='node', sysname!='Darwin'}"),
+			dashboard.AddVariable("instance",
+				listVar.List(
+					labelValuesVar.PrometheusLabelValues("instance",
+						dashboards.AddVariableDatasource(datasource),
+						labelValuesVar.Matchers(
+							promql.SetLabelMatchers(
+								"node_uname_info{job='node', sysname!='Darwin'}",
+								[]promql.LabelMatcher{clusterLabelMatcher},
+							)),
+					),
+					listVar.DisplayName("instance"),
+					listVar.AllowAllValue(true),
+					listVar.AllowMultiple(true),
 				),
-				listVar.DisplayName("instance"),
-				listVar.AllowAllValue(true),
-				listVar.AllowMultiple(true),
 			),
+			withClusterCPU(datasource, clusterLabelMatcher, instanceLabelMatcher),
+			withClusterMemory(datasource, clusterLabelMatcher, instanceLabelMatcher),
+			withClusterNetwork(datasource, clusterLabelMatcher, instanceLabelMatcher),
+			withClusterDiskIO(datasource, clusterLabelMatcher, instanceLabelMatcher),
+			withClusterDiskSpace(datasource, clusterLabelMatcher, instanceLabelMatcher),
 		),
-		withClusterCPU(datasource, clusterLabelMatcher, instanceLabelMatcher),
-		withClusterMemory(datasource, clusterLabelMatcher, instanceLabelMatcher),
-		withClusterNetwork(datasource, clusterLabelMatcher, instanceLabelMatcher),
-		withClusterDiskIO(datasource, clusterLabelMatcher, instanceLabelMatcher),
-		withClusterDiskSpace(datasource, clusterLabelMatcher, instanceLabelMatcher),
-	)
+	).Component("node-exporter")
 }

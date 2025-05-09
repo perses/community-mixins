@@ -104,61 +104,63 @@ func withPodCurrentStorageIOGroup(datasource string, labelMatcher promql.LabelMa
 	)
 }
 
-func BuildKubernetesPodOverview(project string, datasource string, clusterLabelName string) (dashboard.Builder, error) {
+func BuildKubernetesPodOverview(project string, datasource string, clusterLabelName string) dashboards.DashboardResult {
 	clusterLabelMatcher := dashboards.GetClusterLabelMatcher(clusterLabelName)
-	return dashboard.New("kubernetes-pod-resources-overview",
-		dashboard.ProjectName(project),
-		dashboard.Name("Kubernetes / Compute Resources / Pod"),
-		dashboard.AddVariable("cluster",
-			listVar.List(
-				labelValuesVar.PrometheusLabelValues("cluster",
-					labelValuesVar.Matchers("up{"+panels.GetKubeletMatcher()+", metrics_path=\"/metrics/cadvisor\"}"),
-					dashboards.AddVariableDatasource(datasource),
-				),
-				listVar.DisplayName("cluster"),
-			),
-		),
-		dashboard.AddVariable("namespace",
-			listVar.List(
-				labelValuesVar.PrometheusLabelValues("namespace",
-					labelValuesVar.Matchers(
-						promql.SetLabelMatchers(
-							"kube_namespace_status_phase{"+panels.GetKubeStateMetricsMatcher()+"}",
-							[]promql.LabelMatcher{{Name: "cluster", Type: "=", Value: "$cluster"}},
-						),
+	return dashboards.NewDashboardResult(
+		dashboard.New("kubernetes-pod-resources-overview",
+			dashboard.ProjectName(project),
+			dashboard.Name("Kubernetes / Compute Resources / Pod"),
+			dashboard.AddVariable("cluster",
+				listVar.List(
+					labelValuesVar.PrometheusLabelValues("cluster",
+						labelValuesVar.Matchers("up{"+panels.GetKubeletMatcher()+", metrics_path=\"/metrics/cadvisor\"}"),
+						dashboards.AddVariableDatasource(datasource),
 					),
-					dashboards.AddVariableDatasource(datasource),
+					listVar.DisplayName("cluster"),
 				),
-				listVar.DisplayName("namespace"),
 			),
-		),
-		dashboard.AddVariable("pod",
-			listVar.List(
-				labelValuesVar.PrometheusLabelValues("pod",
-					labelValuesVar.Matchers(
-						promql.SetLabelMatchers(
-							"kube_pod_info{"+panels.GetKubeStateMetricsMatcher()+"}",
-							[]promql.LabelMatcher{
-								{Name: "cluster", Type: "=", Value: "$cluster"},
-								{Name: "namespace", Type: "=", Value: "$namespace"},
-							},
+			dashboard.AddVariable("namespace",
+				listVar.List(
+					labelValuesVar.PrometheusLabelValues("namespace",
+						labelValuesVar.Matchers(
+							promql.SetLabelMatchers(
+								"kube_namespace_status_phase{"+panels.GetKubeStateMetricsMatcher()+"}",
+								[]promql.LabelMatcher{{Name: "cluster", Type: "=", Value: "$cluster"}},
+							),
 						),
+						dashboards.AddVariableDatasource(datasource),
 					),
-					dashboards.AddVariableDatasource(datasource),
+					listVar.DisplayName("namespace"),
 				),
-				listVar.DisplayName("pod"),
 			),
+			dashboard.AddVariable("pod",
+				listVar.List(
+					labelValuesVar.PrometheusLabelValues("pod",
+						labelValuesVar.Matchers(
+							promql.SetLabelMatchers(
+								"kube_pod_info{"+panels.GetKubeStateMetricsMatcher()+"}",
+								[]promql.LabelMatcher{
+									{Name: "cluster", Type: "=", Value: "$cluster"},
+									{Name: "namespace", Type: "=", Value: "$namespace"},
+								},
+							),
+						),
+						dashboards.AddVariableDatasource(datasource),
+					),
+					listVar.DisplayName("pod"),
+				),
+			),
+			withPodCPUUsageGroup(datasource, clusterLabelMatcher),
+			withPodCPUThrottlingGroup(datasource, clusterLabelMatcher),
+			withPodCPUUsageQuotaGroup(datasource, clusterLabelMatcher),
+			withPodMemoryUsageGroup(datasource, clusterLabelMatcher),
+			withPodMemoryUsageQuotaGroup(datasource, clusterLabelMatcher),
+			withPodBandwidthGroup(datasource, clusterLabelMatcher),
+			withPodRateOfPacketsGroup(datasource, clusterLabelMatcher),
+			withPodRateOfPacketsDroppedGroup(datasource, clusterLabelMatcher),
+			withPodStorageIOGroup(datasource, clusterLabelMatcher),
+			withPodStorageIOContainerGroup(datasource, clusterLabelMatcher),
+			withPodCurrentStorageIOGroup(datasource, clusterLabelMatcher),
 		),
-		withPodCPUUsageGroup(datasource, clusterLabelMatcher),
-		withPodCPUThrottlingGroup(datasource, clusterLabelMatcher),
-		withPodCPUUsageQuotaGroup(datasource, clusterLabelMatcher),
-		withPodMemoryUsageGroup(datasource, clusterLabelMatcher),
-		withPodMemoryUsageQuotaGroup(datasource, clusterLabelMatcher),
-		withPodBandwidthGroup(datasource, clusterLabelMatcher),
-		withPodRateOfPacketsGroup(datasource, clusterLabelMatcher),
-		withPodRateOfPacketsDroppedGroup(datasource, clusterLabelMatcher),
-		withPodStorageIOGroup(datasource, clusterLabelMatcher),
-		withPodStorageIOContainerGroup(datasource, clusterLabelMatcher),
-		withPodCurrentStorageIOGroup(datasource, clusterLabelMatcher),
-	)
+	).Component("kubernetes")
 }

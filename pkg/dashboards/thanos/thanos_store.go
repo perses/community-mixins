@@ -62,39 +62,41 @@ func withThanosStoreSentGroup(datasource string, labelMatcher promql.LabelMatche
 	)
 }
 
-func BuildThanosStoreOverview(project string, datasource string, clusterLabelName string) (dashboard.Builder, error) {
+func BuildThanosStoreOverview(project string, datasource string, clusterLabelName string) dashboards.DashboardResult {
 	clusterLabelMatcher := dashboards.GetClusterLabelMatcher(clusterLabelName)
-	return dashboard.New("thanos-store-overview",
-		dashboard.ProjectName(project),
-		dashboard.Name("Thanos / Store Gateway / Overview"),
-		dashboard.AddVariable("job",
-			listVar.List(
-				labelValuesVar.PrometheusLabelValues("job",
-					labelValuesVar.Matchers("thanos_build_info{container=\"thanos-store\"}"),
-					dashboards.AddVariableDatasource(datasource),
+	return dashboards.NewDashboardResult(
+		dashboard.New("thanos-store-overview",
+			dashboard.ProjectName(project),
+			dashboard.Name("Thanos / Store Gateway / Overview"),
+			dashboard.AddVariable("job",
+				listVar.List(
+					labelValuesVar.PrometheusLabelValues("job",
+						labelValuesVar.Matchers("thanos_build_info{container=\"thanos-store\"}"),
+						dashboards.AddVariableDatasource(datasource),
+					),
+					listVar.DisplayName("job"),
+					listVar.AllowMultiple(true),
 				),
-				listVar.DisplayName("job"),
-				listVar.AllowMultiple(true),
 			),
-		),
-		dashboards.AddClusterVariable(datasource, clusterLabelName, "thanos_build_info"),
-		dashboard.AddVariable("namespace",
-			listVar.List(
-				labelValuesVar.PrometheusLabelValues("namespace",
-					labelValuesVar.Matchers("thanos_status"),
-					dashboards.AddVariableDatasource(datasource),
+			dashboards.AddClusterVariable(datasource, clusterLabelName, "thanos_build_info"),
+			dashboard.AddVariable("namespace",
+				listVar.List(
+					labelValuesVar.PrometheusLabelValues("namespace",
+						labelValuesVar.Matchers("thanos_status"),
+						dashboards.AddVariableDatasource(datasource),
+					),
+					listVar.DisplayName("namespace"),
 				),
-				listVar.DisplayName("namespace"),
 			),
+			withThanosReadGRPCUnaryGroup(datasource, clusterLabelMatcher),
+			withThanosReadGRPCStreamGroup(datasource, clusterLabelMatcher),
+			withThanosBucketOperationsGroup(datasource, clusterLabelMatcher),
+			withThanosBlockOperationsGroup(datasource, clusterLabelMatcher),
+			withThanosCacheOperationsGroup(datasource, clusterLabelMatcher),
+			withThanosQueryOperationsGroup(datasource, clusterLabelMatcher),
+			withThanosQueryOperationDurationGroup(datasource, clusterLabelMatcher),
+			withThanosStoreSentGroup(datasource, clusterLabelMatcher),
+			withThanosResourcesGroup(datasource, clusterLabelMatcher),
 		),
-		withThanosReadGRPCUnaryGroup(datasource, clusterLabelMatcher),
-		withThanosReadGRPCStreamGroup(datasource, clusterLabelMatcher),
-		withThanosBucketOperationsGroup(datasource, clusterLabelMatcher),
-		withThanosBlockOperationsGroup(datasource, clusterLabelMatcher),
-		withThanosCacheOperationsGroup(datasource, clusterLabelMatcher),
-		withThanosQueryOperationsGroup(datasource, clusterLabelMatcher),
-		withThanosQueryOperationDurationGroup(datasource, clusterLabelMatcher),
-		withThanosStoreSentGroup(datasource, clusterLabelMatcher),
-		withThanosResourcesGroup(datasource, clusterLabelMatcher),
-	)
+	).Component("thanos")
 }

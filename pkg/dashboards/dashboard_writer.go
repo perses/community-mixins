@@ -11,8 +11,21 @@ type DashboardWriter struct {
 }
 
 type DashboardResult struct {
-	builder dashboard.Builder
-	err     error
+	builder   dashboard.Builder
+	component string
+	err       error
+}
+
+func NewDashboardResult(builder dashboard.Builder, err error) DashboardResult {
+	return DashboardResult{
+		builder: builder,
+		err:     err,
+	}
+}
+
+func (d DashboardResult) Component(component string) DashboardResult {
+	d.component = component
+	return d
 }
 
 func NewDashboardWriter() *DashboardWriter {
@@ -22,17 +35,14 @@ func NewDashboardWriter() *DashboardWriter {
 }
 
 // Add adds a dashboard to the writer.
-func (w *DashboardWriter) Add(builder dashboard.Builder, err error) {
-	w.dashboardResults = append(w.dashboardResults, DashboardResult{
-		builder: builder,
-		err:     err,
-	})
+func (w *DashboardWriter) Add(dr DashboardResult) {
+	w.dashboardResults = append(w.dashboardResults, dr)
 }
 
 // Write writes the dashboards to the output directory.
 func (w *DashboardWriter) Write() {
 	for _, result := range w.dashboardResults {
-		w.executor.BuildDashboard(result.builder, result.err)
+		w.executor.BuildDashboard(result)
 	}
 }
 
@@ -40,7 +50,7 @@ func (w *DashboardWriter) Write() {
 func (w *DashboardWriter) OperatorResources() []runtime.Object {
 	operatorResources := []runtime.Object{}
 	for _, result := range w.dashboardResults {
-		operatorResources = append(operatorResources, w.executor.BuildDashboardOperatorResource(result.builder))
+		operatorResources = append(operatorResources, w.executor.BuildDashboardOperatorResource(result))
 	}
 	return operatorResources
 }

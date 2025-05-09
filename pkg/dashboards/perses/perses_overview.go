@@ -11,39 +11,41 @@ import (
 	listvariable "github.com/perses/perses/go-sdk/variable/list-variable"
 )
 
-func BuildPersesOverview(project string, datasource string, clusterLabelName string) (dashboard.Builder, error) {
+func BuildPersesOverview(project string, datasource string, clusterLabelName string) dashboards.DashboardResult {
 	clusterLabelMatcher := dashboards.GetClusterLabelMatcher(clusterLabelName)
-	return dashboard.New("perses-overview",
-		dashboard.ProjectName(project),
-		dashboard.Name("Perses / Overview"),
-		dashboard.AddVariable("job",
-			listvariable.List(
-				labelvalues.PrometheusLabelValues("job",
-					labelvalues.Matchers("perses_build_info{}"),
-					dashboards.AddVariableDatasource(datasource),
-				),
-				listvariable.DisplayName("job"),
-			),
-		),
-		dashboard.AddVariable("instance",
-			listvariable.List(
-				labelvalues.PrometheusLabelValues("instance",
-					labelvalues.Matchers(
-						promql.SetLabelMatchers(
-							"perses_build_info",
-							[]promql.LabelMatcher{clusterLabelMatcher, {Name: "job", Type: "=", Value: "$job"}},
-						),
+	return dashboards.NewDashboardResult(
+		dashboard.New("perses-overview",
+			dashboard.ProjectName(project),
+			dashboard.Name("Perses / Overview"),
+			dashboard.AddVariable("job",
+				listvariable.List(
+					labelvalues.PrometheusLabelValues("job",
+						labelvalues.Matchers("perses_build_info{}"),
+						dashboards.AddVariableDatasource(datasource),
 					),
-					dashboards.AddVariableDatasource(datasource),
+					listvariable.DisplayName("job"),
 				),
-				listvariable.DisplayName("instance"),
 			),
+			dashboard.AddVariable("instance",
+				listvariable.List(
+					labelvalues.PrometheusLabelValues("instance",
+						labelvalues.Matchers(
+							promql.SetLabelMatchers(
+								"perses_build_info",
+								[]promql.LabelMatcher{clusterLabelMatcher, {Name: "job", Type: "=", Value: "$job"}},
+							),
+						),
+						dashboards.AddVariableDatasource(datasource),
+					),
+					listvariable.DisplayName("instance"),
+				),
+			),
+			withPersesOverviewStatsGroup(datasource, clusterLabelMatcher),
+			withPersesAPiRequestGroup(datasource, clusterLabelMatcher),
+			withPersesResources(datasource, clusterLabelMatcher),
+			withPersesPlugins(datasource, clusterLabelMatcher),
 		),
-		withPersesOverviewStatsGroup(datasource, clusterLabelMatcher),
-		withPersesAPiRequestGroup(datasource, clusterLabelMatcher),
-		withPersesResources(datasource, clusterLabelMatcher),
-		withPersesPlugins(datasource, clusterLabelMatcher),
-	)
+	).Component("perses")
 }
 
 func withPersesOverviewStatsGroup(datasource string, clusterLabelMatcher promql.LabelMatcher) dashboard.Option {

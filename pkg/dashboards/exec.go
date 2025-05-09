@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"io"
 	"os"
+	"path"
 
 	persesv1 "github.com/perses/perses-operator/api/v1alpha1"
 	"github.com/perses/perses/go-sdk/dashboard"
@@ -106,15 +107,19 @@ type Exec struct {
 }
 
 // BuildDashboard is a helper to print the result of a dashboard builder in stdout and errors to stderr
-func (b *Exec) BuildDashboard(builder dashboard.Builder, err error) {
-	if err != nil {
-		fmt.Fprint(os.Stderr, err)
+func (b *Exec) BuildDashboard(dr DashboardResult) {
+	if dr.err != nil {
+		fmt.Fprint(os.Stderr, dr.err)
 		os.Exit(-1)
 	}
-	executeDashboardBuilder(builder, b.outputFormat, b.outputDir, os.Stdout)
+	executeDashboardBuilder(dr.builder, b.outputFormat, path.Join(b.outputDir, dr.component), os.Stdout)
 }
 
 // BuildDashboardOperatorResource is a helper to return the operator resource of a dashboard builder as a runtime.Object.
-func (b *Exec) BuildDashboardOperatorResource(builder dashboard.Builder) runtime.Object {
-	return builderToOperatorResource(builder)
+func (b *Exec) BuildDashboardOperatorResource(dr DashboardResult) runtime.Object {
+	if dr.err != nil {
+		fmt.Fprint(os.Stderr, dr.err)
+		os.Exit(-1)
+	}
+	return builderToOperatorResource(dr.builder)
 }

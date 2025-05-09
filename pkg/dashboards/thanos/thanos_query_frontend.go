@@ -33,33 +33,35 @@ func withThanosQueryFrontendCacheGroup(datasource string, labelMatcher promql.La
 	)
 }
 
-func BuildThanosQueryFrontendOverview(project string, datasource string, clusterLabelName string) (dashboard.Builder, error) {
+func BuildThanosQueryFrontendOverview(project string, datasource string, clusterLabelName string) dashboards.DashboardResult {
 	clusterLabelMatcher := dashboards.GetClusterLabelMatcher(clusterLabelName)
-	return dashboard.New("thanos-query-frontend-overview",
-		dashboard.ProjectName(project),
-		dashboard.Name("Thanos / Query Frontend / Overview"),
-		dashboard.AddVariable("job",
-			listVar.List(
-				labelValuesVar.PrometheusLabelValues("job",
-					labelValuesVar.Matchers("thanos_build_info{container=\"thanos-query-frontend\"}"),
-					dashboards.AddVariableDatasource(datasource),
+	return dashboards.NewDashboardResult(
+		dashboard.New("thanos-query-frontend-overview",
+			dashboard.ProjectName(project),
+			dashboard.Name("Thanos / Query Frontend / Overview"),
+			dashboard.AddVariable("job",
+				listVar.List(
+					labelValuesVar.PrometheusLabelValues("job",
+						labelValuesVar.Matchers("thanos_build_info{container=\"thanos-query-frontend\"}"),
+						dashboards.AddVariableDatasource(datasource),
+					),
+					listVar.DisplayName("job"),
+					listVar.AllowMultiple(true),
 				),
-				listVar.DisplayName("job"),
-				listVar.AllowMultiple(true),
 			),
-		),
-		dashboards.AddClusterVariable(datasource, clusterLabelName, "thanos_build_info"),
-		dashboard.AddVariable("namespace",
-			listVar.List(
-				labelValuesVar.PrometheusLabelValues("namespace",
-					labelValuesVar.Matchers("thanos_status"),
-					dashboards.AddVariableDatasource(datasource),
+			dashboards.AddClusterVariable(datasource, clusterLabelName, "thanos_build_info"),
+			dashboard.AddVariable("namespace",
+				listVar.List(
+					labelValuesVar.PrometheusLabelValues("namespace",
+						labelValuesVar.Matchers("thanos_status"),
+						dashboards.AddVariableDatasource(datasource),
+					),
+					listVar.DisplayName("namespace"),
 				),
-				listVar.DisplayName("namespace"),
 			),
+			withThanosQueryFrontendRequestsGroup(datasource, clusterLabelMatcher),
+			withThanosQueryFrontendCacheGroup(datasource, clusterLabelMatcher),
+			withThanosResourcesGroup(datasource, clusterLabelMatcher),
 		),
-		withThanosQueryFrontendRequestsGroup(datasource, clusterLabelMatcher),
-		withThanosQueryFrontendCacheGroup(datasource, clusterLabelMatcher),
-		withThanosResourcesGroup(datasource, clusterLabelMatcher),
-	)
+	).Component("thanos")
 }
