@@ -87,6 +87,6 @@ Once you have installed Perses Operator, with a `Perses` instance and `PersesDat
 # Add the dashboard CRDs to Perses (component-wise)
 kubectl apply -f examples/dashboards/operator/kubernetes/
 
-# Add the dashboard CRD to Perses (component-wise)
+# Add all the dashboard CRDs to Perses
 kubectl apply -f examples/dashboards/operator/ -R
 ```
