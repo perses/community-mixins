@@ -25,6 +25,14 @@ func GroupCompactionRate(datasourceName string, labelMatchers ...promql.LabelMat
 				Position: timeSeriesPanel.BottomPosition,
 				Mode:     timeSeriesPanel.TableMode,
 			}),
+			timeSeriesPanel.WithVisual(timeSeriesPanel.Visual{
+				Display:      timeSeriesPanel.LineDisplay,
+				ConnectNulls: false,
+				LineWidth:    0.25,
+				AreaOpacity:  1,
+				Stack:        timeSeriesPanel.AllStack,
+				Palette:      timeSeriesPanel.Palette{Mode: timeSeriesPanel.AutoMode},
+			}),
 		),
 		panel.AddQuery(
 			query.PromQL(
@@ -51,6 +59,14 @@ func GroupCompactionErrors(datasourceName string, labelMatchers ...promql.LabelM
 			timeSeriesPanel.WithLegend(timeSeriesPanel.Legend{
 				Position: timeSeriesPanel.BottomPosition,
 				Mode:     timeSeriesPanel.TableMode,
+			}),
+			timeSeriesPanel.WithVisual(timeSeriesPanel.Visual{
+				Display:      timeSeriesPanel.LineDisplay,
+				ConnectNulls: false,
+				LineWidth:    0.25,
+				AreaOpacity:  1,
+				Stack:        timeSeriesPanel.AllStack,
+				Palette:      timeSeriesPanel.Palette{Mode: timeSeriesPanel.AutoMode},
 			}),
 		),
 		panel.AddQuery(
@@ -79,6 +95,14 @@ func DownsampleRate(datasourceName string, labelMatchers ...promql.LabelMatcher)
 				Position: timeSeriesPanel.BottomPosition,
 				Mode:     timeSeriesPanel.TableMode,
 			}),
+			timeSeriesPanel.WithVisual(timeSeriesPanel.Visual{
+				Display:      timeSeriesPanel.LineDisplay,
+				ConnectNulls: false,
+				LineWidth:    0.25,
+				AreaOpacity:  1,
+				Stack:        timeSeriesPanel.AllStack,
+				Palette:      timeSeriesPanel.Palette{Mode: timeSeriesPanel.AutoMode},
+			}),
 		),
 		panel.AddQuery(
 			query.PromQL(
@@ -106,6 +130,14 @@ func DownsampleErrors(datasourceName string, labelMatchers ...promql.LabelMatche
 				Position: timeSeriesPanel.BottomPosition,
 				Mode:     timeSeriesPanel.TableMode,
 			}),
+			timeSeriesPanel.WithVisual(timeSeriesPanel.Visual{
+				Display:      timeSeriesPanel.LineDisplay,
+				ConnectNulls: false,
+				LineWidth:    0.25,
+				AreaOpacity:  1,
+				Stack:        timeSeriesPanel.AllStack,
+				Palette:      timeSeriesPanel.Palette{Mode: timeSeriesPanel.AutoMode},
+			}),
 		),
 		panel.AddQuery(
 			query.PromQL(
@@ -132,6 +164,13 @@ func DownsampleDurations(datasourceName string, labelMatchers ...promql.LabelMat
 			timeSeriesPanel.WithLegend(timeSeriesPanel.Legend{
 				Position: timeSeriesPanel.BottomPosition,
 				Mode:     timeSeriesPanel.TableMode,
+			}),
+			timeSeriesPanel.WithVisual(timeSeriesPanel.Visual{
+				Display:      timeSeriesPanel.LineDisplay,
+				ConnectNulls: false,
+				LineWidth:    0.25,
+				AreaOpacity:  0.5,
+				Palette:      timeSeriesPanel.Palette{Mode: timeSeriesPanel.AutoMode},
 			}),
 		),
 		panel.AddQuery(
@@ -180,6 +219,14 @@ func SyncMetaRate(datasourceName string, labelMatchers ...promql.LabelMatcher) p
 				Position: timeSeriesPanel.BottomPosition,
 				Mode:     timeSeriesPanel.TableMode,
 			}),
+			timeSeriesPanel.WithVisual(timeSeriesPanel.Visual{
+				Display:      timeSeriesPanel.LineDisplay,
+				ConnectNulls: false,
+				LineWidth:    0.25,
+				AreaOpacity:  1,
+				Stack:        timeSeriesPanel.AllStack,
+				Palette:      timeSeriesPanel.Palette{Mode: timeSeriesPanel.AutoMode},
+			}),
 		),
 		panel.AddQuery(
 			query.PromQL(
@@ -207,6 +254,14 @@ func SyncMetaErrors(datasourceName string, labelMatchers ...promql.LabelMatcher)
 				Position: timeSeriesPanel.BottomPosition,
 				Mode:     timeSeriesPanel.TableMode,
 			}),
+			timeSeriesPanel.WithVisual(timeSeriesPanel.Visual{
+				Display:      timeSeriesPanel.LineDisplay,
+				ConnectNulls: false,
+				LineWidth:    0.25,
+				AreaOpacity:  1,
+				Stack:        timeSeriesPanel.AllStack,
+				Palette:      timeSeriesPanel.Palette{Mode: timeSeriesPanel.AutoMode},
+			}),
 		),
 		panel.AddQuery(
 			query.PromQL(
@@ -233,6 +288,13 @@ func SyncMetaDurations(datasourceName string, labelMatchers ...promql.LabelMatch
 			timeSeriesPanel.WithLegend(timeSeriesPanel.Legend{
 				Position: timeSeriesPanel.BottomPosition,
 				Mode:     timeSeriesPanel.TableMode,
+			}),
+			timeSeriesPanel.WithVisual(timeSeriesPanel.Visual{
+				Display:      timeSeriesPanel.LineDisplay,
+				ConnectNulls: false,
+				LineWidth:    0.25,
+				AreaOpacity:  0.5,
+				Palette:      timeSeriesPanel.Palette{Mode: timeSeriesPanel.AutoMode},
 			}),
 		),
 		panel.AddQuery(
@@ -281,6 +343,14 @@ func DeletionRate(datasourceName string, labelMatchers ...promql.LabelMatcher) p
 				Position: timeSeriesPanel.BottomPosition,
 				Mode:     timeSeriesPanel.TableMode,
 			}),
+			timeSeriesPanel.WithVisual(timeSeriesPanel.Visual{
+				Display:      timeSeriesPanel.LineDisplay,
+				ConnectNulls: false,
+				LineWidth:    0.25,
+				AreaOpacity:  1,
+				Stack:        timeSeriesPanel.AllStack,
+				Palette:      timeSeriesPanel.Palette{Mode: timeSeriesPanel.AutoMode},
+			}),
 		),
 		panel.AddQuery(
 			query.PromQL(
@@ -307,6 +377,14 @@ func DeletionErrors(datasourceName string, labelMatchers ...promql.LabelMatcher)
 			timeSeriesPanel.WithLegend(timeSeriesPanel.Legend{
 				Position: timeSeriesPanel.BottomPosition,
 				Mode:     timeSeriesPanel.TableMode,
+			}),
+			timeSeriesPanel.WithVisual(timeSeriesPanel.Visual{
+				Display:      timeSeriesPanel.LineDisplay,
+				ConnectNulls: false,
+				LineWidth:    0.25,
+				AreaOpacity:  1,
+				Stack:        timeSeriesPanel.AllStack,
+				Palette:      timeSeriesPanel.Palette{Mode: timeSeriesPanel.AutoMode},
 			}),
 		),
 		panel.AddQuery(
@@ -335,6 +413,14 @@ func MarkingRate(datasourceName string, labelMatchers ...promql.LabelMatcher) pa
 				Position: timeSeriesPanel.BottomPosition,
 				Mode:     timeSeriesPanel.TableMode,
 			}),
+			timeSeriesPanel.WithVisual(timeSeriesPanel.Visual{
+				Display:      timeSeriesPanel.LineDisplay,
+				ConnectNulls: false,
+				LineWidth:    0.25,
+				AreaOpacity:  1,
+				Stack:        timeSeriesPanel.AllStack,
+				Palette:      timeSeriesPanel.Palette{Mode: timeSeriesPanel.AutoMode},
+			}),
 		),
 		panel.AddQuery(
 			query.PromQL(
@@ -361,6 +447,14 @@ func GarbageCollectionRate(datasourceName string, labelMatchers ...promql.LabelM
 			timeSeriesPanel.WithLegend(timeSeriesPanel.Legend{
 				Position: timeSeriesPanel.BottomPosition,
 				Mode:     timeSeriesPanel.TableMode,
+			}),
+			timeSeriesPanel.WithVisual(timeSeriesPanel.Visual{
+				Display:      timeSeriesPanel.LineDisplay,
+				ConnectNulls: false,
+				LineWidth:    0.25,
+				AreaOpacity:  1,
+				Stack:        timeSeriesPanel.AllStack,
+				Palette:      timeSeriesPanel.Palette{Mode: timeSeriesPanel.AutoMode},
 			}),
 		),
 		panel.AddQuery(
@@ -389,6 +483,14 @@ func GarbageCollectionErrors(datasourceName string, labelMatchers ...promql.Labe
 				Position: timeSeriesPanel.BottomPosition,
 				Mode:     timeSeriesPanel.TableMode,
 			}),
+			timeSeriesPanel.WithVisual(timeSeriesPanel.Visual{
+				Display:      timeSeriesPanel.LineDisplay,
+				ConnectNulls: false,
+				LineWidth:    0.25,
+				AreaOpacity:  1,
+				Stack:        timeSeriesPanel.AllStack,
+				Palette:      timeSeriesPanel.Palette{Mode: timeSeriesPanel.AutoMode},
+			}),
 		),
 		panel.AddQuery(
 			query.PromQL(
@@ -415,6 +517,13 @@ func GarbageCollectionDurations(datasourceName string, labelMatchers ...promql.L
 			timeSeriesPanel.WithLegend(timeSeriesPanel.Legend{
 				Position: timeSeriesPanel.BottomPosition,
 				Mode:     timeSeriesPanel.TableMode,
+			}),
+			timeSeriesPanel.WithVisual(timeSeriesPanel.Visual{
+				Display:      timeSeriesPanel.LineDisplay,
+				ConnectNulls: false,
+				LineWidth:    0.25,
+				AreaOpacity:  0.5,
+				Palette:      timeSeriesPanel.Palette{Mode: timeSeriesPanel.AutoMode},
 			}),
 		),
 		panel.AddQuery(
@@ -463,6 +572,14 @@ func TodoCompactionBlocks(datasourceName string, labelMatchers ...promql.LabelMa
 				Position: timeSeriesPanel.BottomPosition,
 				Mode:     timeSeriesPanel.TableMode,
 			}),
+			timeSeriesPanel.WithVisual(timeSeriesPanel.Visual{
+				Display:      timeSeriesPanel.LineDisplay,
+				ConnectNulls: false,
+				LineWidth:    0.25,
+				AreaOpacity:  1,
+				Stack:        timeSeriesPanel.AllStack,
+				Palette:      timeSeriesPanel.Palette{Mode: timeSeriesPanel.AutoMode},
+			}),
 		),
 		panel.AddQuery(
 			query.PromQL(
@@ -489,6 +606,14 @@ func TodoCompactions(datasourceName string, labelMatchers ...promql.LabelMatcher
 			timeSeriesPanel.WithLegend(timeSeriesPanel.Legend{
 				Position: timeSeriesPanel.BottomPosition,
 				Mode:     timeSeriesPanel.TableMode,
+			}),
+			timeSeriesPanel.WithVisual(timeSeriesPanel.Visual{
+				Display:      timeSeriesPanel.LineDisplay,
+				ConnectNulls: false,
+				LineWidth:    0.25,
+				AreaOpacity:  1,
+				Stack:        timeSeriesPanel.AllStack,
+				Palette:      timeSeriesPanel.Palette{Mode: timeSeriesPanel.AutoMode},
 			}),
 		),
 		panel.AddQuery(
@@ -517,6 +642,14 @@ func TodoDeletions(datasourceName string, labelMatchers ...promql.LabelMatcher) 
 				Position: timeSeriesPanel.BottomPosition,
 				Mode:     timeSeriesPanel.TableMode,
 			}),
+			timeSeriesPanel.WithVisual(timeSeriesPanel.Visual{
+				Display:      timeSeriesPanel.LineDisplay,
+				ConnectNulls: false,
+				LineWidth:    0.25,
+				AreaOpacity:  1,
+				Stack:        timeSeriesPanel.AllStack,
+				Palette:      timeSeriesPanel.Palette{Mode: timeSeriesPanel.AutoMode},
+			}),
 		),
 		panel.AddQuery(
 			query.PromQL(
@@ -544,6 +677,14 @@ func TodoDownsamples(datasourceName string, labelMatchers ...promql.LabelMatcher
 				Position: timeSeriesPanel.BottomPosition,
 				Mode:     timeSeriesPanel.TableMode,
 			}),
+			timeSeriesPanel.WithVisual(timeSeriesPanel.Visual{
+				Display:      timeSeriesPanel.LineDisplay,
+				ConnectNulls: false,
+				LineWidth:    0.25,
+				AreaOpacity:  1,
+				Stack:        timeSeriesPanel.AllStack,
+				Palette:      timeSeriesPanel.Palette{Mode: timeSeriesPanel.AutoMode},
+			}),
 		),
 		panel.AddQuery(
 			query.PromQL(
@@ -570,6 +711,14 @@ func HaltedCompactors(datasourceName string, labelMatchers ...promql.LabelMatche
 			timeSeriesPanel.WithLegend(timeSeriesPanel.Legend{
 				Position: timeSeriesPanel.BottomPosition,
 				Mode:     timeSeriesPanel.TableMode,
+			}),
+			timeSeriesPanel.WithVisual(timeSeriesPanel.Visual{
+				Display:      timeSeriesPanel.LineDisplay,
+				ConnectNulls: false,
+				LineWidth:    0.25,
+				AreaOpacity:  1,
+				Stack:        timeSeriesPanel.AllStack,
+				Palette:      timeSeriesPanel.Palette{Mode: timeSeriesPanel.AutoMode},
 			}),
 		),
 		panel.AddQuery(

@@ -14,6 +14,7 @@ import (
 func withThanosQueryFrontendRequestsGroup(datasource string, labelMatcher promql.LabelMatcher) dashboard.Option {
 	return dashboard.AddPanelGroup("Query Frontend API",
 		panelgroup.PanelsPerLine(4),
+		panelgroup.PanelHeight(8),
 		panels.QueryFrontendRequestRate(datasource, labelMatcher),
 		panels.QueryFrontendQueryRate(datasource, labelMatcher),
 		panels.QueryFrontendErrors(datasource, labelMatcher),
@@ -24,6 +25,7 @@ func withThanosQueryFrontendRequestsGroup(datasource string, labelMatcher promql
 func withThanosQueryFrontendCacheGroup(datasource string, labelMatcher promql.LabelMatcher) dashboard.Option {
 	return dashboard.AddPanelGroup("Query Frontend Cache Operations",
 		panelgroup.PanelsPerLine(4),
+		panelgroup.PanelHeight(8),
 		panels.QueryFrontendCacheRequestRate(datasource, labelMatcher),
 		panels.QueryFrontendCacheHitRate(datasource, labelMatcher),
 		panels.QueryFrontendCacheMissRate(datasource, labelMatcher),

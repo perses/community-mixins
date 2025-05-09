@@ -14,6 +14,7 @@ import (
 func withThanosQueryInstantQueryGroup(datasource string, labelMatcher promql.LabelMatcher) dashboard.Option {
 	return dashboard.AddPanelGroup("Instant Query",
 		panelgroup.PanelsPerLine(3),
+		panelgroup.PanelHeight(8),
 		panels.InstantQueryRequestRate(datasource, labelMatcher),
 		panels.InstantQueryRequestErrors(datasource, labelMatcher),
 		panels.InstantQueryRequestDurations(datasource, labelMatcher),
@@ -23,6 +24,7 @@ func withThanosQueryInstantQueryGroup(datasource string, labelMatcher promql.Lab
 func withThanosQueryRangeQueryGroup(datasource string, labelMatcher promql.LabelMatcher) dashboard.Option {
 	return dashboard.AddPanelGroup("Range Query",
 		panelgroup.PanelsPerLine(3),
+		panelgroup.PanelHeight(8),
 		panels.RangeQueryRequestRate(datasource, labelMatcher),
 		panels.RangeQueryRequestErrors(datasource, labelMatcher),
 		panels.RangeQueryRequestDurations(datasource, labelMatcher),
@@ -32,6 +34,7 @@ func withThanosQueryRangeQueryGroup(datasource string, labelMatcher promql.Label
 func withThanosQueryConcurrencyGroup(datasource string, labelMatcher promql.LabelMatcher) dashboard.Option {
 	return dashboard.AddPanelGroup("Query Available Concurrency",
 		panelgroup.PanelsPerLine(1),
+		panelgroup.PanelHeight(8),
 		panels.QueryConcurrency(datasource, labelMatcher),
 	)
 }
@@ -39,6 +42,7 @@ func withThanosQueryConcurrencyGroup(datasource string, labelMatcher promql.Labe
 func withThanosQueryDNSLookupGroup(datasource string, labelMatcher promql.LabelMatcher) dashboard.Option {
 	return dashboard.AddPanelGroup("DNS Lookups",
 		panelgroup.PanelsPerLine(2),
+		panelgroup.PanelHeight(8),
 		panels.DNSLookups(datasource, labelMatcher),
 		panels.DNSLookupsErrors(datasource, labelMatcher),
 	)

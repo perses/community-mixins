@@ -14,6 +14,7 @@ import (
 func withThanosRuleGroupEvaluationGroup(datasource string, labelMatcher promql.LabelMatcher) dashboard.Option {
 	return dashboard.AddPanelGroup("Rule Group Evaluations",
 		panelgroup.PanelsPerLine(4),
+		panelgroup.PanelHeight(8),
 		panels.RuleEvaluationRate(datasource, labelMatcher),
 		panels.RuleEvaluationFailureRate(datasource, labelMatcher),
 		panels.RuleGroupEvaluationsMissRate(datasource, labelMatcher),
@@ -24,6 +25,7 @@ func withThanosRuleGroupEvaluationGroup(datasource string, labelMatcher promql.L
 func withThanosAlertsSentGroup(datasource string, labelMatcher promql.LabelMatcher) dashboard.Option {
 	return dashboard.AddPanelGroup("Alerts Sent",
 		panelgroup.PanelsPerLine(4),
+		panelgroup.PanelHeight(8),
 		panels.AlertsSentRate(datasource, labelMatcher),
 		panels.AlertsDroppedRate(datasource, labelMatcher),
 		panels.AlertSendingErrors(datasource, labelMatcher),
@@ -34,6 +36,7 @@ func withThanosAlertsSentGroup(datasource string, labelMatcher promql.LabelMatch
 func withThanosAlertQueueGroup(datasource string, labelMatcher promql.LabelMatcher) dashboard.Option {
 	return dashboard.AddPanelGroup("Alert Queue",
 		panelgroup.PanelsPerLine(3),
+		panelgroup.PanelHeight(6),
 		panels.AlertQueuePushedRate(datasource, labelMatcher),
 		panels.AlertQueuePoppedRate(datasource, labelMatcher),
 		panels.DroppedRatio(datasource, labelMatcher),
