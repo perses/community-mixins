@@ -9,6 +9,7 @@ var (
 	CONTROLLER_MANAGER_MATCHER = "job=\"kube-controller-manager\""
 	KUBE_SCHEDULER_MATCHER     = "job=\"kube-scheduler\""
 	KUBE_PROXY_MATCHER         = "job=\"kube-proxy\""
+	API_SERVER_MATCHER         = "job=\"kube-apiserver\""
 )
 
 // GetCAdvisorMatcher returns the matcher for the cadvisor job.
@@ -24,6 +25,11 @@ func GetKubeStateMetricsMatcher() string {
 // GetKubeletMatcher returns the matcher for the kubelet job.
 func GetKubeletMatcher() string {
 	return KUBELET_MATCHER
+}
+
+// GetAPIServerMatcher returns the matcher for the api server job.
+func GetAPIServerMatcher() string {
+	return API_SERVER_MATCHER
 }
 
 // GetNodeExporterMatcher returns the matcher for the node-exporter job.
@@ -79,6 +85,11 @@ func SetSchedulerMatcher(matcher string) {
 // SetKubeProxyMatcher sets the matcher for the kube-proxy job globally.
 func SetKubeProxyMatcher(matcher string) {
 	KUBE_PROXY_MATCHER = matcher
+}
+
+// SetKubeletMatcher sets the matcher for the api server job globally.
+func SetAPIServeMatcher(matcher string) {
+	API_SERVER_MATCHER = matcher
 }
 
 // Metrics deprecation considerations: https://github.com/kubernetes-monitoring/kubernetes-mixin?tab=readme-ov-file#metrics-deprecation
