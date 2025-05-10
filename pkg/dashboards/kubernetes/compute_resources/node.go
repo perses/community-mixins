@@ -51,38 +51,40 @@ func withNodeMemoryQuotaGroup(datasource string, labelMatcher promql.LabelMatche
 	)
 }
 
-func BuildKubernetesNodeResourcesOverview(project string, datasource string, clusterLabelName string) (dashboard.Builder, error) {
+func BuildKubernetesNodeResourcesOverview(project string, datasource string, clusterLabelName string) dashboards.DashboardResult {
 	clusterLabelMatcher := dashboards.GetClusterLabelMatcher(clusterLabelName)
-	return dashboard.New("kubernetes-node-resources-overview",
-		dashboard.ProjectName(project),
-		dashboard.Name("Kubernetes / Compute Resources / Node (Pods)"),
-		dashboard.AddVariable("cluster",
-			listVar.List(
-				labelValuesVar.PrometheusLabelValues("cluster",
-					labelValuesVar.Matchers("up{"+panels.GetKubeletMatcher()+", metrics_path=\"/metrics/cadvisor\"}"),
-					dashboards.AddVariableDatasource(datasource),
-				),
-				listVar.DisplayName("cluster"),
-			),
-		),
-		dashboard.AddVariable("node",
-			listVar.List(
-				labelValuesVar.PrometheusLabelValues("node",
-					labelValuesVar.Matchers(
-						promql.SetLabelMatchers(
-							"kube_pod_info",
-							[]promql.LabelMatcher{{Name: "cluster", Type: "=", Value: "$cluster"}},
-						),
+	return dashboards.NewDashboardResult(
+		dashboard.New("kubernetes-node-resources-overview",
+			dashboard.ProjectName(project),
+			dashboard.Name("Kubernetes / Compute Resources / Node (Pods)"),
+			dashboard.AddVariable("cluster",
+				listVar.List(
+					labelValuesVar.PrometheusLabelValues("cluster",
+						labelValuesVar.Matchers("up{"+panels.GetKubeletMatcher()+", metrics_path=\"/metrics/cadvisor\"}"),
+						dashboards.AddVariableDatasource(datasource),
 					),
-					dashboards.AddVariableDatasource(datasource),
+					listVar.DisplayName("cluster"),
 				),
-				listVar.DisplayName("node"),
 			),
+			dashboard.AddVariable("node",
+				listVar.List(
+					labelValuesVar.PrometheusLabelValues("node",
+						labelValuesVar.Matchers(
+							promql.SetLabelMatchers(
+								"kube_pod_info",
+								[]promql.LabelMatcher{{Name: "cluster", Type: "=", Value: "$cluster"}},
+							),
+						),
+						dashboards.AddVariableDatasource(datasource),
+					),
+					listVar.DisplayName("node"),
+				),
+			),
+			withNodeCPUUsageGroup(datasource, clusterLabelMatcher),
+			withNodeCPUQuotaGroup(datasource, clusterLabelMatcher),
+			withNodeMemoryUsageGroup(datasource, clusterLabelMatcher),
+			withNodeMemoryUsageWithoutCacheGroup(datasource, clusterLabelMatcher),
+			withNodeMemoryQuotaGroup(datasource, clusterLabelMatcher),
 		),
-		withNodeCPUUsageGroup(datasource, clusterLabelMatcher),
-		withNodeCPUQuotaGroup(datasource, clusterLabelMatcher),
-		withNodeMemoryUsageGroup(datasource, clusterLabelMatcher),
-		withNodeMemoryUsageWithoutCacheGroup(datasource, clusterLabelMatcher),
-		withNodeMemoryQuotaGroup(datasource, clusterLabelMatcher),
-	)
+	).Component("kubernetes")
 }

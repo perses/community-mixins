@@ -87,59 +87,61 @@ func withWorkloadNamespaceRateOfPacketsDroppedGroup(datasource string, labelMatc
 	)
 }
 
-func BuildKubernetesWorkloadNamespaceOverview(project string, datasource string, clusterLabelName string) (dashboard.Builder, error) {
+func BuildKubernetesWorkloadNamespaceOverview(project string, datasource string, clusterLabelName string) dashboards.DashboardResult {
 	clusterLabelMatcher := dashboards.GetClusterLabelMatcher(clusterLabelName)
-	return dashboard.New("kubernetes-workload-ns-resources-overview",
-		dashboard.ProjectName(project),
-		dashboard.Name("Kubernetes / Compute Resources / Namespace (Workloads)"),
-		dashboard.AddVariable("cluster",
-			listVar.List(
-				labelValuesVar.PrometheusLabelValues("cluster",
-					labelValuesVar.Matchers("up{"+panels.GetKubeletMatcher()+", metrics_path=\"/metrics/cadvisor\"}"),
-					dashboards.AddVariableDatasource(datasource),
-				),
-				listVar.DisplayName("cluster"),
-			),
-		),
-		dashboard.AddVariable("namespace",
-			listVar.List(
-				labelValuesVar.PrometheusLabelValues("namespace",
-					labelValuesVar.Matchers(
-						promql.SetLabelMatchers(
-							"kube_namespace_status_phase{"+panels.GetKubeStateMetricsMatcher()+"}",
-							[]promql.LabelMatcher{{Name: "cluster", Type: "=", Value: "$cluster"}},
-						),
+	return dashboards.NewDashboardResult(
+		dashboard.New("kubernetes-workload-ns-resources-overview",
+			dashboard.ProjectName(project),
+			dashboard.Name("Kubernetes / Compute Resources / Namespace (Workloads)"),
+			dashboard.AddVariable("cluster",
+				listVar.List(
+					labelValuesVar.PrometheusLabelValues("cluster",
+						labelValuesVar.Matchers("up{"+panels.GetKubeletMatcher()+", metrics_path=\"/metrics/cadvisor\"}"),
+						dashboards.AddVariableDatasource(datasource),
 					),
-					dashboards.AddVariableDatasource(datasource),
+					listVar.DisplayName("cluster"),
 				),
-				listVar.DisplayName("namespace"),
 			),
-		),
-		dashboard.AddVariable("type",
-			listVar.List(
-				labelValuesVar.PrometheusLabelValues("workload_type",
-					labelValuesVar.Matchers(
-						promql.SetLabelMatchers(
-							"namespace_workload_pod:kube_pod_owner:relabel{workload=~\".+\"}",
-							[]promql.LabelMatcher{
-								{Name: "cluster", Type: "=", Value: "$cluster"},
-								{Name: "namespace", Type: "=", Value: "$namespace"},
-							},
+			dashboard.AddVariable("namespace",
+				listVar.List(
+					labelValuesVar.PrometheusLabelValues("namespace",
+						labelValuesVar.Matchers(
+							promql.SetLabelMatchers(
+								"kube_namespace_status_phase{"+panels.GetKubeStateMetricsMatcher()+"}",
+								[]promql.LabelMatcher{{Name: "cluster", Type: "=", Value: "$cluster"}},
+							),
 						),
+						dashboards.AddVariableDatasource(datasource),
 					),
-					dashboards.AddVariableDatasource(datasource),
+					listVar.DisplayName("namespace"),
 				),
-				listVar.DisplayName("workload_type"),
 			),
+			dashboard.AddVariable("type",
+				listVar.List(
+					labelValuesVar.PrometheusLabelValues("workload_type",
+						labelValuesVar.Matchers(
+							promql.SetLabelMatchers(
+								"namespace_workload_pod:kube_pod_owner:relabel{workload=~\".+\"}",
+								[]promql.LabelMatcher{
+									{Name: "cluster", Type: "=", Value: "$cluster"},
+									{Name: "namespace", Type: "=", Value: "$namespace"},
+								},
+							),
+						),
+						dashboards.AddVariableDatasource(datasource),
+					),
+					listVar.DisplayName("workload_type"),
+				),
+			),
+			withWorkloadNamespaceCPUUsageGroup(datasource, clusterLabelMatcher),
+			withWorkloadNamespaceCPUUsageQuotaGroup(datasource, clusterLabelMatcher),
+			withWorkloadNamespaceMemoryUsageGroup(datasource, clusterLabelMatcher),
+			withWorkloadNamespaceMemoryUsageQuotaGroup(datasource, clusterLabelMatcher),
+			withWorkloadNamespaceNetworkUsageGroup(datasource, clusterLabelMatcher),
+			withWorkloadNamespaceBandwidthGroup(datasource, clusterLabelMatcher),
+			withWorkloadNamespaceAvgContainerBandwidthGroup(datasource, clusterLabelMatcher),
+			withWorkloadNamespaceRateOfPacketsGroup(datasource, clusterLabelMatcher),
+			withWorkloadNamespaceRateOfPacketsDroppedGroup(datasource, clusterLabelMatcher),
 		),
-		withWorkloadNamespaceCPUUsageGroup(datasource, clusterLabelMatcher),
-		withWorkloadNamespaceCPUUsageQuotaGroup(datasource, clusterLabelMatcher),
-		withWorkloadNamespaceMemoryUsageGroup(datasource, clusterLabelMatcher),
-		withWorkloadNamespaceMemoryUsageQuotaGroup(datasource, clusterLabelMatcher),
-		withWorkloadNamespaceNetworkUsageGroup(datasource, clusterLabelMatcher),
-		withWorkloadNamespaceBandwidthGroup(datasource, clusterLabelMatcher),
-		withWorkloadNamespaceAvgContainerBandwidthGroup(datasource, clusterLabelMatcher),
-		withWorkloadNamespaceRateOfPacketsGroup(datasource, clusterLabelMatcher),
-		withWorkloadNamespaceRateOfPacketsDroppedGroup(datasource, clusterLabelMatcher),
-	)
+	).Component("kubernetes")
 }

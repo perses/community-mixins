@@ -43,29 +43,31 @@ func withNodeExporterNodesNetwork(datasource string, labelMatcher promql.LabelMa
 	)
 }
 
-func BuildNodeExporterNodes(project string, datasource string, clusterLabelName string) (dashboard.Builder, error) {
+func BuildNodeExporterNodes(project string, datasource string, clusterLabelName string) dashboards.DashboardResult {
 	clusterLabelMatcher := dashboards.GetClusterLabelMatcher(clusterLabelName)
-	return dashboard.New("node-exporter-nodes",
-		dashboard.ProjectName(project),
-		dashboard.Name("Node Exporter / Nodes"),
-		dashboards.AddClusterVariable(datasource, clusterLabelName, "node_uname_info{job='node', sysname!='Darwin'}"),
-		dashboard.AddVariable("instance",
-			listVar.List(
-				labelValuesVar.PrometheusLabelValues("instance",
-					dashboards.AddVariableDatasource(datasource),
-					labelValuesVar.Matchers(
-						promql.SetLabelMatchers(
-							"node_uname_info{job='node', sysname!='Darwin'}",
-							[]promql.LabelMatcher{clusterLabelMatcher},
-						)),
+	return dashboards.NewDashboardResult(
+		dashboard.New("node-exporter-nodes",
+			dashboard.ProjectName(project),
+			dashboard.Name("Node Exporter / Nodes"),
+			dashboards.AddClusterVariable(datasource, clusterLabelName, "node_uname_info{job='node', sysname!='Darwin'}"),
+			dashboard.AddVariable("instance",
+				listVar.List(
+					labelValuesVar.PrometheusLabelValues("instance",
+						dashboards.AddVariableDatasource(datasource),
+						labelValuesVar.Matchers(
+							promql.SetLabelMatchers(
+								"node_uname_info{job='node', sysname!='Darwin'}",
+								[]promql.LabelMatcher{clusterLabelMatcher},
+							)),
+					),
+					listVar.DisplayName("instance"),
+					listVar.AllowAllValue(true),
 				),
-				listVar.DisplayName("instance"),
-				listVar.AllowAllValue(true),
 			),
+			withNodeExporterNodesCPU(datasource, clusterLabelMatcher),
+			withNodeExporterNodesMemory(datasource, clusterLabelMatcher),
+			withNodeExporterNodesDisk(datasource, clusterLabelMatcher),
+			withNodeExporterNodesNetwork(datasource, clusterLabelMatcher),
 		),
-		withNodeExporterNodesCPU(datasource, clusterLabelMatcher),
-		withNodeExporterNodesMemory(datasource, clusterLabelMatcher),
-		withNodeExporterNodesDisk(datasource, clusterLabelMatcher),
-		withNodeExporterNodesNetwork(datasource, clusterLabelMatcher),
-	)
+	).Component("node-exporter")
 }

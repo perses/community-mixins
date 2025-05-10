@@ -53,15 +53,17 @@ func withMultiClusterMemoryUsageQuotaGroup(datasource string, labelMatcher promq
 	)
 }
 
-func BuildKubernetesMultiClusterOverview(project string, datasource string, clusterLabelName string) (dashboard.Builder, error) {
+func BuildKubernetesMultiClusterOverview(project string, datasource string, clusterLabelName string) dashboards.DashboardResult {
 	clusterLabelMatcher := dashboards.GetClusterLabelMatcher(clusterLabelName)
-	return dashboard.New("kubernetes-multi-cluster-resources-overview",
-		dashboard.ProjectName(project),
-		dashboard.Name("Kubernetes / Compute Resources / Multi-Cluster"),
-		withMultiClusterStatsGroup(datasource, clusterLabelMatcher),
-		withMultiClusterCPUUsageGroup(datasource, clusterLabelMatcher),
-		withMultiClusterCPUUsageQuotaGroup(datasource, clusterLabelMatcher),
-		withMultiClusterMemoryUsageGroup(datasource, clusterLabelMatcher),
-		withMultiClusterMemoryUsageQuotaGroup(datasource, clusterLabelMatcher),
-	)
+	return dashboards.NewDashboardResult(
+		dashboard.New("kubernetes-multi-cluster-resources-overview",
+			dashboard.ProjectName(project),
+			dashboard.Name("Kubernetes / Compute Resources / Multi-Cluster"),
+			withMultiClusterStatsGroup(datasource, clusterLabelMatcher),
+			withMultiClusterCPUUsageGroup(datasource, clusterLabelMatcher),
+			withMultiClusterCPUUsageQuotaGroup(datasource, clusterLabelMatcher),
+			withMultiClusterMemoryUsageGroup(datasource, clusterLabelMatcher),
+			withMultiClusterMemoryUsageQuotaGroup(datasource, clusterLabelMatcher),
+		),
+	).Component("kubernetes")
 }

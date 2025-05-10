@@ -106,44 +106,46 @@ func withNamespaceCurrentStorageIOGroup(datasource string, labelMatcher promql.L
 	)
 }
 
-func BuildKubernetesNamespaceOverview(project string, datasource string, clusterLabelName string) (dashboard.Builder, error) {
+func BuildKubernetesNamespaceOverview(project string, datasource string, clusterLabelName string) dashboards.DashboardResult {
 	clusterLabelMatcher := dashboards.GetClusterLabelMatcher(clusterLabelName)
-	return dashboard.New("kubernetes-namespace-resources-overview",
-		dashboard.ProjectName(project),
-		dashboard.Name("Kubernetes / Compute Resources / Namespace (Pods)"),
-		dashboard.AddVariable("cluster",
-			listVar.List(
-				labelValuesVar.PrometheusLabelValues("cluster",
-					labelValuesVar.Matchers("up{"+panels.GetKubeletMatcher()+", metrics_path=\"/metrics/cadvisor\"}"),
-					dashboards.AddVariableDatasource(datasource),
-				),
-				listVar.DisplayName("cluster"),
-			),
-		),
-		dashboard.AddVariable("namespace",
-			listVar.List(
-				labelValuesVar.PrometheusLabelValues("namespace",
-					labelValuesVar.Matchers(
-						promql.SetLabelMatchers(
-							"kube_namespace_status_phase{"+panels.GetKubeStateMetricsMatcher()+"}",
-							[]promql.LabelMatcher{{Name: "cluster", Type: "=", Value: "$cluster"}},
-						),
+	return dashboards.NewDashboardResult(
+		dashboard.New("kubernetes-namespace-resources-overview",
+			dashboard.ProjectName(project),
+			dashboard.Name("Kubernetes / Compute Resources / Namespace (Pods)"),
+			dashboard.AddVariable("cluster",
+				listVar.List(
+					labelValuesVar.PrometheusLabelValues("cluster",
+						labelValuesVar.Matchers("up{"+panels.GetKubeletMatcher()+", metrics_path=\"/metrics/cadvisor\"}"),
+						dashboards.AddVariableDatasource(datasource),
 					),
-					dashboards.AddVariableDatasource(datasource),
+					listVar.DisplayName("cluster"),
 				),
-				listVar.DisplayName("namespace"),
 			),
+			dashboard.AddVariable("namespace",
+				listVar.List(
+					labelValuesVar.PrometheusLabelValues("namespace",
+						labelValuesVar.Matchers(
+							promql.SetLabelMatchers(
+								"kube_namespace_status_phase{"+panels.GetKubeStateMetricsMatcher()+"}",
+								[]promql.LabelMatcher{{Name: "cluster", Type: "=", Value: "$cluster"}},
+							),
+						),
+						dashboards.AddVariableDatasource(datasource),
+					),
+					listVar.DisplayName("namespace"),
+				),
+			),
+			withNamespaceStatsGroup(datasource, clusterLabelMatcher),
+			withNamespaceCPUUsageGroup(datasource, clusterLabelMatcher),
+			withNamespaceCPUUsageQuotaGroup(datasource, clusterLabelMatcher),
+			withNamespaceMemoryUsageGroup(datasource, clusterLabelMatcher),
+			withNamespaceMemoryUsageQuotaGroup(datasource, clusterLabelMatcher),
+			withNamespaceNetworkUsageGroup(datasource, clusterLabelMatcher),
+			withNamespaceBandwidthGroup(datasource, clusterLabelMatcher),
+			withNamespaceRateOfPacketsGroup(datasource, clusterLabelMatcher),
+			withNamespaceRateOfPacketsDroppedGroup(datasource, clusterLabelMatcher),
+			withNamespaceStorageIOGroup(datasource, clusterLabelMatcher),
+			withNamespaceCurrentStorageIOGroup(datasource, clusterLabelMatcher),
 		),
-		withNamespaceStatsGroup(datasource, clusterLabelMatcher),
-		withNamespaceCPUUsageGroup(datasource, clusterLabelMatcher),
-		withNamespaceCPUUsageQuotaGroup(datasource, clusterLabelMatcher),
-		withNamespaceMemoryUsageGroup(datasource, clusterLabelMatcher),
-		withNamespaceMemoryUsageQuotaGroup(datasource, clusterLabelMatcher),
-		withNamespaceNetworkUsageGroup(datasource, clusterLabelMatcher),
-		withNamespaceBandwidthGroup(datasource, clusterLabelMatcher),
-		withNamespaceRateOfPacketsGroup(datasource, clusterLabelMatcher),
-		withNamespaceRateOfPacketsDroppedGroup(datasource, clusterLabelMatcher),
-		withNamespaceStorageIOGroup(datasource, clusterLabelMatcher),
-		withNamespaceCurrentStorageIOGroup(datasource, clusterLabelMatcher),
-	)
+	).Component("kubernetes")
 }

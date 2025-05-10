@@ -48,37 +48,39 @@ func withThanosQueryDNSLookupGroup(datasource string, labelMatcher promql.LabelM
 	)
 }
 
-func BuildThanosQueryOverview(project string, datasource string, clusterLabelName string) (dashboard.Builder, error) {
+func BuildThanosQueryOverview(project string, datasource string, clusterLabelName string) dashboards.DashboardResult {
 	clusterLabelMatcher := dashboards.GetClusterLabelMatcher(clusterLabelName)
-	return dashboard.New("thanos-query-overview",
-		dashboard.ProjectName(project),
-		dashboard.Name("Thanos / Query / Overview"),
-		dashboard.AddVariable("namespace",
-			listVar.List(
-				labelValuesVar.PrometheusLabelValues("namespace",
-					labelValuesVar.Matchers("thanos_status"),
-					dashboards.AddVariableDatasource(datasource),
+	return dashboards.NewDashboardResult(
+		dashboard.New("thanos-query-overview",
+			dashboard.ProjectName(project),
+			dashboard.Name("Thanos / Query / Overview"),
+			dashboard.AddVariable("namespace",
+				listVar.List(
+					labelValuesVar.PrometheusLabelValues("namespace",
+						labelValuesVar.Matchers("thanos_status"),
+						dashboards.AddVariableDatasource(datasource),
+					),
+					listVar.DisplayName("namespace"),
 				),
-				listVar.DisplayName("namespace"),
 			),
-		),
-		dashboard.AddVariable("job",
-			listVar.List(
-				labelValuesVar.PrometheusLabelValues("job",
-					labelValuesVar.Matchers("thanos_build_info{container=\"thanos-query\"}"),
-					dashboards.AddVariableDatasource(datasource),
+			dashboard.AddVariable("job",
+				listVar.List(
+					labelValuesVar.PrometheusLabelValues("job",
+						labelValuesVar.Matchers("thanos_build_info{container=\"thanos-query\"}"),
+						dashboards.AddVariableDatasource(datasource),
+					),
+					listVar.DisplayName("job"),
+					listVar.AllowMultiple(true),
 				),
-				listVar.DisplayName("job"),
-				listVar.AllowMultiple(true),
 			),
+			dashboards.AddClusterVariable(datasource, clusterLabelName, "thanos_build_info"),
+			withThanosQueryInstantQueryGroup(datasource, clusterLabelMatcher),
+			withThanosQueryRangeQueryGroup(datasource, clusterLabelMatcher),
+			withThanosReadGRPCUnaryGroup(datasource, clusterLabelMatcher),
+			withThanosReadGRPCStreamGroup(datasource, clusterLabelMatcher),
+			withThanosQueryConcurrencyGroup(datasource, clusterLabelMatcher),
+			withThanosQueryDNSLookupGroup(datasource, clusterLabelMatcher),
+			withThanosResourcesGroup(datasource, clusterLabelMatcher),
 		),
-		dashboards.AddClusterVariable(datasource, clusterLabelName, "thanos_build_info"),
-		withThanosQueryInstantQueryGroup(datasource, clusterLabelMatcher),
-		withThanosQueryRangeQueryGroup(datasource, clusterLabelMatcher),
-		withThanosReadGRPCUnaryGroup(datasource, clusterLabelMatcher),
-		withThanosReadGRPCStreamGroup(datasource, clusterLabelMatcher),
-		withThanosQueryConcurrencyGroup(datasource, clusterLabelMatcher),
-		withThanosQueryDNSLookupGroup(datasource, clusterLabelMatcher),
-		withThanosResourcesGroup(datasource, clusterLabelMatcher),
-	)
+	).Component("thanos")
 }

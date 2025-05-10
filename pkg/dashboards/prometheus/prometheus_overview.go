@@ -51,39 +51,41 @@ func withPrometheusQueryGroup(datasource string, labelMatcher promql.LabelMatche
 	)
 }
 
-func BuildPrometheusOverview(project string, datasource string, clusterLabelName string) (dashboard.Builder, error) {
+func BuildPrometheusOverview(project string, datasource string, clusterLabelName string) dashboards.DashboardResult {
 	clusterLabelMatcher := dashboards.GetClusterLabelMatcher(clusterLabelName)
-	return dashboard.New("prometheus-overview",
-		dashboard.ProjectName(project),
-		dashboard.Name("Prometheus / Overview"),
-		dashboard.AddVariable("job",
-			listVar.List(
-				labelValuesVar.PrometheusLabelValues("job",
-					labelValuesVar.Matchers("prometheus_build_info{}"),
-					dashboards.AddVariableDatasource(datasource),
-				),
-				listVar.DisplayName("job"),
-			),
-		),
-		dashboards.AddClusterVariable(datasource, clusterLabelName, "prometheus_build_info"),
-		dashboard.AddVariable("instance",
-			listVar.List(
-				labelValuesVar.PrometheusLabelValues("instance",
-					labelValuesVar.Matchers(
-						promql.SetLabelMatchers(
-							"prometheus_build_info",
-							[]promql.LabelMatcher{clusterLabelMatcher, {Name: "job", Type: "=", Value: "$job"}},
-						),
+	return dashboards.NewDashboardResult(
+		dashboard.New("prometheus-overview",
+			dashboard.ProjectName(project),
+			dashboard.Name("Prometheus / Overview"),
+			dashboard.AddVariable("job",
+				listVar.List(
+					labelValuesVar.PrometheusLabelValues("job",
+						labelValuesVar.Matchers("prometheus_build_info{}"),
+						dashboards.AddVariableDatasource(datasource),
 					),
-					dashboards.AddVariableDatasource(datasource),
+					listVar.DisplayName("job"),
 				),
-				listVar.DisplayName("instance"),
 			),
+			dashboards.AddClusterVariable(datasource, clusterLabelName, "prometheus_build_info"),
+			dashboard.AddVariable("instance",
+				listVar.List(
+					labelValuesVar.PrometheusLabelValues("instance",
+						labelValuesVar.Matchers(
+							promql.SetLabelMatchers(
+								"prometheus_build_info",
+								[]promql.LabelMatcher{clusterLabelMatcher, {Name: "job", Type: "=", Value: "$job"}},
+							),
+						),
+						dashboards.AddVariableDatasource(datasource),
+					),
+					listVar.DisplayName("instance"),
+				),
+			),
+			withPrometheusOverviewStatsGroup(datasource, clusterLabelMatcher),
+			withPrometheusOverviewDiscoveryGroup(datasource, clusterLabelMatcher),
+			withPrometheusRetrievalGroup(datasource, clusterLabelMatcher),
+			withPrometheusStorageGroup(datasource, clusterLabelMatcher),
+			withPrometheusQueryGroup(datasource, clusterLabelMatcher),
 		),
-		withPrometheusOverviewStatsGroup(datasource, clusterLabelMatcher),
-		withPrometheusOverviewDiscoveryGroup(datasource, clusterLabelMatcher),
-		withPrometheusRetrievalGroup(datasource, clusterLabelMatcher),
-		withPrometheusStorageGroup(datasource, clusterLabelMatcher),
-		withPrometheusQueryGroup(datasource, clusterLabelMatcher),
-	)
+	).Component("prometheus")
 }

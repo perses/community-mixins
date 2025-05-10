@@ -90,57 +90,59 @@ func withPrometheusStorageGroup(datasource string, labelMatcher promql.LabelMatc
 	)
 }
 
-func BuildThanosReceiveOverview(project string, datasource string, clusterLabelName string) (dashboard.Builder, error) {
+func BuildThanosReceiveOverview(project string, datasource string, clusterLabelName string) dashboards.DashboardResult {
 	clusterLabelMatcher := dashboards.GetClusterLabelMatcher(clusterLabelName)
-	return dashboard.New("thanos-receive-overview",
-		dashboard.ProjectName(project),
-		dashboard.Name("Thanos / Receive / Overview"),
-		dashboard.AddVariable("job",
-			listVar.List(
-				labelValuesVar.PrometheusLabelValues("job",
-					labelValuesVar.Matchers("thanos_build_info{container=\"thanos-receive\"}"),
-					dashboards.AddVariableDatasource(datasource),
-				),
-				listVar.DisplayName("job"),
-				listVar.AllowMultiple(true),
-			),
-		),
-		dashboards.AddClusterVariable(datasource, clusterLabelName, "thanos_build_info"),
-		dashboard.AddVariable("namespace",
-			listVar.List(
-				labelValuesVar.PrometheusLabelValues("namespace",
-					labelValuesVar.Matchers("thanos_status"),
-					dashboards.AddVariableDatasource(datasource),
-				),
-				listVar.DisplayName("namespace"),
-			),
-		),
-		dashboard.AddVariable("tenant",
-			listVar.List(
-				labelValuesVar.PrometheusLabelValues("tenant",
-					labelValuesVar.Matchers(
-						promql.SetLabelMatchers(
-							"prometheus_tsdb_head_max_time{container=\"thanos-receive\"}",
-							[]promql.LabelMatcher{clusterLabelMatcher, {Name: "job", Type: "=", Value: "$job"}, {Name: "namespace", Type: "=", Value: "$namespace"}},
-						),
+	return dashboards.NewDashboardResult(
+		dashboard.New("thanos-receive-overview",
+			dashboard.ProjectName(project),
+			dashboard.Name("Thanos / Receive / Overview"),
+			dashboard.AddVariable("job",
+				listVar.List(
+					labelValuesVar.PrometheusLabelValues("job",
+						labelValuesVar.Matchers("thanos_build_info{container=\"thanos-receive\"}"),
+						dashboards.AddVariableDatasource(datasource),
 					),
-					dashboards.AddVariableDatasource(datasource),
+					listVar.DisplayName("job"),
+					listVar.AllowMultiple(true),
 				),
-				listVar.DisplayName("tenant"),
-				listVar.AllowMultiple(true),
 			),
+			dashboards.AddClusterVariable(datasource, clusterLabelName, "thanos_build_info"),
+			dashboard.AddVariable("namespace",
+				listVar.List(
+					labelValuesVar.PrometheusLabelValues("namespace",
+						labelValuesVar.Matchers("thanos_status"),
+						dashboards.AddVariableDatasource(datasource),
+					),
+					listVar.DisplayName("namespace"),
+				),
+			),
+			dashboard.AddVariable("tenant",
+				listVar.List(
+					labelValuesVar.PrometheusLabelValues("tenant",
+						labelValuesVar.Matchers(
+							promql.SetLabelMatchers(
+								"prometheus_tsdb_head_max_time{container=\"thanos-receive\"}",
+								[]promql.LabelMatcher{clusterLabelMatcher, {Name: "job", Type: "=", Value: "$job"}, {Name: "namespace", Type: "=", Value: "$namespace"}},
+							),
+						),
+						dashboards.AddVariableDatasource(datasource),
+					),
+					listVar.DisplayName("tenant"),
+					listVar.AllowMultiple(true),
+				),
+			),
+			withThanosReceiveRemoteWriteGroup(datasource, clusterLabelMatcher),
+			withThanosReceiveRemoteWriteTenantedGroup(datasource, clusterLabelMatcher),
+			withThanosReceiveRemoteWriteHTTPGroup(datasource, clusterLabelMatcher),
+			withThanosReceiveRemoteWriteSeriesSampleGroup(datasource, clusterLabelMatcher),
+			withThanosReceiveRemoteWriteReplicationGroup(datasource, clusterLabelMatcher),
+			withThanosReceiveRemoteWriteForwardGroup(datasource, clusterLabelMatcher),
+			withThanosReceiveWriteGRPCUnaryGroup(datasource, clusterLabelMatcher),
+			withThanosReadGRPCUnaryGroup(datasource, clusterLabelMatcher),
+			withThanosReadGRPCStreamGroup(datasource, clusterLabelMatcher),
+			withThanosBucketUploadGroup(datasource, clusterLabelMatcher),
+			withPrometheusStorageGroup(datasource, clusterLabelMatcher),
+			withThanosResourcesGroup(datasource, clusterLabelMatcher),
 		),
-		withThanosReceiveRemoteWriteGroup(datasource, clusterLabelMatcher),
-		withThanosReceiveRemoteWriteTenantedGroup(datasource, clusterLabelMatcher),
-		withThanosReceiveRemoteWriteHTTPGroup(datasource, clusterLabelMatcher),
-		withThanosReceiveRemoteWriteSeriesSampleGroup(datasource, clusterLabelMatcher),
-		withThanosReceiveRemoteWriteReplicationGroup(datasource, clusterLabelMatcher),
-		withThanosReceiveRemoteWriteForwardGroup(datasource, clusterLabelMatcher),
-		withThanosReceiveWriteGRPCUnaryGroup(datasource, clusterLabelMatcher),
-		withThanosReadGRPCUnaryGroup(datasource, clusterLabelMatcher),
-		withThanosReadGRPCStreamGroup(datasource, clusterLabelMatcher),
-		withThanosBucketUploadGroup(datasource, clusterLabelMatcher),
-		withPrometheusStorageGroup(datasource, clusterLabelMatcher),
-		withThanosResourcesGroup(datasource, clusterLabelMatcher),
-	)
+	).Component("thanos")
 }

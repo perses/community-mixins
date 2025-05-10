@@ -23,6 +23,21 @@ Welcome to the **Perses Community Dashboards** repository! This project is desig
 - Compact Overview
 - Ruler Overview
 
+### Kubernetes-mixin Dashboards
+- Compute Resources / Multi-Cluster
+- Compute Resources / Cluster
+- Compute Resources / Node
+- Compute Resources / Namespace (Pods)
+- Compute Resources / Namespace (Workloads)
+- Compute Resources / Workloads
+- Compute Resources / Pod
+
+### Blackbox Exporter
+- Blackbox Exporter Overview
+
+### Perses
+- Perses Overview
+
 ## Library Panels
 
 In addition to the community dashboards, this repository also offers a **library of reusable panels**. These panels can be used as building blocks for custom dashboard creation, enabling you to craft tailored setups to suit specific observability needs.
@@ -35,7 +50,7 @@ To render and generate the dashboards, run the following command:
 make build-dashboards
 ```
 
-The generated dashboard files will be stored as **YAML files** in the `examples/dashboards/` directory by default (both in native Perses and Perses Operator format). You can then import these files into your Perses instances.
+The generated dashboard files will be stored as **YAML files** in the `examples/dashboards/` directory by default and split by component (both in native Perses and Perses Operator format). You can then import these files into your Perses instances.
 
 ## Local Development Guide
 
@@ -55,8 +70,11 @@ You can use `percli` to apply the dashboards to your Perses instance. Use the [p
 # Connect to your perses instance, for example if you want to use the demo perses
 percli login http://localhost:8080/
 
-# Add the dashboards to your instance
-percli apply -d examples/dashboards/perses/
+# Add the dashboards to your instance (component-wise)
+percli apply -d examples/dashboards/perses/prometheus/
+
+# Add all the dashboards to your instance
+find ./examples/dashboards/perses -type d -mindepth 1 -exec percli apply -d {} \;
 ```
 
 This will deploy the dashboards from the `examples/dashboards/perses` directory to your local Perses instance.
@@ -66,5 +84,9 @@ This will deploy the dashboards from the `examples/dashboards/perses` directory 
 Once you have installed Perses Operator, with a `Perses` instance and `PersesDatasource` object in your cluster (following the instructions [here](https://github.com/perses/perses-operator?tab=readme-ov-file#running-on-the-cluster)), you can apply the generated `PersesDashboard` objects using:
 
 ```bash
-kubectl apply -f examples/dashboards/operator/
+# Add the dashboard CRDs to Perses (component-wise)
+kubectl apply -f examples/dashboards/operator/kubernetes/
+
+# Add all the dashboard CRDs to Perses
+kubectl apply -f examples/dashboards/operator/ -R
 ```

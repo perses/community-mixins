@@ -63,40 +63,42 @@ func withBlackboxProbesAvgTime(datasource string, labelMatcher promql.LabelMatch
 	)
 }
 
-func BuildBlackboxExporter(project string, datasource string, clusterLabelName string) (dashboard.Builder, error) {
+func BuildBlackboxExporter(project string, datasource string, clusterLabelName string) dashboards.DashboardResult {
 	clusterLabelMatcher := dashboards.GetClusterLabelMatcher(clusterLabelName)
-	return dashboard.New("blackbox-overview",
-		dashboard.ProjectName(project),
-		dashboard.Name("Blackbox Exporter / Overview"),
-		dashboard.AddVariable("job",
-			listVar.List(
-				labelValuesVar.PrometheusLabelValues("job",
-					labelValuesVar.Matchers("probe_success"),
-					dashboards.AddVariableDatasource(datasource),
-				),
-				listVar.DisplayName("job"),
-			),
-		),
-		dashboards.AddClusterVariable(datasource, clusterLabelName, "probe_success"),
-		dashboard.AddVariable("instance",
-			listVar.List(
-				labelValuesVar.PrometheusLabelValues("instance",
-					labelValuesVar.Matchers(
-						promql.SetLabelMatchers(
-							"probe_success",
-							[]promql.LabelMatcher{clusterLabelMatcher, {Name: "job", Type: "=", Value: "$job"}},
-						),
+	return dashboards.NewDashboardResult(
+		dashboard.New("blackbox-overview",
+			dashboard.ProjectName(project),
+			dashboard.Name("Blackbox Exporter / Overview"),
+			dashboard.AddVariable("job",
+				listVar.List(
+					labelValuesVar.PrometheusLabelValues("job",
+						labelValuesVar.Matchers("probe_success"),
+						dashboards.AddVariableDatasource(datasource),
 					),
-					dashboards.AddVariableDatasource(datasource),
+					listVar.DisplayName("job"),
 				),
-				listVar.DisplayName("instance"),
 			),
+			dashboards.AddClusterVariable(datasource, clusterLabelName, "probe_success"),
+			dashboard.AddVariable("instance",
+				listVar.List(
+					labelValuesVar.PrometheusLabelValues("instance",
+						labelValuesVar.Matchers(
+							promql.SetLabelMatchers(
+								"probe_success",
+								[]promql.LabelMatcher{clusterLabelMatcher, {Name: "job", Type: "=", Value: "$job"}},
+							),
+						),
+						dashboards.AddVariableDatasource(datasource),
+					),
+					listVar.DisplayName("instance"),
+				),
+			),
+			withBlackboxSummary(datasource, clusterLabelMatcher),
+			withBlackboxProbesStats(datasource, clusterLabelMatcher),
+			withBlackboxProbesUptime(datasource, clusterLabelMatcher),
+			withBlackboxProbes(datasource, clusterLabelMatcher),
+			withBlackboxProbesAdditionalStats(datasource, clusterLabelMatcher),
+			withBlackboxProbesAvgTime(datasource, clusterLabelMatcher),
 		),
-		withBlackboxSummary(datasource, clusterLabelMatcher),
-		withBlackboxProbesStats(datasource, clusterLabelMatcher),
-		withBlackboxProbesUptime(datasource, clusterLabelMatcher),
-		withBlackboxProbes(datasource, clusterLabelMatcher),
-		withBlackboxProbesAdditionalStats(datasource, clusterLabelMatcher),
-		withBlackboxProbesAvgTime(datasource, clusterLabelMatcher),
-	)
+	).Component("blackbox-exporter")
 }
