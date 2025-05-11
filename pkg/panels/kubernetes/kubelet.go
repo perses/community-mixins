@@ -214,6 +214,12 @@ func OperationDurationQuantile(datasourceName string, labelMatchers ...promql.La
 				Mode:     timeSeriesPanel.TableMode,
 				Values:   []commonSdk.Calculation{commonSdk.LastCalculation},
 			}),
+			timeSeriesPanel.WithVisual(timeSeriesPanel.Visual{
+				Display:     timeSeriesPanel.LineDisplay,
+				LineWidth:   0.25,
+				AreaOpacity: 0.5,
+				Palette:     timeSeriesPanel.Palette{Mode: timeSeriesPanel.AutoMode},
+			}),
 		),
 		panel.AddQuery(
 			query.PromQL(
@@ -279,6 +285,12 @@ func PodStartDuration(datasourceName string, labelMatchers ...promql.LabelMatche
 				Position: timeSeriesPanel.BottomPosition,
 				Mode:     timeSeriesPanel.TableMode,
 				Values:   []commonSdk.Calculation{commonSdk.LastCalculation},
+			}),
+			timeSeriesPanel.WithVisual(timeSeriesPanel.Visual{
+				Display:     timeSeriesPanel.LineDisplay,
+				LineWidth:   0.25,
+				AreaOpacity: 0.5,
+				Palette:     timeSeriesPanel.Palette{Mode: timeSeriesPanel.AutoMode},
 			}),
 		),
 		panel.AddQuery(
@@ -374,6 +386,12 @@ func StorageOperationDuration(datasourceName string, labelMatchers ...promql.Lab
 				Mode:     timeSeriesPanel.TableMode,
 				Values:   []commonSdk.Calculation{commonSdk.LastCalculation},
 			}),
+			timeSeriesPanel.WithVisual(timeSeriesPanel.Visual{
+				Display:     timeSeriesPanel.LineDisplay,
+				LineWidth:   0.25,
+				AreaOpacity: 0.5,
+				Palette:     timeSeriesPanel.Palette{Mode: timeSeriesPanel.AutoMode},
+			}),
 		),
 		panel.AddQuery(
 			query.PromQL(
@@ -429,6 +447,12 @@ func CgroupManagerQuantile(datasourceName string, labelMatchers ...promql.LabelM
 				Position: timeSeriesPanel.BottomPosition,
 				Mode:     timeSeriesPanel.TableMode,
 				Values:   []commonSdk.Calculation{commonSdk.LastCalculation},
+			}),
+			timeSeriesPanel.WithVisual(timeSeriesPanel.Visual{
+				Display:     timeSeriesPanel.LineDisplay,
+				LineWidth:   0.25,
+				AreaOpacity: 0.5,
+				Palette:     timeSeriesPanel.Palette{Mode: timeSeriesPanel.AutoMode},
 			}),
 		),
 		panel.AddQuery(
@@ -486,6 +510,12 @@ func PLEGRelistInterval(datasourceName string, labelMatchers ...promql.LabelMatc
 				Mode:     timeSeriesPanel.TableMode,
 				Values:   []commonSdk.Calculation{commonSdk.LastCalculation},
 			}),
+			timeSeriesPanel.WithVisual(timeSeriesPanel.Visual{
+				Display:     timeSeriesPanel.LineDisplay,
+				LineWidth:   0.25,
+				AreaOpacity: 0.5,
+				Palette:     timeSeriesPanel.Palette{Mode: timeSeriesPanel.AutoMode},
+			}),
 		),
 		panel.AddQuery(
 			query.PromQL(
@@ -513,6 +543,12 @@ func PLEGRelistDuration(datasourceName string, labelMatchers ...promql.LabelMatc
 				Position: timeSeriesPanel.BottomPosition,
 				Mode:     timeSeriesPanel.TableMode,
 				Values:   []commonSdk.Calculation{commonSdk.LastCalculation},
+			}),
+			timeSeriesPanel.WithVisual(timeSeriesPanel.Visual{
+				Display:     timeSeriesPanel.LineDisplay,
+				LineWidth:   0.25,
+				AreaOpacity: 0.5,
+				Palette:     timeSeriesPanel.Palette{Mode: timeSeriesPanel.AutoMode},
 			}),
 		),
 		panel.AddQuery(
@@ -599,6 +635,12 @@ func RequestDurationQuantile(datasourceName string, labelMatchers ...promql.Labe
 				Position: timeSeriesPanel.BottomPosition,
 				Mode:     timeSeriesPanel.TableMode,
 				Values:   []commonSdk.Calculation{commonSdk.LastCalculation},
+			}),
+			timeSeriesPanel.WithVisual(timeSeriesPanel.Visual{
+				Display:     timeSeriesPanel.LineDisplay,
+				LineWidth:   0.25,
+				AreaOpacity: 0.5,
+				Palette:     timeSeriesPanel.Palette{Mode: timeSeriesPanel.AutoMode},
 			}),
 		),
 		panel.AddQuery(
