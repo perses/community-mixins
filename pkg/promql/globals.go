@@ -17,3 +17,9 @@ var InstanceVar LabelMatcher = LabelMatcher{
 	Value: "$instance",
 	Type:  "=~",
 }
+
+var ClusterVar LabelMatcher = LabelMatcher{
+	Name:  "cluster",
+	Value: "$cluster",
+	Type:  "=~",
+}

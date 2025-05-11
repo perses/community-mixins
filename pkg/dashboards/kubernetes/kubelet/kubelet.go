@@ -2,6 +2,7 @@ package kubelet
 
 import (
 	"github.com/perses/community-dashboards/pkg/dashboards"
+	panelsGostats "github.com/perses/community-dashboards/pkg/panels/gostats"
 	panels "github.com/perses/community-dashboards/pkg/panels/kubernetes"
 	"github.com/perses/community-dashboards/pkg/promql"
 	"github.com/perses/perses/go-sdk/dashboard"
@@ -97,17 +98,26 @@ func withRequestDurationQuantile(datasource string, labelMatcher promql.LabelMat
 	)
 }
 
-func withKubeletResources(datasource string, labelMatcher promql.LabelMatcher) dashboard.Option {
-	return dashboard.AddPanelGroup("Memory and CPU Usage",
+func withKubeletResources(datasource string, clusterLabelMatcher promql.LabelMatcher) dashboard.Option {
+	labelMatchersToUse := []promql.LabelMatcher{
+		promql.ClusterVar,
+		promql.InstanceVar,
+		{
+			Name:  "job",
+			Value: "kubelet",
+			Type:  "=",
+		},
+	}
+
+	labelMatchersToUse = append(labelMatchersToUse, clusterLabelMatcher)
+
+	return dashboard.AddPanelGroup("Resource Usage",
 		panelgroup.PanelsPerLine(2),
-		panels.KubeletMemory(datasource, labelMatcher),
-		panels.KubeletCPU(datasource, labelMatcher),
-	)
-}
-func withKubeletGoRoutines(datasource string, labelMatcher promql.LabelMatcher) dashboard.Option {
-	return dashboard.AddPanelGroup("Goroutines",
-		panelgroup.PanelsPerLine(1),
-		panels.KubeletGoRoutines(datasource, labelMatcher),
+		panelgroup.PanelHeight(10),
+		panelsGostats.MemoryUsage(datasource, labelMatchersToUse...),
+		panels.KubeletCPU(datasource, labelMatchersToUse...),
+		panelsGostats.Goroutines(datasource, labelMatchersToUse...),
+		panelsGostats.GarbageCollectionPauseTimeQuantiles(datasource, labelMatchersToUse...),
 	)
 }
 
@@ -152,7 +162,6 @@ func BuildKubeletOverview(project string, datasource string, clusterLabelName st
 			withRPCRate(datasource, clusterLabelMatcher),
 			withRequestDurationQuantile(datasource, clusterLabelMatcher),
 			withKubeletResources(datasource, clusterLabelMatcher),
-			withKubeletGoRoutines(datasource, clusterLabelMatcher),
 		),
 	).Component("kubernetes")
 }

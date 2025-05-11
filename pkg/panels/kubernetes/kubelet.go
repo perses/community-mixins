@@ -656,34 +656,6 @@ func RequestDurationQuantile(datasourceName string, labelMatchers ...promql.Labe
 	)
 }
 
-func KubeletMemory(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
-	return panelgroup.AddPanel("Memory",
-		panel.Description("Kubelete Memory Usage"),
-		timeSeriesPanel.Chart(
-			timeSeriesPanel.WithYAxis(timeSeriesPanel.YAxis{
-				Format: &commonSdk.Format{
-					Unit: string(commonSdk.BytesUnit),
-				},
-			}),
-			timeSeriesPanel.WithLegend(timeSeriesPanel.Legend{
-				Position: timeSeriesPanel.BottomPosition,
-				Mode:     timeSeriesPanel.TableMode,
-				Values:   []commonSdk.Calculation{commonSdk.LastCalculation},
-			}),
-		),
-		panel.AddQuery(
-			query.PromQL(
-				promql.SetLabelMatchers(
-					"process_resident_memory_bytes{cluster=~'$cluster',"+GetKubeletMatcher()+", instance=~'$instance'}",
-					labelMatchers,
-				),
-				dashboards.AddQueryDataSource(datasourceName),
-				query.SeriesNameFormat("{{instance}}"),
-			),
-		),
-	)
-}
-
 func KubeletCPU(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
 	return panelgroup.AddPanel("CPU Usage",
 		panel.Description("Kubelete CPU Usage"),
@@ -704,35 +676,6 @@ func KubeletCPU(datasourceName string, labelMatchers ...promql.LabelMatcher) pan
 			query.PromQL(
 				promql.SetLabelMatchers(
 					"rate(process_cpu_seconds_total{cluster=~'$cluster',"+GetKubeletMatcher()+", instance=~'$instance'}[$__rate_interval])",
-					labelMatchers,
-				),
-				dashboards.AddQueryDataSource(datasourceName),
-				query.SeriesNameFormat("{{instance}}"),
-			),
-		),
-	)
-}
-
-func KubeletGoRoutines(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
-	return panelgroup.AddPanel("Goroutines",
-		panel.Description("Kubelete Goroutines"),
-		timeSeriesPanel.Chart(
-			timeSeriesPanel.WithYAxis(timeSeriesPanel.YAxis{
-				Format: &commonSdk.Format{
-					Unit:          string(commonSdk.DecimalUnit),
-					DecimalPlaces: 0,
-				},
-			}),
-			timeSeriesPanel.WithLegend(timeSeriesPanel.Legend{
-				Position: timeSeriesPanel.BottomPosition,
-				Mode:     timeSeriesPanel.TableMode,
-				Values:   []commonSdk.Calculation{commonSdk.LastCalculation},
-			}),
-		),
-		panel.AddQuery(
-			query.PromQL(
-				promql.SetLabelMatchers(
-					"go_goroutines{cluster=~'$cluster',"+GetKubeletMatcher()+", instance=~'$instance'}",
 					labelMatchers,
 				),
 				dashboards.AddQueryDataSource(datasourceName),
