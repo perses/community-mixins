@@ -7,6 +7,7 @@ import (
 	"github.com/perses/community-dashboards/pkg/dashboards/alertmanager"
 	"github.com/perses/community-dashboards/pkg/dashboards/blackbox"
 	k8sComputeResources "github.com/perses/community-dashboards/pkg/dashboards/kubernetes/compute_resources"
+	kubelet "github.com/perses/community-dashboards/pkg/dashboards/kubernetes/kubelet"
 	nodeexporter "github.com/perses/community-dashboards/pkg/dashboards/node_exporter"
 	"github.com/perses/community-dashboards/pkg/dashboards/perses"
 	"github.com/perses/community-dashboards/pkg/dashboards/prometheus"
@@ -48,6 +49,7 @@ func main() {
 	dashboardWriter.Add(k8sComputeResources.BuildKubernetesWorkloadOverview(project, datasource, clusterLabelName))
 	dashboardWriter.Add(k8sComputeResources.BuildKubernetesWorkloadNamespaceOverview(project, datasource, clusterLabelName))
 	dashboardWriter.Add(k8sComputeResources.BuildKubernetesMultiClusterOverview(project, datasource, clusterLabelName))
+	dashboardWriter.Add(kubelet.BuildKubeletOverview(project, datasource, clusterLabelName))
 
 	dashboardWriter.Write()
 }
