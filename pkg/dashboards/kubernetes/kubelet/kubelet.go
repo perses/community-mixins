@@ -7,8 +7,8 @@ import (
 	"github.com/perses/community-dashboards/pkg/promql"
 	"github.com/perses/perses/go-sdk/dashboard"
 	panelgroup "github.com/perses/perses/go-sdk/panel-group"
-	labelValuesVar "github.com/perses/perses/go-sdk/prometheus/variable/label-values"
 	listVar "github.com/perses/perses/go-sdk/variable/list-variable"
+	labelValuesVar "github.com/perses/plugins/prometheus/sdk/go/variable/label-values"
 )
 
 func withKubeletStats(datasource string, labelMatcher promql.LabelMatcher) dashboard.Option {
@@ -26,8 +26,8 @@ func withKubeletStats(datasource string, labelMatcher promql.LabelMatcher) dashb
 func withKubeletOperations(datasource string, labelMatcher promql.LabelMatcher) dashboard.Option {
 	return dashboard.AddPanelGroup("Operation Rate and Errors",
 		panelgroup.PanelsPerLine(2),
-		panels.RunningKubeletStat(datasource, labelMatcher),
-		panels.RunningPodStat(datasource, labelMatcher),
+		panels.OperationRate(datasource, labelMatcher),
+		panels.OperationErrorRate(datasource, labelMatcher),
 	)
 }
 

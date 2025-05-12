@@ -133,7 +133,7 @@ spec:
                                     name: prometheus-datasource
                                 query: |-
                                     sum(
-                                      kubelet_running_containers{cluster=~"$cluster",instance=~"$instance",job="kubelet",state="actual_state_of_world"}
+                                      volume_manager_total_volumes{cluster=~"$cluster",instance=~"$instance",job="kubelet",state="actual_state_of_world"}
                                     )
         "0_4":
             kind: Panel
@@ -158,7 +158,7 @@ spec:
                                     name: prometheus-datasource
                                 query: |-
                                     sum(
-                                      kubelet_running_containers{cluster=~"$cluster",instance=~"$instance",job="kubelet",state="desired_state_of_world"}
+                                      volume_manager_total_volumes{cluster=~"$cluster",instance=~"$instance",job="kubelet",state="desired_state_of_world"}
                                     )
         "0_5":
             kind: Panel
@@ -189,14 +189,19 @@ spec:
             kind: Panel
             spec:
                 display:
-                    name: Running Kubelets
-                    description: Number of Running Kubelets Instances
+                    name: Operation Rate
+                    description: Rate of Container Runtime Operations, grouped by the type of Operation and kubelet instance
                 plugin:
-                    kind: StatChart
+                    kind: TimeSeriesChart
                     spec:
-                        calculation: last
-                        format:
-                            unit: decimal
+                        legend:
+                            position: bottom
+                            mode: table
+                            values:
+                                - last
+                        yAxis:
+                            format:
+                                unit: ops/sec
                 queries:
                     - kind: TimeSeriesQuery
                       spec:
@@ -206,19 +211,30 @@ spec:
                                 datasource:
                                     kind: PrometheusDatasource
                                     name: prometheus-datasource
-                                query: sum(kubelet_node_name{cluster=~"$cluster",job="kubelet"})
+                                query: |-
+                                    sum by (operation_type, instance) (
+                                      rate(
+                                        kubelet_runtime_operations_total{cluster=~"$cluster",instance=~"$instance",job="kubelet"}[$__rate_interval]
+                                      )
+                                    )
+                                seriesNameFormat: '{{instance}} {{operation_type}}'
         "1_1":
             kind: Panel
             spec:
                 display:
-                    name: Running Pods
-                    description: Total Number of Running Pods
+                    name: Operation Error Rate
+                    description: Rate of Container Runtime Operations Errors, grouped by the type of Operation and kubelet instance
                 plugin:
-                    kind: StatChart
+                    kind: TimeSeriesChart
                     spec:
-                        calculation: last
-                        format:
-                            unit: decimal
+                        legend:
+                            position: bottom
+                            mode: table
+                            values:
+                                - last
+                        yAxis:
+                            format:
+                                unit: ops/sec
                 queries:
                     - kind: TimeSeriesQuery
                       spec:
@@ -228,7 +244,13 @@ spec:
                                 datasource:
                                     kind: PrometheusDatasource
                                     name: prometheus-datasource
-                                query: sum(kubelet_running_pods{cluster=~"$cluster",instance=~"$instance",job="kubelet"})
+                                query: |-
+                                    sum by (instance, operation_type) (
+                                      rate(
+                                        kubelet_runtime_operations_errors_total{cluster=~"$cluster",instance=~"$instance",job="kubelet"}[$__rate_interval]
+                                      )
+                                    )
+                                seriesNameFormat: '{{instance}} {{operation_type}}'
         "2_0":
             kind: Panel
             spec:

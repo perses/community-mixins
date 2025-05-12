@@ -5,9 +5,9 @@ import (
 	"github.com/perses/community-dashboards/pkg/promql"
 	"github.com/perses/perses/go-sdk/panel"
 	panelgroup "github.com/perses/perses/go-sdk/panel-group"
-	statPanel "github.com/perses/perses/go-sdk/panel/stat"
-	timeSeriesPanel "github.com/perses/perses/go-sdk/panel/time-series"
-	"github.com/perses/perses/go-sdk/prometheus/query"
+	"github.com/perses/plugins/prometheus/sdk/go/query"
+	statPanel "github.com/perses/plugins/statchart/sdk/go"
+	timeSeriesPanel "github.com/perses/plugins/timeserieschart/sdk/go"
 
 	commonSdk "github.com/perses/perses/go-sdk/common"
 )
@@ -91,7 +91,7 @@ func ActVolumeCountStat(datasourceName string, labelMatchers ...promql.LabelMatc
 		panel.AddQuery(
 			query.PromQL(
 				promql.SetLabelMatchers(
-					"sum(kubelet_running_containers{cluster=~'$cluster',"+GetKubeletMatcher()+", instance=~'$instance', state='actual_state_of_world'})",
+					"sum(volume_manager_total_volumes{cluster=~'$cluster',"+GetKubeletMatcher()+", instance=~'$instance', state='actual_state_of_world'})",
 					labelMatchers,
 				),
 				dashboards.AddQueryDataSource(datasourceName),
@@ -113,7 +113,7 @@ func DesiredVolumeCountStat(datasourceName string, labelMatchers ...promql.Label
 		panel.AddQuery(
 			query.PromQL(
 				promql.SetLabelMatchers(
-					"sum(kubelet_running_containers{cluster=~'$cluster',"+GetKubeletMatcher()+", instance=~'$instance', state='desired_state_of_world'})",
+					"sum(volume_manager_total_volumes{cluster=~'$cluster',"+GetKubeletMatcher()+", instance=~'$instance', state='desired_state_of_world'})",
 					labelMatchers,
 				),
 				dashboards.AddQueryDataSource(datasourceName),

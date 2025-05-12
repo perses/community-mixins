@@ -5,11 +5,11 @@ import (
 	"github.com/perses/community-dashboards/pkg/promql"
 	"github.com/perses/perses/go-sdk/panel"
 	panelgroup "github.com/perses/perses/go-sdk/panel-group"
-	"github.com/perses/perses/go-sdk/prometheus/query"
+	"github.com/perses/plugins/prometheus/sdk/go/query"
 
 	commonSdk "github.com/perses/perses/go-sdk/common"
-	gaugePanel "github.com/perses/perses/go-sdk/panel/gauge"
-	timeSeriesPanel "github.com/perses/perses/go-sdk/panel/time-series"
+	gaugePanel "github.com/perses/plugins/gaugechart/sdk/go"
+	timeSeriesPanel "github.com/perses/plugins/timeserieschart/sdk/go"
 )
 
 func VolumeSpaceUsage(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
