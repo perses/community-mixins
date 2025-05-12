@@ -55,9 +55,9 @@ func withPersesOverviewStatsGroup(datasource string, clusterLabelMatcher promql.
 
 func withPersesAPiRequestGroup(datasource string, clusterLabelMatcher promql.LabelMatcher) dashboard.Option {
 	return dashboard.AddPanelGroup("API Requests", panelgroup.PanelsPerLine(2),
-		perses.HTTPRequestsLatencyPanel(datasource, clusterLabelMatcher),
 		perses.HTTPRequestsRatePanel(datasource, clusterLabelMatcher),
-		perses.HTTPErrorsRatePanel(datasource, clusterLabelMatcher),
+		perses.HTTPErrorPercentagePanel(datasource, clusterLabelMatcher),
+		perses.HTTPRequestsLatencyPanel(datasource, clusterLabelMatcher),
 	)
 }
 
