@@ -2,9 +2,12 @@
 
 We recommend following some standards when building dashboards, to keep the visualization looking good and making them better for usability. 
 
+These are optional recommendations, there is no linting for this. 
+If porting upstream existing dashboards, feel free to defer to original designs.
+
 ## Time Series Panels
 
-* For non duration metric panels (counter/gauge): Fully opaque charts:
+* For generic non-histogram metric panels (counter/gauge): **Fully opaque area charts.** This ensures full visibility of the data, even against dark backgrounds, and enhances contrast when selecting individual result series.
 
 ```go
 timeSeriesPanel.WithVisual(timeSeriesPanel.Visual{
@@ -16,7 +19,7 @@ timeSeriesPanel.WithVisual(timeSeriesPanel.Visual{
 			}),
 ```
 
-* For request Rate, error ratio panels: Stacked fully opaque charts:
+* For request rate, error rates, error ratio/percentage panels: **Stacked fully opaque charts.** The opacity adds visual contrast, while stacking allows users to compare result data side by side and in relation to each other. This is especially helpful when visually distinguishing successful responses (2xx) from error responses (4xx, 5xx).
 
 ```go
 timeSeriesPanel.WithVisual(timeSeriesPanel.Visual{
@@ -29,7 +32,7 @@ timeSeriesPanel.WithVisual(timeSeriesPanel.Visual{
 			}),
 ```
 
-* For duration/quantile metric panels: Semi-opaque non stacked:
+* For duration/quantile metric panels or metrics panels where there is no benefit in seeing result series relations: **Semi-opaque non-stacked.** This approach enables users to view all resulting data simultaneously, offering the flexibility to selectively explore specific ones while also making it easier to identify outliers in the data.
 
 ```go
 timeSeriesPanel.WithVisual(timeSeriesPanel.Visual{
