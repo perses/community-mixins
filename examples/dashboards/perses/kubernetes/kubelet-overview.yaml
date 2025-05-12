@@ -202,6 +202,13 @@ spec:
                         yAxis:
                             format:
                                 unit: ops/sec
+                        visual:
+                            display: line
+                            lineWidth: 0.25
+                            areaOpacity: 1
+                            palette:
+                                mode: auto
+                            stack: all
                 queries:
                     - kind: TimeSeriesQuery
                       spec:
@@ -235,6 +242,13 @@ spec:
                         yAxis:
                             format:
                                 unit: ops/sec
+                        visual:
+                            display: line
+                            lineWidth: 0.25
+                            areaOpacity: 1
+                            palette:
+                                mode: auto
+                            stack: all
                 queries:
                     - kind: TimeSeriesQuery
                       spec:
@@ -310,6 +324,12 @@ spec:
                         yAxis:
                             format:
                                 unit: ops/sec
+                        visual:
+                            display: line
+                            lineWidth: 0.25
+                            areaOpacity: 0.5
+                            palette:
+                                mode: auto
                 queries:
                     - kind: TimeSeriesQuery
                       spec:
@@ -418,6 +438,13 @@ spec:
                         yAxis:
                             format:
                                 unit: ops/sec
+                        visual:
+                            display: line
+                            lineWidth: 0.25
+                            areaOpacity: 1
+                            palette:
+                                mode: auto
+                            stack: all
                 queries:
                     - kind: TimeSeriesQuery
                       spec:
@@ -451,6 +478,13 @@ spec:
                         yAxis:
                             format:
                                 unit: ops/sec
+                        visual:
+                            display: line
+                            lineWidth: 0.25
+                            areaOpacity: 1
+                            palette:
+                                mode: auto
+                            stack: all
                 queries:
                     - kind: TimeSeriesQuery
                       spec:
@@ -526,6 +560,12 @@ spec:
                         yAxis:
                             format:
                                 unit: ops/sec
+                        visual:
+                            display: line
+                            lineWidth: 0.25
+                            areaOpacity: 0.5
+                            palette:
+                                mode: auto
                 queries:
                     - kind: TimeSeriesQuery
                       spec:
@@ -601,6 +641,12 @@ spec:
                         yAxis:
                             format:
                                 unit: ops/sec
+                        visual:
+                            display: line
+                            lineWidth: 0.25
+                            areaOpacity: 0.5
+                            palette:
+                                mode: auto
                 queries:
                     - kind: TimeSeriesQuery
                       spec:
@@ -718,6 +764,13 @@ spec:
                         yAxis:
                             format:
                                 unit: ops/sec
+                        visual:
+                            display: line
+                            lineWidth: 0.25
+                            areaOpacity: 1
+                            palette:
+                                mode: auto
+                            stack: all
                 queries:
                     - kind: TimeSeriesQuery
                       spec:
@@ -938,6 +991,12 @@ spec:
                         yAxis:
                             format:
                                 unit: decimal
+                        visual:
+                            display: line
+                            lineWidth: 0.25
+                            areaOpacity: 0.5
+                            palette:
+                                mode: auto
                 queries:
                     - kind: TimeSeriesQuery
                       spec:

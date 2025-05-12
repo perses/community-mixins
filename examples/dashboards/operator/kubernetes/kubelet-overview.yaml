@@ -381,6 +381,13 @@ spec:
               position: bottom
               values:
               - last
+            visual:
+              areaOpacity: 1
+              display: line
+              lineWidth: 0.25
+              palette:
+                mode: auto
+              stack: all
             yAxis:
               format:
                 unit: ops/sec
@@ -415,6 +422,13 @@ spec:
               position: bottom
               values:
               - last
+            visual:
+              areaOpacity: 1
+              display: line
+              lineWidth: 0.25
+              palette:
+                mode: auto
+              stack: all
             yAxis:
               format:
                 unit: ops/sec
@@ -490,6 +504,12 @@ spec:
               position: bottom
               values:
               - last
+            visual:
+              areaOpacity: 0.5
+              display: line
+              lineWidth: 0.25
+              palette:
+                mode: auto
             yAxis:
               format:
                 unit: ops/sec
@@ -598,6 +618,13 @@ spec:
               position: bottom
               values:
               - last
+            visual:
+              areaOpacity: 1
+              display: line
+              lineWidth: 0.25
+              palette:
+                mode: auto
+              stack: all
             yAxis:
               format:
                 unit: ops/sec
@@ -631,6 +658,13 @@ spec:
               position: bottom
               values:
               - last
+            visual:
+              areaOpacity: 1
+              display: line
+              lineWidth: 0.25
+              palette:
+                mode: auto
+              stack: all
             yAxis:
               format:
                 unit: ops/sec
@@ -706,6 +740,12 @@ spec:
               position: bottom
               values:
               - last
+            visual:
+              areaOpacity: 0.5
+              display: line
+              lineWidth: 0.25
+              palette:
+                mode: auto
             yAxis:
               format:
                 unit: ops/sec
@@ -781,6 +821,12 @@ spec:
               position: bottom
               values:
               - last
+            visual:
+              areaOpacity: 0.5
+              display: line
+              lineWidth: 0.25
+              palette:
+                mode: auto
             yAxis:
               format:
                 unit: ops/sec
@@ -899,6 +945,13 @@ spec:
               position: bottom
               values:
               - last
+            visual:
+              areaOpacity: 1
+              display: line
+              lineWidth: 0.25
+              palette:
+                mode: auto
+              stack: all
             yAxis:
               format:
                 unit: ops/sec
@@ -1119,6 +1172,12 @@ spec:
               position: bottom
               values:
               - last
+            visual:
+              areaOpacity: 0.5
+              display: line
+              lineWidth: 0.25
+              palette:
+                mode: auto
             yAxis:
               format:
                 unit: decimal
