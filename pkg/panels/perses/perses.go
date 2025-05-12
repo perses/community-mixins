@@ -68,6 +68,13 @@ func HTTPRequestsLatencyPanel(datasourceName string, labelMatchers ...promql.Lab
 				Position: timeSeriesPanel.RightPosition,
 				Mode:     timeSeriesPanel.TableMode,
 			}),
+			timeSeriesPanel.WithVisual(timeSeriesPanel.Visual{
+				Display:      timeSeriesPanel.LineDisplay,
+				ConnectNulls: false,
+				LineWidth:    0.25,
+				AreaOpacity:  0.5,
+				Palette:      timeSeriesPanel.Palette{Mode: timeSeriesPanel.AutoMode},
+			}),
 		),
 		panel.AddQuery(
 			query.PromQL(
@@ -95,6 +102,14 @@ func HTTPRequestsRatePanel(datasourceName string, labelMatchers ...promql.LabelM
 				Position: timeSeriesPanel.RightPosition,
 				Mode:     timeSeriesPanel.TableMode,
 			}),
+			timeSeriesPanel.WithVisual(timeSeriesPanel.Visual{
+				Display:      timeSeriesPanel.LineDisplay,
+				ConnectNulls: false,
+				LineWidth:    0.25,
+				AreaOpacity:  0.5,
+				Stack:        timeSeriesPanel.AllStack,
+				Palette:      timeSeriesPanel.Palette{Mode: timeSeriesPanel.AutoMode},
+			}),
 		),
 		panel.AddQuery(
 			query.PromQL(
@@ -109,28 +124,43 @@ func HTTPRequestsRatePanel(datasourceName string, labelMatchers ...promql.LabelM
 	)
 }
 
-func HTTPErrorsRatePanel(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
-	return panelgroup.AddPanel("HTTP Errors Rate",
-		panel.Description("Displays the rate of all HTTP errors over a 5-minute window."),
+func HTTPErrorPercentagePanel(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
+	return panelgroup.AddPanel(
+		"HTTP Errors Percentage",
+		panel.Description("Displays the percentage of HTTP errors over total requests."),
 		timeSeriesPanel.Chart(
-			timeSeriesPanel.WithYAxis(timeSeriesPanel.YAxis{
-				Format: &common.Format{
-					Unit: string(common.DecimalUnit),
+			timeSeriesPanel.WithYAxis(
+				timeSeriesPanel.YAxis{
+					Format: &common.Format{
+						Unit: string(common.PercentDecimalUnit),
+					},
 				},
-			}),
-			timeSeriesPanel.WithLegend(timeSeriesPanel.Legend{
-				Position: timeSeriesPanel.RightPosition,
-				Mode:     timeSeriesPanel.TableMode,
-			}),
+			),
+			timeSeriesPanel.WithLegend(
+				timeSeriesPanel.Legend{
+					Position: timeSeriesPanel.RightPosition,
+					Mode:     timeSeriesPanel.TableMode,
+				},
+			),
+			timeSeriesPanel.WithVisual(
+				timeSeriesPanel.Visual{
+					Display:      timeSeriesPanel.LineDisplay,
+					ConnectNulls: false,
+					LineWidth:    0.25,
+					AreaOpacity:  0.5,
+					Stack:        timeSeriesPanel.AllStack,
+					Palette:      timeSeriesPanel.Palette{Mode: timeSeriesPanel.AutoMode},
+				},
+			),
 		),
 		panel.AddQuery(
 			query.PromQL(
 				promql.SetLabelMatchers(
-					"sum by (handler, code) (rate(perses_http_request_total{job=~'$job', instance=~'$instance', code=~'4..|5..'}[$__rate_interval]))",
+					"(sum by (handler, code) (rate(perses_http_request_total{job=~'$job', instance=~'$instance', code=~'4..|5..'}[$__rate_interval]))) / ignoring(code) group_left() (sum by (handler) (rate(perses_http_request_total{job=~'$job', instance=~'$instance'}[$__rate_interval]))) * 100",
 					labelMatchers,
 				),
 				dashboards.AddQueryDataSource(datasourceName),
-				query.SeriesNameFormat("{{handler}} {{method}} {{code}}"),
+				query.SeriesNameFormat("{{handler}} {{code}}"),
 			),
 		),
 	)
@@ -144,11 +174,19 @@ func CPUUsage(datasourceName string, labelMatchers ...promql.LabelMatcher) panel
 				Format: &common.Format{
 					Unit: string(common.PercentUnit),
 				},
-			}),
+			},
+			),
 			timeSeriesPanel.WithLegend(timeSeriesPanel.Legend{
 				Position: timeSeriesPanel.BottomPosition,
 				Mode:     timeSeriesPanel.TableMode,
 				Values:   []common.Calculation{common.LastCalculation},
+			}),
+			timeSeriesPanel.WithVisual(timeSeriesPanel.Visual{
+				Display:      timeSeriesPanel.LineDisplay,
+				ConnectNulls: false,
+				LineWidth:    0.25,
+				AreaOpacity:  0.5,
+				Palette:      timeSeriesPanel.Palette{Mode: timeSeriesPanel.AutoMode},
 			}),
 		),
 		panel.AddQuery(
@@ -177,6 +215,13 @@ func FileDescriptors(datasourceName string, labelMatchers ...promql.LabelMatcher
 				Position: timeSeriesPanel.BottomPosition,
 				Mode:     timeSeriesPanel.TableMode,
 				Values:   []common.Calculation{common.LastCalculation},
+			}),
+			timeSeriesPanel.WithVisual(timeSeriesPanel.Visual{
+				Display:      timeSeriesPanel.LineDisplay,
+				ConnectNulls: false,
+				LineWidth:    0.25,
+				AreaOpacity:  0.5,
+				Palette:      timeSeriesPanel.Palette{Mode: timeSeriesPanel.AutoMode},
 			}),
 		),
 		panel.AddQuery(
@@ -215,6 +260,13 @@ func PluginSchemaLoadAttempts(datasourceName string, labelMatchers ...promql.Lab
 				Position: timeSeriesPanel.BottomPosition,
 				Mode:     timeSeriesPanel.TableMode,
 				Values:   []common.Calculation{common.LastCalculation},
+			}),
+			timeSeriesPanel.WithVisual(timeSeriesPanel.Visual{
+				Display:      timeSeriesPanel.LineDisplay,
+				ConnectNulls: false,
+				LineWidth:    0.25,
+				AreaOpacity:  0.5,
+				Palette:      timeSeriesPanel.Palette{Mode: timeSeriesPanel.AutoMode},
 			}),
 		),
 		panel.AddQuery(
