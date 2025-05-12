@@ -8,6 +8,7 @@ import (
 	"github.com/perses/community-dashboards/pkg/dashboards/blackbox"
 	k8sComputeResources "github.com/perses/community-dashboards/pkg/dashboards/kubernetes/compute_resources"
 	kubelet "github.com/perses/community-dashboards/pkg/dashboards/kubernetes/kubelet"
+	k8sNetworking "github.com/perses/community-dashboards/pkg/dashboards/kubernetes/networking"
 	nodeexporter "github.com/perses/community-dashboards/pkg/dashboards/node_exporter"
 	"github.com/perses/community-dashboards/pkg/dashboards/perses"
 	"github.com/perses/community-dashboards/pkg/dashboards/prometheus"
@@ -21,7 +22,6 @@ var (
 )
 
 func main() {
-
 	flag.StringVar(&project, "project", "default", "The project name")
 	flag.StringVar(&datasource, "datasource", "", "The datasource name")
 	flag.StringVar(&clusterLabelName, "cluster-label-name", "", "The cluster label name")
@@ -50,6 +50,7 @@ func main() {
 	dashboardWriter.Add(k8sComputeResources.BuildKubernetesWorkloadNamespaceOverview(project, datasource, clusterLabelName))
 	dashboardWriter.Add(k8sComputeResources.BuildKubernetesMultiClusterOverview(project, datasource, clusterLabelName))
 	dashboardWriter.Add(kubelet.BuildKubeletOverview(project, datasource, clusterLabelName))
+	dashboardWriter.Add(k8sNetworking.BuildKubernetesClusterOverview(project, datasource, clusterLabelName))
 
 	dashboardWriter.Write()
 }
