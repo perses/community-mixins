@@ -6,9 +6,9 @@ import (
 	commonSdk "github.com/perses/perses/go-sdk/common"
 	"github.com/perses/perses/go-sdk/panel"
 	panelgroup "github.com/perses/perses/go-sdk/panel-group"
-	stat "github.com/perses/perses/go-sdk/panel/stat"
-	timeSeriesPanel "github.com/perses/perses/go-sdk/panel/time-series"
-	"github.com/perses/perses/go-sdk/prometheus/query"
+	"github.com/perses/plugins/prometheus/sdk/go/query"
+	stat "github.com/perses/plugins/statchart/sdk/go"
+	timeSeriesPanel "github.com/perses/plugins/timeserieschart/sdk/go"
 )
 
 // ProbeStatusMap creates a panel option for displaying Blackbox Probe Success for all instances

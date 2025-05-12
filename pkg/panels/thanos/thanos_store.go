@@ -3,13 +3,13 @@ package thanos
 import (
 	"github.com/perses/perses/go-sdk/panel"
 	panelgroup "github.com/perses/perses/go-sdk/panel-group"
-	"github.com/perses/perses/go-sdk/prometheus/query"
+	"github.com/perses/plugins/prometheus/sdk/go/query"
 
 	"github.com/perses/community-dashboards/pkg/dashboards"
 	"github.com/perses/community-dashboards/pkg/promql"
 
 	commonSdk "github.com/perses/perses/go-sdk/common"
-	timeSeriesPanel "github.com/perses/perses/go-sdk/panel/time-series"
+	timeSeriesPanel "github.com/perses/plugins/timeserieschart/sdk/go"
 )
 
 func BlockLoadRate(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {

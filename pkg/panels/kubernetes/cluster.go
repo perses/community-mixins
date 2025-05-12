@@ -5,10 +5,10 @@ import (
 	"github.com/perses/community-dashboards/pkg/promql"
 	"github.com/perses/perses/go-sdk/panel"
 	panelgroup "github.com/perses/perses/go-sdk/panel-group"
-	"github.com/perses/perses/go-sdk/prometheus/query"
+	"github.com/perses/plugins/prometheus/sdk/go/query"
 
 	commonSdk "github.com/perses/perses/go-sdk/common"
-	tablePanel "github.com/perses/perses/go-sdk/panel/table"
+	tablePanel "github.com/perses/plugins/table/sdk/go"
 )
 
 func ClusterCPUUsageQuota(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {

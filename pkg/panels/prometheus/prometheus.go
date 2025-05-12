@@ -5,11 +5,11 @@ import (
 	"github.com/perses/community-dashboards/pkg/promql"
 	"github.com/perses/perses/go-sdk/panel"
 	panelgroup "github.com/perses/perses/go-sdk/panel-group"
-	"github.com/perses/perses/go-sdk/prometheus/query"
+	"github.com/perses/plugins/prometheus/sdk/go/query"
 
 	commonSdk "github.com/perses/perses/go-sdk/common"
-	tablePanel "github.com/perses/perses/go-sdk/panel/table"
-	timeSeriesPanel "github.com/perses/perses/go-sdk/panel/time-series"
+	tablePanel "github.com/perses/plugins/table/sdk/go"
+	timeSeriesPanel "github.com/perses/plugins/timeserieschart/sdk/go"
 )
 
 // PrometheusStatsTable creates a panel option for displaying Prometheus statistics.
