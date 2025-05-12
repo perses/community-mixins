@@ -135,6 +135,84 @@ spec:
       kind: Panel
       spec:
         display:
+          description: Displays the rate of HTTP requests over a 5-minute window.
+          name: HTTP Requests Rate
+        plugin:
+          kind: TimeSeriesChart
+          spec:
+            legend:
+              mode: table
+              position: right
+            visual:
+              areaOpacity: 0.5
+              display: line
+              lineWidth: 0.25
+              palette:
+                mode: auto
+              stack: all
+            yAxis:
+              format:
+                unit: decimal
+        queries:
+        - kind: TimeSeriesQuery
+          spec:
+            plugin:
+              kind: PrometheusTimeSeriesQuery
+              spec:
+                datasource:
+                  kind: PrometheusDatasource
+                  name: prometheus-datasource
+                query: |-
+                  sum by (handler, code) (
+                    rate(perses_http_request_total{instance=~"$instance",job=~"$job"}[$__rate_interval])
+                  )
+                seriesNameFormat: '{{handler}} {{method}} {{code}}'
+    "1_1":
+      kind: Panel
+      spec:
+        display:
+          description: Displays the percentage of HTTP errors over total requests.
+          name: HTTP Errors Percentage
+        plugin:
+          kind: TimeSeriesChart
+          spec:
+            legend:
+              mode: table
+              position: right
+            visual:
+              areaOpacity: 0.5
+              display: line
+              lineWidth: 0.25
+              palette:
+                mode: auto
+              stack: all
+            yAxis:
+              format:
+                unit: percent-decimal
+        queries:
+        - kind: TimeSeriesQuery
+          spec:
+            plugin:
+              kind: PrometheusTimeSeriesQuery
+              spec:
+                datasource:
+                  kind: PrometheusDatasource
+                  name: prometheus-datasource
+                query: |2-
+                      (
+                        sum by (handler, code) (
+                          rate(perses_http_request_total{code=~"4..|5..",instance=~"$instance",job=~"$job"}[$__rate_interval])
+                        )
+                      )
+                    / ignoring (code) group_left ()
+                      (sum by (handler) (rate(perses_http_request_total{instance=~"$instance",job=~"$job"}[$__rate_interval])))
+                  *
+                    100
+                seriesNameFormat: '{{handler}} {{code}}'
+    "1_2":
+      kind: Panel
+      spec:
+        display:
           description: Displays the latency of HTTP requests over a 5-minute window.
           name: HTTP Requests Latency
         plugin:
@@ -170,76 +248,6 @@ spec:
                       rate(perses_http_request_duration_second_count{instance=~"$instance",job=~"$job"}[$__rate_interval])
                     )
                 seriesNameFormat: '{{handler}} {{method}}'
-    "1_1":
-      kind: Panel
-      spec:
-        display:
-          description: Displays the rate of HTTP requests over a 5-minute window.
-          name: HTTP Requests Rate
-        plugin:
-          kind: TimeSeriesChart
-          spec:
-            legend:
-              mode: table
-              position: right
-            visual:
-              areaOpacity: 0.5
-              display: line
-              lineWidth: 0.25
-              palette:
-                mode: auto
-            yAxis:
-              format:
-                unit: decimal
-        queries:
-        - kind: TimeSeriesQuery
-          spec:
-            plugin:
-              kind: PrometheusTimeSeriesQuery
-              spec:
-                datasource:
-                  kind: PrometheusDatasource
-                  name: prometheus-datasource
-                query: |-
-                  sum by (handler, code) (
-                    rate(perses_http_request_total{instance=~"$instance",job=~"$job"}[$__rate_interval])
-                  )
-                seriesNameFormat: '{{handler}} {{method}} {{code}}'
-    "1_2":
-      kind: Panel
-      spec:
-        display:
-          description: Displays the rate of all HTTP errors over a 5-minute window.
-          name: HTTP Errors Rate
-        plugin:
-          kind: TimeSeriesChart
-          spec:
-            legend:
-              mode: table
-              position: right
-            visual:
-              areaOpacity: 0.5
-              display: line
-              lineWidth: 0.25
-              palette:
-                mode: auto
-            yAxis:
-              format:
-                unit: decimal
-        queries:
-        - kind: TimeSeriesQuery
-          spec:
-            plugin:
-              kind: PrometheusTimeSeriesQuery
-              spec:
-                datasource:
-                  kind: PrometheusDatasource
-                  name: prometheus-datasource
-                query: |-
-                  sum by (handler, code) (
-                    rate(perses_http_request_total{code=~"4..|5..",instance=~"$instance",job=~"$job"}[$__rate_interval])
-                  )
-                seriesNameFormat: '{{handler}} {{method}} {{code}}'
     "2_0":
       kind: Panel
       spec:
