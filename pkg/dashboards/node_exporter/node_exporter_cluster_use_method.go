@@ -6,8 +6,8 @@ import (
 	"github.com/perses/community-dashboards/pkg/promql"
 	"github.com/perses/perses/go-sdk/dashboard"
 	panelgroup "github.com/perses/perses/go-sdk/panel-group"
-	labelValuesVar "github.com/perses/perses/go-sdk/prometheus/variable/label-values"
 	listVar "github.com/perses/perses/go-sdk/variable/list-variable"
+	labelValuesVar "github.com/perses/plugins/prometheus/sdk/go/variable/label-values"
 )
 
 func withClusterCPU(datasource string, clusterLabelMatcher promql.LabelMatcher, instanceLabelMatcher promql.LabelMatcher) dashboard.Option {

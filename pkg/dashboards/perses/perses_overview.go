@@ -7,8 +7,8 @@ import (
 	"github.com/perses/community-dashboards/pkg/promql"
 	"github.com/perses/perses/go-sdk/dashboard"
 	panelgroup "github.com/perses/perses/go-sdk/panel-group"
-	labelvalues "github.com/perses/perses/go-sdk/prometheus/variable/label-values"
 	listvariable "github.com/perses/perses/go-sdk/variable/list-variable"
+	labelvalues "github.com/perses/plugins/prometheus/sdk/go/variable/label-values"
 )
 
 func BuildPersesOverview(project string, datasource string, clusterLabelName string) dashboards.DashboardResult {

@@ -6,8 +6,8 @@ import (
 	commonSdk "github.com/perses/perses/go-sdk/common"
 	"github.com/perses/perses/go-sdk/panel"
 	panelgroup "github.com/perses/perses/go-sdk/panel-group"
-	timeSeriesPanel "github.com/perses/perses/go-sdk/panel/time-series"
-	"github.com/perses/perses/go-sdk/prometheus/query"
+	"github.com/perses/plugins/prometheus/sdk/go/query"
+	timeSeriesPanel "github.com/perses/plugins/timeserieschart/sdk/go"
 )
 
 // Alerts creates a panel option for displaying the count of alerts

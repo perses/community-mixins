@@ -3,9 +3,9 @@ package dashboards
 import (
 	"github.com/perses/community-dashboards/pkg/promql"
 	"github.com/perses/perses/go-sdk/dashboard"
-	"github.com/perses/perses/go-sdk/prometheus/query"
-	labelValuesVar "github.com/perses/perses/go-sdk/prometheus/variable/label-values"
 	listVar "github.com/perses/perses/go-sdk/variable/list-variable"
+	"github.com/perses/plugins/prometheus/sdk/go/query"
+	labelValuesVar "github.com/perses/plugins/prometheus/sdk/go/variable/label-values"
 )
 
 func AddVariableDatasource(datasourceName string) labelValuesVar.Option {

@@ -7,8 +7,8 @@ import (
 	panelgroup "github.com/perses/perses/go-sdk/panel-group"
 
 	panels "github.com/perses/community-dashboards/pkg/panels/node_exporter"
-	labelValuesVar "github.com/perses/perses/go-sdk/prometheus/variable/label-values"
 	listVar "github.com/perses/perses/go-sdk/variable/list-variable"
+	labelValuesVar "github.com/perses/plugins/prometheus/sdk/go/variable/label-values"
 )
 
 func withNodeExporterNodesCPU(datasource string, labelMatcher promql.LabelMatcher) dashboard.Option {
