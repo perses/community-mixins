@@ -91,6 +91,6 @@ kubectl apply -f examples/dashboards/operator/kubernetes/
 kubectl apply -f examples/dashboards/operator/ -R
 ```
 
-### Dashboard Design Recomendations
+### Dashboard Design Recommendations
 
 You can find some recomendation for dashboard design [here](docs/README.md)

@@ -1,6 +1,6 @@
-# Dashboard Design Recomendations
+# Dashboard Design Recommendations
 
-We recomend following some standards when building dashboards, to keep the visualization looking good and making them better for usability. 
+We recommend following some standards when building dashboards, to keep the visualization looking good and making them better for usability. 
 
 ## Time Series Panels
 
