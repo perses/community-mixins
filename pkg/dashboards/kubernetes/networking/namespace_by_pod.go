@@ -75,7 +75,7 @@ func BuildKubernetesNamespaceByPodOverview(project string, datasource string, cl
 					labelValuesVar.PrometheusLabelValues("namespace",
 						labelValuesVar.Matchers(
 							promql.SetLabelMatchers(
-								"kube_namespace_status_phase{"+panels.GetKubeStateMetricsMatcher()+"}",
+								"container_network_receive_packets_total",
 								[]promql.LabelMatcher{{Name: "cluster", Type: "=", Value: "$cluster"}},
 							),
 						),

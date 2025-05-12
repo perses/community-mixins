@@ -803,7 +803,7 @@ spec:
             name: prometheus-datasource
           labelName: namespace
           matchers:
-          - kube_namespace_status_phase{cluster="$cluster",job="kube-state-metrics"}
+          - container_network_receive_packets_total{cluster="$cluster"}
   - kind: ListVariable
     spec:
       allowAllValue: false

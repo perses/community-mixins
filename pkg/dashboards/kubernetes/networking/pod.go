@@ -67,7 +67,7 @@ func BuildKubernetesPodOverview(project string, datasource string, clusterLabelN
 					labelValuesVar.PrometheusLabelValues("namespace",
 						labelValuesVar.Matchers(
 							promql.SetLabelMatchers(
-								"kube_namespace_status_phase{"+panels.GetKubeStateMetricsMatcher()+"}",
+								"container_network_receive_packets_total",
 								[]promql.LabelMatcher{{Name: "cluster", Type: "=", Value: "$cluster"}},
 							),
 						),
@@ -81,7 +81,7 @@ func BuildKubernetesPodOverview(project string, datasource string, clusterLabelN
 					labelValuesVar.PrometheusLabelValues("pod",
 						labelValuesVar.Matchers(
 							promql.SetLabelMatchers(
-								"kube_pod_info{"+panels.GetKubeStateMetricsMatcher()+"}",
+								"container_network_receive_packets_total",
 								[]promql.LabelMatcher{
 									{Name: "cluster", Type: "=", Value: "$cluster"},
 									{Name: "namespace", Type: "=", Value: "$namespace"},
