@@ -85,6 +85,29 @@ tidy:
 
 all: fmt vet deps check-golang check-docs
 
+define require_clean_work_tree
+	@git update-index -q --ignore-submodules --refresh
+
+	@if ! git diff-files --quiet --ignore-submodules --; then \
+		echo >&2 "cannot $1: you have unstaged changes."; \
+		git diff -r --ignore-submodules -- >&2; \
+		echo >&2 "Please commit or stash them."; \
+		exit 1; \
+	fi
+
+	@if ! git diff-index --cached --quiet HEAD --ignore-submodules --; then \
+		echo >&2 "cannot $1: your index contains uncommitted changes."; \
+		git diff --cached -r --ignore-submodules HEAD -- >&2; \
+		echo >&2 "Please commit or stash them."; \
+		exit 1; \
+	fi
+
+endef
+
+.PHONY: generate
+generate: tidy deps fmt build-dashboards
+	$(call require_clean_work_tree,'all generated files should be committed, run make generate and commit changes.')
+
 $(TOOLS_BIN_DIR):
 	mkdir -p $(TOOLS_BIN_DIR)
 

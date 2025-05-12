@@ -19,8 +19,8 @@ jobs:
           check-latest: true
           cache: true
 
-      - name: Tidy Go modules and check for changes
-        run: make tidy && git diff --exit-code
+      - name: Tidy Go modules, format, generate docs, dashboards and check for changes
+        run: make generate
 
       - name: Run GolangCI Lint
         uses: golangci/golangci-lint-action@v8.0.0
