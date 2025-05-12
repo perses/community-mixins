@@ -90,3 +90,7 @@ kubectl apply -f examples/dashboards/operator/kubernetes/
 # Add all the dashboard CRDs to Perses
 kubectl apply -f examples/dashboards/operator/ -R
 ```
+
+### Dashboard Design Recomendations
+
+You can find some recomendation for dashboard design [here](docs/README.md)
