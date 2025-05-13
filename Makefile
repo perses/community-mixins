@@ -42,6 +42,7 @@ build-dashboards:
 	@echo "Building dashboards"
 	@$(ENVVARS) $(GOCMD) run $(GOMAIN) --output-dir="./examples/dashboards/operator" --output="operator" --project="perses-dev" --datasource="prometheus-datasource"
 	@$(ENVVARS) $(GOCMD) run $(GOMAIN) --output-dir="./examples/dashboards/perses" --output="yaml" --project="perses-dev" --datasource="prometheus-datasource"
+	@$(ENVVARS) $(GOCMD) run $(GOMAIN) --output-dir="./examples/dashboards/json/operator/" --output="operator-json" --project="perses-dev" --datasource="prometheus-datasource"
 
 # Adding a new target for building and testing dashboards locally with configurable flags
 .PHONY: build-dashboards-local
