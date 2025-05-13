@@ -11,6 +11,7 @@ import (
 	kubelet "github.com/perses/community-dashboards/pkg/dashboards/kubernetes/kubelet"
 	k8sNetworking "github.com/perses/community-dashboards/pkg/dashboards/kubernetes/networking"
 	k8sPersistentVolume "github.com/perses/community-dashboards/pkg/dashboards/kubernetes/persistent_volume"
+	scheduler "github.com/perses/community-dashboards/pkg/dashboards/kubernetes/scheduler"
 	nodeexporter "github.com/perses/community-dashboards/pkg/dashboards/node_exporter"
 	"github.com/perses/community-dashboards/pkg/dashboards/perses"
 	"github.com/perses/community-dashboards/pkg/dashboards/prometheus"
@@ -53,6 +54,7 @@ func main() {
 	dashboardWriter.Add(k8sComputeResources.BuildKubernetesMultiClusterOverview(project, datasource, clusterLabelName))
 	dashboardWriter.Add(kubelet.BuildKubeletOverview(project, datasource, clusterLabelName))
 	dashboardWriter.Add(controller_manager.BuildControllerManagerOverview(project, datasource, clusterLabelName))
+	dashboardWriter.Add(scheduler.BuildSchedulerOverview(project, datasource, clusterLabelName))
 	dashboardWriter.Add(k8sNetworking.BuildKubernetesClusterOverview(project, datasource, clusterLabelName))
 	dashboardWriter.Add(k8sNetworking.BuildKubernetesNamespaceByPodOverview(project, datasource, clusterLabelName))
 	dashboardWriter.Add(k8sNetworking.BuildKubernetesNamespaceByWorkloadOverview(project, datasource, clusterLabelName))

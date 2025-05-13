@@ -1,4 +1,4 @@
-package controller_manager
+package scheduler
 
 import (
 	"github.com/perses/community-dashboards/pkg/dashboards"
@@ -11,31 +11,30 @@ import (
 	labelValuesVar "github.com/perses/plugins/prometheus/sdk/go/variable/label-values"
 )
 
-func withCMStatsGroup(datasource string, labelMatcher promql.LabelMatcher) dashboard.Option {
-	return dashboard.AddPanelGroup("Controller Manager Status",
+func withSchedulerStatsGroup(datasource string, labelMatcher promql.LabelMatcher) dashboard.Option {
+	return dashboard.AddPanelGroup("Scheduler Status",
 		panelgroup.PanelsPerLine(1),
 		panelgroup.PanelHeight(8),
-		panels.ControllerManagerUpStatus(datasource, labelMatcher),
+		panels.SchedulerUpStatus(datasource, labelMatcher),
 	)
 }
 
-func withCMWorkQueueGroup(datasource string, labelMatcher promql.LabelMatcher) dashboard.Option {
-	return dashboard.AddPanelGroup("Work Queue",
-		panelgroup.PanelsPerLine(3),
+func withSchedulingRateGroup(datasource string, labelMatcher promql.LabelMatcher) dashboard.Option {
+	return dashboard.AddPanelGroup("Scheduling Rate",
+		panelgroup.PanelsPerLine(2),
 		panelgroup.PanelHeight(8),
-		panels.WorkQueueAddRate(datasource, labelMatcher),
-		panels.WorkQueueDepth(datasource, labelMatcher),
-		panels.WorkQueueLatency(datasource, labelMatcher),
+		panels.SchedulingRate(datasource, labelMatcher),
+		panels.SchedulingLatency(datasource, labelMatcher),
 	)
 }
 
-func withCMKubeAPIRequestsGroup(datasource string, labelMatcher promql.LabelMatcher) dashboard.Option {
+func withSchedulerKubeAPIRequestsGroup(datasource string, labelMatcher promql.LabelMatcher) dashboard.Option {
 	labelMatchersToUse := []promql.LabelMatcher{
 		promql.ClusterVar,
 		promql.InstanceVar,
 		{
 			Name:  "job",
-			Value: "kube-controller-manager",
+			Value: "kube-scheduler",
 			Type:  "=",
 		},
 	}
@@ -51,14 +50,14 @@ func withCMKubeAPIRequestsGroup(datasource string, labelMatcher promql.LabelMatc
 	)
 }
 
-func withCMResources(datasource string, clusterLabelMatcher promql.LabelMatcher) dashboard.Option {
+func withSchedulerResources(datasource string, clusterLabelMatcher promql.LabelMatcher) dashboard.Option {
 	// TODO(saswatamcode): Add a way to configure these.
 	labelMatchersToUse := []promql.LabelMatcher{
 		promql.ClusterVar,
 		promql.InstanceVar,
 		{
 			Name:  "job",
-			Value: "kube-controller-manager",
+			Value: "kube-scheduler",
 			Type:  "=",
 		},
 	}
@@ -75,16 +74,16 @@ func withCMResources(datasource string, clusterLabelMatcher promql.LabelMatcher)
 	)
 }
 
-func BuildControllerManagerOverview(project string, datasource string, clusterLabelName string) dashboards.DashboardResult {
+func BuildSchedulerOverview(project string, datasource string, clusterLabelName string) dashboards.DashboardResult {
 	clusterLabelMatcher := dashboards.GetClusterLabelMatcher(clusterLabelName)
 	return dashboards.NewDashboardResult(
-		dashboard.New("controller-manager-overview",
+		dashboard.New("scheduler-overview",
 			dashboard.ProjectName(project),
-			dashboard.Name("Kubernetes / Controller Manager"),
+			dashboard.Name("Kubernetes / Scheduler"),
 			dashboard.AddVariable("cluster",
 				listVar.List(
 					labelValuesVar.PrometheusLabelValues("cluster",
-						labelValuesVar.Matchers("up{"+panels.GetControllerManagerMatcher()+"}"),
+						labelValuesVar.Matchers("up{"+panels.GetSchedulerMatcher()+"}"),
 						dashboards.AddVariableDatasource(datasource),
 					),
 					listVar.DisplayName("cluster"),
@@ -95,7 +94,7 @@ func BuildControllerManagerOverview(project string, datasource string, clusterLa
 					labelValuesVar.PrometheusLabelValues("instance",
 						labelValuesVar.Matchers(
 							promql.SetLabelMatchers(
-								"up{"+panels.GetControllerManagerMatcher()+"}",
+								"up{"+panels.GetSchedulerMatcher()+"}",
 								[]promql.LabelMatcher{{Name: "cluster", Type: "=", Value: "$cluster"}},
 							),
 						),
@@ -104,10 +103,10 @@ func BuildControllerManagerOverview(project string, datasource string, clusterLa
 					listVar.DisplayName("instance"),
 				),
 			),
-			withCMStatsGroup(datasource, clusterLabelMatcher),
-			withCMWorkQueueGroup(datasource, clusterLabelMatcher),
-			withCMKubeAPIRequestsGroup(datasource, clusterLabelMatcher),
-			withCMResources(datasource, clusterLabelMatcher),
+			withSchedulerStatsGroup(datasource, clusterLabelMatcher),
+			withSchedulingRateGroup(datasource, clusterLabelMatcher),
+			withSchedulerKubeAPIRequestsGroup(datasource, clusterLabelMatcher),
+			withSchedulerResources(datasource, clusterLabelMatcher),
 		),
 	).Component("kubernetes")
 }
