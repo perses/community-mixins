@@ -790,6 +790,40 @@ spec:
             kind: Panel
             spec:
                 display:
+                    name: CPU Usage
+                    description: Shows the CPU usage of the component.
+                plugin:
+                    kind: TimeSeriesChart
+                    spec:
+                        legend:
+                            position: bottom
+                            mode: table
+                            values:
+                                - last
+                        yAxis:
+                            format:
+                                unit: decimal
+                        visual:
+                            display: line
+                            lineWidth: 0.25
+                            areaOpacity: 0.5
+                            palette:
+                                mode: auto
+                queries:
+                    - kind: TimeSeriesQuery
+                      spec:
+                        plugin:
+                            kind: PrometheusTimeSeriesQuery
+                            spec:
+                                datasource:
+                                    kind: PrometheusDatasource
+                                    name: prometheus-datasource
+                                query: rate(process_cpu_seconds_total{job=~"$job",namespace="$namespace"}[$__rate_interval])
+                                seriesNameFormat: '{{pod}}'
+        "6_1":
+            kind: Panel
+            spec:
+                display:
                     name: Memory Usage
                     description: Shows various memory usage metrics of the component.
                 plugin:
@@ -880,7 +914,7 @@ spec:
                                     name: prometheus-datasource
                                 query: process_resident_memory_bytes{job=~"$job",namespace="$namespace"}
                                 seriesNameFormat: Resident Memory {{pod}}
-        "6_1":
+        "6_2":
             kind: Panel
             spec:
                 display:
@@ -914,7 +948,7 @@ spec:
                                     name: prometheus-datasource
                                 query: go_goroutines{job=~"$job",namespace="$namespace"}
                                 seriesNameFormat: '{{pod}}'
-        "6_2":
+        "6_3":
             kind: Panel
             spec:
                 display:
@@ -1076,20 +1110,26 @@ spec:
             items:
                 - x: 0
                   "y": 0
-                  width: 8
+                  width: 6
                   height: 8
                   content:
                     $ref: '#/spec/panels/6_0'
-                - x: 8
+                - x: 6
                   "y": 0
-                  width: 8
+                  width: 6
                   height: 8
                   content:
                     $ref: '#/spec/panels/6_1'
-                - x: 16
+                - x: 12
                   "y": 0
-                  width: 8
+                  width: 6
                   height: 8
                   content:
                     $ref: '#/spec/panels/6_2'
+                - x: 18
+                  "y": 0
+                  width: 6
+                  height: 8
+                  content:
+                    $ref: '#/spec/panels/6_3'
     duration: 1h

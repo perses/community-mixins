@@ -12,7 +12,7 @@ import (
 	timeSeriesPanel "github.com/perses/plugins/timeserieschart/sdk/go"
 )
 
-func MemoryUsage(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
+func MemoryUsage(datasourceName string, seriesNameToUse string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
 	return panelgroup.AddPanel("Memory Usage",
 		panel.Description("Shows various memory usage metrics of the component."),
 		timeSeriesPanel.Chart(
@@ -41,7 +41,7 @@ func MemoryUsage(datasourceName string, labelMatchers ...promql.LabelMatcher) pa
 					labelMatchers,
 				),
 				dashboards.AddQueryDataSource(datasourceName),
-				query.SeriesNameFormat("Alloc All {{pod}}"),
+				query.SeriesNameFormat("Alloc All {{"+seriesNameToUse+"}}"),
 			),
 		),
 		panel.AddQuery(
@@ -51,7 +51,7 @@ func MemoryUsage(datasourceName string, labelMatchers ...promql.LabelMatcher) pa
 					labelMatchers,
 				),
 				dashboards.AddQueryDataSource(datasourceName),
-				query.SeriesNameFormat("Alloc Heap {{pod}}"),
+				query.SeriesNameFormat("Alloc Heap {{"+seriesNameToUse+"}}"),
 			),
 		),
 		panel.AddQuery(
@@ -61,7 +61,7 @@ func MemoryUsage(datasourceName string, labelMatchers ...promql.LabelMatcher) pa
 					labelMatchers,
 				),
 				dashboards.AddQueryDataSource(datasourceName),
-				query.SeriesNameFormat("Alloc Rate All {{pod}}"),
+				query.SeriesNameFormat("Alloc Rate All {{"+seriesNameToUse+"}}"),
 			),
 		),
 		panel.AddQuery(
@@ -71,7 +71,7 @@ func MemoryUsage(datasourceName string, labelMatchers ...promql.LabelMatcher) pa
 					labelMatchers,
 				),
 				dashboards.AddQueryDataSource(datasourceName),
-				query.SeriesNameFormat("Alloc Rate Heap {{pod}}"),
+				query.SeriesNameFormat("Alloc Rate Heap {{"+seriesNameToUse+"}}"),
 			),
 		),
 		panel.AddQuery(
@@ -81,7 +81,7 @@ func MemoryUsage(datasourceName string, labelMatchers ...promql.LabelMatcher) pa
 					labelMatchers,
 				),
 				dashboards.AddQueryDataSource(datasourceName),
-				query.SeriesNameFormat("Inuse Stack {{pod}}"),
+				query.SeriesNameFormat("Inuse Stack {{"+seriesNameToUse+"}}"),
 			),
 		),
 		panel.AddQuery(
@@ -91,7 +91,7 @@ func MemoryUsage(datasourceName string, labelMatchers ...promql.LabelMatcher) pa
 					labelMatchers,
 				),
 				dashboards.AddQueryDataSource(datasourceName),
-				query.SeriesNameFormat("Inuse Heap {{pod}}"),
+				query.SeriesNameFormat("Inuse Heap {{"+seriesNameToUse+"}}"),
 			),
 		),
 		panel.AddQuery(
@@ -101,13 +101,13 @@ func MemoryUsage(datasourceName string, labelMatchers ...promql.LabelMatcher) pa
 					labelMatchers,
 				),
 				dashboards.AddQueryDataSource(datasourceName),
-				query.SeriesNameFormat("Resident Memory {{pod}}"),
+				query.SeriesNameFormat("Resident Memory {{"+seriesNameToUse+"}}"),
 			),
 		),
 	)
 }
 
-func Goroutines(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
+func Goroutines(datasourceName string, seriesNameToUse string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
 	return panelgroup.AddPanel("Goroutines",
 		panel.Description("Shows the number of goroutines being used by the component."),
 		timeSeriesPanel.Chart(
@@ -136,13 +136,13 @@ func Goroutines(datasourceName string, labelMatchers ...promql.LabelMatcher) pan
 					labelMatchers,
 				),
 				dashboards.AddQueryDataSource(datasourceName),
-				query.SeriesNameFormat("{{pod}}"),
+				query.SeriesNameFormat("{{"+seriesNameToUse+"}}"),
 			),
 		),
 	)
 }
 
-func GarbageCollectionPauseTimeQuantiles(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
+func GarbageCollectionPauseTimeQuantiles(datasourceName string, seriesNameToUse string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
 	return panelgroup.AddPanel("GC Duration",
 		panel.Description("Shows the Go garbage collection pause durations for the component."),
 		timeSeriesPanel.Chart(
@@ -171,7 +171,42 @@ func GarbageCollectionPauseTimeQuantiles(datasourceName string, labelMatchers ..
 					labelMatchers,
 				),
 				dashboards.AddQueryDataSource(datasourceName),
-				query.SeriesNameFormat("{{quantile}} - {{pod}}"),
+				query.SeriesNameFormat("{{quantile}} - {{"+seriesNameToUse+"}}"),
+			),
+		),
+	)
+}
+
+func CPUUsage(datasourceName string, seriesNameToUse string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
+	return panelgroup.AddPanel("CPU Usage",
+		panel.Description("Shows the CPU usage of the component."),
+		timeSeriesPanel.Chart(
+			timeSeriesPanel.WithYAxis(timeSeriesPanel.YAxis{
+				Format: &commonSdk.Format{
+					Unit: string(commonSdk.DecimalUnit),
+				},
+			}),
+			timeSeriesPanel.WithLegend(timeSeriesPanel.Legend{
+				Position: timeSeriesPanel.BottomPosition,
+				Mode:     timeSeriesPanel.TableMode,
+				Values:   []commonSdk.Calculation{commonSdk.LastCalculation},
+			}),
+			timeSeriesPanel.WithVisual(timeSeriesPanel.Visual{
+				Display:      timeSeriesPanel.LineDisplay,
+				ConnectNulls: false,
+				LineWidth:    0.25,
+				AreaOpacity:  0.5,
+				Palette:      timeSeriesPanel.Palette{Mode: timeSeriesPanel.AutoMode},
+			}),
+		),
+		panel.AddQuery(
+			query.PromQL(
+				promql.SetLabelMatchers(
+					"rate(process_cpu_seconds_total[$__rate_interval])",
+					labelMatchers,
+				),
+				dashboards.AddQueryDataSource(datasourceName),
+				query.SeriesNameFormat("{{"+seriesNameToUse+"}}"),
 			),
 		),
 	)

@@ -71,10 +71,10 @@ func withPersesResources(datasource string, clusterLabelMatcher promql.LabelMatc
 	return dashboard.AddPanelGroup("Resource Usage",
 		panelgroup.PanelsPerLine(3),
 		panelgroup.PanelHeight(10),
-		panelsGostats.MemoryUsage(datasource, labelMatchersToUse...),
-		perses.CPUUsage(datasource, clusterLabelMatcher),
-		panelsGostats.Goroutines(datasource, labelMatchersToUse...),
-		panelsGostats.GarbageCollectionPauseTimeQuantiles(datasource, labelMatchersToUse...),
+		panelsGostats.MemoryUsage(datasource, "pod", labelMatchersToUse...),
+		panelsGostats.CPUUsage(datasource, "pod", labelMatchersToUse...),
+		panelsGostats.Goroutines(datasource, "pod", labelMatchersToUse...),
+		panelsGostats.GarbageCollectionPauseTimeQuantiles(datasource, "pod", labelMatchersToUse...),
 		perses.FileDescriptors(datasource, clusterLabelMatcher),
 	)
 }

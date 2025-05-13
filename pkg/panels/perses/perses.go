@@ -166,42 +166,6 @@ func HTTPErrorPercentagePanel(datasourceName string, labelMatchers ...promql.Lab
 	)
 }
 
-func CPUUsage(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
-	return panelgroup.AddPanel("CPU Usage",
-		panel.Description("Shows CPU usage metrics"),
-		timeSeriesPanel.Chart(
-			timeSeriesPanel.WithYAxis(timeSeriesPanel.YAxis{
-				Format: &common.Format{
-					Unit: string(common.PercentUnit),
-				},
-			},
-			),
-			timeSeriesPanel.WithLegend(timeSeriesPanel.Legend{
-				Position: timeSeriesPanel.BottomPosition,
-				Mode:     timeSeriesPanel.TableMode,
-				Values:   []common.Calculation{common.LastCalculation},
-			}),
-			timeSeriesPanel.WithVisual(timeSeriesPanel.Visual{
-				Display:      timeSeriesPanel.LineDisplay,
-				ConnectNulls: false,
-				LineWidth:    0.25,
-				AreaOpacity:  0.5,
-				Palette:      timeSeriesPanel.Palette{Mode: timeSeriesPanel.AutoMode},
-			}),
-		),
-		panel.AddQuery(
-			query.PromQL(
-				promql.SetLabelMatchers(
-					"rate(process_cpu_seconds_total{job=~'$job', instance=~'$instance'}[$__rate_interval])",
-					labelMatchers,
-				),
-				dashboards.AddQueryDataSource(datasourceName),
-				query.SeriesNameFormat("{{pod}}"),
-			),
-		),
-	)
-}
-
 func FileDescriptors(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
 	return panelgroup.AddPanel("File Descriptors",
 		panel.Description("Displays the number of open and max file descriptors."),

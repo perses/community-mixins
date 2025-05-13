@@ -17,11 +17,12 @@ func withThanosResourcesGroup(datasource string, labelMatcher promql.LabelMatche
 	labelMatchersToUse = append(labelMatchersToUse, labelMatcher)
 
 	return dashboard.AddPanelGroup("Resources",
-		panelgroup.PanelsPerLine(3),
+		panelgroup.PanelsPerLine(4),
 		panelgroup.PanelHeight(8),
-		panelsGostats.MemoryUsage(datasource, labelMatchersToUse...),
-		panelsGostats.Goroutines(datasource, labelMatchersToUse...),
-		panelsGostats.GarbageCollectionPauseTimeQuantiles(datasource, labelMatchersToUse...),
+		panelsGostats.CPUUsage(datasource, "pod", labelMatchersToUse...),
+		panelsGostats.MemoryUsage(datasource, "pod", labelMatchersToUse...),
+		panelsGostats.Goroutines(datasource, "pod", labelMatchersToUse...),
+		panelsGostats.GarbageCollectionPauseTimeQuantiles(datasource, "pod", labelMatchersToUse...),
 	)
 }
 

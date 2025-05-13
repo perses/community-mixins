@@ -296,7 +296,7 @@ spec:
             spec:
                 display:
                     name: CPU Usage
-                    description: Shows CPU usage metrics
+                    description: Shows the CPU usage of the component.
                 plugin:
                     kind: TimeSeriesChart
                     spec:
@@ -307,7 +307,7 @@ spec:
                                 - last
                         yAxis:
                             format:
-                                unit: percent
+                                unit: decimal
                         visual:
                             display: line
                             lineWidth: 0.25

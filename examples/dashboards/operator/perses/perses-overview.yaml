@@ -346,7 +346,7 @@ spec:
       kind: Panel
       spec:
         display:
-          description: Shows CPU usage metrics
+          description: Shows the CPU usage of the component.
           name: CPU Usage
         plugin:
           kind: TimeSeriesChart
@@ -364,7 +364,7 @@ spec:
                 mode: auto
             yAxis:
               format:
-                unit: percent
+                unit: decimal
         queries:
         - kind: TimeSeriesQuery
           spec:
