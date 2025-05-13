@@ -537,7 +537,7 @@ spec:
                                 - last
                         yAxis:
                             format:
-                                unit: milliseconds
+                                unit: seconds
                         visual:
                             display: line
                             lineWidth: 0.25

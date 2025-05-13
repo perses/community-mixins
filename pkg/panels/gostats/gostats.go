@@ -148,7 +148,7 @@ func GarbageCollectionPauseTimeQuantiles(datasourceName string, seriesNameToUse 
 		timeSeriesPanel.Chart(
 			timeSeriesPanel.WithYAxis(timeSeriesPanel.YAxis{
 				Format: &commonSdk.Format{
-					Unit: string(commonSdk.MilliSecondsUnit),
+					Unit: string(commonSdk.SecondsUnit),
 				},
 			}),
 			timeSeriesPanel.WithLegend(timeSeriesPanel.Legend{

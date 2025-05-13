@@ -158,7 +158,7 @@ func DownsampleDurations(datasourceName string, labelMatchers ...promql.LabelMat
 		timeSeriesPanel.Chart(
 			timeSeriesPanel.WithYAxis(timeSeriesPanel.YAxis{
 				Format: &commonSdk.Format{
-					Unit: string(commonSdk.MilliSecondsUnit),
+					Unit: string(commonSdk.SecondsUnit),
 				},
 			}),
 			timeSeriesPanel.WithLegend(timeSeriesPanel.Legend{
@@ -282,7 +282,7 @@ func SyncMetaDurations(datasourceName string, labelMatchers ...promql.LabelMatch
 		timeSeriesPanel.Chart(
 			timeSeriesPanel.WithYAxis(timeSeriesPanel.YAxis{
 				Format: &commonSdk.Format{
-					Unit: string(commonSdk.MilliSecondsUnit),
+					Unit: string(commonSdk.SecondsUnit),
 				},
 			}),
 			timeSeriesPanel.WithLegend(timeSeriesPanel.Legend{
@@ -511,7 +511,7 @@ func GarbageCollectionDurations(datasourceName string, labelMatchers ...promql.L
 		timeSeriesPanel.Chart(
 			timeSeriesPanel.WithYAxis(timeSeriesPanel.YAxis{
 				Format: &commonSdk.Format{
-					Unit: string(commonSdk.MilliSecondsUnit),
+					Unit: string(commonSdk.SecondsUnit),
 				},
 			}),
 			timeSeriesPanel.WithLegend(timeSeriesPanel.Legend{

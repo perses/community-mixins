@@ -318,7 +318,7 @@ spec:
                             mode: table
                         yAxis:
                             format:
-                                unit: milliseconds
+                                unit: seconds
                         visual:
                             display: line
                             lineWidth: 0.25
@@ -580,7 +580,7 @@ spec:
                             mode: table
                         yAxis:
                             format:
-                                unit: milliseconds
+                                unit: seconds
                         visual:
                             display: line
                             lineWidth: 0.25
@@ -738,7 +738,7 @@ spec:
                             mode: table
                         yAxis:
                             format:
-                                unit: milliseconds
+                                unit: seconds
                         visual:
                             display: line
                             lineWidth: 0.25
@@ -978,7 +978,7 @@ spec:
                                 - last
                         yAxis:
                             format:
-                                unit: milliseconds
+                                unit: seconds
                         visual:
                             display: line
                             lineWidth: 0.25

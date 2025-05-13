@@ -61,7 +61,7 @@ func HTTPRequestsLatencyPanel(datasourceName string, labelMatchers ...promql.Lab
 		timeSeriesPanel.Chart(
 			timeSeriesPanel.WithYAxis(timeSeriesPanel.YAxis{
 				Format: &common.Format{
-					Unit: string(common.MilliSecondsUnit),
+					Unit: string(common.SecondsUnit),
 				},
 			}),
 			timeSeriesPanel.WithLegend(timeSeriesPanel.Legend{
