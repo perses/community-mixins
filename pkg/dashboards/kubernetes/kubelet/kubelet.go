@@ -99,6 +99,7 @@ func withRequestDurationQuantile(datasource string, labelMatcher promql.LabelMat
 }
 
 func withKubeletResources(datasource string, clusterLabelMatcher promql.LabelMatcher) dashboard.Option {
+	// TODO(saswatamcode): Add a way to configure these.
 	labelMatchersToUse := []promql.LabelMatcher{
 		promql.ClusterVar,
 		promql.InstanceVar,

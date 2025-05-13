@@ -6,6 +6,7 @@ var (
 	KUBE_STATE_METRICS_MATCHER = "job=\"kube-state-metrics\""
 	KUBELET_MATCHER            = "job=\"kubelet\""
 	NODE_EXPORTER_MATCHER      = "job=\"node-exporter\""
+	CONTROLLER_MANAGER_MATCHER = "job=\"kube-controller-manager\""
 )
 
 // GetCAdvisorMatcher returns the matcher for the cadvisor job.
@@ -28,6 +29,11 @@ func GetNodeExporterMatcher() string {
 	return NODE_EXPORTER_MATCHER
 }
 
+// GetControllerManagerMatcher returns the matcher for the controller-manager job.
+func GetControllerManagerMatcher() string {
+	return CONTROLLER_MANAGER_MATCHER
+}
+
 // SetCAdvisorMatcher sets the matcher for the cadvisor job globally.
 func SetCAdvisorMatcher(matcher string) {
 	CADVISOR_MATCHER = matcher
@@ -46,6 +52,11 @@ func SetKubeletMatcher(matcher string) {
 // SetNodeExporterMatcher sets the matcher for the node-exporter job globally.
 func SetNodeExporterMatcher(matcher string) {
 	NODE_EXPORTER_MATCHER = matcher
+}
+
+// SetControllerManagerMatcher sets the matcher for the controller-manager job globally.
+func SetControllerManagerMatcher(matcher string) {
+	CONTROLLER_MANAGER_MATCHER = matcher
 }
 
 // Metrics deprecation considerations: https://github.com/kubernetes-monitoring/kubernetes-mixin?tab=readme-ov-file#metrics-deprecation
