@@ -37,16 +37,19 @@ clean-demo:
 
 .PHONY: build-dashboards
 build-dashboards:
-	@echo "Building dashboards"
+	@echo "Removing old dashboards"
 	@rm -rf ./examples/dashboards/
+	@echo "Building dashboards"
 	@$(ENVVARS) $(GOCMD) run $(GOMAIN) --output-dir="./examples/dashboards/operator" --output="operator" --project="perses-dev" --datasource="prometheus-datasource"
 	@$(ENVVARS) $(GOCMD) run $(GOMAIN) --output-dir="./examples/dashboards/perses" --output="yaml" --project="perses-dev" --datasource="prometheus-datasource"
 
 # Adding a new target for building and testing dashboards locally with configurable flags
 .PHONY: build-dashboards-local
 build-dashboards-local:
+	@echo "Removing old dashboards"
+	@rm -rf $(OUTPUT_DIR_OPERATOR)
+	@rm -rf $(OUTPUT_DIR_PERSES)
 	@echo "Building dashboards for local testing"
-	@rm -rf ./built/dashboards/
 	@$(ENVVARS) $(GOCMD) run $(GOMAIN) --output-dir=$(OUTPUT_DIR_OPERATOR) --output="operator" --project=$(PROJECT) --datasource=$(DATASOURCE)
 	@$(ENVVARS) $(GOCMD) run $(GOMAIN) --output-dir=$(OUTPUT_DIR_PERSES) --output=$(OUTPUT_FORMAT_PERSES) --project=$(PROJECT) --datasource=$(DATASOURCE)
 
