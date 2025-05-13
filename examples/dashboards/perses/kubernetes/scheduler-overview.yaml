@@ -1,13 +1,13 @@
 kind: Dashboard
 metadata:
-    name: controller-manager-overview
+    name: scheduler-overview
     createdAt: 0001-01-01T00:00:00Z
     updatedAt: 0001-01-01T00:00:00Z
     version: 0
     project: perses-dev
 spec:
     display:
-        name: Kubernetes / Controller Manager
+        name: Kubernetes / Scheduler
     variables:
         - kind: ListVariable
           spec:
@@ -24,7 +24,7 @@ spec:
                         name: prometheus-datasource
                     labelName: cluster
                     matchers:
-                        - up{job="kube-controller-manager"}
+                        - up{job="kube-scheduler"}
             name: cluster
         - kind: ListVariable
           spec:
@@ -41,7 +41,7 @@ spec:
                         name: prometheus-datasource
                     labelName: instance
                     matchers:
-                        - up{cluster="$cluster",job="kube-controller-manager"}
+                        - up{cluster="$cluster",job="kube-scheduler"}
             name: instance
     panels:
         "0_0":
@@ -49,7 +49,7 @@ spec:
             spec:
                 display:
                     name: Up
-                    description: Shows the status of the controller manager.
+                    description: Shows the status of the scheduler.
                 plugin:
                     kind: StatChart
                     spec:
@@ -66,13 +66,13 @@ spec:
                                 datasource:
                                     kind: PrometheusDatasource
                                     name: prometheus-datasource
-                                query: sum(up{cluster="$cluster",job="kube-controller-manager"})
+                                query: sum(up{cluster="$cluster",job="kube-scheduler"})
         "1_0":
             kind: Panel
             spec:
                 display:
-                    name: Work Queue Add Rate
-                    description: Shows the rate of work queue add events.
+                    name: Scheduling Rate
+                    description: Shows the rate of scheduling events.
                 plugin:
                     kind: TimeSeriesChart
                     spec:
@@ -82,11 +82,11 @@ spec:
                             size: small
                         yAxis:
                             format:
-                                unit: decimal
+                                unit: ops/sec
                         visual:
                             display: line
                             lineWidth: 0.25
-                            areaOpacity: 1
+                            areaOpacity: 0.5
                             palette:
                                 mode: auto
                 queries:
@@ -99,56 +99,63 @@ spec:
                                     kind: PrometheusDatasource
                                     name: prometheus-datasource
                                 query: |-
-                                    sum by (cluster, instance, name) (
+                                    sum by (cluster, instance) (
                                       rate(
-                                        workqueue_adds_total{cluster="$cluster",instance=~"$instance",job="kube-controller-manager"}[$__rate_interval]
+                                        scheduler_e2e_scheduling_duration_seconds_count{cluster="$cluster",instance=~"$instance",job="kube-scheduler"}[$__rate_interval]
                                       )
                                     )
-                                seriesNameFormat: '{{cluster}} {{instance}} {{name}}'
+                                seriesNameFormat: '{{cluster}} {{instance}} e2e'
+                    - kind: TimeSeriesQuery
+                      spec:
+                        plugin:
+                            kind: PrometheusTimeSeriesQuery
+                            spec:
+                                datasource:
+                                    kind: PrometheusDatasource
+                                    name: prometheus-datasource
+                                query: |-
+                                    sum by (cluster, instance) (
+                                      rate(
+                                        scheduler_binding_duration_seconds_count{cluster="$cluster",instance=~"$instance",job="kube-scheduler"}[$__rate_interval]
+                                      )
+                                    )
+                                seriesNameFormat: '{{cluster}} {{instance}} binding'
+                    - kind: TimeSeriesQuery
+                      spec:
+                        plugin:
+                            kind: PrometheusTimeSeriesQuery
+                            spec:
+                                datasource:
+                                    kind: PrometheusDatasource
+                                    name: prometheus-datasource
+                                query: |-
+                                    sum by (cluster, instance) (
+                                      rate(
+                                        scheduler_scheduling_algorithm_duration_seconds_count{cluster="$cluster",instance=~"$instance",job="kube-scheduler"}[$__rate_interval]
+                                      )
+                                    )
+                                seriesNameFormat: '{{cluster}} {{instance}} scheduling algorithm'
+                    - kind: TimeSeriesQuery
+                      spec:
+                        plugin:
+                            kind: PrometheusTimeSeriesQuery
+                            spec:
+                                datasource:
+                                    kind: PrometheusDatasource
+                                    name: prometheus-datasource
+                                query: |-
+                                    sum by (cluster, instance) (
+                                      rate(
+                                        scheduler_volume_scheduling_duration_seconds_count{cluster="$cluster",instance=~"$instance",job="kube-scheduler"}[$__rate_interval]
+                                      )
+                                    )
+                                seriesNameFormat: '{{cluster}} {{instance}} volume'
         "1_1":
             kind: Panel
             spec:
                 display:
-                    name: Work Queue Depth
-                    description: Shows the depth of the work queue.
-                plugin:
-                    kind: TimeSeriesChart
-                    spec:
-                        legend:
-                            position: bottom
-                            mode: list
-                            size: small
-                        yAxis:
-                            format:
-                                unit: decimal
-                        visual:
-                            display: line
-                            lineWidth: 0.25
-                            areaOpacity: 1
-                            palette:
-                                mode: auto
-                queries:
-                    - kind: TimeSeriesQuery
-                      spec:
-                        plugin:
-                            kind: PrometheusTimeSeriesQuery
-                            spec:
-                                datasource:
-                                    kind: PrometheusDatasource
-                                    name: prometheus-datasource
-                                query: |-
-                                    sum by (cluster, instance, name) (
-                                      rate(
-                                        workqueue_depth{cluster="$cluster",instance=~"$instance",job="kube-controller-manager"}[$__rate_interval]
-                                      )
-                                    )
-                                seriesNameFormat: '{{cluster}} {{instance}} {{name}}'
-        "1_2":
-            kind: Panel
-            spec:
-                display:
-                    name: Work Queue Latency
-                    description: Shows the 99th percentile latency of items queued in the work queue.
+                    name: Scheduling Latency 99th Quantile
+                    description: Shows the 99th quantile latency of scheduling events.
                 plugin:
                     kind: TimeSeriesChart
                     spec:
@@ -177,13 +184,67 @@ spec:
                                 query: |-
                                     histogram_quantile(
                                       0.99,
-                                      sum by (cluster, instance, name, le) (
+                                      sum by (cluster, instance, le) (
                                         rate(
-                                          workqueue_queue_duration_seconds_bucket{cluster="$cluster",instance=~"$instance",job="kube-controller-manager"}[$__rate_interval]
+                                          scheduler_e2e_scheduling_duration_seconds_bucket{cluster="$cluster",instance=~"$instance",job="kube-scheduler"}[$__rate_interval]
                                         )
                                       )
                                     )
-                                seriesNameFormat: '{{cluster}} {{instance}} {{name}}'
+                                seriesNameFormat: '{{cluster}} {{instance}} e2e'
+                    - kind: TimeSeriesQuery
+                      spec:
+                        plugin:
+                            kind: PrometheusTimeSeriesQuery
+                            spec:
+                                datasource:
+                                    kind: PrometheusDatasource
+                                    name: prometheus-datasource
+                                query: |-
+                                    histogram_quantile(
+                                      0.99,
+                                      sum by (cluster, instance, le) (
+                                        rate(
+                                          scheduler_binding_duration_seconds_bucket{cluster="$cluster",instance=~"$instance",job="kube-scheduler"}[$__rate_interval]
+                                        )
+                                      )
+                                    )
+                                seriesNameFormat: '{{cluster}} {{instance}} binding'
+                    - kind: TimeSeriesQuery
+                      spec:
+                        plugin:
+                            kind: PrometheusTimeSeriesQuery
+                            spec:
+                                datasource:
+                                    kind: PrometheusDatasource
+                                    name: prometheus-datasource
+                                query: |-
+                                    histogram_quantile(
+                                      0.99,
+                                      sum by (cluster, instance, le) (
+                                        rate(
+                                          scheduler_scheduling_algorithm_duration_seconds_bucket{cluster="$cluster",instance=~"$instance",job="kube-scheduler"}[$__rate_interval]
+                                        )
+                                      )
+                                    )
+                                seriesNameFormat: '{{cluster}} {{instance}} scheduling algorithm'
+                    - kind: TimeSeriesQuery
+                      spec:
+                        plugin:
+                            kind: PrometheusTimeSeriesQuery
+                            spec:
+                                datasource:
+                                    kind: PrometheusDatasource
+                                    name: prometheus-datasource
+                                query: |-
+                                    histogram_quantile(
+                                      0.99,
+                                      sum by (cluster, instance, le) (
+                                        rate(
+                                          scheduler_volume_scheduling_duration_seconds_bucket{cluster="$cluster",instance=~"$instance",job="kube-scheduler"}[$__rate_interval]
+                                        )
+                                      )
+                                    )
+                                seriesNameFormat: '{{cluster}} {{instance}} volume'
         "2_0":
             kind: Panel
             spec:
@@ -219,7 +280,7 @@ spec:
                                 query: |-
                                     sum(
                                       rate(
-                                        rest_client_requests_total{cluster=~"$cluster",code=~"2..",instance=~"$instance",job="kube-controller-manager"}[$__rate_interval]
+                                        rest_client_requests_total{cluster=~"$cluster",code=~"2..",instance=~"$instance",job="kube-scheduler"}[$__rate_interval]
                                       )
                                     )
                                 seriesNameFormat: 2xx
@@ -234,7 +295,7 @@ spec:
                                 query: |-
                                     sum(
                                       rate(
-                                        rest_client_requests_total{cluster=~"$cluster",code=~"3..",instance=~"$instance",job="kube-controller-manager"}[$__rate_interval]
+                                        rest_client_requests_total{cluster=~"$cluster",code=~"3..",instance=~"$instance",job="kube-scheduler"}[$__rate_interval]
                                       )
                                     )
                                 seriesNameFormat: 3xx
@@ -249,7 +310,7 @@ spec:
                                 query: |-
                                     sum(
                                       rate(
-                                        rest_client_requests_total{cluster=~"$cluster",code=~"4..",instance=~"$instance",job="kube-controller-manager"}[$__rate_interval]
+                                        rest_client_requests_total{cluster=~"$cluster",code=~"4..",instance=~"$instance",job="kube-scheduler"}[$__rate_interval]
                                       )
                                     )
                                 seriesNameFormat: 4xx
@@ -264,7 +325,7 @@ spec:
                                 query: |-
                                     sum(
                                       rate(
-                                        rest_client_requests_total{cluster=~"$cluster",code=~"5..",instance=~"$instance",job="kube-controller-manager"}[$__rate_interval]
+                                        rest_client_requests_total{cluster=~"$cluster",code=~"5..",instance=~"$instance",job="kube-scheduler"}[$__rate_interval]
                                       )
                                     )
                                 seriesNameFormat: 5xx
@@ -304,7 +365,7 @@ spec:
                                       0.99,
                                       sum by (verb, le) (
                                         rate(
-                                          rest_client_request_duration_seconds_bucket{cluster=~"$cluster",instance=~"$instance",job="kube-controller-manager",verb="POST"}[$__rate_interval]
+                                          rest_client_request_duration_seconds_bucket{cluster=~"$cluster",instance=~"$instance",job="kube-scheduler",verb="POST"}[$__rate_interval]
                                         )
                                       )
                                     )
@@ -345,7 +406,7 @@ spec:
                                       0.99,
                                       sum by (verb, le) (
                                         rate(
-                                          rest_client_request_duration_seconds_bucket{cluster=~"$cluster",instance=~"$instance",job="kube-controller-manager",verb="GET"}[$__rate_interval]
+                                          rest_client_request_duration_seconds_bucket{cluster=~"$cluster",instance=~"$instance",job="kube-scheduler",verb="GET"}[$__rate_interval]
                                         )
                                       )
                                     )
@@ -382,7 +443,7 @@ spec:
                                 datasource:
                                     kind: PrometheusDatasource
                                     name: prometheus-datasource
-                                query: go_memstats_alloc_bytes{cluster=~"$cluster",instance=~"$instance",job="kube-controller-manager"}
+                                query: go_memstats_alloc_bytes{cluster=~"$cluster",instance=~"$instance",job="kube-scheduler"}
                                 seriesNameFormat: Alloc All {{instance}}
                     - kind: TimeSeriesQuery
                       spec:
@@ -392,7 +453,7 @@ spec:
                                 datasource:
                                     kind: PrometheusDatasource
                                     name: prometheus-datasource
-                                query: go_memstats_heap_alloc_bytes{cluster=~"$cluster",instance=~"$instance",job="kube-controller-manager"}
+                                query: go_memstats_heap_alloc_bytes{cluster=~"$cluster",instance=~"$instance",job="kube-scheduler"}
                                 seriesNameFormat: Alloc Heap {{instance}}
                     - kind: TimeSeriesQuery
                       spec:
@@ -404,7 +465,7 @@ spec:
                                     name: prometheus-datasource
                                 query: |-
                                     rate(
-                                      go_memstats_alloc_bytes_total{cluster=~"$cluster",instance=~"$instance",job="kube-controller-manager"}[$__rate_interval]
+                                      go_memstats_alloc_bytes_total{cluster=~"$cluster",instance=~"$instance",job="kube-scheduler"}[$__rate_interval]
                                     )
                                 seriesNameFormat: Alloc Rate All {{instance}}
                     - kind: TimeSeriesQuery
@@ -417,7 +478,7 @@ spec:
                                     name: prometheus-datasource
                                 query: |-
                                     rate(
-                                      go_memstats_heap_alloc_bytes{cluster=~"$cluster",instance=~"$instance",job="kube-controller-manager"}[$__rate_interval]
+                                      go_memstats_heap_alloc_bytes{cluster=~"$cluster",instance=~"$instance",job="kube-scheduler"}[$__rate_interval]
                                     )
                                 seriesNameFormat: Alloc Rate Heap {{instance}}
                     - kind: TimeSeriesQuery
@@ -428,7 +489,7 @@ spec:
                                 datasource:
                                     kind: PrometheusDatasource
                                     name: prometheus-datasource
-                                query: go_memstats_stack_inuse_bytes{cluster=~"$cluster",instance=~"$instance",job="kube-controller-manager"}
+                                query: go_memstats_stack_inuse_bytes{cluster=~"$cluster",instance=~"$instance",job="kube-scheduler"}
                                 seriesNameFormat: Inuse Stack {{instance}}
                     - kind: TimeSeriesQuery
                       spec:
@@ -438,7 +499,7 @@ spec:
                                 datasource:
                                     kind: PrometheusDatasource
                                     name: prometheus-datasource
-                                query: go_memstats_heap_inuse_bytes{cluster=~"$cluster",instance=~"$instance",job="kube-controller-manager"}
+                                query: go_memstats_heap_inuse_bytes{cluster=~"$cluster",instance=~"$instance",job="kube-scheduler"}
                                 seriesNameFormat: Inuse Heap {{instance}}
                     - kind: TimeSeriesQuery
                       spec:
@@ -448,7 +509,7 @@ spec:
                                 datasource:
                                     kind: PrometheusDatasource
                                     name: prometheus-datasource
-                                query: process_resident_memory_bytes{cluster=~"$cluster",instance=~"$instance",job="kube-controller-manager"}
+                                query: process_resident_memory_bytes{cluster=~"$cluster",instance=~"$instance",job="kube-scheduler"}
                                 seriesNameFormat: Resident Memory {{instance}}
         "3_1":
             kind: Panel
@@ -484,7 +545,7 @@ spec:
                                     name: prometheus-datasource
                                 query: |-
                                     rate(
-                                      process_cpu_seconds_total{cluster=~"$cluster",instance=~"$instance",job="kube-controller-manager"}[$__rate_interval]
+                                      process_cpu_seconds_total{cluster=~"$cluster",instance=~"$instance",job="kube-scheduler"}[$__rate_interval]
                                     )
                                 seriesNameFormat: '{{instance}}'
         "3_2":
@@ -519,7 +580,7 @@ spec:
                                 datasource:
                                     kind: PrometheusDatasource
                                     name: prometheus-datasource
-                                query: go_goroutines{cluster=~"$cluster",instance=~"$instance",job="kube-controller-manager"}
+                                query: go_goroutines{cluster=~"$cluster",instance=~"$instance",job="kube-scheduler"}
                                 seriesNameFormat: '{{instance}}'
         "3_3":
             kind: Panel
@@ -553,13 +614,13 @@ spec:
                                 datasource:
                                     kind: PrometheusDatasource
                                     name: prometheus-datasource
-                                query: go_gc_duration_seconds{cluster=~"$cluster",instance=~"$instance",job="kube-controller-manager"}
+                                query: go_gc_duration_seconds{cluster=~"$cluster",instance=~"$instance",job="kube-scheduler"}
                                 seriesNameFormat: '{{quantile}} - {{instance}}'
     layouts:
         - kind: Grid
           spec:
             display:
-                title: Controller Manager Status
+                title: Scheduler Status
             items:
                 - x: 0
                   "y": 0
@@ -570,26 +631,20 @@ spec:
         - kind: Grid
           spec:
             display:
-                title: Work Queue
+                title: Scheduling Rate
             items:
                 - x: 0
                   "y": 0
-                  width: 8
+                  width: 12
                   height: 8
                   content:
                     $ref: '#/spec/panels/1_0'
-                - x: 8
+                - x: 12
                   "y": 0
-                  width: 8
+                  width: 12
                   height: 8
                   content:
                     $ref: '#/spec/panels/1_1'
-                - x: 16
-                  "y": 0
-                  width: 8
-                  height: 8
-                  content:
-                    $ref: '#/spec/panels/1_2'
         - kind: Grid
           spec:
             display:
