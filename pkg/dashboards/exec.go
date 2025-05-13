@@ -17,9 +17,10 @@ import (
 )
 
 const (
-	JSONOutput     = "json"
-	YAMLOutput     = "yaml"
-	OperatorOutput = "operator"
+	JSONOutput         = "json"
+	YAMLOutput         = "yaml"
+	OperatorOutput     = "operator"
+	OperatorJSONOutput = "operator-json"
 )
 
 func init() {
@@ -37,13 +38,16 @@ func executeDashboardBuilder(builder dashboard.Builder, outputFormat string, out
 		output, err = yaml.Marshal(builder.Dashboard)
 		ext = YAMLOutput
 	case JSONOutput:
-		output, err = json.Marshal(builder.Dashboard)
+		output, err = json.MarshalIndent(builder.Dashboard, "", "  ")
 		ext = JSONOutput
 	case OperatorOutput:
 		output, err = k8syaml.Marshal(builderToOperatorResource(builder))
 		ext = YAMLOutput
+	case OperatorJSONOutput:
+		output, err = json.MarshalIndent(builderToOperatorResource(builder), "", "  ")
+		ext = JSONOutput
 	default:
-		err = fmt.Errorf("--output must be %q, %q or %q", JSONOutput, YAMLOutput, OperatorOutput)
+		err = fmt.Errorf("--output must be %q, %q, %q or %q", JSONOutput, YAMLOutput, OperatorOutput, OperatorJSONOutput)
 	}
 
 	if err != nil {
