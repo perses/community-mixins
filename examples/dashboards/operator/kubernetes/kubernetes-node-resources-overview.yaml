@@ -132,24 +132,43 @@ spec:
           spec:
             columnSettings:
             - align: left
+              format:
+                unit: ""
               header: Pod
               name: pod
             - align: right
+              format:
+                decimalPlaces: 4
+                unit: decimal
               header: CPU Usage
               name: 'value #1'
             - align: right
+              format:
+                decimalPlaces: 4
+                unit: decimal
               header: CPU Requests
               name: 'value #2'
             - align: right
+              format:
+                decimalPlaces: 4
+                unit: percent-decimal
               header: CPU Requests %
               name: 'value #3'
             - align: right
+              format:
+                decimalPlaces: 4
+                unit: decimal
               header: CPU Limits
               name: 'value #4'
             - align: right
+              format:
+                decimalPlaces: 4
+                unit: percent-decimal
               header: CPU Limits %
               name: 'value #5'
-            - hide: true
+            - format:
+                unit: ""
+              hide: true
               name: timestamp
             transforms:
             - kind: MergeSeries
@@ -335,33 +354,55 @@ spec:
           spec:
             columnSettings:
             - align: left
+              format:
+                unit: ""
               header: Pod
               name: pod
             - align: right
+              format:
+                unit: bytes
               header: Memory Usage
               name: 'value #1'
             - align: right
+              format:
+                unit: bytes
               header: Memory Requests
               name: 'value #2'
             - align: right
+              format:
+                decimalPlaces: 4
+                unit: percent-decimal
               header: Memory Requests %
               name: 'value #3'
             - align: right
+              format:
+                unit: bytes
               header: Memory Limits
               name: 'value #4'
             - align: right
+              format:
+                decimalPlaces: 4
+                unit: percent-decimal
               header: Memory Limits %
               name: 'value #5'
             - align: right
+              format:
+                unit: bytes
               header: Memory Usage (RSS)
               name: 'value #6'
             - align: right
+              format:
+                unit: bytes
               header: Memory Usage (Cache)
               name: 'value #7'
             - align: right
+              format:
+                unit: bytes
               header: Memory Usage (Swap)
               name: 'value #8'
-            - hide: true
+            - format:
+                unit: ""
+              hide: true
               name: timestamp
             transforms:
             - kind: MergeSeries

@@ -158,50 +158,80 @@
                 {
                   "name": "namespace",
                   "header": "Namespace",
+                  "format": {
+                    "unit": ""
+                  },
                   "align": "left"
                 },
                 {
                   "name": "value #1",
                   "header": "Rx Bytes",
+                  "format": {
+                    "unit": "bytes/sec"
+                  },
                   "align": "right"
                 },
                 {
                   "name": "value #2",
                   "header": "Tx Bytes",
+                  "format": {
+                    "unit": "bytes/sec"
+                  },
                   "align": "right"
                 },
                 {
                   "name": "value #3",
                   "header": "Rx Bytes (Avg)",
+                  "format": {
+                    "unit": "bytes/sec"
+                  },
                   "align": "right"
                 },
                 {
                   "name": "value #4",
                   "header": "Tx Bytes (Avg)",
+                  "format": {
+                    "unit": "bytes/sec"
+                  },
                   "align": "right"
                 },
                 {
                   "name": "value #5",
                   "header": "Rx Packets",
+                  "format": {
+                    "unit": "packets/sec"
+                  },
                   "align": "right"
                 },
                 {
                   "name": "value #6",
                   "header": "Tx Packets",
+                  "format": {
+                    "unit": "packets/sec"
+                  },
                   "align": "right"
                 },
                 {
                   "name": "value #7",
                   "header": "Rx Packets Dropped",
+                  "format": {
+                    "unit": "packets/sec"
+                  },
                   "align": "right"
                 },
                 {
                   "name": "value #8",
                   "header": "Tx Packets Dropped",
+                  "format": {
+                    "unit": "packets/sec"
+                  },
                   "align": "right"
                 },
                 {
                   "name": "timestamp",
+                  "format": {
+                    "unit": ""
+                  },
                   "hide": true
                 }
               ],

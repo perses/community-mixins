@@ -187,27 +187,43 @@ spec:
           spec:
             columnSettings:
             - align: left
+              format:
+                unit: ""
               header: Pod
               name: pod
             - align: right
+              format:
+                unit: bytes/sec
               header: Current Receive Bandwidth
               name: 'value #1'
             - align: right
+              format:
+                unit: bytes/sec
               header: Current Transmit Bandwidth
               name: 'value #2'
             - align: right
+              format:
+                unit: packets/sec
               header: Rate of Received Packets
               name: 'value #3'
             - align: right
+              format:
+                unit: packets/sec
               header: Rate of Transmitted Packets
               name: 'value #4'
             - align: right
+              format:
+                unit: packets/sec
               header: Rate of Received Packets Dropped
               name: 'value #5'
             - align: right
+              format:
+                unit: packets/sec
               header: Rate of Transmitted Packets Dropped
               name: 'value #6'
-            - hide: true
+            - format:
+                unit: ""
+              hide: true
               name: timestamp
             transforms:
             - kind: MergeSeries

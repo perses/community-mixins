@@ -183,40 +183,64 @@
                 {
                   "name": "pod",
                   "header": "Pod",
+                  "format": {
+                    "unit": ""
+                  },
                   "align": "left"
                 },
                 {
                   "name": "value #1",
                   "header": "Current Receive Bandwidth",
+                  "format": {
+                    "unit": "bytes/sec"
+                  },
                   "align": "right"
                 },
                 {
                   "name": "value #2",
                   "header": "Current Transmit Bandwidth",
+                  "format": {
+                    "unit": "bytes/sec"
+                  },
                   "align": "right"
                 },
                 {
                   "name": "value #3",
                   "header": "Rate of Received Packets",
+                  "format": {
+                    "unit": "packets/sec"
+                  },
                   "align": "right"
                 },
                 {
                   "name": "value #4",
                   "header": "Rate of Transmitted Packets",
+                  "format": {
+                    "unit": "packets/sec"
+                  },
                   "align": "right"
                 },
                 {
                   "name": "value #5",
                   "header": "Rate of Received Packets Dropped",
+                  "format": {
+                    "unit": "packets/sec"
+                  },
                   "align": "right"
                 },
                 {
                   "name": "value #6",
                   "header": "Rate of Transmitted Packets Dropped",
+                  "format": {
+                    "unit": "packets/sec"
+                  },
                   "align": "right"
                 },
                 {
                   "name": "timestamp",
+                  "format": {
+                    "unit": ""
+                  },
                   "hide": true
                 }
               ],

@@ -131,18 +131,33 @@ spec:
                               align: left
                             - name: 'value #1'
                               header: CPU Usage
+                              format:
+                                unit: decimal
+                                decimalPlaces: 4
                               align: right
                             - name: 'value #2'
                               header: CPU Requests
+                              format:
+                                unit: decimal
+                                decimalPlaces: 4
                               align: right
                             - name: 'value #3'
                               header: CPU Requests %
+                              format:
+                                unit: percent-decimal
+                                decimalPlaces: 4
                               align: right
                             - name: 'value #4'
                               header: CPU Limits
+                              format:
+                                unit: decimal
+                                decimalPlaces: 4
                               align: right
                             - name: 'value #5'
                               header: CPU Limits %
+                              format:
+                                unit: percent-decimal
+                                decimalPlaces: 4
                               align: right
                             - name: timestamp
                               hide: true
@@ -285,18 +300,33 @@ spec:
                               align: left
                             - name: 'value #1'
                               header: Memory Usage
+                              format:
+                                unit: bytes
+                                decimalPlaces: 4
                               align: right
                             - name: 'value #2'
                               header: Memory Requests
+                              format:
+                                unit: bytes
+                                decimalPlaces: 4
                               align: right
                             - name: 'value #3'
                               header: Memory Requests %
+                              format:
+                                unit: percent-decimal
+                                decimalPlaces: 4
                               align: right
                             - name: 'value #4'
                               header: Memory Limits
+                              format:
+                                unit: bytes
+                                decimalPlaces: 4
                               align: right
                             - name: 'value #5'
                               header: Memory Limits %
+                              format:
+                                unit: percent-decimal
+                                decimalPlaces: 4
                               align: right
                             - name: timestamp
                               hide: true
@@ -401,21 +431,33 @@ spec:
                               align: left
                             - name: 'value #1'
                               header: Current Receive Bandwidth
+                              format:
+                                unit: bytes/sec
                               align: right
                             - name: 'value #2'
                               header: Current Transmit Bandwidth
+                              format:
+                                unit: bytes/sec
                               align: right
                             - name: 'value #3'
                               header: Rate of Received Packets
+                              format:
+                                unit: packets/sec
                               align: right
                             - name: 'value #4'
                               header: Rate of Transmitted Packets
+                              format:
+                                unit: packets/sec
                               align: right
                             - name: 'value #5'
                               header: Rate of Received Packets Dropped
+                              format:
+                                unit: packets/sec
                               align: right
                             - name: 'value #6'
                               header: Rate of Transmitted Packets Dropped
+                              format:
+                                unit: packets/sec
                               align: right
                             - name: timestamp
                               hide: true

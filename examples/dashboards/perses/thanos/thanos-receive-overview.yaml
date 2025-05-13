@@ -1233,6 +1233,8 @@ spec:
                               header: Namespace
                             - name: value
                               header: Uploaded Ago
+                              format:
+                                unit: seconds
                             - name: timestamp
                               hide: true
                 queries:

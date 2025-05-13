@@ -149,35 +149,61 @@
                 {
                   "name": "pod",
                   "header": "Pod",
+                  "format": {
+                    "unit": ""
+                  },
                   "align": "left"
                 },
                 {
                   "name": "value #1",
                   "header": "CPU Usage",
+                  "format": {
+                    "unit": "decimal",
+                    "decimalPlaces": 4
+                  },
                   "align": "right"
                 },
                 {
                   "name": "value #2",
                   "header": "CPU Requests",
+                  "format": {
+                    "unit": "decimal",
+                    "decimalPlaces": 4
+                  },
                   "align": "right"
                 },
                 {
                   "name": "value #3",
                   "header": "CPU Requests %",
+                  "format": {
+                    "unit": "percent-decimal",
+                    "decimalPlaces": 4
+                  },
                   "align": "right"
                 },
                 {
                   "name": "value #4",
                   "header": "CPU Limits",
+                  "format": {
+                    "unit": "decimal",
+                    "decimalPlaces": 4
+                  },
                   "align": "right"
                 },
                 {
                   "name": "value #5",
                   "header": "CPU Limits %",
+                  "format": {
+                    "unit": "percent-decimal",
+                    "decimalPlaces": 4
+                  },
                   "align": "right"
                 },
                 {
                   "name": "timestamp",
+                  "format": {
+                    "unit": ""
+                  },
                   "hide": true
                 }
               ],
@@ -414,50 +440,82 @@
                 {
                   "name": "pod",
                   "header": "Pod",
+                  "format": {
+                    "unit": ""
+                  },
                   "align": "left"
                 },
                 {
                   "name": "value #1",
                   "header": "Memory Usage",
+                  "format": {
+                    "unit": "bytes"
+                  },
                   "align": "right"
                 },
                 {
                   "name": "value #2",
                   "header": "Memory Requests",
+                  "format": {
+                    "unit": "bytes"
+                  },
                   "align": "right"
                 },
                 {
                   "name": "value #3",
                   "header": "Memory Requests %",
+                  "format": {
+                    "unit": "percent-decimal",
+                    "decimalPlaces": 4
+                  },
                   "align": "right"
                 },
                 {
                   "name": "value #4",
                   "header": "Memory Limits",
+                  "format": {
+                    "unit": "bytes"
+                  },
                   "align": "right"
                 },
                 {
                   "name": "value #5",
                   "header": "Memory Limits %",
+                  "format": {
+                    "unit": "percent-decimal",
+                    "decimalPlaces": 4
+                  },
                   "align": "right"
                 },
                 {
                   "name": "value #6",
                   "header": "Memory Usage (RSS)",
+                  "format": {
+                    "unit": "bytes"
+                  },
                   "align": "right"
                 },
                 {
                   "name": "value #7",
                   "header": "Memory Usage (Cache)",
+                  "format": {
+                    "unit": "bytes"
+                  },
                   "align": "right"
                 },
                 {
                   "name": "value #8",
                   "header": "Memory Usage (Swap)",
+                  "format": {
+                    "unit": "bytes"
+                  },
                   "align": "right"
                 },
                 {
                   "name": "timestamp",
+                  "format": {
+                    "unit": ""
+                  },
                   "hide": true
                 }
               ],
