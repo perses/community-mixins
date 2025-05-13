@@ -5,9 +5,9 @@ import (
 	"github.com/perses/community-dashboards/pkg/promql"
 	"github.com/perses/perses/go-sdk/panel"
 	panelgroup "github.com/perses/perses/go-sdk/panel-group"
-	statPanel "github.com/perses/perses/go-sdk/panel/stat"
-	timeSeriesPanel "github.com/perses/perses/go-sdk/panel/time-series"
-	"github.com/perses/perses/go-sdk/prometheus/query"
+	"github.com/perses/plugins/prometheus/sdk/go/query"
+	statPanel "github.com/perses/plugins/statchart/sdk/go"
+	timeSeriesPanel "github.com/perses/plugins/timeserieschart/sdk/go"
 
 	commonSdk "github.com/perses/perses/go-sdk/common"
 )
