@@ -455,7 +455,7 @@ spec:
                 mode: auto
             yAxis:
               format:
-                unit: milliseconds
+                unit: seconds
         queries:
         - kind: TimeSeriesQuery
           spec:
@@ -719,7 +719,7 @@ spec:
                 mode: auto
             yAxis:
               format:
-                unit: milliseconds
+                unit: seconds
         queries:
         - kind: TimeSeriesQuery
           spec:
@@ -880,7 +880,7 @@ spec:
                 mode: auto
             yAxis:
               format:
-                unit: milliseconds
+                unit: seconds
         queries:
         - kind: TimeSeriesQuery
           spec:
@@ -1120,7 +1120,7 @@ spec:
                 mode: auto
             yAxis:
               format:
-                unit: milliseconds
+                unit: seconds
         queries:
         - kind: TimeSeriesQuery
           spec:
