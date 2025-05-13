@@ -7,6 +7,7 @@ import (
 	"github.com/perses/community-dashboards/pkg/dashboards/alertmanager"
 	"github.com/perses/community-dashboards/pkg/dashboards/blackbox"
 	k8sComputeResources "github.com/perses/community-dashboards/pkg/dashboards/kubernetes/compute_resources"
+	controller_manager "github.com/perses/community-dashboards/pkg/dashboards/kubernetes/controller_manager"
 	kubelet "github.com/perses/community-dashboards/pkg/dashboards/kubernetes/kubelet"
 	k8sNetworking "github.com/perses/community-dashboards/pkg/dashboards/kubernetes/networking"
 	k8sPersistentVolume "github.com/perses/community-dashboards/pkg/dashboards/kubernetes/persistent_volume"
@@ -51,6 +52,7 @@ func main() {
 	dashboardWriter.Add(k8sComputeResources.BuildKubernetesWorkloadNamespaceOverview(project, datasource, clusterLabelName))
 	dashboardWriter.Add(k8sComputeResources.BuildKubernetesMultiClusterOverview(project, datasource, clusterLabelName))
 	dashboardWriter.Add(kubelet.BuildKubeletOverview(project, datasource, clusterLabelName))
+	dashboardWriter.Add(controller_manager.BuildControllerManagerOverview(project, datasource, clusterLabelName))
 	dashboardWriter.Add(k8sNetworking.BuildKubernetesClusterOverview(project, datasource, clusterLabelName))
 	dashboardWriter.Add(k8sNetworking.BuildKubernetesNamespaceByPodOverview(project, datasource, clusterLabelName))
 	dashboardWriter.Add(k8sNetworking.BuildKubernetesNamespaceByWorkloadOverview(project, datasource, clusterLabelName))
