@@ -115,10 +115,10 @@ func withKubeletResources(datasource string, clusterLabelMatcher promql.LabelMat
 	return dashboard.AddPanelGroup("Resource Usage",
 		panelgroup.PanelsPerLine(2),
 		panelgroup.PanelHeight(10),
-		panelsGostats.MemoryUsage(datasource, labelMatchersToUse...),
-		panels.KubeletCPU(datasource, labelMatchersToUse...),
-		panelsGostats.Goroutines(datasource, labelMatchersToUse...),
-		panelsGostats.GarbageCollectionPauseTimeQuantiles(datasource, labelMatchersToUse...),
+		panelsGostats.MemoryUsage(datasource, "instance", labelMatchersToUse...),
+		panelsGostats.CPUUsage(datasource, "instance", labelMatchersToUse...),
+		panelsGostats.Goroutines(datasource, "instance", labelMatchersToUse...),
+		panelsGostats.GarbageCollectionPauseTimeQuantiles(datasource, "instance", labelMatchersToUse...),
 	)
 }
 

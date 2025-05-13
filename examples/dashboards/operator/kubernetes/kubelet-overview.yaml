@@ -1091,7 +1091,7 @@ spec:
                   kind: PrometheusDatasource
                   name: prometheus-datasource
                 query: go_memstats_alloc_bytes{cluster=~"$cluster",instance=~"$instance",job="kubelet"}
-                seriesNameFormat: Alloc All {{pod}}
+                seriesNameFormat: Alloc All {{instance}}
         - kind: TimeSeriesQuery
           spec:
             plugin:
@@ -1101,7 +1101,7 @@ spec:
                   kind: PrometheusDatasource
                   name: prometheus-datasource
                 query: go_memstats_heap_alloc_bytes{cluster=~"$cluster",instance=~"$instance",job="kubelet"}
-                seriesNameFormat: Alloc Heap {{pod}}
+                seriesNameFormat: Alloc Heap {{instance}}
         - kind: TimeSeriesQuery
           spec:
             plugin:
@@ -1114,7 +1114,7 @@ spec:
                   rate(
                     go_memstats_alloc_bytes_total{cluster=~"$cluster",instance=~"$instance",job="kubelet"}[$__rate_interval]
                   )
-                seriesNameFormat: Alloc Rate All {{pod}}
+                seriesNameFormat: Alloc Rate All {{instance}}
         - kind: TimeSeriesQuery
           spec:
             plugin:
@@ -1127,7 +1127,7 @@ spec:
                   rate(
                     go_memstats_heap_alloc_bytes{cluster=~"$cluster",instance=~"$instance",job="kubelet"}[$__rate_interval]
                   )
-                seriesNameFormat: Alloc Rate Heap {{pod}}
+                seriesNameFormat: Alloc Rate Heap {{instance}}
         - kind: TimeSeriesQuery
           spec:
             plugin:
@@ -1137,7 +1137,7 @@ spec:
                   kind: PrometheusDatasource
                   name: prometheus-datasource
                 query: go_memstats_stack_inuse_bytes{cluster=~"$cluster",instance=~"$instance",job="kubelet"}
-                seriesNameFormat: Inuse Stack {{pod}}
+                seriesNameFormat: Inuse Stack {{instance}}
         - kind: TimeSeriesQuery
           spec:
             plugin:
@@ -1147,7 +1147,7 @@ spec:
                   kind: PrometheusDatasource
                   name: prometheus-datasource
                 query: go_memstats_heap_inuse_bytes{cluster=~"$cluster",instance=~"$instance",job="kubelet"}
-                seriesNameFormat: Inuse Heap {{pod}}
+                seriesNameFormat: Inuse Heap {{instance}}
         - kind: TimeSeriesQuery
           spec:
             plugin:
@@ -1157,12 +1157,12 @@ spec:
                   kind: PrometheusDatasource
                   name: prometheus-datasource
                 query: process_resident_memory_bytes{cluster=~"$cluster",instance=~"$instance",job="kubelet"}
-                seriesNameFormat: Resident Memory {{pod}}
+                seriesNameFormat: Resident Memory {{instance}}
     "11_1":
       kind: Panel
       spec:
         display:
-          description: Kubelete CPU Usage
+          description: Shows the CPU usage of the component.
           name: CPU Usage
         plugin:
           kind: TimeSeriesChart
@@ -1225,7 +1225,7 @@ spec:
                   kind: PrometheusDatasource
                   name: prometheus-datasource
                 query: go_goroutines{cluster=~"$cluster",instance=~"$instance",job="kubelet"}
-                seriesNameFormat: '{{pod}}'
+                seriesNameFormat: '{{instance}}'
     "11_3":
       kind: Panel
       spec:
@@ -1259,7 +1259,7 @@ spec:
                   kind: PrometheusDatasource
                   name: prometheus-datasource
                 query: go_gc_duration_seconds{cluster=~"$cluster",instance=~"$instance",job="kubelet"}
-                seriesNameFormat: '{{quantile}} - {{pod}}'
+                seriesNameFormat: '{{quantile}} - {{instance}}'
   variables:
   - kind: ListVariable
     spec:

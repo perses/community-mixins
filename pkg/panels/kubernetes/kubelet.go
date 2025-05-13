@@ -723,39 +723,3 @@ func RequestDurationQuantile(datasourceName string, labelMatchers ...promql.Labe
 		),
 	)
 }
-
-func KubeletCPU(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
-	return panelgroup.AddPanel("CPU Usage",
-		panel.Description("Kubelete CPU Usage"),
-		timeSeriesPanel.Chart(
-			timeSeriesPanel.WithYAxis(timeSeriesPanel.YAxis{
-				Format: &commonSdk.Format{
-					Unit:          string(commonSdk.DecimalUnit),
-					DecimalPlaces: 0,
-				},
-			}),
-			timeSeriesPanel.WithLegend(timeSeriesPanel.Legend{
-				Position: timeSeriesPanel.BottomPosition,
-				Mode:     timeSeriesPanel.TableMode,
-				Values:   []commonSdk.Calculation{commonSdk.LastCalculation},
-			}),
-			timeSeriesPanel.WithVisual(timeSeriesPanel.Visual{
-				Display:      timeSeriesPanel.LineDisplay,
-				ConnectNulls: false,
-				LineWidth:    0.25,
-				AreaOpacity:  0.5,
-				Palette:      timeSeriesPanel.Palette{Mode: timeSeriesPanel.AutoMode},
-			}),
-		),
-		panel.AddQuery(
-			query.PromQL(
-				promql.SetLabelMatchers(
-					"rate(process_cpu_seconds_total{cluster=~'$cluster',"+GetKubeletMatcher()+", instance=~'$instance'}[$__rate_interval])",
-					labelMatchers,
-				),
-				dashboards.AddQueryDataSource(datasourceName),
-				query.SeriesNameFormat("{{instance}}"),
-			),
-		),
-	)
-}

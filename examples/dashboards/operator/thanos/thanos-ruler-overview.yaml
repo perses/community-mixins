@@ -149,20 +149,26 @@ spec:
       - content:
           $ref: '#/spec/panels/5_0'
         height: 8
-        width: 8
+        width: 6
         x: 0
         "y": 0
       - content:
           $ref: '#/spec/panels/5_1'
         height: 8
-        width: 8
-        x: 8
+        width: 6
+        x: 6
         "y": 0
       - content:
           $ref: '#/spec/panels/5_2'
         height: 8
-        width: 8
-        x: 16
+        width: 6
+        x: 12
+        "y": 0
+      - content:
+          $ref: '#/spec/panels/5_3'
+        height: 8
+        width: 6
+        x: 18
         "y": 0
   panels:
     "0_0":
@@ -934,6 +940,40 @@ spec:
       kind: Panel
       spec:
         display:
+          description: Shows the CPU usage of the component.
+          name: CPU Usage
+        plugin:
+          kind: TimeSeriesChart
+          spec:
+            legend:
+              mode: table
+              position: bottom
+              values:
+              - last
+            visual:
+              areaOpacity: 0.5
+              display: line
+              lineWidth: 0.25
+              palette:
+                mode: auto
+            yAxis:
+              format:
+                unit: decimal
+        queries:
+        - kind: TimeSeriesQuery
+          spec:
+            plugin:
+              kind: PrometheusTimeSeriesQuery
+              spec:
+                datasource:
+                  kind: PrometheusDatasource
+                  name: prometheus-datasource
+                query: rate(process_cpu_seconds_total{job=~"$job",namespace="$namespace"}[$__rate_interval])
+                seriesNameFormat: '{{pod}}'
+    "5_1":
+      kind: Panel
+      spec:
+        display:
           description: Shows various memory usage metrics of the component.
           name: Memory Usage
         plugin:
@@ -1024,7 +1064,7 @@ spec:
                   name: prometheus-datasource
                 query: process_resident_memory_bytes{job=~"$job",namespace="$namespace"}
                 seriesNameFormat: Resident Memory {{pod}}
-    "5_1":
+    "5_2":
       kind: Panel
       spec:
         display:
@@ -1058,7 +1098,7 @@ spec:
                   name: prometheus-datasource
                 query: go_goroutines{job=~"$job",namespace="$namespace"}
                 seriesNameFormat: '{{pod}}'
-    "5_2":
+    "5_3":
       kind: Panel
       spec:
         display:
