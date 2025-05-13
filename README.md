@@ -31,6 +31,15 @@ Welcome to the **Perses Community Dashboards** repository! This project is desig
 - Compute Resources / Namespace (Workloads)
 - Compute Resources / Workloads
 - Compute Resources / Pod
+- Networking / Cluster
+- Networking / Namespace (Pods)
+- Networking / Namespace (Workload)
+- Networking / Pod
+- Networking / Workload
+- Persistent Volume
+- Kubelet
+- Controller Manager
+- Scheduler
 
 ### Blackbox Exporter
 - Blackbox Exporter Overview
