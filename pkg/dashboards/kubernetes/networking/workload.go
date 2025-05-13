@@ -1,4 +1,4 @@
-package compute_resources
+package networking
 
 import (
 	"github.com/perses/community-dashboards/pkg/dashboards"
@@ -11,43 +11,21 @@ import (
 	labelValuesVar "github.com/perses/plugins/prometheus/sdk/go/variable/label-values"
 )
 
-func withWorkloadCPUUsageGroup(datasource string, labelMatcher promql.LabelMatcher) dashboard.Option {
-	return dashboard.AddPanelGroup("CPU Usage",
-		panelgroup.PanelsPerLine(1),
+func withWorkloadCurrentRateOfBytesGroup(datasource string, labelMatcher promql.LabelMatcher) dashboard.Option {
+	return dashboard.AddPanelGroup("Current Rate of Bytes",
+		panelgroup.PanelsPerLine(2),
 		panelgroup.PanelHeight(8),
-		panels.KubernetesCPUUsage("workload", datasource, labelMatcher),
+		panels.KubernetesCurrentRateOfBytesReceived("workload-networking", datasource, labelMatcher),
+		panels.KubernetesCurrentRateOfBytesTransmitted("workload-networking", datasource, labelMatcher),
 	)
 }
 
-func withWorkloadCPUUsageQuotaGroup(datasource string, labelMatcher promql.LabelMatcher) dashboard.Option {
-	return dashboard.AddPanelGroup("CPU Usage Quota",
-		panelgroup.PanelsPerLine(1),
-		panelgroup.PanelHeight(10),
-		panels.WorkloadCPUUsageQuota(datasource, labelMatcher),
-	)
-}
-
-func withWorkloadMemoryUsageGroup(datasource string, labelMatcher promql.LabelMatcher) dashboard.Option {
-	return dashboard.AddPanelGroup("Memory Usage",
-		panelgroup.PanelsPerLine(1),
+func withWorkloadAverageRateOfBytesGroup(datasource string, labelMatcher promql.LabelMatcher) dashboard.Option {
+	return dashboard.AddPanelGroup("Average Rate of Bytes",
+		panelgroup.PanelsPerLine(2),
 		panelgroup.PanelHeight(8),
-		panels.KubernetesMemoryUsage("workload", datasource, labelMatcher),
-	)
-}
-
-func withWorkloadMemoryUsageQuotaGroup(datasource string, labelMatcher promql.LabelMatcher) dashboard.Option {
-	return dashboard.AddPanelGroup("Memory Usage Quota",
-		panelgroup.PanelsPerLine(1),
-		panelgroup.PanelHeight(10),
-		panels.WorkloadMemoryUsageQuota(datasource, labelMatcher),
-	)
-}
-
-func withWorkloadNetworkUsageGroup(datasource string, labelMatcher promql.LabelMatcher) dashboard.Option {
-	return dashboard.AddPanelGroup("Network Usage",
-		panelgroup.PanelsPerLine(1),
-		panelgroup.PanelHeight(10),
-		panels.WorkloadCurrentNetworkUsage(datasource, labelMatcher),
+		panels.KubernetesAverageRateOfBytesReceived("workload-networking", datasource, labelMatcher),
+		panels.KubernetesAverageRateOfBytesTransmitted("workload-networking", datasource, labelMatcher),
 	)
 }
 
@@ -55,17 +33,8 @@ func withWorkloadBandwidthGroup(datasource string, labelMatcher promql.LabelMatc
 	return dashboard.AddPanelGroup("Bandwidth",
 		panelgroup.PanelsPerLine(2),
 		panelgroup.PanelHeight(8),
-		panels.KubernetesReceiveBandwidth("workload", datasource, labelMatcher),
-		panels.KubernetesTransmitBandwidth("workload", datasource, labelMatcher),
-	)
-}
-
-func withWorkloadAvgContainerBandwidthGroup(datasource string, labelMatcher promql.LabelMatcher) dashboard.Option {
-	return dashboard.AddPanelGroup("Average Container Bandwidth",
-		panelgroup.PanelsPerLine(2),
-		panelgroup.PanelHeight(8),
-		panels.KubernetesAvgContainerBandwidthReceived("workload", datasource, labelMatcher),
-		panels.KubernetesAvgContainerBandwidthTransmitted("workload", datasource, labelMatcher),
+		panels.KubernetesReceiveBandwidth("workload-networking", datasource, labelMatcher),
+		panels.KubernetesTransmitBandwidth("workload-networking", datasource, labelMatcher),
 	)
 }
 
@@ -73,8 +42,8 @@ func withWorkloadRateOfPacketsGroup(datasource string, labelMatcher promql.Label
 	return dashboard.AddPanelGroup("Rate of Packets",
 		panelgroup.PanelsPerLine(2),
 		panelgroup.PanelHeight(8),
-		panels.KubernetesReceivedPackets("workload", datasource, labelMatcher),
-		panels.KubernetesTransmittedPackets("workload", datasource, labelMatcher),
+		panels.KubernetesReceivedPackets("workload-networking", datasource, labelMatcher),
+		panels.KubernetesTransmittedPackets("workload-networking", datasource, labelMatcher),
 	)
 }
 
@@ -82,17 +51,17 @@ func withWorkloadRateOfPacketsDroppedGroup(datasource string, labelMatcher promq
 	return dashboard.AddPanelGroup("Rate of Packets Dropped",
 		panelgroup.PanelsPerLine(2),
 		panelgroup.PanelHeight(8),
-		panels.KubernetesReceivedPacketsDropped("workload", datasource, labelMatcher),
-		panels.KubernetesTransmittedPacketsDropped("workload", datasource, labelMatcher),
+		panels.KubernetesReceivedPacketsDropped("workload-networking", datasource, labelMatcher),
+		panels.KubernetesTransmittedPacketsDropped("workload-networking", datasource, labelMatcher),
 	)
 }
 
 func BuildKubernetesWorkloadOverview(project string, datasource string, clusterLabelName string) dashboards.DashboardResult {
 	clusterLabelMatcher := dashboards.GetClusterLabelMatcher(clusterLabelName)
 	return dashboards.NewDashboardResult(
-		dashboard.New("kubernetes-workload-resources-overview",
+		dashboard.New("kubernetes-workload-networking-overview",
 			dashboard.ProjectName(project),
-			dashboard.Name("Kubernetes / Compute Resources / Workload"),
+			dashboard.Name("Kubernetes / Networking / Workload"),
 			dashboard.AddVariable("cluster",
 				listVar.List(
 					labelValuesVar.PrometheusLabelValues("cluster",
@@ -107,7 +76,7 @@ func BuildKubernetesWorkloadOverview(project string, datasource string, clusterL
 					labelValuesVar.PrometheusLabelValues("namespace",
 						labelValuesVar.Matchers(
 							promql.SetLabelMatchers(
-								"kube_namespace_status_phase{"+panels.GetKubeStateMetricsMatcher()+"}",
+								"container_network_receive_packets_total",
 								[]promql.LabelMatcher{{Name: "cluster", Type: "=", Value: "$cluster"}},
 							),
 						),
@@ -151,13 +120,9 @@ func BuildKubernetesWorkloadOverview(project string, datasource string, clusterL
 					listVar.DisplayName("workload"),
 				),
 			),
-			withWorkloadCPUUsageGroup(datasource, clusterLabelMatcher),
-			withWorkloadCPUUsageQuotaGroup(datasource, clusterLabelMatcher),
-			withWorkloadMemoryUsageGroup(datasource, clusterLabelMatcher),
-			withWorkloadMemoryUsageQuotaGroup(datasource, clusterLabelMatcher),
-			withWorkloadNetworkUsageGroup(datasource, clusterLabelMatcher),
+			withWorkloadCurrentRateOfBytesGroup(datasource, clusterLabelMatcher),
+			withWorkloadAverageRateOfBytesGroup(datasource, clusterLabelMatcher),
 			withWorkloadBandwidthGroup(datasource, clusterLabelMatcher),
-			withWorkloadAvgContainerBandwidthGroup(datasource, clusterLabelMatcher),
 			withWorkloadRateOfPacketsGroup(datasource, clusterLabelMatcher),
 			withWorkloadRateOfPacketsDroppedGroup(datasource, clusterLabelMatcher),
 		),

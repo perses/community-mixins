@@ -26,8 +26,8 @@ func withKubeletStats(datasource string, labelMatcher promql.LabelMatcher) dashb
 func withKubeletOperations(datasource string, labelMatcher promql.LabelMatcher) dashboard.Option {
 	return dashboard.AddPanelGroup("Operation Rate and Errors",
 		panelgroup.PanelsPerLine(2),
-		panels.RunningKubeletStat(datasource, labelMatcher),
-		panels.RunningPodStat(datasource, labelMatcher),
+		panels.OperationRate(datasource, labelMatcher),
+		panels.OperationErrorRate(datasource, labelMatcher),
 	)
 }
 

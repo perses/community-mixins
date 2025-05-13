@@ -1244,3 +1244,337 @@ func KubernetesTransmittedPacketsDropped(granularity, datasourceName string, lab
 
 	return panelgroup.AddPanel("Rate of Transmitted Packets Dropped", panelOpts...)
 }
+
+func KubernetesCurrentRateOfBytesReceived(granularity, datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
+	var description string
+	var queries []panel.Option
+
+	switch granularity {
+	case "cluster-networking":
+		description = "Shows the rate of bytes received by namespace in a cluster."
+		queries = []panel.Option{
+			panel.AddQuery(
+				query.PromQL(
+					promql.SetLabelMatchers(
+						"sum by (namespace) (\n    rate(container_network_receive_bytes_total{cluster=\"$cluster\",namespace!=\"\"}[$__rate_interval])\n  * on (cluster,namespace,pod) group_left ()\n    topk by (cluster,namespace,pod) (\n      1,\n      max by (cluster,namespace,pod) (kube_pod_info{host_network=\"false\"})\n    )\n)\n",
+						labelMatchers,
+					),
+					dashboards.AddQueryDataSource(datasourceName),
+					query.SeriesNameFormat("{{namespace}}"),
+				),
+			),
+		}
+	case "namespace-pod-networking":
+		description = "Shows the rate of bytes received by top pods in a namespace in a cluster."
+		queries = []panel.Option{
+			panel.AddQuery(
+				query.PromQL(
+					promql.SetLabelMatchers(
+						"sum (\n    rate(container_network_receive_bytes_total{cluster=\"$cluster\",namespace=~\"$namespace\"}[$__rate_interval])\n  * on (cluster,namespace,pod) group_left ()\n    topk by (cluster,namespace,pod) (\n      1,\n      max by (cluster,namespace,pod) (kube_pod_info{host_network=\"false\"})\n    )\n)\n",
+						labelMatchers,
+					),
+					dashboards.AddQueryDataSource(datasourceName),
+					query.SeriesNameFormat("{{pod}}"),
+				),
+			),
+		}
+	case "namespace-workload-networking":
+		description = "Shows the rate of bytes received by top workload in a namespace in a cluster."
+		queries = []panel.Option{
+			panel.AddQuery(
+				query.PromQL(
+					promql.SetLabelMatchers(
+						"sort_desc(sum(rate(container_network_receive_bytes_total{cluster=\"$cluster\",namespace=\"$namespace\"}[$__rate_interval])\n* on (cluster,namespace,pod) group_left ()\n    topk by (cluster,namespace,pod) (\n      1,\n      max by (cluster,namespace,pod) (kube_pod_info{host_network=\"false\"})\n    )\n* on (cluster,namespace,pod)\ngroup_left(workload,workload_type) namespace_workload_pod:kube_pod_owner:relabel{cluster=\"$cluster\",namespace=\"$namespace\", workload=~\".+\", workload_type=~\"$type\"}) by (workload))\n",
+						labelMatchers,
+					),
+					dashboards.AddQueryDataSource(datasourceName),
+					query.SeriesNameFormat("{{workload}}"),
+				),
+			),
+		}
+	case "workload-networking":
+		description = "Shows the rate of bytes received by top pods in a workload in a cluster."
+		queries = []panel.Option{
+			panel.AddQuery(
+				query.PromQL(
+					promql.SetLabelMatchers(
+						"sort_desc(sum(rate(container_network_receive_bytes_total{"+GetCAdvisorMatcher()+", cluster=\"$cluster\",namespace=~\"$namespace\"}[$__rate_interval])\n* on (namespace,pod)\ngroup_left(workload,workload_type) namespace_workload_pod:kube_pod_owner:relabel{cluster=\"$cluster\",namespace=~\"$namespace\", workload=~\"$workload\", workload_type=~\"$type\"}) by (pod))\n",
+						labelMatchers,
+					),
+					dashboards.AddQueryDataSource(datasourceName),
+					query.SeriesNameFormat("{{pod}}"),
+				),
+			),
+		}
+	case "pod-networking":
+		description = "Shows the rate of bytes received by a pod in a cluster."
+		queries = []panel.Option{
+			panel.AddQuery(
+				query.PromQL(
+					promql.SetLabelMatchers(
+						"sum(rate(container_network_receive_bytes_total{cluster=\"$cluster\",namespace=~\"$namespace\", pod=~\"$pod\"}[$__rate_interval]))",
+						labelMatchers,
+					),
+					dashboards.AddQueryDataSource(datasourceName),
+					query.SeriesNameFormat("{{pod}}"),
+				),
+			),
+		}
+	}
+
+	panelOpts := []panel.Option{
+		panel.Description(description),
+		timeSeriesPanel.Chart(
+			timeSeriesPanel.WithYAxis(timeSeriesPanel.YAxis{
+				Format: &commonSdk.Format{
+					Unit: string(commonSdk.BytesPerSecondsUnit),
+				},
+			}),
+			timeSeriesPanel.WithLegend(timeSeriesPanel.Legend{
+				Position: timeSeriesPanel.BottomPosition,
+				Mode:     timeSeriesPanel.ListMode,
+				Size:     timeSeriesPanel.SmallSize,
+			}),
+			timeSeriesPanel.WithVisual(timeSeriesPanel.Visual{
+				Display:      timeSeriesPanel.LineDisplay,
+				ConnectNulls: false,
+				LineWidth:    0.25,
+				AreaOpacity:  0.75,
+				Palette:      timeSeriesPanel.Palette{Mode: timeSeriesPanel.AutoMode},
+			}),
+		),
+	}
+	panelOpts = append(panelOpts, queries...)
+
+	return panelgroup.AddPanel("Current Rate of Bytes Received", panelOpts...)
+}
+
+func KubernetesCurrentRateOfBytesTransmitted(granularity, datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
+	var description string
+	var queries []panel.Option
+
+	switch granularity {
+	case "cluster-networking":
+		description = "Shows the rate of bytes transmitted by namespace in a cluster."
+		queries = []panel.Option{
+			panel.AddQuery(
+				query.PromQL(
+					promql.SetLabelMatchers(
+						"sum by (namespace) (\n    rate(container_network_transmit_bytes_total{cluster=\"$cluster\",namespace!=\"\"}[$__rate_interval])\n  * on (cluster,namespace,pod) group_left ()\n    topk by (cluster,namespace,pod) (\n      1,\n      max by (cluster,namespace,pod) (kube_pod_info{host_network=\"false\"})\n    )\n)\n",
+						labelMatchers,
+					),
+					dashboards.AddQueryDataSource(datasourceName),
+					query.SeriesNameFormat("{{namespace}}"),
+				),
+			),
+		}
+	case "namespace-pod-networking":
+		description = "Shows the rate of bytes transmitted by top pods in a namespace in a cluster."
+		queries = []panel.Option{
+			panel.AddQuery(
+				query.PromQL(
+					promql.SetLabelMatchers(
+						"sum (\n    rate(container_network_transmit_bytes_total{cluster=\"$cluster\",namespace=~\"$namespace\"}[$__rate_interval])\n  * on (cluster,namespace,pod) group_left ()\n    topk by (cluster,namespace,pod) (\n      1,\n      max by (cluster,namespace,pod) (kube_pod_info{host_network=\"false\"})\n    )\n)\n",
+						labelMatchers,
+					),
+					dashboards.AddQueryDataSource(datasourceName),
+					query.SeriesNameFormat("{{pod}}"),
+				),
+			),
+		}
+	case "namespace-workload-networking":
+		description = "Shows the rate of bytes transmitted by top workload in a namespace in a cluster."
+		queries = []panel.Option{
+			panel.AddQuery(
+				query.PromQL(
+					promql.SetLabelMatchers(
+						"sort_desc(sum(rate(container_network_transmit_bytes_total{cluster=\"$cluster\",namespace=\"$namespace\"}[$__rate_interval])\n* on (cluster,namespace,pod) group_left ()\n    topk by (cluster,namespace,pod) (\n      1,\n      max by (cluster,namespace,pod) (kube_pod_info{host_network=\"false\"})\n    )\n* on (cluster,namespace,pod)\ngroup_left(workload,workload_type) namespace_workload_pod:kube_pod_owner:relabel{cluster=\"$cluster\",namespace=\"$namespace\", workload=~\".+\", workload_type=~\"$type\"}) by (workload))\n",
+						labelMatchers,
+					),
+					dashboards.AddQueryDataSource(datasourceName),
+					query.SeriesNameFormat("{{workload}}"),
+				),
+			),
+		}
+	case "workload-networking":
+		description = "Shows the rate of bytes transmitted by top pods in a workload in a cluster."
+		queries = []panel.Option{
+			panel.AddQuery(
+				query.PromQL(
+					promql.SetLabelMatchers(
+						"sort_desc(sum(rate(container_network_transmit_bytes_total{"+GetCAdvisorMatcher()+", cluster=\"$cluster\",namespace=~\"$namespace\"}[$__rate_interval])\n* on (namespace,pod)\ngroup_left(workload,workload_type) namespace_workload_pod:kube_pod_owner:relabel{cluster=\"$cluster\",namespace=~\"$namespace\", workload=~\"$workload\", workload_type=~\"$type\"}) by (pod))\n",
+						labelMatchers,
+					),
+					dashboards.AddQueryDataSource(datasourceName),
+					query.SeriesNameFormat("{{pod}}"),
+				),
+			),
+		}
+	case "pod-networking":
+		description = "Shows the rate of bytes transmitted by a pod in a cluster."
+		queries = []panel.Option{
+			panel.AddQuery(
+				query.PromQL(
+					promql.SetLabelMatchers(
+						"sum(rate(container_network_transmit_bytes_total{cluster=\"$cluster\",namespace=~\"$namespace\", pod=~\"$pod\"}[$__rate_interval]))",
+						labelMatchers,
+					),
+					dashboards.AddQueryDataSource(datasourceName),
+					query.SeriesNameFormat("{{pod}}"),
+				),
+			),
+		}
+	}
+
+	panelOpts := []panel.Option{
+		panel.Description(description),
+		timeSeriesPanel.Chart(
+			timeSeriesPanel.WithYAxis(timeSeriesPanel.YAxis{
+				Format: &commonSdk.Format{
+					Unit: string(commonSdk.BytesPerSecondsUnit),
+				},
+			}),
+			timeSeriesPanel.WithLegend(timeSeriesPanel.Legend{
+				Position: timeSeriesPanel.BottomPosition,
+				Mode:     timeSeriesPanel.ListMode,
+				Size:     timeSeriesPanel.SmallSize,
+			}),
+			timeSeriesPanel.WithVisual(timeSeriesPanel.Visual{
+				Display:      timeSeriesPanel.LineDisplay,
+				ConnectNulls: false,
+				LineWidth:    0.25,
+				AreaOpacity:  0.75,
+				Palette:      timeSeriesPanel.Palette{Mode: timeSeriesPanel.AutoMode},
+			}),
+		),
+	}
+	panelOpts = append(panelOpts, queries...)
+
+	return panelgroup.AddPanel("Current Rate of Bytes Transmitted", panelOpts...)
+}
+
+func KubernetesAverageRateOfBytesReceived(granularity, datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
+	var description string
+	var queries []panel.Option
+
+	switch granularity {
+	case "cluster-networking":
+		description = "Shows the average rate of bytes received by namespace in a cluster."
+		queries = []panel.Option{
+			panel.AddQuery(
+				query.PromQL(
+					promql.SetLabelMatchers(
+						"avg by (namespace) (\n    rate(container_network_receive_bytes_total{cluster=\"$cluster\",namespace!=\"\"}[$__rate_interval])\n  * on (cluster,namespace,pod) group_left ()\n    topk by (cluster,namespace,pod) (\n      1,\n      max by (cluster,namespace,pod) (kube_pod_info{host_network=\"false\"})\n    )\n)\n",
+						labelMatchers,
+					),
+					dashboards.AddQueryDataSource(datasourceName),
+					query.SeriesNameFormat("{{namespace}}"),
+				),
+			),
+		}
+
+	case "workload-networking":
+		description = "Shows the average rate of bytes received by top pods in a workload in a cluster."
+		queries = []panel.Option{
+			panel.AddQuery(
+				query.PromQL(
+					promql.SetLabelMatchers(
+						"sort_desc(avg(rate(container_network_receive_bytes_total{"+GetCAdvisorMatcher()+", cluster=\"$cluster\",namespace=~\"$namespace\"}[$__rate_interval])\n* on (namespace,pod)\ngroup_left(workload,workload_type) namespace_workload_pod:kube_pod_owner:relabel{cluster=\"$cluster\",namespace=~\"$namespace\", workload=~\"$workload\", workload_type=~\"$type\"}) by (pod))\n",
+						labelMatchers,
+					),
+					dashboards.AddQueryDataSource(datasourceName),
+					query.SeriesNameFormat("{{pod}}"),
+				),
+			),
+		}
+	}
+
+	panelOpts := []panel.Option{
+		panel.Description(description),
+		timeSeriesPanel.Chart(
+			timeSeriesPanel.WithYAxis(timeSeriesPanel.YAxis{
+				Format: &commonSdk.Format{
+					Unit: string(commonSdk.BytesPerSecondsUnit),
+				},
+			}),
+			timeSeriesPanel.WithLegend(timeSeriesPanel.Legend{
+				Position: timeSeriesPanel.BottomPosition,
+				Mode:     timeSeriesPanel.ListMode,
+				Size:     timeSeriesPanel.SmallSize,
+			}),
+			timeSeriesPanel.WithVisual(timeSeriesPanel.Visual{
+				Display:      timeSeriesPanel.LineDisplay,
+				ConnectNulls: false,
+				LineWidth:    0.25,
+				AreaOpacity:  0.75,
+				Palette:      timeSeriesPanel.Palette{Mode: timeSeriesPanel.AutoMode},
+			}),
+		),
+	}
+	panelOpts = append(panelOpts, queries...)
+
+	return panelgroup.AddPanel("Average Rate of Bytes Received", panelOpts...)
+}
+
+func KubernetesAverageRateOfBytesTransmitted(granularity, datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
+	var description string
+	var queries []panel.Option
+
+	switch granularity {
+	case "cluster-networking":
+		description = "Shows the average rate of bytes transmitted by namespace in a cluster."
+		queries = []panel.Option{
+			panel.AddQuery(
+				query.PromQL(
+					promql.SetLabelMatchers(
+						"avg by (namespace) (\n    rate(container_network_transmit_bytes_total{cluster=\"$cluster\",namespace!=\"\"}[$__rate_interval])\n  * on (cluster,namespace,pod) group_left ()\n    topk by (cluster,namespace,pod) (\n      1,\n      max by (cluster,namespace,pod) (kube_pod_info{host_network=\"false\"})\n    )\n)\n",
+						labelMatchers,
+					),
+					dashboards.AddQueryDataSource(datasourceName),
+					query.SeriesNameFormat("{{namespace}}"),
+				),
+			),
+		}
+
+	case "workload-networking":
+		description = "Shows the average rate of bytes transmitted by top pods in a workload in a cluster."
+		queries = []panel.Option{
+			panel.AddQuery(
+				query.PromQL(
+					promql.SetLabelMatchers(
+						"sort_desc(avg(rate(container_network_transmit_bytes_total{"+GetCAdvisorMatcher()+", cluster=\"$cluster\",namespace=~\"$namespace\"}[$__rate_interval])\n* on (namespace,pod)\ngroup_left(workload,workload_type) namespace_workload_pod:kube_pod_owner:relabel{cluster=\"$cluster\",namespace=~\"$namespace\", workload=~\"$workload\", workload_type=~\"$type\"}) by (pod))\n",
+						labelMatchers,
+					),
+					dashboards.AddQueryDataSource(datasourceName),
+					query.SeriesNameFormat("{{pod}}"),
+				),
+			),
+		}
+	}
+
+	panelOpts := []panel.Option{
+		panel.Description(description),
+		timeSeriesPanel.Chart(
+			timeSeriesPanel.WithYAxis(timeSeriesPanel.YAxis{
+				Format: &commonSdk.Format{
+					Unit: string(commonSdk.BytesPerSecondsUnit),
+				},
+			}),
+			timeSeriesPanel.WithLegend(timeSeriesPanel.Legend{
+				Position: timeSeriesPanel.BottomPosition,
+				Mode:     timeSeriesPanel.ListMode,
+				Size:     timeSeriesPanel.SmallSize,
+			}),
+			timeSeriesPanel.WithVisual(timeSeriesPanel.Visual{
+				Display:      timeSeriesPanel.LineDisplay,
+				ConnectNulls: false,
+				LineWidth:    0.25,
+				AreaOpacity:  0.75,
+				Palette:      timeSeriesPanel.Palette{Mode: timeSeriesPanel.AutoMode},
+			}),
+		),
+	}
+	panelOpts = append(panelOpts, queries...)
+
+	return panelgroup.AddPanel("Average Rate of Bytes Received", panelOpts...)
+}

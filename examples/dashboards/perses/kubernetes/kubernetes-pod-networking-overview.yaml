@@ -1,0 +1,437 @@
+kind: Dashboard
+metadata:
+    name: kubernetes-pod-networking-overview
+    createdAt: 0001-01-01T00:00:00Z
+    updatedAt: 0001-01-01T00:00:00Z
+    version: 0
+    project: perses-dev
+spec:
+    display:
+        name: Kubernetes / Networking / Pod
+    variables:
+        - kind: ListVariable
+          spec:
+            display:
+                name: cluster
+                hidden: false
+            allowAllValue: false
+            allowMultiple: false
+            plugin:
+                kind: PrometheusLabelValuesVariable
+                spec:
+                    datasource:
+                        kind: PrometheusDatasource
+                        name: prometheus-datasource
+                    labelName: cluster
+                    matchers:
+                        - up{job="kubelet", metrics_path="/metrics/cadvisor"}
+            name: cluster
+        - kind: ListVariable
+          spec:
+            display:
+                name: namespace
+                hidden: false
+            allowAllValue: false
+            allowMultiple: false
+            plugin:
+                kind: PrometheusLabelValuesVariable
+                spec:
+                    datasource:
+                        kind: PrometheusDatasource
+                        name: prometheus-datasource
+                    labelName: namespace
+                    matchers:
+                        - container_network_receive_packets_total{cluster="$cluster"}
+            name: namespace
+        - kind: ListVariable
+          spec:
+            display:
+                name: pod
+                hidden: false
+            allowAllValue: false
+            allowMultiple: false
+            plugin:
+                kind: PrometheusLabelValuesVariable
+                spec:
+                    datasource:
+                        kind: PrometheusDatasource
+                        name: prometheus-datasource
+                    labelName: pod
+                    matchers:
+                        - container_network_receive_packets_total{cluster="$cluster",namespace="$namespace"}
+            name: pod
+    panels:
+        "0_0":
+            kind: Panel
+            spec:
+                display:
+                    name: Current Rate of Bytes Received
+                    description: Shows the rate of bytes received by a pod in a cluster.
+                plugin:
+                    kind: TimeSeriesChart
+                    spec:
+                        legend:
+                            position: bottom
+                            mode: list
+                            size: small
+                        yAxis:
+                            format:
+                                unit: bytes/sec
+                        visual:
+                            display: line
+                            lineWidth: 0.25
+                            areaOpacity: 0.75
+                            palette:
+                                mode: auto
+                queries:
+                    - kind: TimeSeriesQuery
+                      spec:
+                        plugin:
+                            kind: PrometheusTimeSeriesQuery
+                            spec:
+                                datasource:
+                                    kind: PrometheusDatasource
+                                    name: prometheus-datasource
+                                query: |-
+                                    sum(
+                                      rate(
+                                        container_network_receive_bytes_total{cluster="$cluster",namespace=~"$namespace",pod=~"$pod"}[$__rate_interval]
+                                      )
+                                    )
+                                seriesNameFormat: '{{pod}}'
+        "0_1":
+            kind: Panel
+            spec:
+                display:
+                    name: Current Rate of Bytes Transmitted
+                    description: Shows the rate of bytes transmitted by a pod in a cluster.
+                plugin:
+                    kind: TimeSeriesChart
+                    spec:
+                        legend:
+                            position: bottom
+                            mode: list
+                            size: small
+                        yAxis:
+                            format:
+                                unit: bytes/sec
+                        visual:
+                            display: line
+                            lineWidth: 0.25
+                            areaOpacity: 0.75
+                            palette:
+                                mode: auto
+                queries:
+                    - kind: TimeSeriesQuery
+                      spec:
+                        plugin:
+                            kind: PrometheusTimeSeriesQuery
+                            spec:
+                                datasource:
+                                    kind: PrometheusDatasource
+                                    name: prometheus-datasource
+                                query: |-
+                                    sum(
+                                      rate(
+                                        container_network_transmit_bytes_total{cluster="$cluster",namespace=~"$namespace",pod=~"$pod"}[$__rate_interval]
+                                      )
+                                    )
+                                seriesNameFormat: '{{pod}}'
+        "1_0":
+            kind: Panel
+            spec:
+                display:
+                    name: Receive Bandwidth
+                    description: Shows the network receive bandwidth of the pod.
+                plugin:
+                    kind: TimeSeriesChart
+                    spec:
+                        legend:
+                            position: bottom
+                            mode: list
+                            size: small
+                        yAxis:
+                            format:
+                                unit: bytes/sec
+                        visual:
+                            display: line
+                            lineWidth: 0.25
+                            areaOpacity: 0.75
+                            palette:
+                                mode: auto
+                queries:
+                    - kind: TimeSeriesQuery
+                      spec:
+                        plugin:
+                            kind: PrometheusTimeSeriesQuery
+                            spec:
+                                datasource:
+                                    kind: PrometheusDatasource
+                                    name: prometheus-datasource
+                                query: |-
+                                    sum by (pod) (
+                                      rate(
+                                        container_network_receive_bytes_total{cluster="$cluster",namespace=~"$namespace",pod=~"$pod"}[$__rate_interval]
+                                      )
+                                    )
+                                seriesNameFormat: '{{pod}}'
+        "1_1":
+            kind: Panel
+            spec:
+                display:
+                    name: Transmit Bandwidth
+                    description: Shows the network transmit bandwidth of the pod.
+                plugin:
+                    kind: TimeSeriesChart
+                    spec:
+                        legend:
+                            position: bottom
+                            mode: list
+                            size: small
+                        yAxis:
+                            format:
+                                unit: bytes/sec
+                        visual:
+                            display: line
+                            lineWidth: 0.25
+                            areaOpacity: 0.75
+                            palette:
+                                mode: auto
+                queries:
+                    - kind: TimeSeriesQuery
+                      spec:
+                        plugin:
+                            kind: PrometheusTimeSeriesQuery
+                            spec:
+                                datasource:
+                                    kind: PrometheusDatasource
+                                    name: prometheus-datasource
+                                query: |-
+                                    sum by (pod) (
+                                      rate(
+                                        container_network_transmit_bytes_total{cluster="$cluster",namespace=~"$namespace",pod=~"$pod"}[$__rate_interval]
+                                      )
+                                    )
+                                seriesNameFormat: '{{pod}}'
+        "2_0":
+            kind: Panel
+            spec:
+                display:
+                    name: Rate of Received Packets
+                    description: Shows the rate of received packets by a pod in a cluster.
+                plugin:
+                    kind: TimeSeriesChart
+                    spec:
+                        legend:
+                            position: bottom
+                            mode: list
+                            size: small
+                        yAxis:
+                            format:
+                                unit: packets/sec
+                        visual:
+                            display: line
+                            lineWidth: 0.25
+                            areaOpacity: 0.75
+                            palette:
+                                mode: auto
+                queries:
+                    - kind: TimeSeriesQuery
+                      spec:
+                        plugin:
+                            kind: PrometheusTimeSeriesQuery
+                            spec:
+                                datasource:
+                                    kind: PrometheusDatasource
+                                    name: prometheus-datasource
+                                query: |-
+                                    sum by (pod) (
+                                      rate(
+                                        container_network_receive_packets_total{cluster="$cluster",namespace=~"$namespace",pod=~"$pod"}[$__rate_interval]
+                                      )
+                                    )
+                                seriesNameFormat: '{{pod}}'
+        "2_1":
+            kind: Panel
+            spec:
+                display:
+                    name: Rate of Transmitted Packets
+                    description: Shows the rate of transmitted packets by a pod in a cluster.
+                plugin:
+                    kind: TimeSeriesChart
+                    spec:
+                        legend:
+                            position: bottom
+                            mode: list
+                            size: small
+                        yAxis:
+                            format:
+                                unit: packets/sec
+                        visual:
+                            display: line
+                            lineWidth: 0.25
+                            areaOpacity: 0.75
+                            palette:
+                                mode: auto
+                queries:
+                    - kind: TimeSeriesQuery
+                      spec:
+                        plugin:
+                            kind: PrometheusTimeSeriesQuery
+                            spec:
+                                datasource:
+                                    kind: PrometheusDatasource
+                                    name: prometheus-datasource
+                                query: |-
+                                    sum by (pod) (
+                                      rate(
+                                        container_network_transmit_packets_total{cluster="$cluster",namespace=~"$namespace",pod=~"$pod"}[$__rate_interval]
+                                      )
+                                    )
+                                seriesNameFormat: '{{pod}}'
+        "3_0":
+            kind: Panel
+            spec:
+                display:
+                    name: Rate of Received Packets Dropped
+                    description: Shows the rate of received packets dropped by a pod in a cluster.
+                plugin:
+                    kind: TimeSeriesChart
+                    spec:
+                        legend:
+                            position: bottom
+                            mode: list
+                            size: small
+                        yAxis:
+                            format:
+                                unit: packets/sec
+                        visual:
+                            display: line
+                            lineWidth: 0.25
+                            areaOpacity: 0.75
+                            palette:
+                                mode: auto
+                queries:
+                    - kind: TimeSeriesQuery
+                      spec:
+                        plugin:
+                            kind: PrometheusTimeSeriesQuery
+                            spec:
+                                datasource:
+                                    kind: PrometheusDatasource
+                                    name: prometheus-datasource
+                                query: |-
+                                    sum by (pod) (
+                                      rate(
+                                        container_network_receive_packets_dropped_total{cluster="$cluster",namespace=~"$namespace",pod=~"$pod"}[$__rate_interval]
+                                      )
+                                    )
+                                seriesNameFormat: '{{pod}}'
+        "3_1":
+            kind: Panel
+            spec:
+                display:
+                    name: Rate of Transmitted Packets Dropped
+                    description: Shows the rate of transmitted packets dropped by a pod in a cluster.
+                plugin:
+                    kind: TimeSeriesChart
+                    spec:
+                        legend:
+                            position: bottom
+                            mode: list
+                            size: small
+                        yAxis:
+                            format:
+                                unit: packets/sec
+                        visual:
+                            display: line
+                            lineWidth: 0.25
+                            areaOpacity: 0.75
+                            palette:
+                                mode: auto
+                queries:
+                    - kind: TimeSeriesQuery
+                      spec:
+                        plugin:
+                            kind: PrometheusTimeSeriesQuery
+                            spec:
+                                datasource:
+                                    kind: PrometheusDatasource
+                                    name: prometheus-datasource
+                                query: |-
+                                    sum by (pod) (
+                                      rate(
+                                        container_network_transmit_packets_dropped_total{cluster="$cluster",namespace=~"$namespace",pod=~"$pod"}[$__rate_interval]
+                                      )
+                                    )
+                                seriesNameFormat: '{{pod}}'
+    layouts:
+        - kind: Grid
+          spec:
+            display:
+                title: Current Rate of Bytes
+            items:
+                - x: 0
+                  "y": 0
+                  width: 12
+                  height: 8
+                  content:
+                    $ref: '#/spec/panels/0_0'
+                - x: 12
+                  "y": 0
+                  width: 12
+                  height: 8
+                  content:
+                    $ref: '#/spec/panels/0_1'
+        - kind: Grid
+          spec:
+            display:
+                title: Bandwidth
+            items:
+                - x: 0
+                  "y": 0
+                  width: 12
+                  height: 8
+                  content:
+                    $ref: '#/spec/panels/1_0'
+                - x: 12
+                  "y": 0
+                  width: 12
+                  height: 8
+                  content:
+                    $ref: '#/spec/panels/1_1'
+        - kind: Grid
+          spec:
+            display:
+                title: Rate of Packets
+            items:
+                - x: 0
+                  "y": 0
+                  width: 12
+                  height: 8
+                  content:
+                    $ref: '#/spec/panels/2_0'
+                - x: 12
+                  "y": 0
+                  width: 12
+                  height: 8
+                  content:
+                    $ref: '#/spec/panels/2_1'
+        - kind: Grid
+          spec:
+            display:
+                title: Rate of Packets Dropped
+            items:
+                - x: 0
+                  "y": 0
+                  width: 12
+                  height: 8
+                  content:
+                    $ref: '#/spec/panels/3_0'
+                - x: 12
+                  "y": 0
+                  width: 12
+                  height: 8
+                  content:
+                    $ref: '#/spec/panels/3_1'
+    duration: 1h

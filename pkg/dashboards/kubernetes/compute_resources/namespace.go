@@ -1,4 +1,4 @@
-package kubernetes
+package compute_resources
 
 import (
 	"github.com/perses/community-dashboards/pkg/dashboards"

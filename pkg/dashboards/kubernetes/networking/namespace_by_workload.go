@@ -1,4 +1,4 @@
-package compute_resources
+package networking
 
 import (
 	"github.com/perses/community-dashboards/pkg/dashboards"
@@ -11,43 +11,20 @@ import (
 	labelValuesVar "github.com/perses/plugins/prometheus/sdk/go/variable/label-values"
 )
 
-func withWorkloadNamespaceCPUUsageGroup(datasource string, labelMatcher promql.LabelMatcher) dashboard.Option {
-	return dashboard.AddPanelGroup("CPU Usage",
-		panelgroup.PanelsPerLine(1),
+func withWorkloadNamespaceCurrentRateBytesGroup(datasource string, labelMatcher promql.LabelMatcher) dashboard.Option {
+	return dashboard.AddPanelGroup("Current Rate of Bytes",
+		panelgroup.PanelsPerLine(2),
 		panelgroup.PanelHeight(8),
-		panels.KubernetesCPUUsage("namespace-workload", datasource, labelMatcher),
+		panels.KubernetesCurrentRateOfBytesReceived("namespace-workload-networking", datasource, labelMatcher),
+		panels.KubernetesCurrentRateOfBytesTransmitted("namespace-workload-networking", datasource, labelMatcher),
 	)
 }
 
-func withWorkloadNamespaceCPUUsageQuotaGroup(datasource string, labelMatcher promql.LabelMatcher) dashboard.Option {
-	return dashboard.AddPanelGroup("CPU Usage Quota",
+func withWorkloadNamespaceNetworkStatusGroup(datasource string, labelMatcher promql.LabelMatcher) dashboard.Option {
+	return dashboard.AddPanelGroup("Current Status",
 		panelgroup.PanelsPerLine(1),
 		panelgroup.PanelHeight(10),
-		panels.WorkloadNamespaceCPUUsageQuota(datasource, labelMatcher),
-	)
-}
-
-func withWorkloadNamespaceMemoryUsageGroup(datasource string, labelMatcher promql.LabelMatcher) dashboard.Option {
-	return dashboard.AddPanelGroup("Memory Usage",
-		panelgroup.PanelsPerLine(1),
-		panelgroup.PanelHeight(8),
-		panels.KubernetesMemoryUsage("namespace-workload", datasource, labelMatcher),
-	)
-}
-
-func withWorkloadNamespaceMemoryUsageQuotaGroup(datasource string, labelMatcher promql.LabelMatcher) dashboard.Option {
-	return dashboard.AddPanelGroup("Memory Usage Quota",
-		panelgroup.PanelsPerLine(1),
-		panelgroup.PanelHeight(10),
-		panels.WorkloadNamespaceMemoryUsageQuota(datasource, labelMatcher),
-	)
-}
-
-func withWorkloadNamespaceNetworkUsageGroup(datasource string, labelMatcher promql.LabelMatcher) dashboard.Option {
-	return dashboard.AddPanelGroup("Network Usage",
-		panelgroup.PanelsPerLine(1),
-		panelgroup.PanelHeight(10),
-		panels.WorkloadNamespaceCurrentNetworkUsage(datasource, labelMatcher),
+		panels.WorkloadNamespaceCurrentNetworkStatus(datasource, labelMatcher),
 	)
 }
 
@@ -55,8 +32,8 @@ func withWorkloadNamespaceBandwidthGroup(datasource string, labelMatcher promql.
 	return dashboard.AddPanelGroup("Bandwidth",
 		panelgroup.PanelsPerLine(2),
 		panelgroup.PanelHeight(8),
-		panels.KubernetesReceiveBandwidth("namespace-workload", datasource, labelMatcher),
-		panels.KubernetesTransmitBandwidth("namespace-workload", datasource, labelMatcher),
+		panels.KubernetesReceiveBandwidth("namespace-workload-networking", datasource, labelMatcher),
+		panels.KubernetesTransmitBandwidth("namespace-workload-networking", datasource, labelMatcher),
 	)
 }
 
@@ -64,8 +41,8 @@ func withWorkloadNamespaceAvgContainerBandwidthGroup(datasource string, labelMat
 	return dashboard.AddPanelGroup("Average Container Bandwidth",
 		panelgroup.PanelsPerLine(2),
 		panelgroup.PanelHeight(8),
-		panels.KubernetesAvgContainerBandwidthReceived("namespace-workload", datasource, labelMatcher),
-		panels.KubernetesAvgContainerBandwidthTransmitted("namespace-workload", datasource, labelMatcher),
+		panels.KubernetesAvgContainerBandwidthReceived("namespace-workload-networking", datasource, labelMatcher),
+		panels.KubernetesAvgContainerBandwidthTransmitted("namespace-workload-networking", datasource, labelMatcher),
 	)
 }
 
@@ -73,8 +50,8 @@ func withWorkloadNamespaceRateOfPacketsGroup(datasource string, labelMatcher pro
 	return dashboard.AddPanelGroup("Rate of Packets",
 		panelgroup.PanelsPerLine(2),
 		panelgroup.PanelHeight(8),
-		panels.KubernetesReceivedPackets("namespace-workload", datasource, labelMatcher),
-		panels.KubernetesTransmittedPackets("namespace-workload", datasource, labelMatcher),
+		panels.KubernetesReceivedPackets("namespace-workload-networking", datasource, labelMatcher),
+		panels.KubernetesTransmittedPackets("namespace-workload-networking", datasource, labelMatcher),
 	)
 }
 
@@ -82,17 +59,17 @@ func withWorkloadNamespaceRateOfPacketsDroppedGroup(datasource string, labelMatc
 	return dashboard.AddPanelGroup("Rate of Packets Dropped",
 		panelgroup.PanelsPerLine(2),
 		panelgroup.PanelHeight(8),
-		panels.KubernetesReceivedPacketsDropped("namespace-workload", datasource, labelMatcher),
-		panels.KubernetesTransmittedPacketsDropped("namespace-workload", datasource, labelMatcher),
+		panels.KubernetesReceivedPacketsDropped("namespace-workload-networking", datasource, labelMatcher),
+		panels.KubernetesTransmittedPacketsDropped("namespace-workload-networking", datasource, labelMatcher),
 	)
 }
 
-func BuildKubernetesWorkloadNamespaceOverview(project string, datasource string, clusterLabelName string) dashboards.DashboardResult {
+func BuildKubernetesNamespaceByWorkloadOverview(project string, datasource string, clusterLabelName string) dashboards.DashboardResult {
 	clusterLabelMatcher := dashboards.GetClusterLabelMatcher(clusterLabelName)
 	return dashboards.NewDashboardResult(
-		dashboard.New("kubernetes-workload-ns-resources-overview",
+		dashboard.New("kubernetes-workload-ns-networking-overview",
 			dashboard.ProjectName(project),
-			dashboard.Name("Kubernetes / Compute Resources / Namespace (Workloads)"),
+			dashboard.Name("Kubernetes / Networking / Namespace (Workloads)"),
 			dashboard.AddVariable("cluster",
 				listVar.List(
 					labelValuesVar.PrometheusLabelValues("cluster",
@@ -107,7 +84,7 @@ func BuildKubernetesWorkloadNamespaceOverview(project string, datasource string,
 					labelValuesVar.PrometheusLabelValues("namespace",
 						labelValuesVar.Matchers(
 							promql.SetLabelMatchers(
-								"kube_namespace_status_phase{"+panels.GetKubeStateMetricsMatcher()+"}",
+								"container_network_receive_packets_total",
 								[]promql.LabelMatcher{{Name: "cluster", Type: "=", Value: "$cluster"}},
 							),
 						),
@@ -133,11 +110,8 @@ func BuildKubernetesWorkloadNamespaceOverview(project string, datasource string,
 					listVar.DisplayName("workload_type"),
 				),
 			),
-			withWorkloadNamespaceCPUUsageGroup(datasource, clusterLabelMatcher),
-			withWorkloadNamespaceCPUUsageQuotaGroup(datasource, clusterLabelMatcher),
-			withWorkloadNamespaceMemoryUsageGroup(datasource, clusterLabelMatcher),
-			withWorkloadNamespaceMemoryUsageQuotaGroup(datasource, clusterLabelMatcher),
-			withWorkloadNamespaceNetworkUsageGroup(datasource, clusterLabelMatcher),
+			withWorkloadNamespaceCurrentRateBytesGroup(datasource, clusterLabelMatcher),
+			withWorkloadNamespaceNetworkStatusGroup(datasource, clusterLabelMatcher),
 			withWorkloadNamespaceBandwidthGroup(datasource, clusterLabelMatcher),
 			withWorkloadNamespaceAvgContainerBandwidthGroup(datasource, clusterLabelMatcher),
 			withWorkloadNamespaceRateOfPacketsGroup(datasource, clusterLabelMatcher),
