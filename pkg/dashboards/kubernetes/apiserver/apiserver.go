@@ -21,6 +21,7 @@ func withMarkdown(datasource string, labelMatcher promql.LabelMatcher) dashboard
 func withAllAvailabilityAndErrorBudget(datasource string, labelMatcher promql.LabelMatcher) dashboard.Option {
 	return dashboard.AddPanelGroup("All Availability And Error Budget",
 		panelgroup.PanelsPerLine(2),
+		panelgroup.PanelHeight(8),
 		panels.APIServerAvailability(datasource, labelMatcher),
 		panels.APIServerErrorBudget(datasource, labelMatcher),
 	)
@@ -29,6 +30,7 @@ func withAllAvailabilityAndErrorBudget(datasource string, labelMatcher promql.La
 func withReadStats(datasource string, labelMatcher promql.LabelMatcher) dashboard.Option {
 	return dashboard.AddPanelGroup("API Server Read",
 		panelgroup.PanelsPerLine(4),
+		panelgroup.PanelHeight(8),
 		panels.APIServerReadAvailability(datasource, labelMatcher),
 		panels.APIServerReadSLIRequests(datasource, labelMatcher),
 		panels.APIServerReadSLIErrors(datasource, labelMatcher),
@@ -39,6 +41,7 @@ func withReadStats(datasource string, labelMatcher promql.LabelMatcher) dashboar
 func withWriteStats(datasource string, labelMatcher promql.LabelMatcher) dashboard.Option {
 	return dashboard.AddPanelGroup("API Server Write",
 		panelgroup.PanelsPerLine(4),
+		panelgroup.PanelHeight(8),
 		panels.APIServerWriteAvailability(datasource, labelMatcher),
 		panels.APIServerWriteSLIRequests(datasource, labelMatcher),
 		panels.APIServerWriteSLIErrors(datasource, labelMatcher),
@@ -49,6 +52,7 @@ func withWriteStats(datasource string, labelMatcher promql.LabelMatcher) dashboa
 func withWorkQueueGroup(datasource string, labelMatcher promql.LabelMatcher) dashboard.Option {
 	return dashboard.AddPanelGroup("Work Queue",
 		panelgroup.PanelsPerLine(3),
+		panelgroup.PanelHeight(8),
 		panels.APIServerWorkQueueAddRate(datasource, labelMatcher),
 		panels.APIServerWorkQueueDepth(datasource, labelMatcher),
 		panels.APIServerWorkQueueLatency(datasource, labelMatcher),
