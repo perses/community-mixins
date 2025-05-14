@@ -1,13 +1,13 @@
 kind: Dashboard
 metadata:
-    name: scheduler-overview
+    name: proxy-overview
     createdAt: 0001-01-01T00:00:00Z
     updatedAt: 0001-01-01T00:00:00Z
     version: 0
     project: perses-dev
 spec:
     display:
-        name: Kubernetes / Scheduler
+        name: Kubernetes / Proxy
     variables:
         - kind: ListVariable
           spec:
@@ -24,7 +24,7 @@ spec:
                         name: prometheus-datasource
                     labelName: cluster
                     matchers:
-                        - up{job="kube-scheduler"}
+                        - up{job="kube-proxy"}
             name: cluster
         - kind: ListVariable
           spec:
@@ -41,7 +41,7 @@ spec:
                         name: prometheus-datasource
                     labelName: instance
                     matchers:
-                        - up{cluster="$cluster",job="kube-scheduler"}
+                        - up{cluster="$cluster",job="kube-proxy"}
             name: instance
     panels:
         "0_0":
@@ -49,7 +49,7 @@ spec:
             spec:
                 display:
                     name: Up
-                    description: Shows the status of the scheduler.
+                    description: Shows the status of the proxy.
                 plugin:
                     kind: StatChart
                     spec:
@@ -66,13 +66,13 @@ spec:
                                 datasource:
                                     kind: PrometheusDatasource
                                     name: prometheus-datasource
-                                query: sum(up{cluster="$cluster",job="kube-scheduler"})
+                                query: sum(up{cluster="$cluster",job="kube-proxy"})
         "1_0":
             kind: Panel
             spec:
                 display:
-                    name: Scheduling Rate
-                    description: Shows the rate of scheduling events.
+                    name: Rules Sync Rate
+                    description: Shows the rate of rules sync events.
                 plugin:
                     kind: TimeSeriesChart
                     spec:
@@ -86,7 +86,7 @@ spec:
                         visual:
                             display: line
                             lineWidth: 0.25
-                            areaOpacity: 0.5
+                            areaOpacity: 1
                             palette:
                                 mode: auto
                 queries:
@@ -99,63 +99,18 @@ spec:
                                     kind: PrometheusDatasource
                                     name: prometheus-datasource
                                 query: |-
-                                    sum by (cluster, instance) (
+                                    sum(
                                       rate(
-                                        scheduler_e2e_scheduling_duration_seconds_count{cluster="$cluster",instance=~"$instance",job="kube-scheduler"}[$__rate_interval]
+                                        kubeproxy_sync_proxy_rules_duration_seconds_count{cluster="$cluster",instance=~"$instance",job="kube-proxy"}[$__rate_interval]
                                       )
                                     )
-                                seriesNameFormat: '{{cluster}} {{instance}} e2e'
-                    - kind: TimeSeriesQuery
-                      spec:
-                        plugin:
-                            kind: PrometheusTimeSeriesQuery
-                            spec:
-                                datasource:
-                                    kind: PrometheusDatasource
-                                    name: prometheus-datasource
-                                query: |-
-                                    sum by (cluster, instance) (
-                                      rate(
-                                        scheduler_binding_duration_seconds_count{cluster="$cluster",instance=~"$instance",job="kube-scheduler"}[$__rate_interval]
-                                      )
-                                    )
-                                seriesNameFormat: '{{cluster}} {{instance}} binding'
-                    - kind: TimeSeriesQuery
-                      spec:
-                        plugin:
-                            kind: PrometheusTimeSeriesQuery
-                            spec:
-                                datasource:
-                                    kind: PrometheusDatasource
-                                    name: prometheus-datasource
-                                query: |-
-                                    sum by (cluster, instance) (
-                                      rate(
-                                        scheduler_scheduling_algorithm_duration_seconds_count{cluster="$cluster",instance=~"$instance",job="kube-scheduler"}[$__rate_interval]
-                                      )
-                                    )
-                                seriesNameFormat: '{{cluster}} {{instance}} scheduling algorithm'
-                    - kind: TimeSeriesQuery
-                      spec:
-                        plugin:
-                            kind: PrometheusTimeSeriesQuery
-                            spec:
-                                datasource:
-                                    kind: PrometheusDatasource
-                                    name: prometheus-datasource
-                                query: |-
-                                    sum by (cluster, instance) (
-                                      rate(
-                                        scheduler_volume_scheduling_duration_seconds_count{cluster="$cluster",instance=~"$instance",job="kube-scheduler"}[$__rate_interval]
-                                      )
-                                    )
-                                seriesNameFormat: '{{cluster}} {{instance}} volume'
+                                seriesNameFormat: '{{instance}}'
         "1_1":
             kind: Panel
             spec:
                 display:
-                    name: Scheduling Latency 99th Quantile
-                    description: Shows the 99th quantile latency of scheduling events.
+                    name: Rules Sync Latency 99th Quantile
+                    description: Shows the 99th quantile latency of rules sync events.
                 plugin:
                     kind: TimeSeriesChart
                     spec:
@@ -184,68 +139,91 @@ spec:
                                 query: |-
                                     histogram_quantile(
                                       0.99,
-                                      sum by (cluster, instance, le) (
-                                        rate(
-                                          scheduler_e2e_scheduling_duration_seconds_bucket{cluster="$cluster",instance=~"$instance",job="kube-scheduler"}[$__rate_interval]
-                                        )
+                                      rate(
+                                        kubeproxy_sync_proxy_rules_duration_seconds_bucket{cluster="$cluster",instance=~"$instance",job="kube-proxy"}[$__rate_interval]
                                       )
                                     )
-                                seriesNameFormat: '{{cluster}} {{instance}} e2e'
-                    - kind: TimeSeriesQuery
-                      spec:
-                        plugin:
-                            kind: PrometheusTimeSeriesQuery
-                            spec:
-                                datasource:
-                                    kind: PrometheusDatasource
-                                    name: prometheus-datasource
-                                query: |-
-                                    histogram_quantile(
-                                      0.99,
-                                      sum by (cluster, instance, le) (
-                                        rate(
-                                          scheduler_binding_duration_seconds_bucket{cluster="$cluster",instance=~"$instance",job="kube-scheduler"}[$__rate_interval]
-                                        )
-                                      )
-                                    )
-                                seriesNameFormat: '{{cluster}} {{instance}} binding'
-                    - kind: TimeSeriesQuery
-                      spec:
-                        plugin:
-                            kind: PrometheusTimeSeriesQuery
-                            spec:
-                                datasource:
-                                    kind: PrometheusDatasource
-                                    name: prometheus-datasource
-                                query: |-
-                                    histogram_quantile(
-                                      0.99,
-                                      sum by (cluster, instance, le) (
-                                        rate(
-                                          scheduler_scheduling_algorithm_duration_seconds_bucket{cluster="$cluster",instance=~"$instance",job="kube-scheduler"}[$__rate_interval]
-                                        )
-                                      )
-                                    )
-                                seriesNameFormat: '{{cluster}} {{instance}} scheduling algorithm'
-                    - kind: TimeSeriesQuery
-                      spec:
-                        plugin:
-                            kind: PrometheusTimeSeriesQuery
-                            spec:
-                                datasource:
-                                    kind: PrometheusDatasource
-                                    name: prometheus-datasource
-                                query: |-
-                                    histogram_quantile(
-                                      0.99,
-                                      sum by (cluster, instance, le) (
-                                        rate(
-                                          scheduler_volume_scheduling_duration_seconds_bucket{cluster="$cluster",instance=~"$instance",job="kube-scheduler"}[$__rate_interval]
-                                        )
-                                      )
-                                    )
-                                seriesNameFormat: '{{cluster}} {{instance}} volume'
+                                seriesNameFormat: '{{instance}}'
         "2_0":
+            kind: Panel
+            spec:
+                display:
+                    name: Network Programming Rate
+                    description: Shows the rate of network programming events.
+                plugin:
+                    kind: TimeSeriesChart
+                    spec:
+                        legend:
+                            position: bottom
+                            mode: list
+                            size: small
+                        yAxis:
+                            format:
+                                unit: ops/sec
+                        visual:
+                            display: line
+                            lineWidth: 0.25
+                            areaOpacity: 1
+                            palette:
+                                mode: auto
+                queries:
+                    - kind: TimeSeriesQuery
+                      spec:
+                        plugin:
+                            kind: PrometheusTimeSeriesQuery
+                            spec:
+                                datasource:
+                                    kind: PrometheusDatasource
+                                    name: prometheus-datasource
+                                query: |-
+                                    sum(
+                                      rate(
+                                        kubeproxy_network_programming_duration_seconds_count{cluster="$cluster",instance=~"$instance",job="kube-proxy"}[$__rate_interval]
+                                      )
+                                    )
+                                seriesNameFormat: '{{instance}}'
+        "2_1":
+            kind: Panel
+            spec:
+                display:
+                    name: Network Programming Latency 99th Quantile
+                    description: Shows the 99th quantile latency of network programming events.
+                plugin:
+                    kind: TimeSeriesChart
+                    spec:
+                        legend:
+                            position: bottom
+                            mode: list
+                            size: small
+                        yAxis:
+                            format:
+                                unit: seconds
+                        visual:
+                            display: line
+                            lineWidth: 0.25
+                            areaOpacity: 0.5
+                            palette:
+                                mode: auto
+                queries:
+                    - kind: TimeSeriesQuery
+                      spec:
+                        plugin:
+                            kind: PrometheusTimeSeriesQuery
+                            spec:
+                                datasource:
+                                    kind: PrometheusDatasource
+                                    name: prometheus-datasource
+                                query: |-
+                                    histogram_quantile(
+                                      0.99,
+                                      sum by (instance, le) (
+                                        rate(
+                                          kubeproxy_network_programming_duration_seconds_bucket{cluster="$cluster",instance=~"$instance",job="kube-proxy"}[$__rate_interval]
+                                        )
+                                      )
+                                    )
+                                seriesNameFormat: '{{instance}}'
+        "3_0":
             kind: Panel
             spec:
                 display:
@@ -280,7 +258,7 @@ spec:
                                 query: |-
                                     sum(
                                       rate(
-                                        rest_client_requests_total{cluster=~"$cluster",code=~"2..",instance=~"$instance",job="kube-scheduler"}[$__rate_interval]
+                                        rest_client_requests_total{cluster=~"$cluster",code=~"2..",instance=~"$instance",job="kube-proxy"}[$__rate_interval]
                                       )
                                     )
                                 seriesNameFormat: 2xx
@@ -295,7 +273,7 @@ spec:
                                 query: |-
                                     sum(
                                       rate(
-                                        rest_client_requests_total{cluster=~"$cluster",code=~"3..",instance=~"$instance",job="kube-scheduler"}[$__rate_interval]
+                                        rest_client_requests_total{cluster=~"$cluster",code=~"3..",instance=~"$instance",job="kube-proxy"}[$__rate_interval]
                                       )
                                     )
                                 seriesNameFormat: 3xx
@@ -310,7 +288,7 @@ spec:
                                 query: |-
                                     sum(
                                       rate(
-                                        rest_client_requests_total{cluster=~"$cluster",code=~"4..",instance=~"$instance",job="kube-scheduler"}[$__rate_interval]
+                                        rest_client_requests_total{cluster=~"$cluster",code=~"4..",instance=~"$instance",job="kube-proxy"}[$__rate_interval]
                                       )
                                     )
                                 seriesNameFormat: 4xx
@@ -325,11 +303,11 @@ spec:
                                 query: |-
                                     sum(
                                       rate(
-                                        rest_client_requests_total{cluster=~"$cluster",code=~"5..",instance=~"$instance",job="kube-scheduler"}[$__rate_interval]
+                                        rest_client_requests_total{cluster=~"$cluster",code=~"5..",instance=~"$instance",job="kube-proxy"}[$__rate_interval]
                                       )
                                     )
                                 seriesNameFormat: 5xx
-        "2_1":
+        "3_1":
             kind: Panel
             spec:
                 display:
@@ -365,12 +343,12 @@ spec:
                                       0.99,
                                       sum by (verb, le) (
                                         rate(
-                                          rest_client_request_duration_seconds_bucket{cluster=~"$cluster",instance=~"$instance",job="kube-scheduler",verb="POST"}[$__rate_interval]
+                                          rest_client_request_duration_seconds_bucket{cluster=~"$cluster",instance=~"$instance",job="kube-proxy",verb="POST"}[$__rate_interval]
                                         )
                                       )
                                     )
                                 seriesNameFormat: '{{verb}}'
-        "2_2":
+        "3_2":
             kind: Panel
             spec:
                 display:
@@ -406,12 +384,12 @@ spec:
                                       0.99,
                                       sum by (verb, le) (
                                         rate(
-                                          rest_client_request_duration_seconds_bucket{cluster=~"$cluster",instance=~"$instance",job="kube-scheduler",verb="GET"}[$__rate_interval]
+                                          rest_client_request_duration_seconds_bucket{cluster=~"$cluster",instance=~"$instance",job="kube-proxy",verb="GET"}[$__rate_interval]
                                         )
                                       )
                                     )
                                 seriesNameFormat: '{{verb}}'
-        "3_0":
+        "4_0":
             kind: Panel
             spec:
                 display:
@@ -443,7 +421,7 @@ spec:
                                 datasource:
                                     kind: PrometheusDatasource
                                     name: prometheus-datasource
-                                query: go_memstats_alloc_bytes{cluster=~"$cluster",instance=~"$instance",job="kube-scheduler"}
+                                query: go_memstats_alloc_bytes{cluster=~"$cluster",instance=~"$instance",job="kube-proxy"}
                                 seriesNameFormat: Alloc All {{instance}}
                     - kind: TimeSeriesQuery
                       spec:
@@ -453,7 +431,7 @@ spec:
                                 datasource:
                                     kind: PrometheusDatasource
                                     name: prometheus-datasource
-                                query: go_memstats_heap_alloc_bytes{cluster=~"$cluster",instance=~"$instance",job="kube-scheduler"}
+                                query: go_memstats_heap_alloc_bytes{cluster=~"$cluster",instance=~"$instance",job="kube-proxy"}
                                 seriesNameFormat: Alloc Heap {{instance}}
                     - kind: TimeSeriesQuery
                       spec:
@@ -465,7 +443,7 @@ spec:
                                     name: prometheus-datasource
                                 query: |-
                                     rate(
-                                      go_memstats_alloc_bytes_total{cluster=~"$cluster",instance=~"$instance",job="kube-scheduler"}[$__rate_interval]
+                                      go_memstats_alloc_bytes_total{cluster=~"$cluster",instance=~"$instance",job="kube-proxy"}[$__rate_interval]
                                     )
                                 seriesNameFormat: Alloc Rate All {{instance}}
                     - kind: TimeSeriesQuery
@@ -478,7 +456,7 @@ spec:
                                     name: prometheus-datasource
                                 query: |-
                                     rate(
-                                      go_memstats_heap_alloc_bytes{cluster=~"$cluster",instance=~"$instance",job="kube-scheduler"}[$__rate_interval]
+                                      go_memstats_heap_alloc_bytes{cluster=~"$cluster",instance=~"$instance",job="kube-proxy"}[$__rate_interval]
                                     )
                                 seriesNameFormat: Alloc Rate Heap {{instance}}
                     - kind: TimeSeriesQuery
@@ -489,7 +467,7 @@ spec:
                                 datasource:
                                     kind: PrometheusDatasource
                                     name: prometheus-datasource
-                                query: go_memstats_stack_inuse_bytes{cluster=~"$cluster",instance=~"$instance",job="kube-scheduler"}
+                                query: go_memstats_stack_inuse_bytes{cluster=~"$cluster",instance=~"$instance",job="kube-proxy"}
                                 seriesNameFormat: Inuse Stack {{instance}}
                     - kind: TimeSeriesQuery
                       spec:
@@ -499,7 +477,7 @@ spec:
                                 datasource:
                                     kind: PrometheusDatasource
                                     name: prometheus-datasource
-                                query: go_memstats_heap_inuse_bytes{cluster=~"$cluster",instance=~"$instance",job="kube-scheduler"}
+                                query: go_memstats_heap_inuse_bytes{cluster=~"$cluster",instance=~"$instance",job="kube-proxy"}
                                 seriesNameFormat: Inuse Heap {{instance}}
                     - kind: TimeSeriesQuery
                       spec:
@@ -509,9 +487,9 @@ spec:
                                 datasource:
                                     kind: PrometheusDatasource
                                     name: prometheus-datasource
-                                query: process_resident_memory_bytes{cluster=~"$cluster",instance=~"$instance",job="kube-scheduler"}
+                                query: process_resident_memory_bytes{cluster=~"$cluster",instance=~"$instance",job="kube-proxy"}
                                 seriesNameFormat: Resident Memory {{instance}}
-        "3_1":
+        "4_1":
             kind: Panel
             spec:
                 display:
@@ -545,10 +523,10 @@ spec:
                                     name: prometheus-datasource
                                 query: |-
                                     rate(
-                                      process_cpu_seconds_total{cluster=~"$cluster",instance=~"$instance",job="kube-scheduler"}[$__rate_interval]
+                                      process_cpu_seconds_total{cluster=~"$cluster",instance=~"$instance",job="kube-proxy"}[$__rate_interval]
                                     )
                                 seriesNameFormat: '{{instance}}'
-        "3_2":
+        "4_2":
             kind: Panel
             spec:
                 display:
@@ -580,9 +558,9 @@ spec:
                                 datasource:
                                     kind: PrometheusDatasource
                                     name: prometheus-datasource
-                                query: go_goroutines{cluster=~"$cluster",instance=~"$instance",job="kube-scheduler"}
+                                query: go_goroutines{cluster=~"$cluster",instance=~"$instance",job="kube-proxy"}
                                 seriesNameFormat: '{{instance}}'
-        "3_3":
+        "4_3":
             kind: Panel
             spec:
                 display:
@@ -614,13 +592,13 @@ spec:
                                 datasource:
                                     kind: PrometheusDatasource
                                     name: prometheus-datasource
-                                query: go_gc_duration_seconds{cluster=~"$cluster",instance=~"$instance",job="kube-scheduler"}
+                                query: go_gc_duration_seconds{cluster=~"$cluster",instance=~"$instance",job="kube-proxy"}
                                 seriesNameFormat: '{{quantile}} - {{instance}}'
     layouts:
         - kind: Grid
           spec:
             display:
-                title: Scheduler Status
+                title: Proxy Status
             items:
                 - x: 0
                   "y": 0
@@ -631,7 +609,7 @@ spec:
         - kind: Grid
           spec:
             display:
-                title: Scheduling Rate
+                title: Proxy Rules Sync Rate
             items:
                 - x: 0
                   "y": 0
@@ -648,6 +626,23 @@ spec:
         - kind: Grid
           spec:
             display:
+                title: Proxy Network Programming Rate
+            items:
+                - x: 0
+                  "y": 0
+                  width: 12
+                  height: 8
+                  content:
+                    $ref: '#/spec/panels/2_0'
+                - x: 12
+                  "y": 0
+                  width: 12
+                  height: 8
+                  content:
+                    $ref: '#/spec/panels/2_1'
+        - kind: Grid
+          spec:
+            display:
                 title: Kube API Requests
             items:
                 - x: 0
@@ -655,19 +650,19 @@ spec:
                   width: 8
                   height: 8
                   content:
-                    $ref: '#/spec/panels/2_0'
+                    $ref: '#/spec/panels/3_0'
                 - x: 8
                   "y": 0
                   width: 8
                   height: 8
                   content:
-                    $ref: '#/spec/panels/2_1'
+                    $ref: '#/spec/panels/3_1'
                 - x: 16
                   "y": 0
                   width: 8
                   height: 8
                   content:
-                    $ref: '#/spec/panels/2_2'
+                    $ref: '#/spec/panels/3_2'
         - kind: Grid
           spec:
             display:
@@ -678,23 +673,23 @@ spec:
                   width: 12
                   height: 8
                   content:
-                    $ref: '#/spec/panels/3_0'
+                    $ref: '#/spec/panels/4_0'
                 - x: 12
                   "y": 0
                   width: 12
                   height: 8
                   content:
-                    $ref: '#/spec/panels/3_1'
+                    $ref: '#/spec/panels/4_1'
                 - x: 0
                   "y": 8
                   width: 12
                   height: 8
                   content:
-                    $ref: '#/spec/panels/3_2'
+                    $ref: '#/spec/panels/4_2'
                 - x: 12
                   "y": 8
                   width: 12
                   height: 8
                   content:
-                    $ref: '#/spec/panels/3_3'
+                    $ref: '#/spec/panels/4_3'
     duration: 1h

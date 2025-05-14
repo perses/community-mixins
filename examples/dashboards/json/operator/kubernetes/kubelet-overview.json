@@ -602,7 +602,7 @@
               },
               "yAxis": {
                 "format": {
-                  "unit": "milliseconds"
+                  "unit": "seconds"
                 }
               },
               "visual": {

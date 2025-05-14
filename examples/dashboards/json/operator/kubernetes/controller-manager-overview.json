@@ -297,7 +297,7 @@
                       "kind": "PrometheusDatasource",
                       "name": "prometheus-datasource"
                     },
-                    "query": "sum(\n  rate(\n    rest_client_requests_total{code=~\"2..\",instance=~\"$instance\",job=\"kube-controller-manager\"}[$__rate_interval]\n  )\n)",
+                    "query": "sum(\n  rate(\n    rest_client_requests_total{cluster=~\"$cluster\",code=~\"2..\",instance=~\"$instance\",job=\"kube-controller-manager\"}[$__rate_interval]\n  )\n)",
                     "seriesNameFormat": "2xx"
                   }
                 }
@@ -313,7 +313,7 @@
                       "kind": "PrometheusDatasource",
                       "name": "prometheus-datasource"
                     },
-                    "query": "sum(\n  rate(\n    rest_client_requests_total{code=~\"3..\",instance=~\"$instance\",job=\"kube-controller-manager\"}[$__rate_interval]\n  )\n)",
+                    "query": "sum(\n  rate(\n    rest_client_requests_total{cluster=~\"$cluster\",code=~\"3..\",instance=~\"$instance\",job=\"kube-controller-manager\"}[$__rate_interval]\n  )\n)",
                     "seriesNameFormat": "3xx"
                   }
                 }
@@ -329,7 +329,7 @@
                       "kind": "PrometheusDatasource",
                       "name": "prometheus-datasource"
                     },
-                    "query": "sum(\n  rate(\n    rest_client_requests_total{code=~\"4..\",instance=~\"$instance\",job=\"kube-controller-manager\"}[$__rate_interval]\n  )\n)",
+                    "query": "sum(\n  rate(\n    rest_client_requests_total{cluster=~\"$cluster\",code=~\"4..\",instance=~\"$instance\",job=\"kube-controller-manager\"}[$__rate_interval]\n  )\n)",
                     "seriesNameFormat": "4xx"
                   }
                 }
@@ -345,7 +345,7 @@
                       "kind": "PrometheusDatasource",
                       "name": "prometheus-datasource"
                     },
-                    "query": "sum(\n  rate(\n    rest_client_requests_total{code=~\"5..\",instance=~\"$instance\",job=\"kube-controller-manager\"}[$__rate_interval]\n  )\n)",
+                    "query": "sum(\n  rate(\n    rest_client_requests_total{cluster=~\"$cluster\",code=~\"5..\",instance=~\"$instance\",job=\"kube-controller-manager\"}[$__rate_interval]\n  )\n)",
                     "seriesNameFormat": "5xx"
                   }
                 }
@@ -395,7 +395,7 @@
                       "kind": "PrometheusDatasource",
                       "name": "prometheus-datasource"
                     },
-                    "query": "histogram_quantile(\n  0.99,\n  sum by (verb, le) (\n    rate(\n      rest_client_request_duration_seconds_bucket{cluster=\"$cluster\",instance=~\"$instance\",job=\"kube-controller-manager\",verb=\"POST\"}[$__rate_interval]\n    )\n  )\n)",
+                    "query": "histogram_quantile(\n  0.99,\n  sum by (verb, le) (\n    rate(\n      rest_client_request_duration_seconds_bucket{cluster=~\"$cluster\",instance=~\"$instance\",job=\"kube-controller-manager\",verb=\"POST\"}[$__rate_interval]\n    )\n  )\n)",
                     "seriesNameFormat": "{{verb}}"
                   }
                 }
@@ -445,7 +445,7 @@
                       "kind": "PrometheusDatasource",
                       "name": "prometheus-datasource"
                     },
-                    "query": "histogram_quantile(\n  0.99,\n  sum by (verb, le) (\n    rate(\n      rest_client_request_duration_seconds_bucket{cluster=\"$cluster\",instance=~\"$instance\",job=\"kube-controller-manager\",verb=\"GET\"}[$__rate_interval]\n    )\n  )\n)",
+                    "query": "histogram_quantile(\n  0.99,\n  sum by (verb, le) (\n    rate(\n      rest_client_request_duration_seconds_bucket{cluster=~\"$cluster\",instance=~\"$instance\",job=\"kube-controller-manager\",verb=\"GET\"}[$__rate_interval]\n    )\n  )\n)",
                     "seriesNameFormat": "{{verb}}"
                   }
                 }
@@ -725,7 +725,7 @@
               },
               "yAxis": {
                 "format": {
-                  "unit": "milliseconds"
+                  "unit": "seconds"
                 }
               },
               "visual": {

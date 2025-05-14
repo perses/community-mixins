@@ -2,26 +2,26 @@
   "kind": "PersesDashboard",
   "apiVersion": "perses.dev/v1alpha1",
   "metadata": {
-    "name": "perses-overview",
+    "name": "proxy-overview",
     "namespace": "perses-dev",
     "creationTimestamp": null,
     "labels": {
       "app.kubernetes.io/component": "dashboard",
-      "app.kubernetes.io/instance": "perses-overview",
+      "app.kubernetes.io/instance": "proxy-overview",
       "app.kubernetes.io/name": "perses-dashboard",
       "app.kubernetes.io/part-of": "perses-operator"
     }
   },
   "spec": {
     "display": {
-      "name": "Perses / Overview"
+      "name": "Kubernetes / Proxy"
     },
     "variables": [
       {
         "kind": "ListVariable",
         "spec": {
           "display": {
-            "name": "job",
+            "name": "cluster",
             "hidden": false
           },
           "allowAllValue": false,
@@ -33,13 +33,13 @@
                 "kind": "PrometheusDatasource",
                 "name": "prometheus-datasource"
               },
-              "labelName": "job",
+              "labelName": "cluster",
               "matchers": [
-                "perses_build_info{}"
+                "up{job=\"kube-proxy\"}"
               ]
             }
           },
-          "name": "job"
+          "name": "cluster"
         }
       },
       {
@@ -60,7 +60,7 @@
               },
               "labelName": "instance",
               "matchers": [
-                "perses_build_info{job=\"$job\"}"
+                "up{cluster=\"$cluster\",job=\"kube-proxy\"}"
               ]
             }
           },
@@ -73,41 +73,17 @@
         "kind": "Panel",
         "spec": {
           "display": {
-            "name": "Perses Stats"
+            "name": "Up",
+            "description": "Shows the status of the proxy."
           },
           "plugin": {
-            "kind": "Table",
+            "kind": "StatChart",
             "spec": {
-              "columnSettings": [
-                {
-                  "name": "job",
-                  "header": "Job"
-                },
-                {
-                  "name": "instance",
-                  "header": "Instance"
-                },
-                {
-                  "name": "version",
-                  "header": "Version"
-                },
-                {
-                  "name": "namespace",
-                  "header": "Namespace"
-                },
-                {
-                  "name": "pod",
-                  "header": "Pod"
-                },
-                {
-                  "name": "value",
-                  "hide": true
-                },
-                {
-                  "name": "timestamp",
-                  "hide": true
-                }
-              ]
+              "calculation": "last",
+              "format": {
+                "unit": "decimal"
+              },
+              "valueFontSize": 50
             }
           },
           "queries": [
@@ -121,7 +97,7 @@
                       "kind": "PrometheusDatasource",
                       "name": "prometheus-datasource"
                     },
-                    "query": "count by (job, instance, version, namespace, pod) (\n  perses_build_info{instance=~\"$instance\",job=~\"$job\"}\n)"
+                    "query": "sum(up{cluster=\"$cluster\",job=\"kube-proxy\"})"
                   }
                 }
               }
@@ -133,29 +109,29 @@
         "kind": "Panel",
         "spec": {
           "display": {
-            "name": "HTTP Requests Rate",
-            "description": "Displays the rate of HTTP requests over a 5-minute window."
+            "name": "Rules Sync Rate",
+            "description": "Shows the rate of rules sync events."
           },
           "plugin": {
             "kind": "TimeSeriesChart",
             "spec": {
               "legend": {
-                "position": "right",
-                "mode": "table"
+                "position": "bottom",
+                "mode": "list",
+                "size": "small"
               },
               "yAxis": {
                 "format": {
-                  "unit": "decimal"
+                  "unit": "ops/sec"
                 }
               },
               "visual": {
                 "display": "line",
                 "lineWidth": 0.25,
-                "areaOpacity": 0.5,
+                "areaOpacity": 1,
                 "palette": {
                   "mode": "auto"
-                },
-                "stack": "all"
+                }
               }
             }
           },
@@ -170,8 +146,8 @@
                       "kind": "PrometheusDatasource",
                       "name": "prometheus-datasource"
                     },
-                    "query": "sum by (handler, code) (\n  rate(perses_http_request_total{instance=~\"$instance\",job=~\"$job\"}[$__rate_interval])\n)",
-                    "seriesNameFormat": "{{handler}} {{method}} {{code}}"
+                    "query": "sum(\n  rate(\n    kubeproxy_sync_proxy_rules_duration_seconds_count{cluster=\"$cluster\",instance=~\"$instance\",job=\"kube-proxy\"}[$__rate_interval]\n  )\n)",
+                    "seriesNameFormat": "{{instance}}"
                   }
                 }
               }
@@ -183,65 +159,16 @@
         "kind": "Panel",
         "spec": {
           "display": {
-            "name": "HTTP Errors Percentage",
-            "description": "Displays the percentage of HTTP errors over total requests."
+            "name": "Rules Sync Latency 99th Quantile",
+            "description": "Shows the 99th quantile latency of rules sync events."
           },
           "plugin": {
             "kind": "TimeSeriesChart",
             "spec": {
               "legend": {
-                "position": "right",
-                "mode": "table"
-              },
-              "yAxis": {
-                "format": {
-                  "unit": "percent-decimal"
-                }
-              },
-              "visual": {
-                "display": "line",
-                "lineWidth": 0.25,
-                "areaOpacity": 0.5,
-                "palette": {
-                  "mode": "auto"
-                },
-                "stack": "all"
-              }
-            }
-          },
-          "queries": [
-            {
-              "kind": "TimeSeriesQuery",
-              "spec": {
-                "plugin": {
-                  "kind": "PrometheusTimeSeriesQuery",
-                  "spec": {
-                    "datasource": {
-                      "kind": "PrometheusDatasource",
-                      "name": "prometheus-datasource"
-                    },
-                    "query": "    (\n      sum by (handler, code) (\n        rate(perses_http_request_total{code=~\"4..|5..\",instance=~\"$instance\",job=~\"$job\"}[$__rate_interval])\n      )\n    )\n  / ignoring (code) group_left ()\n    (sum by (handler) (rate(perses_http_request_total{instance=~\"$instance\",job=~\"$job\"}[$__rate_interval])))\n*\n  100",
-                    "seriesNameFormat": "{{handler}} {{code}}"
-                  }
-                }
-              }
-            }
-          ]
-        }
-      },
-      "1_2": {
-        "kind": "Panel",
-        "spec": {
-          "display": {
-            "name": "HTTP Requests Latency",
-            "description": "Displays the latency of HTTP requests over a 5-minute window."
-          },
-          "plugin": {
-            "kind": "TimeSeriesChart",
-            "spec": {
-              "legend": {
-                "position": "right",
-                "mode": "table"
+                "position": "bottom",
+                "mode": "list",
+                "size": "small"
               },
               "yAxis": {
                 "format": {
@@ -269,8 +196,8 @@
                       "kind": "PrometheusDatasource",
                       "name": "prometheus-datasource"
                     },
-                    "query": "  sum by (handler, method) (\n    rate(perses_http_request_duration_second_sum{instance=~\"$instance\",job=~\"$job\"}[$__rate_interval])\n  )\n/\n  sum by (handler, method) (\n    rate(perses_http_request_duration_second_count{instance=~\"$instance\",job=~\"$job\"}[$__rate_interval])\n  )",
-                    "seriesNameFormat": "{{handler}} {{method}}"
+                    "query": "histogram_quantile(\n  0.99,\n  rate(\n    kubeproxy_sync_proxy_rules_duration_seconds_bucket{cluster=\"$cluster\",instance=~\"$instance\",job=\"kube-proxy\"}[$__rate_interval]\n  )\n)",
+                    "seriesNameFormat": "{{instance}}"
                   }
                 }
               }
@@ -279,6 +206,305 @@
         }
       },
       "2_0": {
+        "kind": "Panel",
+        "spec": {
+          "display": {
+            "name": "Network Programming Rate",
+            "description": "Shows the rate of network programming events."
+          },
+          "plugin": {
+            "kind": "TimeSeriesChart",
+            "spec": {
+              "legend": {
+                "position": "bottom",
+                "mode": "list",
+                "size": "small"
+              },
+              "yAxis": {
+                "format": {
+                  "unit": "ops/sec"
+                }
+              },
+              "visual": {
+                "display": "line",
+                "lineWidth": 0.25,
+                "areaOpacity": 1,
+                "palette": {
+                  "mode": "auto"
+                }
+              }
+            }
+          },
+          "queries": [
+            {
+              "kind": "TimeSeriesQuery",
+              "spec": {
+                "plugin": {
+                  "kind": "PrometheusTimeSeriesQuery",
+                  "spec": {
+                    "datasource": {
+                      "kind": "PrometheusDatasource",
+                      "name": "prometheus-datasource"
+                    },
+                    "query": "sum(\n  rate(\n    kubeproxy_network_programming_duration_seconds_count{cluster=\"$cluster\",instance=~\"$instance\",job=\"kube-proxy\"}[$__rate_interval]\n  )\n)",
+                    "seriesNameFormat": "{{instance}}"
+                  }
+                }
+              }
+            }
+          ]
+        }
+      },
+      "2_1": {
+        "kind": "Panel",
+        "spec": {
+          "display": {
+            "name": "Network Programming Latency 99th Quantile",
+            "description": "Shows the 99th quantile latency of network programming events."
+          },
+          "plugin": {
+            "kind": "TimeSeriesChart",
+            "spec": {
+              "legend": {
+                "position": "bottom",
+                "mode": "list",
+                "size": "small"
+              },
+              "yAxis": {
+                "format": {
+                  "unit": "seconds"
+                }
+              },
+              "visual": {
+                "display": "line",
+                "lineWidth": 0.25,
+                "areaOpacity": 0.5,
+                "palette": {
+                  "mode": "auto"
+                }
+              }
+            }
+          },
+          "queries": [
+            {
+              "kind": "TimeSeriesQuery",
+              "spec": {
+                "plugin": {
+                  "kind": "PrometheusTimeSeriesQuery",
+                  "spec": {
+                    "datasource": {
+                      "kind": "PrometheusDatasource",
+                      "name": "prometheus-datasource"
+                    },
+                    "query": "histogram_quantile(\n  0.99,\n  sum by (instance, le) (\n    rate(\n      kubeproxy_network_programming_duration_seconds_bucket{cluster=\"$cluster\",instance=~\"$instance\",job=\"kube-proxy\"}[$__rate_interval]\n    )\n  )\n)",
+                    "seriesNameFormat": "{{instance}}"
+                  }
+                }
+              }
+            }
+          ]
+        }
+      },
+      "3_0": {
+        "kind": "Panel",
+        "spec": {
+          "display": {
+            "name": "Kube API Request Rate",
+            "description": "Shows the rate of requests to the Kube API."
+          },
+          "plugin": {
+            "kind": "TimeSeriesChart",
+            "spec": {
+              "legend": {
+                "position": "bottom",
+                "mode": "list",
+                "size": "small"
+              },
+              "yAxis": {
+                "format": {
+                  "unit": "requests/sec"
+                }
+              },
+              "visual": {
+                "display": "line",
+                "lineWidth": 0.25,
+                "areaOpacity": 1,
+                "palette": {
+                  "mode": "auto"
+                },
+                "stack": "all"
+              }
+            }
+          },
+          "queries": [
+            {
+              "kind": "TimeSeriesQuery",
+              "spec": {
+                "plugin": {
+                  "kind": "PrometheusTimeSeriesQuery",
+                  "spec": {
+                    "datasource": {
+                      "kind": "PrometheusDatasource",
+                      "name": "prometheus-datasource"
+                    },
+                    "query": "sum(\n  rate(\n    rest_client_requests_total{cluster=~\"$cluster\",code=~\"2..\",instance=~\"$instance\",job=\"kube-proxy\"}[$__rate_interval]\n  )\n)",
+                    "seriesNameFormat": "2xx"
+                  }
+                }
+              }
+            },
+            {
+              "kind": "TimeSeriesQuery",
+              "spec": {
+                "plugin": {
+                  "kind": "PrometheusTimeSeriesQuery",
+                  "spec": {
+                    "datasource": {
+                      "kind": "PrometheusDatasource",
+                      "name": "prometheus-datasource"
+                    },
+                    "query": "sum(\n  rate(\n    rest_client_requests_total{cluster=~\"$cluster\",code=~\"3..\",instance=~\"$instance\",job=\"kube-proxy\"}[$__rate_interval]\n  )\n)",
+                    "seriesNameFormat": "3xx"
+                  }
+                }
+              }
+            },
+            {
+              "kind": "TimeSeriesQuery",
+              "spec": {
+                "plugin": {
+                  "kind": "PrometheusTimeSeriesQuery",
+                  "spec": {
+                    "datasource": {
+                      "kind": "PrometheusDatasource",
+                      "name": "prometheus-datasource"
+                    },
+                    "query": "sum(\n  rate(\n    rest_client_requests_total{cluster=~\"$cluster\",code=~\"4..\",instance=~\"$instance\",job=\"kube-proxy\"}[$__rate_interval]\n  )\n)",
+                    "seriesNameFormat": "4xx"
+                  }
+                }
+              }
+            },
+            {
+              "kind": "TimeSeriesQuery",
+              "spec": {
+                "plugin": {
+                  "kind": "PrometheusTimeSeriesQuery",
+                  "spec": {
+                    "datasource": {
+                      "kind": "PrometheusDatasource",
+                      "name": "prometheus-datasource"
+                    },
+                    "query": "sum(\n  rate(\n    rest_client_requests_total{cluster=~\"$cluster\",code=~\"5..\",instance=~\"$instance\",job=\"kube-proxy\"}[$__rate_interval]\n  )\n)",
+                    "seriesNameFormat": "5xx"
+                  }
+                }
+              }
+            }
+          ]
+        }
+      },
+      "3_1": {
+        "kind": "Panel",
+        "spec": {
+          "display": {
+            "name": "Post Request Latency 99th Quantile",
+            "description": "Shows the 99th quantile latency of post requests to the Kube API."
+          },
+          "plugin": {
+            "kind": "TimeSeriesChart",
+            "spec": {
+              "legend": {
+                "position": "bottom",
+                "mode": "list",
+                "size": "small"
+              },
+              "yAxis": {
+                "format": {
+                  "unit": "seconds"
+                }
+              },
+              "visual": {
+                "display": "line",
+                "lineWidth": 0.25,
+                "areaOpacity": 0.5,
+                "palette": {
+                  "mode": "auto"
+                }
+              }
+            }
+          },
+          "queries": [
+            {
+              "kind": "TimeSeriesQuery",
+              "spec": {
+                "plugin": {
+                  "kind": "PrometheusTimeSeriesQuery",
+                  "spec": {
+                    "datasource": {
+                      "kind": "PrometheusDatasource",
+                      "name": "prometheus-datasource"
+                    },
+                    "query": "histogram_quantile(\n  0.99,\n  sum by (verb, le) (\n    rate(\n      rest_client_request_duration_seconds_bucket{cluster=~\"$cluster\",instance=~\"$instance\",job=\"kube-proxy\",verb=\"POST\"}[$__rate_interval]\n    )\n  )\n)",
+                    "seriesNameFormat": "{{verb}}"
+                  }
+                }
+              }
+            }
+          ]
+        }
+      },
+      "3_2": {
+        "kind": "Panel",
+        "spec": {
+          "display": {
+            "name": "Get Request Latency 99th Quantile",
+            "description": "Shows the 99th quantile latency of get requests to the Kube API."
+          },
+          "plugin": {
+            "kind": "TimeSeriesChart",
+            "spec": {
+              "legend": {
+                "position": "bottom",
+                "mode": "list",
+                "size": "small"
+              },
+              "yAxis": {
+                "format": {
+                  "unit": "seconds"
+                }
+              },
+              "visual": {
+                "display": "line",
+                "lineWidth": 0.25,
+                "areaOpacity": 0.5,
+                "palette": {
+                  "mode": "auto"
+                }
+              }
+            }
+          },
+          "queries": [
+            {
+              "kind": "TimeSeriesQuery",
+              "spec": {
+                "plugin": {
+                  "kind": "PrometheusTimeSeriesQuery",
+                  "spec": {
+                    "datasource": {
+                      "kind": "PrometheusDatasource",
+                      "name": "prometheus-datasource"
+                    },
+                    "query": "histogram_quantile(\n  0.99,\n  sum by (verb, le) (\n    rate(\n      rest_client_request_duration_seconds_bucket{cluster=~\"$cluster\",instance=~\"$instance\",job=\"kube-proxy\",verb=\"GET\"}[$__rate_interval]\n    )\n  )\n)",
+                    "seriesNameFormat": "{{verb}}"
+                  }
+                }
+              }
+            }
+          ]
+        }
+      },
+      "4_0": {
         "kind": "Panel",
         "spec": {
           "display": {
@@ -321,8 +547,8 @@
                       "kind": "PrometheusDatasource",
                       "name": "prometheus-datasource"
                     },
-                    "query": "go_memstats_alloc_bytes{instance=~\"$instance\",job=~\"$job\"}",
-                    "seriesNameFormat": "Alloc All {{pod}}"
+                    "query": "go_memstats_alloc_bytes{cluster=~\"$cluster\",instance=~\"$instance\",job=\"kube-proxy\"}",
+                    "seriesNameFormat": "Alloc All {{instance}}"
                   }
                 }
               }
@@ -337,8 +563,8 @@
                       "kind": "PrometheusDatasource",
                       "name": "prometheus-datasource"
                     },
-                    "query": "go_memstats_heap_alloc_bytes{instance=~\"$instance\",job=~\"$job\"}",
-                    "seriesNameFormat": "Alloc Heap {{pod}}"
+                    "query": "go_memstats_heap_alloc_bytes{cluster=~\"$cluster\",instance=~\"$instance\",job=\"kube-proxy\"}",
+                    "seriesNameFormat": "Alloc Heap {{instance}}"
                   }
                 }
               }
@@ -353,8 +579,8 @@
                       "kind": "PrometheusDatasource",
                       "name": "prometheus-datasource"
                     },
-                    "query": "rate(go_memstats_alloc_bytes_total{instance=~\"$instance\",job=~\"$job\"}[$__rate_interval])",
-                    "seriesNameFormat": "Alloc Rate All {{pod}}"
+                    "query": "rate(\n  go_memstats_alloc_bytes_total{cluster=~\"$cluster\",instance=~\"$instance\",job=\"kube-proxy\"}[$__rate_interval]\n)",
+                    "seriesNameFormat": "Alloc Rate All {{instance}}"
                   }
                 }
               }
@@ -369,8 +595,8 @@
                       "kind": "PrometheusDatasource",
                       "name": "prometheus-datasource"
                     },
-                    "query": "rate(go_memstats_heap_alloc_bytes{instance=~\"$instance\",job=~\"$job\"}[$__rate_interval])",
-                    "seriesNameFormat": "Alloc Rate Heap {{pod}}"
+                    "query": "rate(\n  go_memstats_heap_alloc_bytes{cluster=~\"$cluster\",instance=~\"$instance\",job=\"kube-proxy\"}[$__rate_interval]\n)",
+                    "seriesNameFormat": "Alloc Rate Heap {{instance}}"
                   }
                 }
               }
@@ -385,8 +611,8 @@
                       "kind": "PrometheusDatasource",
                       "name": "prometheus-datasource"
                     },
-                    "query": "go_memstats_stack_inuse_bytes{instance=~\"$instance\",job=~\"$job\"}",
-                    "seriesNameFormat": "Inuse Stack {{pod}}"
+                    "query": "go_memstats_stack_inuse_bytes{cluster=~\"$cluster\",instance=~\"$instance\",job=\"kube-proxy\"}",
+                    "seriesNameFormat": "Inuse Stack {{instance}}"
                   }
                 }
               }
@@ -401,8 +627,8 @@
                       "kind": "PrometheusDatasource",
                       "name": "prometheus-datasource"
                     },
-                    "query": "go_memstats_heap_inuse_bytes{instance=~\"$instance\",job=~\"$job\"}",
-                    "seriesNameFormat": "Inuse Heap {{pod}}"
+                    "query": "go_memstats_heap_inuse_bytes{cluster=~\"$cluster\",instance=~\"$instance\",job=\"kube-proxy\"}",
+                    "seriesNameFormat": "Inuse Heap {{instance}}"
                   }
                 }
               }
@@ -417,8 +643,8 @@
                       "kind": "PrometheusDatasource",
                       "name": "prometheus-datasource"
                     },
-                    "query": "process_resident_memory_bytes{instance=~\"$instance\",job=~\"$job\"}",
-                    "seriesNameFormat": "Resident Memory {{pod}}"
+                    "query": "process_resident_memory_bytes{cluster=~\"$cluster\",instance=~\"$instance\",job=\"kube-proxy\"}",
+                    "seriesNameFormat": "Resident Memory {{instance}}"
                   }
                 }
               }
@@ -426,7 +652,7 @@
           ]
         }
       },
-      "2_1": {
+      "4_1": {
         "kind": "Panel",
         "spec": {
           "display": {
@@ -469,8 +695,8 @@
                       "kind": "PrometheusDatasource",
                       "name": "prometheus-datasource"
                     },
-                    "query": "rate(process_cpu_seconds_total{instance=~\"$instance\",job=~\"$job\"}[$__rate_interval])",
-                    "seriesNameFormat": "{{pod}}"
+                    "query": "rate(\n  process_cpu_seconds_total{cluster=~\"$cluster\",instance=~\"$instance\",job=\"kube-proxy\"}[$__rate_interval]\n)",
+                    "seriesNameFormat": "{{instance}}"
                   }
                 }
               }
@@ -478,7 +704,7 @@
           ]
         }
       },
-      "2_2": {
+      "4_2": {
         "kind": "Panel",
         "spec": {
           "display": {
@@ -521,8 +747,8 @@
                       "kind": "PrometheusDatasource",
                       "name": "prometheus-datasource"
                     },
-                    "query": "go_goroutines{instance=~\"$instance\",job=~\"$job\"}",
-                    "seriesNameFormat": "{{pod}}"
+                    "query": "go_goroutines{cluster=~\"$cluster\",instance=~\"$instance\",job=\"kube-proxy\"}",
+                    "seriesNameFormat": "{{instance}}"
                   }
                 }
               }
@@ -530,7 +756,7 @@
           ]
         }
       },
-      "2_3": {
+      "4_3": {
         "kind": "Panel",
         "spec": {
           "display": {
@@ -573,128 +799,8 @@
                       "kind": "PrometheusDatasource",
                       "name": "prometheus-datasource"
                     },
-                    "query": "go_gc_duration_seconds{instance=~\"$instance\",job=~\"$job\"}",
-                    "seriesNameFormat": "{{quantile}} - {{pod}}"
-                  }
-                }
-              }
-            }
-          ]
-        }
-      },
-      "2_4": {
-        "kind": "Panel",
-        "spec": {
-          "display": {
-            "name": "File Descriptors",
-            "description": "Displays the number of open and max file descriptors."
-          },
-          "plugin": {
-            "kind": "TimeSeriesChart",
-            "spec": {
-              "legend": {
-                "position": "bottom",
-                "mode": "table",
-                "values": [
-                  "last"
-                ]
-              },
-              "yAxis": {
-                "format": {
-                  "unit": "decimal"
-                }
-              },
-              "visual": {
-                "display": "line",
-                "lineWidth": 0.25,
-                "areaOpacity": 0.5,
-                "palette": {
-                  "mode": "auto"
-                }
-              }
-            }
-          },
-          "queries": [
-            {
-              "kind": "TimeSeriesQuery",
-              "spec": {
-                "plugin": {
-                  "kind": "PrometheusTimeSeriesQuery",
-                  "spec": {
-                    "datasource": {
-                      "kind": "PrometheusDatasource",
-                      "name": "prometheus-datasource"
-                    },
-                    "query": "process_open_fds{instance=~\"$instance\",job=~\"$job\"}",
-                    "seriesNameFormat": "{{instance}} - {{pod}} Open FDs"
-                  }
-                }
-              }
-            },
-            {
-              "kind": "TimeSeriesQuery",
-              "spec": {
-                "plugin": {
-                  "kind": "PrometheusTimeSeriesQuery",
-                  "spec": {
-                    "datasource": {
-                      "kind": "PrometheusDatasource",
-                      "name": "prometheus-datasource"
-                    },
-                    "query": "process_max_fds{instance=~\"$instance\",job=~\"$job\"}",
-                    "seriesNameFormat": "{{instance}} - {{pod}} - Max FDs"
-                  }
-                }
-              }
-            }
-          ]
-        }
-      },
-      "3_0": {
-        "kind": "Panel",
-        "spec": {
-          "display": {
-            "name": "Plugin Schema Load Attempts",
-            "description": "Displays the success and failure attempts to load plugin schemas."
-          },
-          "plugin": {
-            "kind": "TimeSeriesChart",
-            "spec": {
-              "legend": {
-                "position": "bottom",
-                "mode": "table",
-                "values": [
-                  "last"
-                ]
-              },
-              "yAxis": {
-                "format": {
-                  "unit": "decimal"
-                }
-              },
-              "visual": {
-                "display": "line",
-                "lineWidth": 0.25,
-                "areaOpacity": 0.5,
-                "palette": {
-                  "mode": "auto"
-                }
-              }
-            }
-          },
-          "queries": [
-            {
-              "kind": "TimeSeriesQuery",
-              "spec": {
-                "plugin": {
-                  "kind": "PrometheusTimeSeriesQuery",
-                  "spec": {
-                    "datasource": {
-                      "kind": "PrometheusDatasource",
-                      "name": "prometheus-datasource"
-                    },
-                    "query": "perses_plugin_schemas_load_attempts{instance=~\"$instance\",job=~\"$job\"}",
-                    "seriesNameFormat": "{{pod}} - {{schema}} - {{status}}"
+                    "query": "go_gc_duration_seconds{cluster=~\"$cluster\",instance=~\"$instance\",job=\"kube-proxy\"}",
+                    "seriesNameFormat": "{{quantile}} - {{instance}}"
                   }
                 }
               }
@@ -708,14 +814,14 @@
         "kind": "Grid",
         "spec": {
           "display": {
-            "title": "Perses Stats"
+            "title": "Proxy Status"
           },
           "items": [
             {
               "x": 0,
               "y": 0,
               "width": 24,
-              "height": 6,
+              "height": 8,
               "content": {
                 "$ref": "#/spec/panels/0_0"
               }
@@ -727,14 +833,14 @@
         "kind": "Grid",
         "spec": {
           "display": {
-            "title": "API Requests"
+            "title": "Proxy Rules Sync Rate"
           },
           "items": [
             {
               "x": 0,
               "y": 0,
               "width": 12,
-              "height": 6,
+              "height": 8,
               "content": {
                 "$ref": "#/spec/panels/1_0"
               }
@@ -743,18 +849,74 @@
               "x": 12,
               "y": 0,
               "width": 12,
-              "height": 6,
+              "height": 8,
               "content": {
                 "$ref": "#/spec/panels/1_1"
               }
-            },
+            }
+          ]
+        }
+      },
+      {
+        "kind": "Grid",
+        "spec": {
+          "display": {
+            "title": "Proxy Network Programming Rate"
+          },
+          "items": [
             {
               "x": 0,
-              "y": 6,
+              "y": 0,
               "width": 12,
-              "height": 6,
+              "height": 8,
               "content": {
-                "$ref": "#/spec/panels/1_2"
+                "$ref": "#/spec/panels/2_0"
+              }
+            },
+            {
+              "x": 12,
+              "y": 0,
+              "width": 12,
+              "height": 8,
+              "content": {
+                "$ref": "#/spec/panels/2_1"
+              }
+            }
+          ]
+        }
+      },
+      {
+        "kind": "Grid",
+        "spec": {
+          "display": {
+            "title": "Kube API Requests"
+          },
+          "items": [
+            {
+              "x": 0,
+              "y": 0,
+              "width": 8,
+              "height": 8,
+              "content": {
+                "$ref": "#/spec/panels/3_0"
+              }
+            },
+            {
+              "x": 8,
+              "y": 0,
+              "width": 8,
+              "height": 8,
+              "content": {
+                "$ref": "#/spec/panels/3_1"
+              }
+            },
+            {
+              "x": 16,
+              "y": 0,
+              "width": 8,
+              "height": 8,
+              "content": {
+                "$ref": "#/spec/panels/3_2"
               }
             }
           ]
@@ -770,65 +932,37 @@
             {
               "x": 0,
               "y": 0,
-              "width": 8,
-              "height": 10,
-              "content": {
-                "$ref": "#/spec/panels/2_0"
-              }
-            },
-            {
-              "x": 8,
-              "y": 0,
-              "width": 8,
-              "height": 10,
-              "content": {
-                "$ref": "#/spec/panels/2_1"
-              }
-            },
-            {
-              "x": 16,
-              "y": 0,
-              "width": 8,
-              "height": 10,
-              "content": {
-                "$ref": "#/spec/panels/2_2"
-              }
-            },
-            {
-              "x": 0,
-              "y": 10,
-              "width": 8,
-              "height": 10,
-              "content": {
-                "$ref": "#/spec/panels/2_3"
-              }
-            },
-            {
-              "x": 8,
-              "y": 10,
-              "width": 8,
-              "height": 10,
-              "content": {
-                "$ref": "#/spec/panels/2_4"
-              }
-            }
-          ]
-        }
-      },
-      {
-        "kind": "Grid",
-        "spec": {
-          "display": {
-            "title": "Plugins Usage"
-          },
-          "items": [
-            {
-              "x": 0,
-              "y": 0,
-              "width": 24,
+              "width": 12,
               "height": 8,
               "content": {
-                "$ref": "#/spec/panels/3_0"
+                "$ref": "#/spec/panels/4_0"
+              }
+            },
+            {
+              "x": 12,
+              "y": 0,
+              "width": 12,
+              "height": 8,
+              "content": {
+                "$ref": "#/spec/panels/4_1"
+              }
+            },
+            {
+              "x": 0,
+              "y": 8,
+              "width": 12,
+              "height": 8,
+              "content": {
+                "$ref": "#/spec/panels/4_2"
+              }
+            },
+            {
+              "x": 12,
+              "y": 8,
+              "width": 12,
+              "height": 8,
+              "content": {
+                "$ref": "#/spec/panels/4_3"
               }
             }
           ]
