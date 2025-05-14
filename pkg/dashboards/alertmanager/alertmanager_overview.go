@@ -13,6 +13,7 @@ import (
 func withAlertsGroup(datasource string, labelMatcher promql.LabelMatcher) dashboard.Option {
 	return dashboard.AddPanelGroup("Alerts",
 		panelgroup.PanelsPerLine(2),
+		panelgroup.PanelHeight(8),
 		panels.Alerts(datasource, labelMatcher),
 		panels.AlertsReceiveRate(datasource, labelMatcher),
 	)
@@ -21,6 +22,7 @@ func withAlertsGroup(datasource string, labelMatcher promql.LabelMatcher) dashbo
 func withNotificationsGroup(datasource string, labelMatcher promql.LabelMatcher) dashboard.Option {
 	return dashboard.AddPanelGroup("Notifications",
 		panelgroup.PanelsPerLine(2),
+		panelgroup.PanelHeight(8),
 		panels.NotificationsSendRate(datasource, labelMatcher),
 		panels.NotificationDuration(datasource, labelMatcher),
 	)
