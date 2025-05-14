@@ -42,6 +42,9 @@ Welcome to the **Perses Community Dashboards** repository! This project is desig
 - Scheduler
 - Proxy
 
+### etcd-mixin Dashboards
+- etcd Overview
+
 ### Blackbox Exporter
 - Blackbox Exporter Overview
 
