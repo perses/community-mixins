@@ -14,6 +14,7 @@ import (
 func withBlackboxSummary(datasource string, labelMatcher promql.LabelMatcher) dashboard.Option {
 	return dashboard.AddPanelGroup("Summary",
 		panelgroup.PanelsPerLine(1),
+		panelgroup.PanelHeight(8),
 		panels.ProbeStatusMap(datasource, labelMatcher),
 	)
 }
@@ -21,6 +22,7 @@ func withBlackboxSummary(datasource string, labelMatcher promql.LabelMatcher) da
 func withBlackboxProbesStats(datasource string, labelMatcher promql.LabelMatcher) dashboard.Option {
 	return dashboard.AddPanelGroup("Probes Stats",
 		panelgroup.PanelsPerLine(4),
+		panelgroup.PanelHeight(8),
 		panels.ProbeSuccessCount(datasource, labelMatcher),
 		panels.ProbeSuccessPercent(datasource, labelMatcher),
 		panels.ProbeHTTPSSL(datasource, labelMatcher),
@@ -31,6 +33,7 @@ func withBlackboxProbesStats(datasource string, labelMatcher promql.LabelMatcher
 func withBlackboxProbesUptime(datasource string, labelMatcher promql.LabelMatcher) dashboard.Option {
 	return dashboard.AddPanelGroup("Probes Uptimes Stats",
 		panelgroup.PanelsPerLine(2),
+		panelgroup.PanelHeight(8),
 		panels.ProbeUptimeSuccess(datasource, labelMatcher),
 		panels.ProbeUptimeMonthly(datasource, labelMatcher),
 	)
@@ -39,6 +42,7 @@ func withBlackboxProbesUptime(datasource string, labelMatcher promql.LabelMatche
 func withBlackboxProbes(datasource string, labelMatcher promql.LabelMatcher) dashboard.Option {
 	return dashboard.AddPanelGroup("Probes",
 		panelgroup.PanelsPerLine(2),
+		panelgroup.PanelHeight(10),
 		panels.ProbeDurationSeconds(datasource, labelMatcher),
 		panels.ProbePhases(datasource, labelMatcher),
 	)
@@ -47,6 +51,7 @@ func withBlackboxProbes(datasource string, labelMatcher promql.LabelMatcher) das
 func withBlackboxProbesAdditionalStats(datasource string, labelMatcher promql.LabelMatcher) dashboard.Option {
 	return dashboard.AddPanelGroup("Probes Additional Stats",
 		panelgroup.PanelsPerLine(5),
+		panelgroup.PanelHeight(8),
 		panels.ProbeStatusCode(datasource, labelMatcher),
 		panels.ProbeTLSVersion(datasource, labelMatcher),
 		panels.ProbeSSLExpiry(datasource, labelMatcher),
@@ -58,6 +63,7 @@ func withBlackboxProbesAdditionalStats(datasource string, labelMatcher promql.La
 func withBlackboxProbesAvgTime(datasource string, labelMatcher promql.LabelMatcher) dashboard.Option {
 	return dashboard.AddPanelGroup("Probes Avg Duration Stats",
 		panelgroup.PanelsPerLine(2),
+		panelgroup.PanelHeight(8),
 		panels.ProbeAverageDurationInstance(datasource, labelMatcher),
 		panels.ProbeAverageDNSLookupPerInstance(datasource, labelMatcher),
 	)

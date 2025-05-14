@@ -38,6 +38,7 @@ func ProbeStatusMap(datasourceName string, labelMatchers ...promql.LabelMatcher)
 			stat.WithSparkline(stat.Sparkline{
 				Width: 1,
 			}),
+			stat.ValueFontSize(50),
 			stat.Thresholds(commonSdk.Thresholds{
 				Mode:         commonSdk.AbsoluteMode,
 				DefaultColor: "green",
@@ -92,6 +93,7 @@ func ProbeSuccessCount(datasourceName string, labelMatchers ...promql.LabelMatch
 			stat.WithSparkline(stat.Sparkline{
 				Width: 1,
 			}),
+			stat.ValueFontSize(50),
 			stat.Thresholds(commonSdk.Thresholds{
 				Mode:         commonSdk.AbsoluteMode,
 				DefaultColor: "green",
@@ -134,6 +136,7 @@ func ProbeSuccessPercent(datasourceName string, labelMatchers ...promql.LabelMat
 			stat.WithSparkline(stat.Sparkline{
 				Width: 1,
 			}),
+			stat.ValueFontSize(50),
 			stat.Thresholds(commonSdk.Thresholds{
 				Mode:         commonSdk.AbsoluteMode,
 				DefaultColor: "red",
@@ -187,6 +190,7 @@ func ProbeHTTPSSL(datasourceName string, labelMatchers ...promql.LabelMatcher) p
 			stat.WithSparkline(stat.Sparkline{
 				Width: 1,
 			}),
+			stat.ValueFontSize(50),
 			stat.Thresholds(commonSdk.Thresholds{
 				Mode:         commonSdk.AbsoluteMode,
 				DefaultColor: "red",
@@ -239,6 +243,7 @@ func ProbeAverageDuration(datasourceName string, labelMatchers ...promql.LabelMa
 			stat.WithSparkline(stat.Sparkline{
 				Width: 1,
 			}),
+			stat.ValueFontSize(50),
 			stat.Thresholds(commonSdk.Thresholds{
 				Mode:         commonSdk.AbsoluteMode,
 				DefaultColor: "green",
@@ -282,6 +287,7 @@ func ProbeUptimeSuccess(datasourceName string, labelMatchers ...promql.LabelMatc
 			stat.WithSparkline(stat.Sparkline{
 				Width: 1,
 			}),
+			stat.ValueFontSize(50),
 			stat.Thresholds(commonSdk.Thresholds{
 				Mode:         commonSdk.AbsoluteMode,
 				DefaultColor: "red",
@@ -335,6 +341,7 @@ func ProbeUptimeMonthly(datasourceName string, labelMatchers ...promql.LabelMatc
 			stat.WithSparkline(stat.Sparkline{
 				Width: 1,
 			}),
+			stat.ValueFontSize(50),
 			stat.Thresholds(commonSdk.Thresholds{
 				Mode:         commonSdk.AbsoluteMode,
 				DefaultColor: "red",
@@ -391,7 +398,14 @@ func ProbeDurationSeconds(datasourceName string, labelMatchers ...promql.LabelMa
 			timeSeriesPanel.WithLegend(timeSeriesPanel.Legend{
 				Position: timeSeriesPanel.BottomPosition,
 				Mode:     timeSeriesPanel.TableMode,
-				Values:   []commonSdk.Calculation{commonSdk.LastCalculation},
+				Size:     timeSeriesPanel.SmallSize,
+			}),
+			timeSeriesPanel.WithVisual(timeSeriesPanel.Visual{
+				Display:      timeSeriesPanel.LineDisplay,
+				ConnectNulls: false,
+				LineWidth:    0.25,
+				AreaOpacity:  0.5,
+				Palette:      timeSeriesPanel.Palette{Mode: timeSeriesPanel.AutoMode},
 			}),
 		),
 		panel.AddQuery(
@@ -444,7 +458,14 @@ func ProbePhases(datasourceName string, labelMatchers ...promql.LabelMatcher) pa
 			timeSeriesPanel.WithLegend(timeSeriesPanel.Legend{
 				Position: timeSeriesPanel.BottomPosition,
 				Mode:     timeSeriesPanel.TableMode,
-				Values:   []commonSdk.Calculation{commonSdk.LastCalculation},
+				Size:     timeSeriesPanel.SmallSize,
+			}),
+			timeSeriesPanel.WithVisual(timeSeriesPanel.Visual{
+				Display:      timeSeriesPanel.LineDisplay,
+				ConnectNulls: false,
+				LineWidth:    0.25,
+				AreaOpacity:  0.5,
+				Palette:      timeSeriesPanel.Palette{Mode: timeSeriesPanel.AutoMode},
 			}),
 		),
 		panel.AddQuery(
@@ -493,6 +514,7 @@ func ProbeStatusCode(datasourceName string, labelMatchers ...promql.LabelMatcher
 				Unit:          string(commonSdk.DecimalUnit),
 				DecimalPlaces: 0,
 			}),
+			stat.ValueFontSize(50),
 			stat.WithSparkline(stat.Sparkline{
 				Width: 1,
 			}),
@@ -553,6 +575,7 @@ func ProbeTLSVersion(datasourceName string, labelMatchers ...promql.LabelMatcher
 			stat.WithSparkline(stat.Sparkline{
 				Width: 1,
 			}),
+			stat.ValueFontSize(50),
 			stat.Thresholds(commonSdk.Thresholds{
 				Mode:         commonSdk.AbsoluteMode,
 				DefaultColor: "green",
@@ -596,6 +619,7 @@ func ProbeSSLExpiry(datasourceName string, labelMatchers ...promql.LabelMatcher)
 			stat.WithSparkline(stat.Sparkline{
 				Width: 1,
 			}),
+			stat.ValueFontSize(50),
 			stat.Thresholds(commonSdk.Thresholds{
 				Mode:         commonSdk.AbsoluteMode,
 				DefaultColor: "green",
@@ -639,6 +663,7 @@ func ProbeRedirects(datasourceName string, labelMatchers ...promql.LabelMatcher)
 			stat.WithSparkline(stat.Sparkline{
 				Width: 1,
 			}),
+			stat.ValueFontSize(50),
 			stat.Thresholds(commonSdk.Thresholds{
 				Mode:         commonSdk.AbsoluteMode,
 				DefaultColor: "blue",
@@ -693,6 +718,7 @@ func ProbeHTTPVersion(datasourceName string, labelMatchers ...promql.LabelMatche
 			stat.WithSparkline(stat.Sparkline{
 				Width: 1,
 			}),
+			stat.ValueFontSize(50),
 			stat.Thresholds(commonSdk.Thresholds{
 				Mode:         commonSdk.AbsoluteMode,
 				DefaultColor: "blue",
@@ -736,6 +762,7 @@ func ProbeAverageDurationInstance(datasourceName string, labelMatchers ...promql
 			stat.WithSparkline(stat.Sparkline{
 				Width: 1,
 			}),
+			stat.ValueFontSize(50),
 			stat.Thresholds(commonSdk.Thresholds{
 				Mode:         commonSdk.AbsoluteMode,
 				DefaultColor: "green",
@@ -778,6 +805,7 @@ func ProbeAverageDNSLookupPerInstance(datasourceName string, labelMatchers ...pr
 			stat.WithSparkline(stat.Sparkline{
 				Width: 1,
 			}),
+			stat.ValueFontSize(50),
 			stat.Thresholds(commonSdk.Thresholds{
 				Mode:         commonSdk.AbsoluteMode,
 				DefaultColor: "green",

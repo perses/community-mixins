@@ -24,6 +24,7 @@ Welcome to the **Perses Community Dashboards** repository! This project is desig
 - Ruler Overview
 
 ### Kubernetes-mixin Dashboards
+- API Server
 - Compute Resources / Multi-Cluster
 - Compute Resources / Cluster
 - Compute Resources / Node
