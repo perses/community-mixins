@@ -21,7 +21,7 @@ spec:
       items:
       - content:
           $ref: '#/spec/panels/0_0'
-        height: 6
+        height: 3
         width: 24
         x: 0
         "y": 0
@@ -196,13 +196,21 @@ spec:
             guarantees?
           name: ErrorBudget (30d) > 99.000%
         plugin:
-          kind: StatChart
+          kind: TimeSeriesChart
           spec:
-            calculation: last
-            format:
-              decimalPlaces: 3
-              unit: percent
-            valueFontSize: 50
+            legend:
+              mode: list
+              position: bottom
+              size: small
+            visual:
+              areaOpacity: 0.75
+              display: line
+              lineWidth: 0.25
+              palette:
+                mode: auto
+            yAxis:
+              format:
+                unit: percent
         queries:
         - kind: TimeSeriesQuery
           spec:
@@ -214,6 +222,7 @@ spec:
                   name: prometheus-datasource
                 query: 100 * (apiserver_request:availability30d{cluster=~"$cluster",verb="all"}
                   - 0.99)
+                seriesNameFormat: errorbudget
     "2_0":
       kind: Panel
       spec:
@@ -550,7 +559,7 @@ spec:
                   kind: PrometheusDatasource
                   name: prometheus-datasource
                 query: |-
-                  sum by (cluster, instance, name) (
+                  sum by (instance, name) (
                     rate(workqueue_depth{cluster=~"$cluster",instance=~"$instance",job="kube-apiserver"}[$__rate_interval])
                   )
                 seriesNameFormat: '{{instance}} {{name}}'
@@ -789,7 +798,7 @@ spec:
                 mode: auto
             yAxis:
               format:
-                unit: milliseconds
+                unit: seconds
         queries:
         - kind: TimeSeriesQuery
           spec:

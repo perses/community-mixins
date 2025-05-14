@@ -14,6 +14,7 @@ import (
 func withMarkdown(datasource string, labelMatcher promql.LabelMatcher) dashboard.Option {
 	return dashboard.AddPanelGroup("Notice",
 		panelgroup.PanelsPerLine(1),
+		panelgroup.PanelHeight(3),
 		panels.APIServerSLONotice(datasource, labelMatcher),
 	)
 }

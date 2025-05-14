@@ -11,7 +11,7 @@ metadata:
   namespace: perses-dev
 spec:
   display:
-    name: etcd Overview
+    name: etcd / Overview
   duration: 1h
   layouts:
   - kind: Grid

@@ -92,7 +92,7 @@ func BuildETCDOverview(project string, datasource string, clusterLabelName strin
 	return dashboards.NewDashboardResult(
 		dashboard.New("etcd-overview",
 			dashboard.ProjectName(project),
-			dashboard.Name("etcd Overview"),
+			dashboard.Name("etcd / Overview"),
 			dashboard.AddVariable("cluster",
 				listVar.List(
 					labelValuesVar.PrometheusLabelValues("cluster",

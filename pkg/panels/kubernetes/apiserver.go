@@ -46,13 +46,24 @@ func APIServerAvailability(datasourceName string, labelMatchers ...promql.LabelM
 func APIServerErrorBudget(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
 	return panelgroup.AddPanel("ErrorBudget (30d) > 99.000%",
 		panel.Description("How much error budget is left looking at our 0.990% availability guarantees?"),
-		statPanel.Chart(
-			statPanel.Calculation(commonSdk.LastCalculation),
-			statPanel.Format(commonSdk.Format{
-				Unit:          string(commonSdk.PercentUnit),
-				DecimalPlaces: 3,
+		timeSeriesPanel.Chart(
+			timeSeriesPanel.WithYAxis(timeSeriesPanel.YAxis{
+				Format: &commonSdk.Format{
+					Unit: string(commonSdk.PercentUnit),
+				},
 			}),
-			statPanel.ValueFontSize(50),
+			timeSeriesPanel.WithLegend(timeSeriesPanel.Legend{
+				Position: timeSeriesPanel.BottomPosition,
+				Mode:     timeSeriesPanel.ListMode,
+				Size:     timeSeriesPanel.SmallSize,
+			}),
+			timeSeriesPanel.WithVisual(timeSeriesPanel.Visual{
+				Display:      timeSeriesPanel.LineDisplay,
+				ConnectNulls: false,
+				LineWidth:    0.25,
+				AreaOpacity:  0.75,
+				Palette:      timeSeriesPanel.Palette{Mode: timeSeriesPanel.AutoMode},
+			}),
 		),
 		panel.AddQuery(
 			query.PromQL(
@@ -61,6 +72,7 @@ func APIServerErrorBudget(datasourceName string, labelMatchers ...promql.LabelMa
 					labelMatchers,
 				),
 				dashboards.AddQueryDataSource(datasourceName),
+				query.SeriesNameFormat("errorbudget"),
 			),
 		),
 	)
@@ -347,7 +359,7 @@ func APIServerWorkQueueAddRate(datasourceName string, labelMatchers ...promql.La
 		panel.AddQuery(
 			query.PromQL(
 				promql.SetLabelMatchers(
-					"sum(rate(workqueue_adds_total{job='kube-apiserver', instance=~'$instance',  cluster=~'$cluster'}[$__rate_interval])) by (instance, name)",
+					"sum(rate(workqueue_adds_total{"+GetAPIServerMatcher()+", instance=~'$instance',  cluster=~'$cluster'}[$__rate_interval])) by (instance, name)",
 					labelMatchers,
 				),
 				dashboards.AddQueryDataSource(datasourceName),
@@ -382,7 +394,7 @@ func APIServerWorkQueueDepth(datasourceName string, labelMatchers ...promql.Labe
 		panel.AddQuery(
 			query.PromQL(
 				promql.SetLabelMatchers(
-					"sum(rate(workqueue_depth{job='kube-apiserver', instance=~'$instance', cluster=~'$cluster'}[$__rate_interval])) by (cluster, instance, name)",
+					"sum(rate(workqueue_depth{"+GetAPIServerMatcher()+", instance=~'$instance', cluster=~'$cluster'}[$__rate_interval])) by (instance, name)",
 					labelMatchers,
 				),
 				dashboards.AddQueryDataSource(datasourceName),
@@ -417,7 +429,7 @@ func APIServerWorkQueueLatency(datasourceName string, labelMatchers ...promql.La
 		panel.AddQuery(
 			query.PromQL(
 				promql.SetLabelMatchers(
-					"histogram_quantile(0.99, sum(rate(workqueue_queue_duration_seconds_bucket{cluster='$cluster', job='kube-apiserver', instance=~'$instance'}[$__rate_interval])) by (instance, name, le))",
+					"histogram_quantile(0.99, sum(rate(workqueue_queue_duration_seconds_bucket{cluster='$cluster', "+GetAPIServerMatcher()+", instance=~'$instance'}[$__rate_interval])) by (instance, name, le))",
 					labelMatchers,
 				),
 				dashboards.AddQueryDataSource(datasourceName),

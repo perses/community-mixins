@@ -84,13 +84,21 @@ spec:
                     name: ErrorBudget (30d) > 99.000%
                     description: How much error budget is left looking at our 0.990% availability guarantees?
                 plugin:
-                    kind: StatChart
+                    kind: TimeSeriesChart
                     spec:
-                        calculation: last
-                        format:
-                            unit: percent
-                            decimalPlaces: 3
-                        valueFontSize: 50
+                        legend:
+                            position: bottom
+                            mode: list
+                            size: small
+                        yAxis:
+                            format:
+                                unit: percent
+                        visual:
+                            display: line
+                            lineWidth: 0.25
+                            areaOpacity: 0.75
+                            palette:
+                                mode: auto
                 queries:
                     - kind: TimeSeriesQuery
                       spec:
@@ -101,6 +109,7 @@ spec:
                                     kind: PrometheusDatasource
                                     name: prometheus-datasource
                                 query: 100 * (apiserver_request:availability30d{cluster=~"$cluster",verb="all"} - 0.99)
+                                seriesNameFormat: errorbudget
         "2_0":
             kind: Panel
             spec:
@@ -429,7 +438,7 @@ spec:
                                     kind: PrometheusDatasource
                                     name: prometheus-datasource
                                 query: |-
-                                    sum by (cluster, instance, name) (
+                                    sum by (instance, name) (
                                       rate(workqueue_depth{cluster=~"$cluster",instance=~"$instance",job="kube-apiserver"}[$__rate_interval])
                                     )
                                 seriesNameFormat: '{{instance}} {{name}}'
@@ -661,7 +670,7 @@ spec:
                                 - last
                         yAxis:
                             format:
-                                unit: milliseconds
+                                unit: seconds
                         visual:
                             display: line
                             lineWidth: 0.25
@@ -688,7 +697,7 @@ spec:
                 - x: 0
                   "y": 0
                   width: 24
-                  height: 6
+                  height: 3
                   content:
                     $ref: '#/spec/panels/0_0'
         - kind: Grid
