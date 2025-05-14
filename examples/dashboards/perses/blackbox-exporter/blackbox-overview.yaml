@@ -66,6 +66,7 @@ spec:
                                   color: green
                         sparkline:
                             width: 1
+                        valueFontSize: 50
                 queries:
                     - kind: TimeSeriesQuery
                       spec:
@@ -94,6 +95,7 @@ spec:
                             defaultColor: green
                         sparkline:
                             width: 1
+                        valueFontSize: 50
                 queries:
                     - kind: TimeSeriesQuery
                       spec:
@@ -126,6 +128,7 @@ spec:
                                   color: green
                         sparkline:
                             width: 1
+                        valueFontSize: 50
                 queries:
                     - kind: TimeSeriesQuery
                       spec:
@@ -158,6 +161,7 @@ spec:
                                   color: green
                         sparkline:
                             width: 1
+                        valueFontSize: 50
                 queries:
                     - kind: TimeSeriesQuery
                       spec:
@@ -185,6 +189,7 @@ spec:
                             defaultColor: green
                         sparkline:
                             width: 1
+                        valueFontSize: 50
                 queries:
                     - kind: TimeSeriesQuery
                       spec:
@@ -217,6 +222,7 @@ spec:
                                   color: green
                         sparkline:
                             width: 1
+                        valueFontSize: 50
                 queries:
                     - kind: TimeSeriesQuery
                       spec:
@@ -250,6 +256,7 @@ spec:
                                   color: green
                         sparkline:
                             width: 1
+                        valueFontSize: 50
                 queries:
                     - kind: TimeSeriesQuery
                       spec:
@@ -273,11 +280,16 @@ spec:
                         legend:
                             position: bottom
                             mode: table
-                            values:
-                                - last
+                            size: small
                         yAxis:
                             format:
                                 unit: seconds
+                        visual:
+                            display: line
+                            lineWidth: 0.25
+                            areaOpacity: 0.5
+                            palette:
+                                mode: auto
                 queries:
                     - kind: TimeSeriesQuery
                       spec:
@@ -314,11 +326,16 @@ spec:
                         legend:
                             position: bottom
                             mode: table
-                            values:
-                                - last
+                            size: small
                         yAxis:
                             format:
                                 unit: seconds
+                        visual:
+                            display: line
+                            lineWidth: 0.25
+                            areaOpacity: 0.5
+                            palette:
+                                mode: auto
                 queries:
                     - kind: TimeSeriesQuery
                       spec:
@@ -364,6 +381,7 @@ spec:
                                   color: blue
                         sparkline:
                             width: 1
+                        valueFontSize: 50
                 queries:
                     - kind: TimeSeriesQuery
                       spec:
@@ -392,6 +410,7 @@ spec:
                             defaultColor: green
                         sparkline:
                             width: 1
+                        valueFontSize: 50
                 queries:
                     - kind: TimeSeriesQuery
                       spec:
@@ -420,6 +439,7 @@ spec:
                             defaultColor: green
                         sparkline:
                             width: 1
+                        valueFontSize: 50
                 queries:
                     - kind: TimeSeriesQuery
                       spec:
@@ -454,6 +474,7 @@ spec:
                                   name: "Yes"
                         sparkline:
                             width: 1
+                        valueFontSize: 50
                 queries:
                     - kind: TimeSeriesQuery
                       spec:
@@ -481,6 +502,7 @@ spec:
                             defaultColor: blue
                         sparkline:
                             width: 1
+                        valueFontSize: 50
                 queries:
                     - kind: TimeSeriesQuery
                       spec:
@@ -509,6 +531,7 @@ spec:
                             defaultColor: green
                         sparkline:
                             width: 1
+                        valueFontSize: 50
                 queries:
                     - kind: TimeSeriesQuery
                       spec:
@@ -536,6 +559,7 @@ spec:
                             defaultColor: green
                         sparkline:
                             width: 1
+                        valueFontSize: 50
                 queries:
                     - kind: TimeSeriesQuery
                       spec:
@@ -555,7 +579,7 @@ spec:
                 - x: 0
                   "y": 0
                   width: 24
-                  height: 6
+                  height: 8
                   content:
                     $ref: '#/spec/panels/0_0'
         - kind: Grid
@@ -566,25 +590,25 @@ spec:
                 - x: 0
                   "y": 0
                   width: 6
-                  height: 6
+                  height: 8
                   content:
                     $ref: '#/spec/panels/1_0'
                 - x: 6
                   "y": 0
                   width: 6
-                  height: 6
+                  height: 8
                   content:
                     $ref: '#/spec/panels/1_1'
                 - x: 12
                   "y": 0
                   width: 6
-                  height: 6
+                  height: 8
                   content:
                     $ref: '#/spec/panels/1_2'
                 - x: 18
                   "y": 0
                   width: 6
-                  height: 6
+                  height: 8
                   content:
                     $ref: '#/spec/panels/1_3'
         - kind: Grid
@@ -595,13 +619,13 @@ spec:
                 - x: 0
                   "y": 0
                   width: 12
-                  height: 6
+                  height: 8
                   content:
                     $ref: '#/spec/panels/2_0'
                 - x: 12
                   "y": 0
                   width: 12
-                  height: 6
+                  height: 8
                   content:
                     $ref: '#/spec/panels/2_1'
         - kind: Grid
@@ -612,13 +636,13 @@ spec:
                 - x: 0
                   "y": 0
                   width: 12
-                  height: 6
+                  height: 10
                   content:
                     $ref: '#/spec/panels/3_0'
                 - x: 12
                   "y": 0
                   width: 12
-                  height: 6
+                  height: 10
                   content:
                     $ref: '#/spec/panels/3_1'
         - kind: Grid
@@ -629,31 +653,31 @@ spec:
                 - x: 0
                   "y": 0
                   width: 4
-                  height: 6
+                  height: 8
                   content:
                     $ref: '#/spec/panels/4_0'
                 - x: 4
                   "y": 0
                   width: 4
-                  height: 6
+                  height: 8
                   content:
                     $ref: '#/spec/panels/4_1'
                 - x: 8
                   "y": 0
                   width: 4
-                  height: 6
+                  height: 8
                   content:
                     $ref: '#/spec/panels/4_2'
                 - x: 12
                   "y": 0
                   width: 4
-                  height: 6
+                  height: 8
                   content:
                     $ref: '#/spec/panels/4_3'
                 - x: 16
                   "y": 0
                   width: 4
-                  height: 6
+                  height: 8
                   content:
                     $ref: '#/spec/panels/4_4'
         - kind: Grid
@@ -664,13 +688,13 @@ spec:
                 - x: 0
                   "y": 0
                   width: 12
-                  height: 6
+                  height: 8
                   content:
                     $ref: '#/spec/panels/5_0'
                 - x: 12
                   "y": 0
                   width: 12
-                  height: 6
+                  height: 8
                   content:
                     $ref: '#/spec/panels/5_1'
     duration: 1h

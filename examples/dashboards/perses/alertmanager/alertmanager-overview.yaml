@@ -58,6 +58,12 @@ spec:
                             mode: table
                             values:
                                 - last
+                        visual:
+                            display: line
+                            lineWidth: 0.25
+                            areaOpacity: 1
+                            palette:
+                                mode: auto
                 queries:
                     - kind: TimeSeriesQuery
                       spec:
@@ -83,6 +89,13 @@ spec:
                             mode: table
                             values:
                                 - last
+                        visual:
+                            display: line
+                            lineWidth: 0.25
+                            areaOpacity: 1
+                            palette:
+                                mode: auto
+                            stack: all
                 queries:
                     - kind: TimeSeriesQuery
                       spec:
@@ -118,6 +131,13 @@ spec:
                             mode: table
                             values:
                                 - last
+                        visual:
+                            display: line
+                            lineWidth: 0.25
+                            areaOpacity: 1
+                            palette:
+                                mode: auto
+                            stack: all
                 queries:
                     - kind: TimeSeriesQuery
                       spec:
@@ -162,6 +182,12 @@ spec:
                         yAxis:
                             format:
                                 unit: seconds
+                        visual:
+                            display: line
+                            lineWidth: 0.25
+                            areaOpacity: 0.5
+                            palette:
+                                mode: auto
                 queries:
                     - kind: TimeSeriesQuery
                       spec:
@@ -229,13 +255,13 @@ spec:
                 - x: 0
                   "y": 0
                   width: 12
-                  height: 6
+                  height: 8
                   content:
                     $ref: '#/spec/panels/0_0'
                 - x: 12
                   "y": 0
                   width: 12
-                  height: 6
+                  height: 8
                   content:
                     $ref: '#/spec/panels/0_1'
         - kind: Grid
@@ -246,13 +272,13 @@ spec:
                 - x: 0
                   "y": 0
                   width: 12
-                  height: 6
+                  height: 8
                   content:
                     $ref: '#/spec/panels/1_0'
                 - x: 12
                   "y": 0
                   width: 12
-                  height: 6
+                  height: 8
                   content:
                     $ref: '#/spec/panels/1_1'
     duration: 1h
