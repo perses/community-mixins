@@ -40,6 +40,7 @@ Welcome to the **Perses Community Dashboards** repository! This project is desig
 - Kubelet
 - Controller Manager
 - Scheduler
+- Proxy
 
 ### Blackbox Exporter
 - Blackbox Exporter Overview
