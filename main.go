@@ -7,6 +7,7 @@ import (
 	"github.com/perses/community-dashboards/pkg/dashboards/alertmanager"
 	"github.com/perses/community-dashboards/pkg/dashboards/blackbox"
 	"github.com/perses/community-dashboards/pkg/dashboards/etcd"
+	"github.com/perses/community-dashboards/pkg/dashboards/kubernetes/apiserver"
 	k8sComputeResources "github.com/perses/community-dashboards/pkg/dashboards/kubernetes/compute_resources"
 	controller_manager "github.com/perses/community-dashboards/pkg/dashboards/kubernetes/controller_manager"
 	kubelet "github.com/perses/community-dashboards/pkg/dashboards/kubernetes/kubelet"
@@ -65,6 +66,7 @@ func main() {
 	dashboardWriter.Add(k8sNetworking.BuildKubernetesWorkloadOverview(project, datasource, clusterLabelName))
 	dashboardWriter.Add(k8sPersistentVolume.BuildKubernetesPersistentVolumeOverview(project, datasource, clusterLabelName))
 	dashboardWriter.Add(etcd.BuildETCDOverview(project, datasource, clusterLabelName))
+	dashboardWriter.Add(apiserver.BuildAPIServerOverview(project, datasource, clusterLabelName))
 
 	dashboardWriter.Write()
 }
