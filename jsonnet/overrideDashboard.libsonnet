@@ -1,8 +1,8 @@
-local overrideDashboard(dashboard, namespace, commonLabels, newDatasource) = 
+local overrideDashboard(dashboard, namespace, commonLabels, newDatasource) =
   dashboard {
     metadata+: {
       namespace: namespace,
-      labels: std.mergePatch(dashboard.metadata.labels, commonLabels),
+      labels: dashboard.metadata.labels + commonLabels,
     },
 
     spec+: {
@@ -15,14 +15,15 @@ local overrideDashboard(dashboard, namespace, commonLabels, newDatasource) =
                   plugin+: {
                     spec+: {
                       datasource+: {
-                        name: newDatasource
-                      }
-                    }
-                  }
-                }
-              } for query in dashboard.spec.panels[panelKey].spec.queries
-            ]
-          } else {}
+                        name: newDatasource,
+                      },
+                    },
+                  },
+                },
+              }
+              for query in dashboard.spec.panels[panelKey].spec.queries
+            ],
+          } else {},
         }
         for panelKey in std.objectFields(dashboard.spec.panels)
       },
@@ -33,15 +34,16 @@ local overrideDashboard(dashboard, namespace, commonLabels, newDatasource) =
             plugin+: {
               spec+: {
                 datasource+: {
-                  name: newDatasource
-                }
-              }
-            }
-          }
-        } for variable in dashboard.spec.variables
-      ] else []
-    }
+                  name: newDatasource,
+                },
+              },
+            },
+          },
+        }
+        for variable in dashboard.spec.variables
+      ] else [],
+    },
   };
 {
-  overrideDashboard: overrideDashboard
+  overrideDashboard: overrideDashboard,
 }

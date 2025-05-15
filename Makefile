@@ -1,12 +1,19 @@
 TOOLS_BIN_DIR ?= $(shell pwd)/tmp/bin
 
+XARGS ?= $(shell which gxargs 2>/dev/null || which xargs)
+
 export PATH := $(TOOLS_BIN_DIR):$(PATH)
 
 GOLANGCILINTER_BINARY=$(TOOLS_BIN_DIR)/golangci-lint
 MDOX_BINARY=$(TOOLS_BIN_DIR)/mdox
+GOJSONTOYAML_BINARY ?= $(TOOLS_BIN_DIR)/gojsontoyaml
+JSONNET_BINARY ?= $(TOOLS_BIN_DIR)/jsonnet
+JSONNETFMT_BINARY ?= $(TOOLS_BIN_DIR)/jsonnetfmt
+JSONNETLINT_BINARY ?= $(TOOLS_BIN_DIR)/jsonnet-lint
+
 MDOX_VALIDATE_CONFIG?=.mdox.validate.yaml
 
-TOOLING=$(MDOX_BINARY) $(GOLANGCILINTER_BINARY)
+TOOLING=$(MDOX_BINARY) $(GOLANGCILINTER_BINARY) $(GOJSONTOYAML_BINARY) $(JSONNET_BINARY) $(JSONNETFMT_BINARY) $(JSONNETLINT_BINARY)
 
 MD_FILES_TO_FORMAT=$(shell ls *.md)
 
@@ -42,7 +49,7 @@ build-dashboards:
 	@echo "Building dashboards"
 	@$(ENVVARS) $(GOCMD) run $(GOMAIN) --output-dir="./examples/dashboards/operator" --output="operator" --project="perses-dev" --datasource="prometheus-datasource"
 	@$(ENVVARS) $(GOCMD) run $(GOMAIN) --output-dir="./examples/dashboards/perses" --output="yaml" --project="perses-dev" --datasource="prometheus-datasource"
-	@$(ENVVARS) $(GOCMD) run $(GOMAIN) --output-dir="./examples/dashboards/json/operator/" --output="operator-json" --project="perses-dev" --datasource="prometheus-datasource"
+	@$(ENVVARS) $(GOCMD) run $(GOMAIN) --output-dir="./jsonnet/dashboards/operator/" --output="operator-json" --project="perses-dev" --datasource="prometheus-datasource"
 
 # Adding a new target for building and testing dashboards locally with configurable flags
 .PHONY: build-dashboards-local
@@ -88,6 +95,20 @@ check-docs: $(MDOX_BINARY)
 tidy:
 	go mod tidy -v
 	cd scripts && go mod tidy -v -modfile=go.mod -compat=1.18
+
+.PHONY: jsonnet-resources
+jsonnet-resources: $(JSONNET_BINARY) $(GOJSONTOYAML_BINARY)
+	@echo ">>>>> Running jsonnet gen"
+	rm -f jsonnet/examples/*.yaml
+	$(JSONNET_BINARY) -m jsonnet/examples jsonnet/example.jsonnet | $(XARGS) -I{} sh -c 'cat {} | $(GOJSONTOYAML_BINARY) > {}.yaml' -- {}
+	find jsonnet/examples -type f -not -name "*.*" -delete
+
+JSONNET_SRC = $(shell find . -type f -not -path './*vendor_jsonnet/*' \( -name '*.libsonnet' -o -name '*.jsonnet' \))
+
+.PHONY: jsonnet-format
+jsonnet-format: $(JSONNET_SRC) $(JSONNETFMT_BINARY)
+	@echo ">>>>> Running format"
+	$(JSONNETFMT_BINARY) -n 2 --max-blank-lines 2 --string-style s --comment-style s -i $(JSONNET_SRC)
 
 all: fmt vet deps check-golang check-docs
 
