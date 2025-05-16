@@ -49,8 +49,6 @@ build-dashboards:
 	@echo "Building dashboards"
 	@$(ENVVARS) $(GOCMD) run $(GOMAIN) --output-dir="./examples/dashboards/operator" --output="operator" --project="perses-dev" --datasource="prometheus-datasource"
 	@$(ENVVARS) $(GOCMD) run $(GOMAIN) --output-dir="./examples/dashboards/perses" --output="yaml" --project="perses-dev" --datasource="prometheus-datasource"
-	@$(ENVVARS) $(GOCMD) run $(GOMAIN) --output-dir="./jsonnet/dashboards/operator/" --output="operator-json" --project="perses-dev" --datasource="prometheus-datasource"
-	$(MAKE) jsonnet-resources
 
 # Adding a new target for building and testing dashboards locally with configurable flags
 .PHONY: build-dashboards-local
@@ -100,6 +98,9 @@ tidy:
 
 .PHONY: jsonnet-resources
 jsonnet-resources: $(JSONNET_BINARY) $(GOJSONTOYAML_BINARY)
+	@rm -rf ./jsonnet/dashboards/
+	@echo ">>>>> Building json operator dashboard resources"
+	@$(ENVVARS) $(GOCMD) run $(GOMAIN) --output-dir="./jsonnet/dashboards/operator/" --output="operator-json" --project="perses-dev" --datasource="prometheus-datasource"
 	@echo ">>>>> Running jsonnet gen"
 	rm -f jsonnet/examples/*.yaml
 	$(JSONNET_BINARY) -m jsonnet/examples jsonnet/example.jsonnet | $(XARGS) -I{} sh -c 'cat {} | $(GOJSONTOYAML_BINARY) > {}.yaml' -- {}
@@ -109,7 +110,7 @@ JSONNET_SRC = $(shell find . -type f -not -path './*vendor_jsonnet/*' \( -name '
 
 .PHONY: jsonnet-format
 jsonnet-format: $(JSONNET_SRC) $(JSONNETFMT_BINARY)
-	@echo ">>>>> Running format"
+	@echo ">>>>> Running jsonnet format"
 	$(JSONNETFMT_BINARY) -n 2 --max-blank-lines 2 --string-style s --comment-style s -i $(JSONNET_SRC)
 
 all: fmt vet deps check-golang check-docs
@@ -134,7 +135,7 @@ define require_clean_work_tree
 endef
 
 .PHONY: generate
-generate: tidy deps fmt build-dashboards
+generate: tidy deps fmt build-dashboards jsonnet-resources
 	$(call require_clean_work_tree,'all generated files should be committed, run make generate and commit changes.')
 
 $(TOOLS_BIN_DIR):
