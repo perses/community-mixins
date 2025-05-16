@@ -50,6 +50,7 @@ build-dashboards:
 	@$(ENVVARS) $(GOCMD) run $(GOMAIN) --output-dir="./examples/dashboards/operator" --output="operator" --project="perses-dev" --datasource="prometheus-datasource"
 	@$(ENVVARS) $(GOCMD) run $(GOMAIN) --output-dir="./examples/dashboards/perses" --output="yaml" --project="perses-dev" --datasource="prometheus-datasource"
 	@$(ENVVARS) $(GOCMD) run $(GOMAIN) --output-dir="./jsonnet/dashboards/operator/" --output="operator-json" --project="perses-dev" --datasource="prometheus-datasource"
+	$(MAKE) jsonnet-resources
 
 # Adding a new target for building and testing dashboards locally with configurable flags
 .PHONY: build-dashboards-local
@@ -68,6 +69,7 @@ deps:
 .PHONY: fmt
 fmt:
 	$(ENVVARS) $(GOCMD) fmt -x ./...
+	$(MAKE) jsonnet-format
 
 .PHONY: vet
 vet:

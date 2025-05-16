@@ -5,4 +5,9 @@ local config = {
   components: ['kubernetes', 'thanos', 'etcd', 'blackbox-exporter', 'node-exporter', 'alertmanager', 'prometheus', 'perses'],
 };
 
-dashboards(config)
+local result = dashboards(config);
+
+{
+  [dashboard.metadata.name]: dashboard
+  for dashboard in result.dashboards
+}
