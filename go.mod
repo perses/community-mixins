@@ -15,7 +15,7 @@ require (
 	github.com/perses/plugins/timeserieschart v0.6.0
 	github.com/prometheus/prometheus v0.303.1
 	gopkg.in/yaml.v3 v3.0.1
-	k8s.io/apimachinery v0.33.0
+	k8s.io/apimachinery v0.33.1
 	sigs.k8s.io/yaml v1.4.0
 )
 
