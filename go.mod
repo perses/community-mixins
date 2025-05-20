@@ -13,7 +13,7 @@ require (
 	github.com/perses/plugins/statchart v0.6.0
 	github.com/perses/plugins/table v0.6.0
 	github.com/perses/plugins/timeserieschart v0.6.0
-	github.com/prometheus/prometheus v0.303.1
+	github.com/prometheus/prometheus v0.304.0
 	gopkg.in/yaml.v3 v3.0.1
 	k8s.io/apimachinery v0.33.0
 	sigs.k8s.io/yaml v1.4.0
@@ -68,7 +68,7 @@ require (
 	golang.org/x/sys v0.33.0 // indirect
 	golang.org/x/text v0.25.0 // indirect
 	google.golang.org/genproto/googleapis/api v0.0.0-20250324211829-b45e905df463 // indirect
-	google.golang.org/genproto/googleapis/rpc v0.0.0-20250324211829-b45e905df463 // indirect
+	google.golang.org/genproto/googleapis/rpc v0.0.0-20250414145226-207652e42e2e // indirect
 	google.golang.org/protobuf v1.36.6 // indirect
 	gopkg.in/inf.v0 v0.9.1 // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect
