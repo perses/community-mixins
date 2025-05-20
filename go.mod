@@ -6,7 +6,7 @@ toolchain go1.24.2
 
 require (
 	github.com/perses/perses v0.51.0-rc.0
-	github.com/perses/perses-operator v0.1.10
+	github.com/perses/perses-operator v0.1.10-0.20250515091740-6855a844c9e6
 	github.com/perses/plugins/gaugechart v0.7.0
 	github.com/perses/plugins/markdown v0.7.0
 	github.com/perses/plugins/prometheus v0.6.0
@@ -75,7 +75,7 @@ require (
 	k8s.io/api v0.33.0 // indirect
 	k8s.io/klog/v2 v2.130.1 // indirect
 	k8s.io/utils v0.0.0-20241104100929-3ea5e8cea738 // indirect
-	sigs.k8s.io/controller-runtime v0.20.3 // indirect
+	sigs.k8s.io/controller-runtime v0.20.4 // indirect
 	sigs.k8s.io/json v0.0.0-20241014173422-cfa47c3a1cc8 // indirect
 	sigs.k8s.io/randfill v1.0.0 // indirect
 	sigs.k8s.io/structured-merge-diff/v4 v4.6.0 // indirect
