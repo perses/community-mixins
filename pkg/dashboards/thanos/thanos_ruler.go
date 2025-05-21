@@ -45,6 +45,7 @@ func withThanosAlertQueueGroup(datasource string, labelMatcher promql.LabelMatch
 
 func BuildThanosRulerOverview(project string, datasource string, clusterLabelName string) dashboards.DashboardResult {
 	clusterLabelMatcher := dashboards.GetClusterLabelMatcher(clusterLabelName)
+	clusterLabelMatcherV2 := dashboards.GetClusterLabelMatcherV2(clusterLabelName)
 	return dashboards.NewDashboardResult(
 		dashboard.New("thanos-ruler-overview",
 			dashboard.ProjectName(project),
@@ -72,8 +73,8 @@ func BuildThanosRulerOverview(project string, datasource string, clusterLabelNam
 			withThanosRuleGroupEvaluationGroup(datasource, clusterLabelMatcher),
 			withThanosAlertsSentGroup(datasource, clusterLabelMatcher),
 			withThanosAlertQueueGroup(datasource, clusterLabelMatcher),
-			withThanosReadGRPCUnaryGroup(datasource, clusterLabelMatcher),
-			withThanosReadGRPCStreamGroup(datasource, clusterLabelMatcher),
+			withThanosReadGRPCUnaryGroup(datasource, clusterLabelMatcherV2),
+			withThanosReadGRPCStreamGroup(datasource, clusterLabelMatcherV2),
 			withThanosResourcesGroup(datasource, clusterLabelMatcher),
 		),
 	).Component("thanos")

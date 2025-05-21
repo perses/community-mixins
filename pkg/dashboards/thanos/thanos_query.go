@@ -50,6 +50,7 @@ func withThanosQueryDNSLookupGroup(datasource string, labelMatcher promql.LabelM
 
 func BuildThanosQueryOverview(project string, datasource string, clusterLabelName string) dashboards.DashboardResult {
 	clusterLabelMatcher := dashboards.GetClusterLabelMatcher(clusterLabelName)
+	clusterLabelMatcherV2 := dashboards.GetClusterLabelMatcherV2(clusterLabelName)
 	return dashboards.NewDashboardResult(
 		dashboard.New("thanos-query-overview",
 			dashboard.ProjectName(project),
@@ -76,8 +77,8 @@ func BuildThanosQueryOverview(project string, datasource string, clusterLabelNam
 			dashboards.AddClusterVariable(datasource, clusterLabelName, "thanos_build_info"),
 			withThanosQueryInstantQueryGroup(datasource, clusterLabelMatcher),
 			withThanosQueryRangeQueryGroup(datasource, clusterLabelMatcher),
-			withThanosReadGRPCUnaryGroup(datasource, clusterLabelMatcher),
-			withThanosReadGRPCStreamGroup(datasource, clusterLabelMatcher),
+			withThanosReadGRPCUnaryGroup(datasource, clusterLabelMatcherV2),
+			withThanosReadGRPCStreamGroup(datasource, clusterLabelMatcherV2),
 			withThanosQueryConcurrencyGroup(datasource, clusterLabelMatcher),
 			withThanosQueryDNSLookupGroup(datasource, clusterLabelMatcher),
 			withThanosResourcesGroup(datasource, clusterLabelMatcher),

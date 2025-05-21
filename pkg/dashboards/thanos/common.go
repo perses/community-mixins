@@ -3,6 +3,7 @@ package thanos
 import (
 	"github.com/perses/perses/go-sdk/dashboard"
 	panelgroup "github.com/perses/perses/go-sdk/panel-group"
+	"github.com/prometheus/prometheus/model/labels"
 
 	panelsGostats "github.com/perses/community-dashboards/pkg/panels/gostats"
 	panels "github.com/perses/community-dashboards/pkg/panels/thanos"
@@ -26,7 +27,7 @@ func withThanosResourcesGroup(datasource string, labelMatcher promql.LabelMatche
 	)
 }
 
-func withThanosBucketOperationsGroup(datasource string, labelMatcher promql.LabelMatcher) dashboard.Option {
+func withThanosBucketOperationsGroup(datasource string, labelMatcher *labels.Matcher) dashboard.Option {
 	return dashboard.AddPanelGroup("Bucket Operations",
 		panelgroup.PanelsPerLine(3),
 		panelgroup.PanelHeight(8),
@@ -36,7 +37,7 @@ func withThanosBucketOperationsGroup(datasource string, labelMatcher promql.Labe
 	)
 }
 
-func withThanosReadGRPCUnaryGroup(datasource string, labelMatcher promql.LabelMatcher) dashboard.Option {
+func withThanosReadGRPCUnaryGroup(datasource string, labelMatcher *labels.Matcher) dashboard.Option {
 	return dashboard.AddPanelGroup("Read gRPC Unary (StoreAPI Info/Labels)",
 		panelgroup.PanelsPerLine(3),
 		panelgroup.PanelHeight(8),
@@ -46,7 +47,7 @@ func withThanosReadGRPCUnaryGroup(datasource string, labelMatcher promql.LabelMa
 	)
 }
 
-func withThanosReadGRPCStreamGroup(datasource string, labelMatcher promql.LabelMatcher) dashboard.Option {
+func withThanosReadGRPCStreamGroup(datasource string, labelMatcher *labels.Matcher) dashboard.Option {
 	return dashboard.AddPanelGroup("Read gRPC Stream (StoreAPI Series/Exemplars)",
 		panelgroup.PanelsPerLine(3),
 		panelgroup.PanelHeight(8),

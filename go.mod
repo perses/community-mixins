@@ -13,6 +13,7 @@ require (
 	github.com/perses/plugins/statchart v0.7.0
 	github.com/perses/plugins/table v0.6.0
 	github.com/perses/plugins/timeserieschart v0.6.0
+	github.com/perses/promql-builder v0.1.0
 	github.com/prometheus/prometheus v0.304.0
 	gopkg.in/yaml.v3 v3.0.1
 	k8s.io/apimachinery v0.33.1

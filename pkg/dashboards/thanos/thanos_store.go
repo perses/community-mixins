@@ -64,6 +64,7 @@ func withThanosStoreSentGroup(datasource string, labelMatcher promql.LabelMatche
 
 func BuildThanosStoreOverview(project string, datasource string, clusterLabelName string) dashboards.DashboardResult {
 	clusterLabelMatcher := dashboards.GetClusterLabelMatcher(clusterLabelName)
+	clusterLabelMatcherV2 := dashboards.GetClusterLabelMatcherV2(clusterLabelName)
 	return dashboards.NewDashboardResult(
 		dashboard.New("thanos-store-overview",
 			dashboard.ProjectName(project),
@@ -88,9 +89,9 @@ func BuildThanosStoreOverview(project string, datasource string, clusterLabelNam
 					listVar.DisplayName("namespace"),
 				),
 			),
-			withThanosReadGRPCUnaryGroup(datasource, clusterLabelMatcher),
-			withThanosReadGRPCStreamGroup(datasource, clusterLabelMatcher),
-			withThanosBucketOperationsGroup(datasource, clusterLabelMatcher),
+			withThanosReadGRPCUnaryGroup(datasource, clusterLabelMatcherV2),
+			withThanosReadGRPCStreamGroup(datasource, clusterLabelMatcherV2),
+			withThanosBucketOperationsGroup(datasource, clusterLabelMatcherV2),
 			withThanosBlockOperationsGroup(datasource, clusterLabelMatcher),
 			withThanosCacheOperationsGroup(datasource, clusterLabelMatcher),
 			withThanosQueryOperationsGroup(datasource, clusterLabelMatcher),
