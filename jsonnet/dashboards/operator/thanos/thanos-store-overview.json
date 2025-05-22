@@ -522,7 +522,7 @@
                       "kind": "PrometheusDatasource",
                       "name": "prometheus-datasource"
                     },
-                    "query": "  (\n      sum by (namespace, job, operation) (\n        rate(thanos_objstore_bucket_operation_failures_total{job=~\"$job\",namespace=\"$namespace\"}[$__rate_interval])\n      )\n    /\n      sum by (namespace, job, operation) (\n        rate(thanos_objstore_bucket_operations_total{job=~\"$job\",namespace=\"$namespace\"}[$__rate_interval])\n      )\n  )\n*\n  100",
+                    "query": "    sum by (namespace, job, operation) (\n      rate(\n        thanos_objstore_bucket_operation_failures_total{job=~\"$job\",namespace=\"$namespace\"}[$__rate_interval]\n      )\n    )\n  /\n    sum by (namespace, job, operation) (\n      rate(thanos_objstore_bucket_operations_total{job=~\"$job\",namespace=\"$namespace\"}[$__rate_interval])\n    )\n*\n  100",
                     "seriesNameFormat": "{{job}} {{operation}} {{namespace}}"
                   }
                 }

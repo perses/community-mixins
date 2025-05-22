@@ -314,7 +314,7 @@ var ThanosCommonPanelQueries = map[string]parser.Expr{
 	),
 	"MarkingRate": promql.SumByRate(
 		"thanos_compact_blocks_marked_total",
-		[]string{"namespace", "job", "marker"},
+		[]string{"namespace", "job"},
 		label.New("namespace").Equal("$namespace"),
 		label.New("job").EqualRegexp("$job"),
 		label.New("marker").Equal("deletion-mark.json"),

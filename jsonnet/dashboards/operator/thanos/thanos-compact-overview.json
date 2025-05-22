@@ -360,7 +360,7 @@
                       "kind": "PrometheusDatasource",
                       "name": "prometheus-datasource"
                     },
-                    "query": "  (\n      sum by (namespace, job) (\n        rate(thanos_compact_group_compactions_failures_total{job=~\"$job\",namespace=\"$namespace\"}[$__rate_interval])\n      )\n    /\n      sum by (namespace, job) (\n        rate(thanos_compact_group_compactions_total{job=~\"$job\",namespace=\"$namespace\"}[$__rate_interval])\n      )\n  )\n*\n  100",
+                    "query": "    sum by (namespace, job) (\n      rate(\n        thanos_compact_group_compactions_failures_total{job=~\"$job\",namespace=\"$namespace\"}[$__rate_interval]\n      )\n    )\n  /\n    sum by (namespace, job) (\n      rate(thanos_compact_group_compactions_total{job=~\"$job\",namespace=\"$namespace\"}[$__rate_interval])\n    )\n*\n  100",
                     "seriesNameFormat": "{{job}} {{namespace}}"
                   }
                 }
@@ -460,7 +460,7 @@
                       "kind": "PrometheusDatasource",
                       "name": "prometheus-datasource"
                     },
-                    "query": "  (\n      sum by (namespace, job) (\n        rate(thanos_compact_downsample_failed_total{job=~\"$job\",namespace=\"$namespace\"}[$__rate_interval])\n      )\n    /\n      sum by (namespace, job) (\n        rate(thanos_compact_downsample_total{job=~\"$job\",namespace=\"$namespace\"}[$__rate_interval])\n      )\n  )\n*\n  100",
+                    "query": "    sum by (namespace, job) (\n      rate(thanos_compact_downsample_failed_total{job=~\"$job\",namespace=\"$namespace\"}[$__rate_interval])\n    )\n  /\n    sum by (namespace, job) (\n      rate(thanos_compact_downsample_total{job=~\"$job\",namespace=\"$namespace\"}[$__rate_interval])\n    )\n*\n  100",
                     "seriesNameFormat": "{{job}} {{namespace}}"
                   }
                 }
@@ -641,7 +641,7 @@
                       "kind": "PrometheusDatasource",
                       "name": "prometheus-datasource"
                     },
-                    "query": "  (\n      sum by (namespace, job) (\n        rate(thanos_blocks_meta_sync_failures_total{job=~\"$job\",namespace=\"$namespace\"}[$__rate_interval])\n      )\n    /\n      sum by (namespace, job) (\n        rate(thanos_blocks_meta_syncs_total{job=~\"$job\",namespace=\"$namespace\"}[$__rate_interval])\n      )\n  )\n*\n  100",
+                    "query": "    sum by (namespace, job) (\n      rate(thanos_blocks_meta_sync_failures_total{job=~\"$job\",namespace=\"$namespace\"}[$__rate_interval])\n    )\n  /\n    sum by (namespace, job) (\n      rate(thanos_blocks_meta_syncs_total{job=~\"$job\",namespace=\"$namespace\"}[$__rate_interval])\n    )\n*\n  100",
                     "seriesNameFormat": "{{job}} {{namespace}}"
                   }
                 }
@@ -690,7 +690,7 @@
                       "kind": "PrometheusDatasource",
                       "name": "prometheus-datasource"
                     },
-                    "query": "histogram_quantile(\n  0.5,\n  sum by (namespace, job, le) (\n    rate(thanos_blocks_meta_sync_duration_seconds_bucket{job=~\"$job\",namespace=\"$namespace\"}[$__rate_interval])\n  )\n)",
+                    "query": "histogram_quantile(\n  0.5,\n  sum by (namespace, job, le) (\n    rate(\n      thanos_blocks_meta_sync_duration_seconds_bucket{job=~\"$job\",namespace=\"$namespace\"}[$__rate_interval]\n    )\n  )\n)",
                     "seriesNameFormat": "p50 {{job}} {{namespace}}"
                   }
                 }
@@ -706,7 +706,7 @@
                       "kind": "PrometheusDatasource",
                       "name": "prometheus-datasource"
                     },
-                    "query": "histogram_quantile(\n  0.9,\n  sum by (namespace, job, le) (\n    rate(thanos_blocks_meta_sync_duration_seconds_bucket{job=~\"$job\",namespace=\"$namespace\"}[$__rate_interval])\n  )\n)",
+                    "query": "histogram_quantile(\n  0.9,\n  sum by (namespace, job, le) (\n    rate(\n      thanos_blocks_meta_sync_duration_seconds_bucket{job=~\"$job\",namespace=\"$namespace\"}[$__rate_interval]\n    )\n  )\n)",
                     "seriesNameFormat": "p90 {{job}} {{namespace}}"
                   }
                 }
@@ -722,7 +722,7 @@
                       "kind": "PrometheusDatasource",
                       "name": "prometheus-datasource"
                     },
-                    "query": "histogram_quantile(\n  0.99,\n  sum by (namespace, job, le) (\n    rate(thanos_blocks_meta_sync_duration_seconds_bucket{job=~\"$job\",namespace=\"$namespace\"}[$__rate_interval])\n  )\n)",
+                    "query": "histogram_quantile(\n  0.99,\n  sum by (namespace, job, le) (\n    rate(\n      thanos_blocks_meta_sync_duration_seconds_bucket{job=~\"$job\",namespace=\"$namespace\"}[$__rate_interval]\n    )\n  )\n)",
                     "seriesNameFormat": "p99 {{job}} {{namespace}}"
                   }
                 }
@@ -822,7 +822,7 @@
                       "kind": "PrometheusDatasource",
                       "name": "prometheus-datasource"
                     },
-                    "query": "sum by (namespace, job) (\n  rate(thanos_compact_block_cleanup_failures_total{job=~\"$job\",namespace=\"$namespace\"}[$__rate_interval])\n)",
+                    "query": "sum by (namespace, job) (\n  rate(\n    thanos_compact_block_cleanup_failures_total{job=~\"$job\",namespace=\"$namespace\"}[$__rate_interval]\n  )\n)",
                     "seriesNameFormat": "{{job}} {{namespace}}"
                   }
                 }
@@ -972,7 +972,7 @@
                       "kind": "PrometheusDatasource",
                       "name": "prometheus-datasource"
                     },
-                    "query": "  (\n      sum by (namespace, job, operation) (\n        rate(thanos_objstore_bucket_operation_failures_total{job=~\"$job\",namespace=\"$namespace\"}[$__rate_interval])\n      )\n    /\n      sum by (namespace, job, operation) (\n        rate(thanos_objstore_bucket_operations_total{job=~\"$job\",namespace=\"$namespace\"}[$__rate_interval])\n      )\n  )\n*\n  100",
+                    "query": "    sum by (namespace, job, operation) (\n      rate(\n        thanos_objstore_bucket_operation_failures_total{job=~\"$job\",namespace=\"$namespace\"}[$__rate_interval]\n      )\n    )\n  /\n    sum by (namespace, job, operation) (\n      rate(thanos_objstore_bucket_operations_total{job=~\"$job\",namespace=\"$namespace\"}[$__rate_interval])\n    )\n*\n  100",
                     "seriesNameFormat": "{{job}} {{operation}} {{namespace}}"
                   }
                 }
@@ -1203,7 +1203,7 @@
                       "kind": "PrometheusDatasource",
                       "name": "prometheus-datasource"
                     },
-                    "query": "  (\n      sum by (namespace, job) (\n        rate(\n          thanos_compact_garbage_collection_failures_total{job=~\"$job\",namespace=\"$namespace\"}[$__rate_interval]\n        )\n      )\n    /\n      sum by (namespace, job) (\n        rate(thanos_compact_garbage_collection_total{job=~\"$job\",namespace=\"$namespace\"}[$__rate_interval])\n      )\n  )\n*\n  100",
+                    "query": "    sum by (namespace, job) (\n      rate(\n        thanos_compact_garbage_collection_failures_total{job=~\"$job\",namespace=\"$namespace\"}[$__rate_interval]\n      )\n    )\n  /\n    sum by (namespace, job) (\n      rate(thanos_compact_garbage_collection_total{job=~\"$job\",namespace=\"$namespace\"}[$__rate_interval])\n    )\n*\n  100",
                     "seriesNameFormat": "{{job}} {{namespace}}"
                   }
                 }

@@ -618,15 +618,15 @@ spec:
                   kind: PrometheusDatasource
                   name: custom-datasource
                 query: |2-
-                    (
-                        sum by (namespace, job, operation) (
-                          rate(thanos_objstore_bucket_operation_failures_total{job=~"$job",namespace="$namespace"}[$__rate_interval])
+                      sum by (namespace, job, operation) (
+                        rate(
+                          thanos_objstore_bucket_operation_failures_total{job=~"$job",namespace="$namespace"}[$__rate_interval]
                         )
-                      /
-                        sum by (namespace, job, operation) (
-                          rate(thanos_objstore_bucket_operations_total{job=~"$job",namespace="$namespace"}[$__rate_interval])
-                        )
-                    )
+                      )
+                    /
+                      sum by (namespace, job, operation) (
+                        rate(thanos_objstore_bucket_operations_total{job=~"$job",namespace="$namespace"}[$__rate_interval])
+                      )
                   *
                     100
                 seriesNameFormat: '{{job}} {{operation}} {{namespace}}'
