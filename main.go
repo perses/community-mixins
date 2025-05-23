@@ -69,6 +69,7 @@ func main() {
 	dashboardWriter.Add(etcd.BuildETCDOverview(project, datasource, clusterLabelName))
 	dashboardWriter.Add(apiserver.BuildAPIServerOverview(project, datasource, clusterLabelName))
 	dashboardWriter.Add(tempo.BuildTempoWritesOverview(project, datasource, clusterLabelName))
+	dashboardWriter.Add(tempo.BuildTempoTenantOverview(project, datasource, clusterLabelName))
 
 	dashboardWriter.Write()
 }

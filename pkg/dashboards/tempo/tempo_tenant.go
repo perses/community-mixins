@@ -59,7 +59,7 @@ func withTenantMetricGenerator(datasource string, labelMatcher promql.LabelMatch
 func BuildTempoTenantOverview(project string, datasource string, clusterLabelName string) dashboards.DashboardResult {
 	clusterLabelMatcher := dashboards.GetClusterLabelMatcher(clusterLabelName)
 	return dashboards.NewDashboardResult(
-		dashboard.New("thanos-tenant-overview",
+		dashboard.New("tempo-tenant-overview",
 			dashboard.ProjectName(project),
 			dashboard.Name("Tempo / Tenant"),
 			dashboard.AddVariable("cluster",

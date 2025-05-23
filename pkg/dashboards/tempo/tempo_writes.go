@@ -105,7 +105,7 @@ func withWritesBackendCompactor(datasource string, labelMatcher promql.LabelMatc
 func BuildTempoWritesOverview(project string, datasource string, clusterLabelName string) dashboards.DashboardResult {
 	clusterLabelMatcher := dashboards.GetClusterLabelMatcher(clusterLabelName)
 	return dashboards.NewDashboardResult(
-		dashboard.New("thanos-writes-overview",
+		dashboard.New("tempo-writes-overview",
 			dashboard.ProjectName(project),
 			dashboard.Name("Tempo / Writes"),
 			dashboard.AddVariable("cluster",

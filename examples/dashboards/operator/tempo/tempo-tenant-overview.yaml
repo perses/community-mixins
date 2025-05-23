@@ -1,0 +1,622 @@
+apiVersion: perses.dev/v1alpha1
+kind: PersesDashboard
+metadata:
+  creationTimestamp: null
+  labels:
+    app.kubernetes.io/component: dashboard
+    app.kubernetes.io/instance: tempo-tenant-overview
+    app.kubernetes.io/name: perses-dashboard
+    app.kubernetes.io/part-of: perses-operator
+  name: tempo-tenant-overview
+  namespace: perses-dev
+spec:
+  display:
+    name: Tempo / Tenant
+  duration: 1h
+  layouts:
+  - kind: Grid
+    spec:
+      display:
+        title: Tenant Info
+      items:
+      - content:
+          $ref: '#/spec/panels/0_0'
+        height: 8
+        width: 24
+        x: 0
+        "y": 0
+  - kind: Grid
+    spec:
+      display:
+        title: Ingestion
+      items:
+      - content:
+          $ref: '#/spec/panels/1_0'
+        height: 8
+        width: 8
+        x: 0
+        "y": 0
+      - content:
+          $ref: '#/spec/panels/1_1'
+        height: 8
+        width: 8
+        x: 8
+        "y": 0
+      - content:
+          $ref: '#/spec/panels/1_2'
+        height: 8
+        width: 8
+        x: 16
+        "y": 0
+  - kind: Grid
+    spec:
+      display:
+        title: Reads
+      items:
+      - content:
+          $ref: '#/spec/panels/2_0'
+        height: 8
+        width: 12
+        x: 0
+        "y": 0
+      - content:
+          $ref: '#/spec/panels/2_1'
+        height: 8
+        width: 12
+        x: 12
+        "y": 0
+  - kind: Grid
+    spec:
+      display:
+        title: Storage
+      items:
+      - content:
+          $ref: '#/spec/panels/3_0'
+        height: 8
+        width: 12
+        x: 0
+        "y": 0
+      - content:
+          $ref: '#/spec/panels/3_1'
+        height: 8
+        width: 12
+        x: 12
+        "y": 0
+  - kind: Grid
+    spec:
+      display:
+        title: Metrics Generator
+      items:
+      - content:
+          $ref: '#/spec/panels/4_0'
+        height: 8
+        width: 12
+        x: 0
+        "y": 0
+      - content:
+          $ref: '#/spec/panels/4_1'
+        height: 8
+        width: 12
+        x: 12
+        "y": 0
+  panels:
+    "0_0":
+      kind: Panel
+      spec:
+        display:
+          description: Displays the effective Tempo limits (limit_name)
+          name: Tenant info
+        plugin:
+          kind: Table
+          spec:
+            columnSettings:
+            - header: limit name
+              name: limit_name
+        queries:
+        - kind: TimeSeriesQuery
+          spec:
+            plugin:
+              kind: PrometheusTimeSeriesQuery
+              spec:
+                datasource:
+                  kind: PrometheusDatasource
+                  name: prometheus-datasource
+                query: |-
+                  max by (limit_name) (
+                      max by (cluster, namespace, limit_name) (
+                        tempo_limits_overrides{cluster=~"$cluster",job=~"($namespace)/compactor",user="$tenant"}
+                      )
+                    or
+                      max by (cluster, namespace, limit_name) (
+                        tempo_limits_defaults{cluster=~"$cluster",job=~"($namespace)/compactor"}
+                      )
+                  )
+    "1_0":
+      kind: Panel
+      spec:
+        display:
+          description: Data ingestion rate (in bytes/sec) for the Tempo distributor,
+            filtered by tenant, cluster, and namespace.
+          name: Distributor bytes/s
+        plugin:
+          kind: TimeSeriesChart
+          spec:
+            legend:
+              mode: table
+              position: bottom
+            visual:
+              areaOpacity: 1
+              display: line
+              lineWidth: 0.25
+              palette:
+                mode: auto
+            yAxis:
+              format:
+                unit: bytes/sec
+        queries:
+        - kind: TimeSeriesQuery
+          spec:
+            plugin:
+              kind: PrometheusTimeSeriesQuery
+              spec:
+                datasource:
+                  kind: PrometheusDatasource
+                  name: prometheus-datasource
+                query: |-
+                  sum(
+                    rate(
+                      tempo_distributor_bytes_received_total{cluster=~"$cluster",job=~"($namespace)/distributor",tenant="$tenant"}[$__rate_interval]
+                    )
+                  )
+                seriesNameFormat: received
+        - kind: TimeSeriesQuery
+          spec:
+            plugin:
+              kind: PrometheusTimeSeriesQuery
+              spec:
+                datasource:
+                  kind: PrometheusDatasource
+                  name: prometheus-datasource
+                query: |-
+                  max by (ingestion_rate_limit_bytes) (
+                      max by (cluster, namespace, limit_name) (
+                        tempo_limits_overrides{cluster=~"$cluster",job=~"($namespace)/compactor",limit_name="ingestion_rate_limit_bytes",user="$tenant"}
+                      )
+                    or
+                      max by (cluster, namespace, limit_name) (
+                        tempo_limits_defaults{cluster=~"$cluster",job=~"($namespace)/compactor",limit_name="ingestion_rate_limit_bytes"}
+                      )
+                  )
+                seriesNameFormat: limit
+        - kind: TimeSeriesQuery
+          spec:
+            plugin:
+              kind: PrometheusTimeSeriesQuery
+              spec:
+                datasource:
+                  kind: PrometheusDatasource
+                  name: prometheus-datasource
+                query: |-
+                  max by (ingestion_burst_size_bytes) (
+                      max by (cluster, namespace, limit_name) (
+                        tempo_limits_overrides{cluster=~"$cluster",job=~"($namespace)/compactor",limit_name="ingestion_burst_size_bytes",user="$tenant"}
+                      )
+                    or
+                      max by (cluster, namespace, limit_name) (
+                        tempo_limits_defaults{cluster=~"$cluster",job=~"($namespace)/compactor",limit_name="ingestion_burst_size_bytes"}
+                      )
+                  )
+                seriesNameFormat: burst limit
+    "1_1":
+      kind: Panel
+      spec:
+        display:
+          description: Rate of Spans per Second for Tempo Distributor
+          name: Distributor span/s
+        plugin:
+          kind: TimeSeriesChart
+          spec:
+            legend:
+              mode: table
+              position: bottom
+            visual:
+              areaOpacity: 1
+              display: line
+              lineWidth: 0.25
+              palette:
+                mode: auto
+            yAxis:
+              format:
+                unit: decimal
+        queries:
+        - kind: TimeSeriesQuery
+          spec:
+            plugin:
+              kind: PrometheusTimeSeriesQuery
+              spec:
+                datasource:
+                  kind: PrometheusDatasource
+                  name: prometheus-datasource
+                query: |-
+                  sum(
+                    rate(
+                      tempo_distributor_spans_received_total{cluster=~"$cluster",job=~"($namespace)/distributor",tenant="$tenant"}[$__rate_interval]
+                    )
+                  )
+                seriesNameFormat: accepted
+        - kind: TimeSeriesQuery
+          spec:
+            plugin:
+              kind: PrometheusTimeSeriesQuery
+              spec:
+                datasource:
+                  kind: PrometheusDatasource
+                  name: prometheus-datasource
+                query: |-
+                  sum by (reason) (
+                    rate(
+                      tempo_discarded_spans_total{cluster=~"$cluster",job=~"($namespace)/distributor",tenant="$tenant"}[$__rate_interval]
+                    )
+                  )
+                seriesNameFormat: refused {{ reason }}
+    "1_2":
+      kind: Panel
+      spec:
+        display:
+          description: Tempo ingester traces in memory
+          name: Live traces
+        plugin:
+          kind: TimeSeriesChart
+          spec:
+            legend:
+              mode: table
+              position: bottom
+            visual:
+              areaOpacity: 1
+              display: line
+              lineWidth: 0.25
+              palette:
+                mode: auto
+            yAxis:
+              format:
+                unit: decimal
+        queries:
+        - kind: TimeSeriesQuery
+          spec:
+            plugin:
+              kind: PrometheusTimeSeriesQuery
+              spec:
+                datasource:
+                  kind: PrometheusDatasource
+                  name: prometheus-datasource
+                query: max(tempo_ingester_live_traces{cluster=~"$cluster",job=~"($namespace)/ingester",tenant="$tenant"})
+                seriesNameFormat: live traces
+        - kind: TimeSeriesQuery
+          spec:
+            plugin:
+              kind: PrometheusTimeSeriesQuery
+              spec:
+                datasource:
+                  kind: PrometheusDatasource
+                  name: prometheus-datasource
+                query: |-
+                  max by (max_global_traces_per_user) (
+                      max by (cluster, namespace, limit_name) (
+                        tempo_limits_overrides{cluster=~"$cluster",job=~"($namespace)/compactor",limit_name="max_global_traces_per_user",user="$tenant"}
+                      )
+                    or
+                      max by (cluster, namespace, limit_name) (
+                        tempo_limits_defaults{cluster=~"$cluster",job=~"($namespace)/compactor",limit_name="max_global_traces_per_user"}
+                      )
+                  )
+                seriesNameFormat: global limit
+        - kind: TimeSeriesQuery
+          spec:
+            plugin:
+              kind: PrometheusTimeSeriesQuery
+              spec:
+                datasource:
+                  kind: PrometheusDatasource
+                  name: prometheus-datasource
+                query: |-
+                  max by (max_local_traces_per_user) (
+                      max by (cluster, namespace, limit_name) (
+                        tempo_limits_overrides{cluster=~"$cluster",job=~"($namespace)/compactor",limit_name="max_local_traces_per_user",user="$tenant"}
+                      )
+                    or
+                      max by (cluster, namespace, limit_name) (
+                        tempo_limits_defaults{cluster=~"$cluster",job=~"($namespace)/compactor",limit_name="max_local_traces_per_user"}
+                      )
+                  )
+                seriesNameFormat: local limit
+    "2_0":
+      kind: Panel
+      spec:
+        display:
+          description: Rate per second of traces queries handled by Tempo's query-frontend
+          name: Queries/s (ID lookup)
+        plugin:
+          kind: TimeSeriesChart
+          spec:
+            legend:
+              mode: table
+              position: bottom
+            visual:
+              areaOpacity: 1
+              display: line
+              lineWidth: 0.25
+              palette:
+                mode: auto
+            yAxis:
+              format:
+                unit: decimal
+        queries:
+        - kind: TimeSeriesQuery
+          spec:
+            plugin:
+              kind: PrometheusTimeSeriesQuery
+              spec:
+                datasource:
+                  kind: PrometheusDatasource
+                  name: prometheus-datasource
+                query: |-
+                  sum by (status) (
+                    rate(
+                      tempo_query_frontend_queries_total{cluster=~"$cluster",job=~"($namespace)/query-frontend",op="traces",tenant="$tenant"}[$__rate_interval]
+                    )
+                  )
+                seriesNameFormat: '{{ status }}'
+    "2_1":
+      kind: Panel
+      spec:
+        display:
+          description: Rate per second of Tempo search queries processed by the query-frontend
+          name: Queries/s (search)
+        plugin:
+          kind: TimeSeriesChart
+          spec:
+            legend:
+              mode: table
+              position: bottom
+            visual:
+              areaOpacity: 1
+              display: line
+              lineWidth: 0.25
+              palette:
+                mode: auto
+            yAxis:
+              format:
+                unit: decimal
+        queries:
+        - kind: TimeSeriesQuery
+          spec:
+            plugin:
+              kind: PrometheusTimeSeriesQuery
+              spec:
+                datasource:
+                  kind: PrometheusDatasource
+                  name: prometheus-datasource
+                query: |-
+                  sum by (status) (
+                    rate(
+                      tempo_query_frontend_queries_total{cluster=~"$cluster",job=~"($namespace)/query-frontend",op="search",tenant="$tenant"}[$__rate_interval]
+                    )
+                  )
+                seriesNameFormat: '{{ status }}'
+    "3_0":
+      kind: Panel
+      spec:
+        display:
+          description: Average number of blocks currently listed in the blocklist
+            of the Tempo compactor
+          name: Blockslist length
+        plugin:
+          kind: TimeSeriesChart
+          spec:
+            legend:
+              mode: table
+              position: bottom
+            visual:
+              areaOpacity: 1
+              display: line
+              lineWidth: 0.25
+              palette:
+                mode: auto
+            yAxis:
+              format:
+                unit: decimal
+        queries:
+        - kind: TimeSeriesQuery
+          spec:
+            plugin:
+              kind: PrometheusTimeSeriesQuery
+              spec:
+                datasource:
+                  kind: PrometheusDatasource
+                  name: prometheus-datasource
+                query: avg(tempodb_blocklist_length{cluster=~"$cluster",job=~"($namespace)/compactor",tenant="$tenant"})
+                seriesNameFormat: length
+    "3_1":
+      kind: Panel
+      spec:
+        display:
+          description: Average number of Tempo blocks awaiting compaction per compactor
+            instance
+          name: Outstanding compactions
+        plugin:
+          kind: TimeSeriesChart
+          spec:
+            legend:
+              mode: table
+              position: bottom
+            visual:
+              areaOpacity: 1
+              display: line
+              lineWidth: 0.25
+              palette:
+                mode: auto
+            yAxis:
+              format:
+                unit: decimal
+        queries:
+        - kind: TimeSeriesQuery
+          spec:
+            plugin:
+              kind: PrometheusTimeSeriesQuery
+              spec:
+                datasource:
+                  kind: PrometheusDatasource
+                  name: prometheus-datasource
+                query: |2-
+                    sum(
+                      tempodb_compaction_outstanding_blocks{cluster=~"$cluster",job=~"($namespace)/compactor",tenant="$tenant"}
+                    )
+                  /
+                    count(tempo_build_info{cluster=~"$cluster",job=~"($namespace)/compactor"})
+                seriesNameFormat: blocks
+    "4_0":
+      kind: Panel
+      spec:
+        display:
+          description: Rate of trace data (in bytes/sec) ingested by the Tempo metrics
+            generato
+          name: Bytes/s
+        plugin:
+          kind: TimeSeriesChart
+          spec:
+            legend:
+              mode: table
+              position: bottom
+            visual:
+              areaOpacity: 1
+              display: line
+              lineWidth: 0.25
+              palette:
+                mode: auto
+            yAxis:
+              format:
+                unit: bytes/sec
+        queries:
+        - kind: TimeSeriesQuery
+          spec:
+            plugin:
+              kind: PrometheusTimeSeriesQuery
+              spec:
+                datasource:
+                  kind: PrometheusDatasource
+                  name: prometheus-datasource
+                query: |-
+                  sum(
+                    rate(
+                      tempo_metrics_generator_bytes_received_total{cluster=~"$cluster",job=~"($namespace)/metrics-generator",tenant="$tenant"}[$__rate_interval]
+                    )
+                  )
+                seriesNameFormat: rate
+    "4_1":
+      kind: Panel
+      spec:
+        display:
+          description: Number of active metric series registered in the Tempo Metrics
+            Generator
+          name: Active series
+        plugin:
+          kind: TimeSeriesChart
+          spec:
+            legend:
+              mode: table
+              position: bottom
+            visual:
+              areaOpacity: 1
+              display: line
+              lineWidth: 0.25
+              palette:
+                mode: auto
+            yAxis:
+              format:
+                unit: decimal
+        queries:
+        - kind: TimeSeriesQuery
+          spec:
+            plugin:
+              kind: PrometheusTimeSeriesQuery
+              spec:
+                datasource:
+                  kind: PrometheusDatasource
+                  name: prometheus-datasource
+                query: |-
+                  sum(
+                    tempo_metrics_generator_registry_active_series{cluster=~"$cluster",job=~"($namespace)/metrics-generator",tenant="$tenant"}
+                  )
+                seriesNameFormat: '{{ tenant }}'
+        - kind: TimeSeriesQuery
+          spec:
+            plugin:
+              kind: PrometheusTimeSeriesQuery
+              spec:
+                datasource:
+                  kind: PrometheusDatasource
+                  name: prometheus-datasource
+                query: |-
+                  max by (metrics_generator_max_active_series) (
+                      max by (cluster, namespace, limit_name) (
+                        tempo_limits_overrides{cluster=~"$cluster",job=~"($namespace)/compactor",limit_name="metrics_generator_max_active_series",user="$tenant"}
+                      )
+                    or
+                      max by (cluster, namespace, limit_name) (
+                        tempo_limits_defaults{cluster=~"$cluster",job=~"($namespace)/compactor",limit_name="metrics_generator_max_active_series"}
+                      )
+                  )
+                seriesNameFormat: limit
+  variables:
+  - kind: ListVariable
+    spec:
+      allowAllValue: false
+      allowMultiple: true
+      display:
+        hidden: false
+        name: cluster
+      name: cluster
+      plugin:
+        kind: PrometheusLabelValuesVariable
+        spec:
+          datasource:
+            kind: PrometheusDatasource
+            name: prometheus-datasource
+          labelName: cluster
+          matchers:
+          - tempo_build_info{}
+  - kind: ListVariable
+    spec:
+      allowAllValue: false
+      allowMultiple: false
+      display:
+        hidden: false
+        name: namespace
+      name: namespace
+      plugin:
+        kind: PrometheusLabelValuesVariable
+        spec:
+          datasource:
+            kind: PrometheusDatasource
+            name: prometheus-datasource
+          labelName: namespace
+          matchers:
+          - tempo_build_info{cluster="$cluster"}
+  - kind: ListVariable
+    spec:
+      allowAllValue: false
+      allowMultiple: false
+      display:
+        hidden: false
+        name: tenant
+      name: tenant
+      plugin:
+        kind: PrometheusLabelValuesVariable
+        spec:
+          datasource:
+            kind: PrometheusDatasource
+            name: prometheus-datasource
+          labelName: tenant
+          matchers:
+          - tempodb_blocklist_length{cluster="$cluster",job=~"($namespace)/compactor"}
+status: {}

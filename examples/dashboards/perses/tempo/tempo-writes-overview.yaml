@@ -1,6 +1,6 @@
 kind: Dashboard
 metadata:
-    name: thanos-writes-overview
+    name: tempo-writes-overview
     createdAt: 0001-01-01T00:00:00Z
     updatedAt: 0001-01-01T00:00:00Z
     version: 0
