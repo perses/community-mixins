@@ -29,7 +29,7 @@ func ErrorCaseRatio(
 	denominatorMetricName string,
 	denominatorByLabels []string,
 	denominatorLabelMatchers []*labels.Matcher,
-) parser.Expr {
+) *promqlbuilder.BinaryBuilder {
 	return promqlbuilder.Div(
 		promqlbuilder.Sum(
 			promqlbuilder.Rate(

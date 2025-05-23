@@ -159,7 +159,7 @@
                       "kind": "PrometheusDatasource",
                       "name": "prometheus-datasource"
                     },
-                    "query": "sum by (namespace, job, rule_group, strategy) (\n  rate(prometheus_rule_evaluation_failures_total{job=~\"$job\",namespace=\"$namespace\"}[$__rate_interval])\n)",
+                    "query": "sum by (namespace, job, rule_group, strategy) (\n  rate(\n    prometheus_rule_evaluation_failures_total{job=~\"$job\",namespace=\"$namespace\"}[$__rate_interval]\n  )\n)",
                     "seriesNameFormat": "{{rule_group}} {{strategy}} - {{job}} {{namespace}}"
                   }
                 }
@@ -209,7 +209,7 @@
                       "kind": "PrometheusDatasource",
                       "name": "prometheus-datasource"
                     },
-                    "query": "sum by (namespace, job, rule_group, strategy) (\n  rate(prometheus_rule_group_iterations_missed_total{job=~\"$job\",namespace=\"$namespace\"}[$__rate_interval])\n)",
+                    "query": "sum by (namespace, job, rule_group, strategy) (\n  rate(\n    prometheus_rule_group_iterations_missed_total{job=~\"$job\",namespace=\"$namespace\"}[$__rate_interval]\n  )\n)",
                     "seriesNameFormat": "{{rule_group}} {{strategy}} - {{job}} {{namespace}}"
                   }
                 }
@@ -258,7 +258,7 @@
                       "kind": "PrometheusDatasource",
                       "name": "prometheus-datasource"
                     },
-                    "query": "(\n    sum by (namespace, job, rule_group) (\n      prometheus_rule_group_last_duration_seconds{job=~\"$job\",namespace=\"$namespace\"}\n    )\n  \u003e\n    sum by (namespace, job, rule_group) (\n      prometheus_rule_group_interval_seconds{job=~\"$job\",namespace=\"$namespace\"}\n    )\n)",
+                    "query": "  sum by (namespace, job, rule_group) (\n    prometheus_rule_group_last_duration_seconds{job=~\"$job\",namespace=\"$namespace\"}\n  )\n\u003e\n  sum by (namespace, job, rule_group) (\n    prometheus_rule_group_interval_seconds{job=~\"$job\",namespace=\"$namespace\"}\n  )",
                     "seriesNameFormat": "{{rule_group}} - {{job}} {{namespace}}"
                   }
                 }
@@ -457,7 +457,7 @@
                       "kind": "PrometheusDatasource",
                       "name": "prometheus-datasource"
                     },
-                    "query": "histogram_quantile(\n  0.5,\n  sum by (namespace, job, le) (\n    rate(thanos_alert_sender_latency_seconds_bucket{job=~\"$job\",namespace=\"$namespace\"}[$__rate_interval])\n  )\n)",
+                    "query": "histogram_quantile(\n  0.5,\n  sum by (namespace, job, le) (\n    rate(\n      thanos_alert_sender_latency_seconds_bucket{job=~\"$job\",namespace=\"$namespace\"}[$__rate_interval]\n    )\n  )\n)",
                     "seriesNameFormat": "p50 {{job}} {{namespace}}"
                   }
                 }
@@ -473,7 +473,7 @@
                       "kind": "PrometheusDatasource",
                       "name": "prometheus-datasource"
                     },
-                    "query": "histogram_quantile(\n  0.9,\n  sum by (namespace, job, le) (\n    rate(thanos_alert_sender_latency_seconds_bucket{job=~\"$job\",namespace=\"$namespace\"}[$__rate_interval])\n  )\n)",
+                    "query": "histogram_quantile(\n  0.9,\n  sum by (namespace, job, le) (\n    rate(\n      thanos_alert_sender_latency_seconds_bucket{job=~\"$job\",namespace=\"$namespace\"}[$__rate_interval]\n    )\n  )\n)",
                     "seriesNameFormat": "p90 {{job}} {{namespace}}"
                   }
                 }
@@ -489,7 +489,7 @@
                       "kind": "PrometheusDatasource",
                       "name": "prometheus-datasource"
                     },
-                    "query": "histogram_quantile(\n  0.99,\n  sum by (namespace, job, le) (\n    rate(thanos_alert_sender_latency_seconds_bucket{job=~\"$job\",namespace=\"$namespace\"}[$__rate_interval])\n  )\n)",
+                    "query": "histogram_quantile(\n  0.99,\n  sum by (namespace, job, le) (\n    rate(\n      thanos_alert_sender_latency_seconds_bucket{job=~\"$job\",namespace=\"$namespace\"}[$__rate_interval]\n    )\n  )\n)",
                     "seriesNameFormat": "p99 {{job}} {{namespace}}"
                   }
                 }

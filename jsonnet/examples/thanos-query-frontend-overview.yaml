@@ -135,7 +135,9 @@ spec:
                   name: custom-datasource
                 query: |-
                   sum by (namespace, job, handler, code) (
-                    rate(http_requests_total{handler="query-frontend",job=~"$job",namespace="$namespace"}[$__rate_interval])
+                    rate(
+                      http_requests_total{handler="query-frontend",job=~"$job",namespace="$namespace"}[$__rate_interval]
+                    )
                   )
                 seriesNameFormat: '{{code}} - {{job}} {{namespace}}'
     "0_1":
@@ -208,15 +210,19 @@ spec:
                   kind: PrometheusDatasource
                   name: custom-datasource
                 query: |2-
-                    sum by (namespace, job, code) (
-                      rate(
-                        http_requests_total{code=~"5..",handler="query-frontend",job=~"$job",namespace="$namespace"}[$__rate_interval]
+                      sum by (namespace, job, code) (
+                        rate(
+                          http_requests_total{code=~"5..",handler="query-frontend",job=~"$job",namespace="$namespace"}[$__rate_interval]
+                        )
                       )
-                    )
-                  / ignoring (code) group_left ()
-                    sum by (namespace, job) (
-                      rate(http_requests_total{handler="query-frontend",job=~"$job",namespace="$namespace"}[$__rate_interval])
-                    )
+                    / ignoring (code) group_left ()
+                      sum by (namespace, job) (
+                        rate(
+                          http_requests_total{handler="query-frontend",job=~"$job",namespace="$namespace"}[$__rate_interval]
+                        )
+                      )
+                  *
+                    100
                 seriesNameFormat: '{{code}} - {{job}} {{namespace}}'
     "0_3":
       kind: Panel
@@ -327,7 +333,9 @@ spec:
                   name: custom-datasource
                 query: |-
                   sum by (namespace, job, tripperware) (
-                    rate(cortex_cache_request_duration_seconds_count{job=~"$job",namespace="$namespace"}[$__rate_interval])
+                    rate(
+                      cortex_cache_request_duration_seconds_count{job=~"$job",namespace="$namespace"}[$__rate_interval]
+                    )
                   )
                 seriesNameFormat: '{{tripperware}} - {{job}} {{namespace}}'
     "1_1":

@@ -5,13 +5,13 @@ import (
 	panelgroup "github.com/perses/perses/go-sdk/panel-group"
 	listVar "github.com/perses/perses/go-sdk/variable/list-variable"
 	labelValuesVar "github.com/perses/plugins/prometheus/sdk/go/variable/label-values"
+	"github.com/prometheus/prometheus/model/labels"
 
 	"github.com/perses/community-dashboards/pkg/dashboards"
 	panels "github.com/perses/community-dashboards/pkg/panels/thanos"
-	"github.com/perses/community-dashboards/pkg/promql"
 )
 
-func withThanosQueryInstantQueryGroup(datasource string, labelMatcher promql.LabelMatcher) dashboard.Option {
+func withThanosQueryInstantQueryGroup(datasource string, labelMatcher *labels.Matcher) dashboard.Option {
 	return dashboard.AddPanelGroup("Instant Query",
 		panelgroup.PanelsPerLine(3),
 		panelgroup.PanelHeight(8),
@@ -21,7 +21,7 @@ func withThanosQueryInstantQueryGroup(datasource string, labelMatcher promql.Lab
 	)
 }
 
-func withThanosQueryRangeQueryGroup(datasource string, labelMatcher promql.LabelMatcher) dashboard.Option {
+func withThanosQueryRangeQueryGroup(datasource string, labelMatcher *labels.Matcher) dashboard.Option {
 	return dashboard.AddPanelGroup("Range Query",
 		panelgroup.PanelsPerLine(3),
 		panelgroup.PanelHeight(8),
@@ -31,7 +31,7 @@ func withThanosQueryRangeQueryGroup(datasource string, labelMatcher promql.Label
 	)
 }
 
-func withThanosQueryConcurrencyGroup(datasource string, labelMatcher promql.LabelMatcher) dashboard.Option {
+func withThanosQueryConcurrencyGroup(datasource string, labelMatcher *labels.Matcher) dashboard.Option {
 	return dashboard.AddPanelGroup("Query Available Concurrency",
 		panelgroup.PanelsPerLine(1),
 		panelgroup.PanelHeight(8),
@@ -39,7 +39,7 @@ func withThanosQueryConcurrencyGroup(datasource string, labelMatcher promql.Labe
 	)
 }
 
-func withThanosQueryDNSLookupGroup(datasource string, labelMatcher promql.LabelMatcher) dashboard.Option {
+func withThanosQueryDNSLookupGroup(datasource string, labelMatcher *labels.Matcher) dashboard.Option {
 	return dashboard.AddPanelGroup("DNS Lookups",
 		panelgroup.PanelsPerLine(2),
 		panelgroup.PanelHeight(8),
@@ -75,12 +75,12 @@ func BuildThanosQueryOverview(project string, datasource string, clusterLabelNam
 				),
 			),
 			dashboards.AddClusterVariable(datasource, clusterLabelName, "thanos_build_info"),
-			withThanosQueryInstantQueryGroup(datasource, clusterLabelMatcher),
-			withThanosQueryRangeQueryGroup(datasource, clusterLabelMatcher),
+			withThanosQueryInstantQueryGroup(datasource, clusterLabelMatcherV2),
+			withThanosQueryRangeQueryGroup(datasource, clusterLabelMatcherV2),
 			withThanosReadGRPCUnaryGroup(datasource, clusterLabelMatcherV2),
 			withThanosReadGRPCStreamGroup(datasource, clusterLabelMatcherV2),
-			withThanosQueryConcurrencyGroup(datasource, clusterLabelMatcher),
-			withThanosQueryDNSLookupGroup(datasource, clusterLabelMatcher),
+			withThanosQueryConcurrencyGroup(datasource, clusterLabelMatcherV2),
+			withThanosQueryDNSLookupGroup(datasource, clusterLabelMatcherV2),
 			withThanosResourcesGroup(datasource, clusterLabelMatcher),
 		),
 	).Component("thanos")

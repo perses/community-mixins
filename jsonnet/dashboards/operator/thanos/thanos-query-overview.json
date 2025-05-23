@@ -160,7 +160,7 @@
                       "kind": "PrometheusDatasource",
                       "name": "prometheus-datasource"
                     },
-                    "query": "  (\n      sum by (namespace, job, code) (\n        rate(http_requests_total{code=~\"5..\",handler=\"query\",job=~\"$job\",namespace=\"$namespace\"}[$__rate_interval])\n      )\n    / ignoring (code) group_left ()\n      sum by (namespace, job) (\n        rate(http_requests_total{handler=\"query\",job=~\"$job\",namespace=\"$namespace\"}[$__rate_interval])\n      )\n  )\n*\n  100",
+                    "query": "    sum by (namespace, job, code) (\n      rate(\n        http_requests_total{code=~\"5..\",handler=\"query\",job=~\"$job\",namespace=\"$namespace\"}[$__rate_interval]\n      )\n    )\n  / ignoring (code) group_left ()\n    sum by (namespace, job) (\n      rate(http_requests_total{handler=\"query\",job=~\"$job\",namespace=\"$namespace\"}[$__rate_interval])\n    )\n*\n  100",
                     "seriesNameFormat": "{{job}} {{namespace}} {{code}} {{handler}}"
                   }
                 }
@@ -291,7 +291,7 @@
                       "kind": "PrometheusDatasource",
                       "name": "prometheus-datasource"
                     },
-                    "query": "sum by (namespace, job, handler, code) (\n  rate(http_requests_total{handler=\"query_range\",job=~\"$job\",namespace=\"$namespace\"}[$__rate_interval])\n)",
+                    "query": "sum by (namespace, job, handler, code) (\n  rate(\n    http_requests_total{handler=\"query_range\",job=~\"$job\",namespace=\"$namespace\"}[$__rate_interval]\n  )\n)",
                     "seriesNameFormat": "{{job}} {{namespace}} {{handler}} {{code}}"
                   }
                 }
@@ -341,7 +341,7 @@
                       "kind": "PrometheusDatasource",
                       "name": "prometheus-datasource"
                     },
-                    "query": "  (\n      sum by (namespace, job, code) (\n        rate(\n          http_requests_total{code=~\"5..\",handler=\"query_range\",job=~\"$job\",namespace=\"$namespace\"}[$__rate_interval]\n        )\n      )\n    / ignoring (code) group_left ()\n      sum by (namespace, job) (\n        rate(http_requests_total{handler=\"query_range\",job=~\"$job\",namespace=\"$namespace\"}[$__rate_interval])\n      )\n  )\n*\n  100",
+                    "query": "    sum by (namespace, job, code) (\n      rate(\n        http_requests_total{code=~\"5..\",handler=\"query_range\",job=~\"$job\",namespace=\"$namespace\"}[$__rate_interval]\n      )\n    )\n  / ignoring (code) group_left ()\n    sum by (namespace, job) (\n      rate(\n        http_requests_total{handler=\"query_range\",job=~\"$job\",namespace=\"$namespace\"}[$__rate_interval]\n      )\n    )\n*\n  100",
                     "seriesNameFormat": "{{job}} {{namespace}} {{code}} {{handler}}"
                   }
                 }
@@ -878,7 +878,7 @@
                       "kind": "PrometheusDatasource",
                       "name": "prometheus-datasource"
                     },
-                    "query": "sum by (namespace, job) (\n  rate(thanos_query_store_apis_dns_lookups_total{job=~\"$job\",namespace=\"$namespace\"}[$__rate_interval])\n)",
+                    "query": "sum by (namespace, job) (\n  rate(\n    thanos_query_store_apis_dns_lookups_total{job=~\"$job\",namespace=\"$namespace\"}[$__rate_interval]\n  )\n)",
                     "seriesNameFormat": "{{job}}"
                   }
                 }
@@ -928,7 +928,7 @@
                       "kind": "PrometheusDatasource",
                       "name": "prometheus-datasource"
                     },
-                    "query": "  sum by (namespace, job) (\n    rate(thanos_query_store_apis_dns_failures_total{job=~\"$job\",namespace=\"$namespace\"}[$__rate_interval])\n  )\n/\n  sum by (namespace, job) (\n    rate(thanos_query_store_apis_dns_lookups_total{job=~\"$job\",namespace=\"$namespace\"}[$__rate_interval])\n  )",
+                    "query": "  sum by (namespace, job) (\n    rate(\n      thanos_query_store_apis_dns_failures_total{job=~\"$job\",namespace=\"$namespace\"}[$__rate_interval]\n    )\n  )\n/\n  sum by (namespace, job) (\n    rate(\n      thanos_query_store_apis_dns_lookups_total{job=~\"$job\",namespace=\"$namespace\"}[$__rate_interval]\n    )\n  )",
                     "seriesNameFormat": "{{job}}"
                   }
                 }

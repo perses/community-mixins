@@ -57,7 +57,7 @@ func withThanosReadGRPCStreamGroup(datasource string, labelMatcher *labels.Match
 	)
 }
 
-func withThanosBucketUploadGroup(datasource string, labelMatcher promql.LabelMatcher) dashboard.Option {
+func withThanosBucketUploadGroup(datasource string, labelMatcher *labels.Matcher) dashboard.Option {
 	return dashboard.AddPanelGroup("Last Bucket Upload",
 		panelgroup.PanelsPerLine(1),
 		panels.BucketUploadTable(datasource, labelMatcher),
