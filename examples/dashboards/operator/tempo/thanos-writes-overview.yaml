@@ -571,7 +571,7 @@ spec:
                         tempo_distributor_push_duration_seconds_count{cluster=~"$cluster",job=~"($namespace)/distributor"}[$__rate_interval]
                       )
                     )
-                seriesNameFormat: Average
+                seriesNameFormat: '{{route}} Average'
     "3_0":
       kind: Panel
       spec:
@@ -683,7 +683,7 @@ spec:
                       tempo_distributor_kafka_write_bytes_total{cluster=~"$cluster",job=~"($namespace)/distributor"}[$__rate_interval]
                     )
                   )
-                seriesNameFormat: failed
+                seriesNameFormat: writes
     "4_1":
       kind: Panel
       spec:
@@ -725,7 +725,7 @@ spec:
                       )
                     )
                   )
-                seriesNameFormat: '{{route}} 50th'
+                seriesNameFormat: 50th percentile
         - kind: TimeSeriesQuery
           spec:
             plugin:
@@ -743,7 +743,7 @@ spec:
                       )
                     )
                   )
-                seriesNameFormat: '{{route}} 99th'
+                seriesNameFormat: 99th percentile
         - kind: TimeSeriesQuery
           spec:
             plugin:

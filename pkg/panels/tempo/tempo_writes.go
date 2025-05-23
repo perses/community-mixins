@@ -3,12 +3,11 @@ package tempo
 import (
 	"github.com/perses/community-dashboards/pkg/dashboards"
 	"github.com/perses/community-dashboards/pkg/promql"
+	commonSdk "github.com/perses/perses/go-sdk/common"
 	"github.com/perses/perses/go-sdk/panel"
 	panelgroup "github.com/perses/perses/go-sdk/panel-group"
 	markdown "github.com/perses/plugins/markdown/sdk/go"
 	"github.com/perses/plugins/prometheus/sdk/go/query"
-
-	commonSdk "github.com/perses/perses/go-sdk/common"
 	timeSeriesPanel "github.com/perses/plugins/timeserieschart/sdk/go"
 )
 
@@ -276,7 +275,7 @@ func WritesDistributorLatency(datasourceName string, labelMatchers ...promql.Lab
 					labelMatchers,
 				),
 				dashboards.AddQueryDataSource(datasourceName),
-				query.SeriesNameFormat("Average"),
+				query.SeriesNameFormat("{{route}} Average"),
 			),
 		),
 	)
@@ -381,7 +380,7 @@ func WritesDistributorKafkaWrite(datasourceName string, labelMatchers ...promql.
 					labelMatchers,
 				),
 				dashboards.AddQueryDataSource(datasourceName),
-				query.SeriesNameFormat("failed"),
+				query.SeriesNameFormat("writes"),
 			),
 		),
 	)
@@ -416,7 +415,7 @@ func WritesDistributorKafkaWriteLatency(datasourceName string, labelMatchers ...
 					labelMatchers,
 				),
 				dashboards.AddQueryDataSource(datasourceName),
-				query.SeriesNameFormat("{{route}} 50th"),
+				query.SeriesNameFormat("50th percentile"),
 			),
 		),
 		panel.AddQuery(
@@ -426,7 +425,7 @@ func WritesDistributorKafkaWriteLatency(datasourceName string, labelMatchers ...
 					labelMatchers,
 				),
 				dashboards.AddQueryDataSource(datasourceName),
-				query.SeriesNameFormat("{{route}} 99th"),
+				query.SeriesNameFormat("99th percentile"),
 			),
 		),
 		panel.AddQuery(
