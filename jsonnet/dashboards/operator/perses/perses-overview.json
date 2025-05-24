@@ -13,829 +13,831 @@
     }
   },
   "spec": {
-    "display": {
-      "name": "Perses / Overview"
-    },
-    "variables": [
-      {
-        "kind": "ListVariable",
-        "spec": {
-          "display": {
-            "name": "job",
-            "hidden": false
-          },
-          "allowAllValue": false,
-          "allowMultiple": false,
-          "plugin": {
-            "kind": "PrometheusLabelValuesVariable",
-            "spec": {
-              "datasource": {
-                "kind": "PrometheusDatasource",
-                "name": "prometheus-datasource"
-              },
-              "labelName": "job",
-              "matchers": [
-                "perses_build_info{}"
-              ]
-            }
-          },
-          "name": "job"
-        }
+    "config": {
+      "display": {
+        "name": "Perses / Overview"
       },
-      {
-        "kind": "ListVariable",
-        "spec": {
-          "display": {
-            "name": "instance",
-            "hidden": false
-          },
-          "allowAllValue": false,
-          "allowMultiple": false,
-          "plugin": {
-            "kind": "PrometheusLabelValuesVariable",
-            "spec": {
-              "datasource": {
-                "kind": "PrometheusDatasource",
-                "name": "prometheus-datasource"
-              },
-              "labelName": "instance",
-              "matchers": [
-                "perses_build_info{job=\"$job\"}"
-              ]
-            }
-          },
-          "name": "instance"
-        }
-      }
-    ],
-    "panels": {
-      "0_0": {
-        "kind": "Panel",
-        "spec": {
-          "display": {
-            "name": "Perses Stats"
-          },
-          "plugin": {
-            "kind": "Table",
-            "spec": {
-              "columnSettings": [
-                {
-                  "name": "job",
-                  "header": "Job"
-                },
-                {
-                  "name": "instance",
-                  "header": "Instance"
-                },
-                {
-                  "name": "version",
-                  "header": "Version"
-                },
-                {
-                  "name": "namespace",
-                  "header": "Namespace"
-                },
-                {
-                  "name": "pod",
-                  "header": "Pod"
-                },
-                {
-                  "name": "value",
-                  "hide": true
-                },
-                {
-                  "name": "timestamp",
-                  "hide": true
-                }
-              ]
-            }
-          },
-          "queries": [
-            {
-              "kind": "TimeSeriesQuery",
+      "variables": [
+        {
+          "kind": "ListVariable",
+          "spec": {
+            "display": {
+              "name": "job",
+              "hidden": false
+            },
+            "allowAllValue": false,
+            "allowMultiple": false,
+            "plugin": {
+              "kind": "PrometheusLabelValuesVariable",
               "spec": {
-                "plugin": {
-                  "kind": "PrometheusTimeSeriesQuery",
-                  "spec": {
-                    "datasource": {
-                      "kind": "PrometheusDatasource",
-                      "name": "prometheus-datasource"
-                    },
-                    "query": "count by (job, instance, version, namespace, pod) (\n  perses_build_info{instance=~\"$instance\",job=~\"$job\"}\n)"
-                  }
-                }
-              }
-            }
-          ]
-        }
-      },
-      "1_0": {
-        "kind": "Panel",
-        "spec": {
-          "display": {
-            "name": "HTTP Requests Rate",
-            "description": "Displays the rate of HTTP requests over a 5-minute window."
-          },
-          "plugin": {
-            "kind": "TimeSeriesChart",
-            "spec": {
-              "legend": {
-                "position": "right",
-                "mode": "table"
-              },
-              "yAxis": {
-                "format": {
-                  "unit": "decimal"
-                }
-              },
-              "visual": {
-                "display": "line",
-                "lineWidth": 0.25,
-                "areaOpacity": 0.5,
-                "palette": {
-                  "mode": "auto"
+                "datasource": {
+                  "kind": "PrometheusDatasource",
+                  "name": "prometheus-datasource"
                 },
-                "stack": "all"
-              }
-            }
-          },
-          "queries": [
-            {
-              "kind": "TimeSeriesQuery",
-              "spec": {
-                "plugin": {
-                  "kind": "PrometheusTimeSeriesQuery",
-                  "spec": {
-                    "datasource": {
-                      "kind": "PrometheusDatasource",
-                      "name": "prometheus-datasource"
-                    },
-                    "query": "sum by (handler, code) (\n  rate(perses_http_request_total{instance=~\"$instance\",job=~\"$job\"}[$__rate_interval])\n)",
-                    "seriesNameFormat": "{{handler}} {{method}} {{code}}"
-                  }
-                }
-              }
-            }
-          ]
-        }
-      },
-      "1_1": {
-        "kind": "Panel",
-        "spec": {
-          "display": {
-            "name": "HTTP Errors Percentage",
-            "description": "Displays the percentage of HTTP errors over total requests."
-          },
-          "plugin": {
-            "kind": "TimeSeriesChart",
-            "spec": {
-              "legend": {
-                "position": "right",
-                "mode": "table"
-              },
-              "yAxis": {
-                "format": {
-                  "unit": "percent-decimal"
-                }
-              },
-              "visual": {
-                "display": "line",
-                "lineWidth": 0.25,
-                "areaOpacity": 0.5,
-                "palette": {
-                  "mode": "auto"
-                },
-                "stack": "all"
-              }
-            }
-          },
-          "queries": [
-            {
-              "kind": "TimeSeriesQuery",
-              "spec": {
-                "plugin": {
-                  "kind": "PrometheusTimeSeriesQuery",
-                  "spec": {
-                    "datasource": {
-                      "kind": "PrometheusDatasource",
-                      "name": "prometheus-datasource"
-                    },
-                    "query": "    (\n      sum by (handler, code) (\n        rate(perses_http_request_total{code=~\"4..|5..\",instance=~\"$instance\",job=~\"$job\"}[$__rate_interval])\n      )\n    )\n  / ignoring (code) group_left ()\n    (sum by (handler) (rate(perses_http_request_total{instance=~\"$instance\",job=~\"$job\"}[$__rate_interval])))\n*\n  100",
-                    "seriesNameFormat": "{{handler}} {{code}}"
-                  }
-                }
-              }
-            }
-          ]
-        }
-      },
-      "1_2": {
-        "kind": "Panel",
-        "spec": {
-          "display": {
-            "name": "HTTP Requests Latency",
-            "description": "Displays the latency of HTTP requests over a 5-minute window."
-          },
-          "plugin": {
-            "kind": "TimeSeriesChart",
-            "spec": {
-              "legend": {
-                "position": "right",
-                "mode": "table"
-              },
-              "yAxis": {
-                "format": {
-                  "unit": "seconds"
-                }
-              },
-              "visual": {
-                "display": "line",
-                "lineWidth": 0.25,
-                "areaOpacity": 0.5,
-                "palette": {
-                  "mode": "auto"
-                }
-              }
-            }
-          },
-          "queries": [
-            {
-              "kind": "TimeSeriesQuery",
-              "spec": {
-                "plugin": {
-                  "kind": "PrometheusTimeSeriesQuery",
-                  "spec": {
-                    "datasource": {
-                      "kind": "PrometheusDatasource",
-                      "name": "prometheus-datasource"
-                    },
-                    "query": "  sum by (handler, method) (\n    rate(perses_http_request_duration_second_sum{instance=~\"$instance\",job=~\"$job\"}[$__rate_interval])\n  )\n/\n  sum by (handler, method) (\n    rate(perses_http_request_duration_second_count{instance=~\"$instance\",job=~\"$job\"}[$__rate_interval])\n  )",
-                    "seriesNameFormat": "{{handler}} {{method}}"
-                  }
-                }
-              }
-            }
-          ]
-        }
-      },
-      "2_0": {
-        "kind": "Panel",
-        "spec": {
-          "display": {
-            "name": "Memory Usage",
-            "description": "Shows various memory usage metrics of the component."
-          },
-          "plugin": {
-            "kind": "TimeSeriesChart",
-            "spec": {
-              "legend": {
-                "position": "bottom",
-                "mode": "table",
-                "values": [
-                  "last"
+                "labelName": "job",
+                "matchers": [
+                  "perses_build_info{}"
                 ]
-              },
-              "yAxis": {
-                "format": {
-                  "unit": "bytes"
-                }
-              },
-              "visual": {
-                "display": "line",
-                "lineWidth": 0.25,
-                "areaOpacity": 0.5,
-                "palette": {
-                  "mode": "auto"
-                }
-              }
-            }
-          },
-          "queries": [
-            {
-              "kind": "TimeSeriesQuery",
-              "spec": {
-                "plugin": {
-                  "kind": "PrometheusTimeSeriesQuery",
-                  "spec": {
-                    "datasource": {
-                      "kind": "PrometheusDatasource",
-                      "name": "prometheus-datasource"
-                    },
-                    "query": "go_memstats_alloc_bytes{instance=~\"$instance\",job=~\"$job\"}",
-                    "seriesNameFormat": "Alloc All {{pod}}"
-                  }
-                }
               }
             },
-            {
-              "kind": "TimeSeriesQuery",
-              "spec": {
-                "plugin": {
-                  "kind": "PrometheusTimeSeriesQuery",
-                  "spec": {
-                    "datasource": {
-                      "kind": "PrometheusDatasource",
-                      "name": "prometheus-datasource"
-                    },
-                    "query": "go_memstats_heap_alloc_bytes{instance=~\"$instance\",job=~\"$job\"}",
-                    "seriesNameFormat": "Alloc Heap {{pod}}"
-                  }
-                }
-              }
+            "name": "job"
+          }
+        },
+        {
+          "kind": "ListVariable",
+          "spec": {
+            "display": {
+              "name": "instance",
+              "hidden": false
             },
-            {
-              "kind": "TimeSeriesQuery",
+            "allowAllValue": false,
+            "allowMultiple": false,
+            "plugin": {
+              "kind": "PrometheusLabelValuesVariable",
               "spec": {
-                "plugin": {
-                  "kind": "PrometheusTimeSeriesQuery",
-                  "spec": {
-                    "datasource": {
-                      "kind": "PrometheusDatasource",
-                      "name": "prometheus-datasource"
-                    },
-                    "query": "rate(go_memstats_alloc_bytes_total{instance=~\"$instance\",job=~\"$job\"}[$__rate_interval])",
-                    "seriesNameFormat": "Alloc Rate All {{pod}}"
-                  }
-                }
-              }
-            },
-            {
-              "kind": "TimeSeriesQuery",
-              "spec": {
-                "plugin": {
-                  "kind": "PrometheusTimeSeriesQuery",
-                  "spec": {
-                    "datasource": {
-                      "kind": "PrometheusDatasource",
-                      "name": "prometheus-datasource"
-                    },
-                    "query": "rate(go_memstats_heap_alloc_bytes{instance=~\"$instance\",job=~\"$job\"}[$__rate_interval])",
-                    "seriesNameFormat": "Alloc Rate Heap {{pod}}"
-                  }
-                }
-              }
-            },
-            {
-              "kind": "TimeSeriesQuery",
-              "spec": {
-                "plugin": {
-                  "kind": "PrometheusTimeSeriesQuery",
-                  "spec": {
-                    "datasource": {
-                      "kind": "PrometheusDatasource",
-                      "name": "prometheus-datasource"
-                    },
-                    "query": "go_memstats_stack_inuse_bytes{instance=~\"$instance\",job=~\"$job\"}",
-                    "seriesNameFormat": "Inuse Stack {{pod}}"
-                  }
-                }
-              }
-            },
-            {
-              "kind": "TimeSeriesQuery",
-              "spec": {
-                "plugin": {
-                  "kind": "PrometheusTimeSeriesQuery",
-                  "spec": {
-                    "datasource": {
-                      "kind": "PrometheusDatasource",
-                      "name": "prometheus-datasource"
-                    },
-                    "query": "go_memstats_heap_inuse_bytes{instance=~\"$instance\",job=~\"$job\"}",
-                    "seriesNameFormat": "Inuse Heap {{pod}}"
-                  }
-                }
-              }
-            },
-            {
-              "kind": "TimeSeriesQuery",
-              "spec": {
-                "plugin": {
-                  "kind": "PrometheusTimeSeriesQuery",
-                  "spec": {
-                    "datasource": {
-                      "kind": "PrometheusDatasource",
-                      "name": "prometheus-datasource"
-                    },
-                    "query": "process_resident_memory_bytes{instance=~\"$instance\",job=~\"$job\"}",
-                    "seriesNameFormat": "Resident Memory {{pod}}"
-                  }
-                }
-              }
-            }
-          ]
-        }
-      },
-      "2_1": {
-        "kind": "Panel",
-        "spec": {
-          "display": {
-            "name": "CPU Usage",
-            "description": "Shows the CPU usage of the component."
-          },
-          "plugin": {
-            "kind": "TimeSeriesChart",
-            "spec": {
-              "legend": {
-                "position": "bottom",
-                "mode": "table",
-                "values": [
-                  "last"
+                "datasource": {
+                  "kind": "PrometheusDatasource",
+                  "name": "prometheus-datasource"
+                },
+                "labelName": "instance",
+                "matchers": [
+                  "perses_build_info{job=\"$job\"}"
                 ]
-              },
-              "yAxis": {
-                "format": {
-                  "unit": "decimal"
-                }
-              },
-              "visual": {
-                "display": "line",
-                "lineWidth": 0.25,
-                "areaOpacity": 0.5,
-                "palette": {
-                  "mode": "auto"
-                }
               }
-            }
-          },
-          "queries": [
-            {
-              "kind": "TimeSeriesQuery",
-              "spec": {
-                "plugin": {
-                  "kind": "PrometheusTimeSeriesQuery",
-                  "spec": {
-                    "datasource": {
-                      "kind": "PrometheusDatasource",
-                      "name": "prometheus-datasource"
-                    },
-                    "query": "rate(process_cpu_seconds_total{instance=~\"$instance\",job=~\"$job\"}[$__rate_interval])",
-                    "seriesNameFormat": "{{pod}}"
-                  }
-                }
-              }
-            }
-          ]
+            },
+            "name": "instance"
+          }
         }
-      },
-      "2_2": {
-        "kind": "Panel",
-        "spec": {
-          "display": {
-            "name": "Goroutines",
-            "description": "Shows the number of goroutines being used by the component."
-          },
-          "plugin": {
-            "kind": "TimeSeriesChart",
-            "spec": {
-              "legend": {
-                "position": "bottom",
-                "mode": "table",
-                "values": [
-                  "last"
+      ],
+      "panels": {
+        "0_0": {
+          "kind": "Panel",
+          "spec": {
+            "display": {
+              "name": "Perses Stats"
+            },
+            "plugin": {
+              "kind": "Table",
+              "spec": {
+                "columnSettings": [
+                  {
+                    "name": "job",
+                    "header": "Job"
+                  },
+                  {
+                    "name": "instance",
+                    "header": "Instance"
+                  },
+                  {
+                    "name": "version",
+                    "header": "Version"
+                  },
+                  {
+                    "name": "namespace",
+                    "header": "Namespace"
+                  },
+                  {
+                    "name": "pod",
+                    "header": "Pod"
+                  },
+                  {
+                    "name": "value",
+                    "hide": true
+                  },
+                  {
+                    "name": "timestamp",
+                    "hide": true
+                  }
                 ]
-              },
-              "yAxis": {
-                "format": {
-                  "unit": "decimal"
-                }
-              },
-              "visual": {
-                "display": "line",
-                "lineWidth": 0.25,
-                "areaOpacity": 0.5,
-                "palette": {
-                  "mode": "auto"
-                }
               }
-            }
-          },
-          "queries": [
-            {
-              "kind": "TimeSeriesQuery",
-              "spec": {
-                "plugin": {
-                  "kind": "PrometheusTimeSeriesQuery",
-                  "spec": {
-                    "datasource": {
-                      "kind": "PrometheusDatasource",
-                      "name": "prometheus-datasource"
-                    },
-                    "query": "go_goroutines{instance=~\"$instance\",job=~\"$job\"}",
-                    "seriesNameFormat": "{{pod}}"
+            },
+            "queries": [
+              {
+                "kind": "TimeSeriesQuery",
+                "spec": {
+                  "plugin": {
+                    "kind": "PrometheusTimeSeriesQuery",
+                    "spec": {
+                      "datasource": {
+                        "kind": "PrometheusDatasource",
+                        "name": "prometheus-datasource"
+                      },
+                      "query": "count by (job, instance, version, namespace, pod) (\n  perses_build_info{instance=~\"$instance\",job=~\"$job\"}\n)"
+                    }
                   }
                 }
               }
-            }
-          ]
-        }
-      },
-      "2_3": {
-        "kind": "Panel",
-        "spec": {
-          "display": {
-            "name": "GC Duration",
-            "description": "Shows the Go garbage collection pause durations for the component."
-          },
-          "plugin": {
-            "kind": "TimeSeriesChart",
-            "spec": {
-              "legend": {
-                "position": "bottom",
-                "mode": "table",
-                "values": [
-                  "last"
-                ]
-              },
-              "yAxis": {
-                "format": {
-                  "unit": "seconds"
-                }
-              },
-              "visual": {
-                "display": "line",
-                "lineWidth": 0.25,
-                "areaOpacity": 0.5,
-                "palette": {
-                  "mode": "auto"
+            ]
+          }
+        },
+        "1_0": {
+          "kind": "Panel",
+          "spec": {
+            "display": {
+              "name": "HTTP Requests Rate",
+              "description": "Displays the rate of HTTP requests over a 5-minute window."
+            },
+            "plugin": {
+              "kind": "TimeSeriesChart",
+              "spec": {
+                "legend": {
+                  "position": "right",
+                  "mode": "table"
+                },
+                "yAxis": {
+                  "format": {
+                    "unit": "decimal"
+                  }
+                },
+                "visual": {
+                  "display": "line",
+                  "lineWidth": 0.25,
+                  "areaOpacity": 0.5,
+                  "palette": {
+                    "mode": "auto"
+                  },
+                  "stack": "all"
                 }
               }
-            }
-          },
-          "queries": [
-            {
-              "kind": "TimeSeriesQuery",
-              "spec": {
-                "plugin": {
-                  "kind": "PrometheusTimeSeriesQuery",
-                  "spec": {
-                    "datasource": {
-                      "kind": "PrometheusDatasource",
-                      "name": "prometheus-datasource"
-                    },
-                    "query": "go_gc_duration_seconds{instance=~\"$instance\",job=~\"$job\"}",
-                    "seriesNameFormat": "{{quantile}} - {{pod}}"
+            },
+            "queries": [
+              {
+                "kind": "TimeSeriesQuery",
+                "spec": {
+                  "plugin": {
+                    "kind": "PrometheusTimeSeriesQuery",
+                    "spec": {
+                      "datasource": {
+                        "kind": "PrometheusDatasource",
+                        "name": "prometheus-datasource"
+                      },
+                      "query": "sum by (handler, code) (\n  rate(perses_http_request_total{instance=~\"$instance\",job=~\"$job\"}[$__rate_interval])\n)",
+                      "seriesNameFormat": "{{handler}} {{method}} {{code}}"
+                    }
                   }
                 }
               }
-            }
-          ]
-        }
-      },
-      "2_4": {
-        "kind": "Panel",
-        "spec": {
-          "display": {
-            "name": "File Descriptors",
-            "description": "Displays the number of open and max file descriptors."
-          },
-          "plugin": {
-            "kind": "TimeSeriesChart",
-            "spec": {
-              "legend": {
-                "position": "bottom",
-                "mode": "table",
-                "values": [
-                  "last"
-                ]
-              },
-              "yAxis": {
-                "format": {
-                  "unit": "decimal"
-                }
-              },
-              "visual": {
-                "display": "line",
-                "lineWidth": 0.25,
-                "areaOpacity": 0.5,
-                "palette": {
-                  "mode": "auto"
+            ]
+          }
+        },
+        "1_1": {
+          "kind": "Panel",
+          "spec": {
+            "display": {
+              "name": "HTTP Errors Percentage",
+              "description": "Displays the percentage of HTTP errors over total requests."
+            },
+            "plugin": {
+              "kind": "TimeSeriesChart",
+              "spec": {
+                "legend": {
+                  "position": "right",
+                  "mode": "table"
+                },
+                "yAxis": {
+                  "format": {
+                    "unit": "percent-decimal"
+                  }
+                },
+                "visual": {
+                  "display": "line",
+                  "lineWidth": 0.25,
+                  "areaOpacity": 0.5,
+                  "palette": {
+                    "mode": "auto"
+                  },
+                  "stack": "all"
                 }
               }
-            }
-          },
-          "queries": [
-            {
-              "kind": "TimeSeriesQuery",
+            },
+            "queries": [
+              {
+                "kind": "TimeSeriesQuery",
+                "spec": {
+                  "plugin": {
+                    "kind": "PrometheusTimeSeriesQuery",
+                    "spec": {
+                      "datasource": {
+                        "kind": "PrometheusDatasource",
+                        "name": "prometheus-datasource"
+                      },
+                      "query": "    (\n      sum by (handler, code) (\n        rate(perses_http_request_total{code=~\"4..|5..\",instance=~\"$instance\",job=~\"$job\"}[$__rate_interval])\n      )\n    )\n  / ignoring (code) group_left ()\n    (sum by (handler) (rate(perses_http_request_total{instance=~\"$instance\",job=~\"$job\"}[$__rate_interval])))\n*\n  100",
+                      "seriesNameFormat": "{{handler}} {{code}}"
+                    }
+                  }
+                }
+              }
+            ]
+          }
+        },
+        "1_2": {
+          "kind": "Panel",
+          "spec": {
+            "display": {
+              "name": "HTTP Requests Latency",
+              "description": "Displays the latency of HTTP requests over a 5-minute window."
+            },
+            "plugin": {
+              "kind": "TimeSeriesChart",
               "spec": {
-                "plugin": {
-                  "kind": "PrometheusTimeSeriesQuery",
-                  "spec": {
-                    "datasource": {
-                      "kind": "PrometheusDatasource",
-                      "name": "prometheus-datasource"
-                    },
-                    "query": "process_open_fds{instance=~\"$instance\",job=~\"$job\"}",
-                    "seriesNameFormat": "{{instance}} - {{pod}} Open FDs"
+                "legend": {
+                  "position": "right",
+                  "mode": "table"
+                },
+                "yAxis": {
+                  "format": {
+                    "unit": "seconds"
+                  }
+                },
+                "visual": {
+                  "display": "line",
+                  "lineWidth": 0.25,
+                  "areaOpacity": 0.5,
+                  "palette": {
+                    "mode": "auto"
                   }
                 }
               }
             },
-            {
-              "kind": "TimeSeriesQuery",
-              "spec": {
-                "plugin": {
-                  "kind": "PrometheusTimeSeriesQuery",
-                  "spec": {
-                    "datasource": {
-                      "kind": "PrometheusDatasource",
-                      "name": "prometheus-datasource"
-                    },
-                    "query": "process_max_fds{instance=~\"$instance\",job=~\"$job\"}",
-                    "seriesNameFormat": "{{instance}} - {{pod}} - Max FDs"
+            "queries": [
+              {
+                "kind": "TimeSeriesQuery",
+                "spec": {
+                  "plugin": {
+                    "kind": "PrometheusTimeSeriesQuery",
+                    "spec": {
+                      "datasource": {
+                        "kind": "PrometheusDatasource",
+                        "name": "prometheus-datasource"
+                      },
+                      "query": "  sum by (handler, method) (\n    rate(perses_http_request_duration_second_sum{instance=~\"$instance\",job=~\"$job\"}[$__rate_interval])\n  )\n/\n  sum by (handler, method) (\n    rate(perses_http_request_duration_second_count{instance=~\"$instance\",job=~\"$job\"}[$__rate_interval])\n  )",
+                      "seriesNameFormat": "{{handler}} {{method}}"
+                    }
                   }
                 }
               }
-            }
-          ]
-        }
-      },
-      "3_0": {
-        "kind": "Panel",
-        "spec": {
-          "display": {
-            "name": "Plugin Schema Load Attempts",
-            "description": "Displays the success and failure attempts to load plugin schemas."
-          },
-          "plugin": {
-            "kind": "TimeSeriesChart",
-            "spec": {
-              "legend": {
-                "position": "bottom",
-                "mode": "table",
-                "values": [
-                  "last"
-                ]
-              },
-              "yAxis": {
-                "format": {
-                  "unit": "decimal"
-                }
-              },
-              "visual": {
-                "display": "line",
-                "lineWidth": 0.25,
-                "areaOpacity": 0.5,
-                "palette": {
-                  "mode": "auto"
-                }
-              }
-            }
-          },
-          "queries": [
-            {
-              "kind": "TimeSeriesQuery",
+            ]
+          }
+        },
+        "2_0": {
+          "kind": "Panel",
+          "spec": {
+            "display": {
+              "name": "Memory Usage",
+              "description": "Shows various memory usage metrics of the component."
+            },
+            "plugin": {
+              "kind": "TimeSeriesChart",
               "spec": {
-                "plugin": {
-                  "kind": "PrometheusTimeSeriesQuery",
-                  "spec": {
-                    "datasource": {
-                      "kind": "PrometheusDatasource",
-                      "name": "prometheus-datasource"
-                    },
-                    "query": "perses_plugin_schemas_load_attempts{instance=~\"$instance\",job=~\"$job\"}",
-                    "seriesNameFormat": "{{pod}} - {{schema}} - {{status}}"
+                "legend": {
+                  "position": "bottom",
+                  "mode": "table",
+                  "values": [
+                    "last"
+                  ]
+                },
+                "yAxis": {
+                  "format": {
+                    "unit": "bytes"
+                  }
+                },
+                "visual": {
+                  "display": "line",
+                  "lineWidth": 0.25,
+                  "areaOpacity": 0.5,
+                  "palette": {
+                    "mode": "auto"
                   }
                 }
               }
-            }
-          ]
-        }
-      }
-    },
-    "layouts": [
-      {
-        "kind": "Grid",
-        "spec": {
-          "display": {
-            "title": "Perses Stats"
-          },
-          "items": [
-            {
-              "x": 0,
-              "y": 0,
-              "width": 24,
-              "height": 6,
-              "content": {
-                "$ref": "#/spec/panels/0_0"
+            },
+            "queries": [
+              {
+                "kind": "TimeSeriesQuery",
+                "spec": {
+                  "plugin": {
+                    "kind": "PrometheusTimeSeriesQuery",
+                    "spec": {
+                      "datasource": {
+                        "kind": "PrometheusDatasource",
+                        "name": "prometheus-datasource"
+                      },
+                      "query": "go_memstats_alloc_bytes{instance=~\"$instance\",job=~\"$job\"}",
+                      "seriesNameFormat": "Alloc All {{pod}}"
+                    }
+                  }
+                }
+              },
+              {
+                "kind": "TimeSeriesQuery",
+                "spec": {
+                  "plugin": {
+                    "kind": "PrometheusTimeSeriesQuery",
+                    "spec": {
+                      "datasource": {
+                        "kind": "PrometheusDatasource",
+                        "name": "prometheus-datasource"
+                      },
+                      "query": "go_memstats_heap_alloc_bytes{instance=~\"$instance\",job=~\"$job\"}",
+                      "seriesNameFormat": "Alloc Heap {{pod}}"
+                    }
+                  }
+                }
+              },
+              {
+                "kind": "TimeSeriesQuery",
+                "spec": {
+                  "plugin": {
+                    "kind": "PrometheusTimeSeriesQuery",
+                    "spec": {
+                      "datasource": {
+                        "kind": "PrometheusDatasource",
+                        "name": "prometheus-datasource"
+                      },
+                      "query": "rate(go_memstats_alloc_bytes_total{instance=~\"$instance\",job=~\"$job\"}[$__rate_interval])",
+                      "seriesNameFormat": "Alloc Rate All {{pod}}"
+                    }
+                  }
+                }
+              },
+              {
+                "kind": "TimeSeriesQuery",
+                "spec": {
+                  "plugin": {
+                    "kind": "PrometheusTimeSeriesQuery",
+                    "spec": {
+                      "datasource": {
+                        "kind": "PrometheusDatasource",
+                        "name": "prometheus-datasource"
+                      },
+                      "query": "rate(go_memstats_heap_alloc_bytes{instance=~\"$instance\",job=~\"$job\"}[$__rate_interval])",
+                      "seriesNameFormat": "Alloc Rate Heap {{pod}}"
+                    }
+                  }
+                }
+              },
+              {
+                "kind": "TimeSeriesQuery",
+                "spec": {
+                  "plugin": {
+                    "kind": "PrometheusTimeSeriesQuery",
+                    "spec": {
+                      "datasource": {
+                        "kind": "PrometheusDatasource",
+                        "name": "prometheus-datasource"
+                      },
+                      "query": "go_memstats_stack_inuse_bytes{instance=~\"$instance\",job=~\"$job\"}",
+                      "seriesNameFormat": "Inuse Stack {{pod}}"
+                    }
+                  }
+                }
+              },
+              {
+                "kind": "TimeSeriesQuery",
+                "spec": {
+                  "plugin": {
+                    "kind": "PrometheusTimeSeriesQuery",
+                    "spec": {
+                      "datasource": {
+                        "kind": "PrometheusDatasource",
+                        "name": "prometheus-datasource"
+                      },
+                      "query": "go_memstats_heap_inuse_bytes{instance=~\"$instance\",job=~\"$job\"}",
+                      "seriesNameFormat": "Inuse Heap {{pod}}"
+                    }
+                  }
+                }
+              },
+              {
+                "kind": "TimeSeriesQuery",
+                "spec": {
+                  "plugin": {
+                    "kind": "PrometheusTimeSeriesQuery",
+                    "spec": {
+                      "datasource": {
+                        "kind": "PrometheusDatasource",
+                        "name": "prometheus-datasource"
+                      },
+                      "query": "process_resident_memory_bytes{instance=~\"$instance\",job=~\"$job\"}",
+                      "seriesNameFormat": "Resident Memory {{pod}}"
+                    }
+                  }
+                }
               }
-            }
-          ]
+            ]
+          }
+        },
+        "2_1": {
+          "kind": "Panel",
+          "spec": {
+            "display": {
+              "name": "CPU Usage",
+              "description": "Shows the CPU usage of the component."
+            },
+            "plugin": {
+              "kind": "TimeSeriesChart",
+              "spec": {
+                "legend": {
+                  "position": "bottom",
+                  "mode": "table",
+                  "values": [
+                    "last"
+                  ]
+                },
+                "yAxis": {
+                  "format": {
+                    "unit": "decimal"
+                  }
+                },
+                "visual": {
+                  "display": "line",
+                  "lineWidth": 0.25,
+                  "areaOpacity": 0.5,
+                  "palette": {
+                    "mode": "auto"
+                  }
+                }
+              }
+            },
+            "queries": [
+              {
+                "kind": "TimeSeriesQuery",
+                "spec": {
+                  "plugin": {
+                    "kind": "PrometheusTimeSeriesQuery",
+                    "spec": {
+                      "datasource": {
+                        "kind": "PrometheusDatasource",
+                        "name": "prometheus-datasource"
+                      },
+                      "query": "rate(process_cpu_seconds_total{instance=~\"$instance\",job=~\"$job\"}[$__rate_interval])",
+                      "seriesNameFormat": "{{pod}}"
+                    }
+                  }
+                }
+              }
+            ]
+          }
+        },
+        "2_2": {
+          "kind": "Panel",
+          "spec": {
+            "display": {
+              "name": "Goroutines",
+              "description": "Shows the number of goroutines being used by the component."
+            },
+            "plugin": {
+              "kind": "TimeSeriesChart",
+              "spec": {
+                "legend": {
+                  "position": "bottom",
+                  "mode": "table",
+                  "values": [
+                    "last"
+                  ]
+                },
+                "yAxis": {
+                  "format": {
+                    "unit": "decimal"
+                  }
+                },
+                "visual": {
+                  "display": "line",
+                  "lineWidth": 0.25,
+                  "areaOpacity": 0.5,
+                  "palette": {
+                    "mode": "auto"
+                  }
+                }
+              }
+            },
+            "queries": [
+              {
+                "kind": "TimeSeriesQuery",
+                "spec": {
+                  "plugin": {
+                    "kind": "PrometheusTimeSeriesQuery",
+                    "spec": {
+                      "datasource": {
+                        "kind": "PrometheusDatasource",
+                        "name": "prometheus-datasource"
+                      },
+                      "query": "go_goroutines{instance=~\"$instance\",job=~\"$job\"}",
+                      "seriesNameFormat": "{{pod}}"
+                    }
+                  }
+                }
+              }
+            ]
+          }
+        },
+        "2_3": {
+          "kind": "Panel",
+          "spec": {
+            "display": {
+              "name": "GC Duration",
+              "description": "Shows the Go garbage collection pause durations for the component."
+            },
+            "plugin": {
+              "kind": "TimeSeriesChart",
+              "spec": {
+                "legend": {
+                  "position": "bottom",
+                  "mode": "table",
+                  "values": [
+                    "last"
+                  ]
+                },
+                "yAxis": {
+                  "format": {
+                    "unit": "seconds"
+                  }
+                },
+                "visual": {
+                  "display": "line",
+                  "lineWidth": 0.25,
+                  "areaOpacity": 0.5,
+                  "palette": {
+                    "mode": "auto"
+                  }
+                }
+              }
+            },
+            "queries": [
+              {
+                "kind": "TimeSeriesQuery",
+                "spec": {
+                  "plugin": {
+                    "kind": "PrometheusTimeSeriesQuery",
+                    "spec": {
+                      "datasource": {
+                        "kind": "PrometheusDatasource",
+                        "name": "prometheus-datasource"
+                      },
+                      "query": "go_gc_duration_seconds{instance=~\"$instance\",job=~\"$job\"}",
+                      "seriesNameFormat": "{{quantile}} - {{pod}}"
+                    }
+                  }
+                }
+              }
+            ]
+          }
+        },
+        "2_4": {
+          "kind": "Panel",
+          "spec": {
+            "display": {
+              "name": "File Descriptors",
+              "description": "Displays the number of open and max file descriptors."
+            },
+            "plugin": {
+              "kind": "TimeSeriesChart",
+              "spec": {
+                "legend": {
+                  "position": "bottom",
+                  "mode": "table",
+                  "values": [
+                    "last"
+                  ]
+                },
+                "yAxis": {
+                  "format": {
+                    "unit": "decimal"
+                  }
+                },
+                "visual": {
+                  "display": "line",
+                  "lineWidth": 0.25,
+                  "areaOpacity": 0.5,
+                  "palette": {
+                    "mode": "auto"
+                  }
+                }
+              }
+            },
+            "queries": [
+              {
+                "kind": "TimeSeriesQuery",
+                "spec": {
+                  "plugin": {
+                    "kind": "PrometheusTimeSeriesQuery",
+                    "spec": {
+                      "datasource": {
+                        "kind": "PrometheusDatasource",
+                        "name": "prometheus-datasource"
+                      },
+                      "query": "process_open_fds{instance=~\"$instance\",job=~\"$job\"}",
+                      "seriesNameFormat": "{{instance}} - {{pod}} Open FDs"
+                    }
+                  }
+                }
+              },
+              {
+                "kind": "TimeSeriesQuery",
+                "spec": {
+                  "plugin": {
+                    "kind": "PrometheusTimeSeriesQuery",
+                    "spec": {
+                      "datasource": {
+                        "kind": "PrometheusDatasource",
+                        "name": "prometheus-datasource"
+                      },
+                      "query": "process_max_fds{instance=~\"$instance\",job=~\"$job\"}",
+                      "seriesNameFormat": "{{instance}} - {{pod}} - Max FDs"
+                    }
+                  }
+                }
+              }
+            ]
+          }
+        },
+        "3_0": {
+          "kind": "Panel",
+          "spec": {
+            "display": {
+              "name": "Plugin Schema Load Attempts",
+              "description": "Displays the success and failure attempts to load plugin schemas."
+            },
+            "plugin": {
+              "kind": "TimeSeriesChart",
+              "spec": {
+                "legend": {
+                  "position": "bottom",
+                  "mode": "table",
+                  "values": [
+                    "last"
+                  ]
+                },
+                "yAxis": {
+                  "format": {
+                    "unit": "decimal"
+                  }
+                },
+                "visual": {
+                  "display": "line",
+                  "lineWidth": 0.25,
+                  "areaOpacity": 0.5,
+                  "palette": {
+                    "mode": "auto"
+                  }
+                }
+              }
+            },
+            "queries": [
+              {
+                "kind": "TimeSeriesQuery",
+                "spec": {
+                  "plugin": {
+                    "kind": "PrometheusTimeSeriesQuery",
+                    "spec": {
+                      "datasource": {
+                        "kind": "PrometheusDatasource",
+                        "name": "prometheus-datasource"
+                      },
+                      "query": "perses_plugin_schemas_load_attempts{instance=~\"$instance\",job=~\"$job\"}",
+                      "seriesNameFormat": "{{pod}} - {{schema}} - {{status}}"
+                    }
+                  }
+                }
+              }
+            ]
+          }
         }
       },
-      {
-        "kind": "Grid",
-        "spec": {
-          "display": {
-            "title": "API Requests"
-          },
-          "items": [
-            {
-              "x": 0,
-              "y": 0,
-              "width": 12,
-              "height": 6,
-              "content": {
-                "$ref": "#/spec/panels/1_0"
-              }
+      "layouts": [
+        {
+          "kind": "Grid",
+          "spec": {
+            "display": {
+              "title": "Perses Stats"
             },
-            {
-              "x": 12,
-              "y": 0,
-              "width": 12,
-              "height": 6,
-              "content": {
-                "$ref": "#/spec/panels/1_1"
+            "items": [
+              {
+                "x": 0,
+                "y": 0,
+                "width": 24,
+                "height": 6,
+                "content": {
+                  "$ref": "#/spec/panels/0_0"
+                }
               }
+            ]
+          }
+        },
+        {
+          "kind": "Grid",
+          "spec": {
+            "display": {
+              "title": "API Requests"
             },
-            {
-              "x": 0,
-              "y": 6,
-              "width": 12,
-              "height": 6,
-              "content": {
-                "$ref": "#/spec/panels/1_2"
+            "items": [
+              {
+                "x": 0,
+                "y": 0,
+                "width": 12,
+                "height": 6,
+                "content": {
+                  "$ref": "#/spec/panels/1_0"
+                }
+              },
+              {
+                "x": 12,
+                "y": 0,
+                "width": 12,
+                "height": 6,
+                "content": {
+                  "$ref": "#/spec/panels/1_1"
+                }
+              },
+              {
+                "x": 0,
+                "y": 6,
+                "width": 12,
+                "height": 6,
+                "content": {
+                  "$ref": "#/spec/panels/1_2"
+                }
               }
-            }
-          ]
+            ]
+          }
+        },
+        {
+          "kind": "Grid",
+          "spec": {
+            "display": {
+              "title": "Resource Usage"
+            },
+            "items": [
+              {
+                "x": 0,
+                "y": 0,
+                "width": 8,
+                "height": 10,
+                "content": {
+                  "$ref": "#/spec/panels/2_0"
+                }
+              },
+              {
+                "x": 8,
+                "y": 0,
+                "width": 8,
+                "height": 10,
+                "content": {
+                  "$ref": "#/spec/panels/2_1"
+                }
+              },
+              {
+                "x": 16,
+                "y": 0,
+                "width": 8,
+                "height": 10,
+                "content": {
+                  "$ref": "#/spec/panels/2_2"
+                }
+              },
+              {
+                "x": 0,
+                "y": 10,
+                "width": 8,
+                "height": 10,
+                "content": {
+                  "$ref": "#/spec/panels/2_3"
+                }
+              },
+              {
+                "x": 8,
+                "y": 10,
+                "width": 8,
+                "height": 10,
+                "content": {
+                  "$ref": "#/spec/panels/2_4"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "kind": "Grid",
+          "spec": {
+            "display": {
+              "title": "Plugins Usage"
+            },
+            "items": [
+              {
+                "x": 0,
+                "y": 0,
+                "width": 24,
+                "height": 8,
+                "content": {
+                  "$ref": "#/spec/panels/3_0"
+                }
+              }
+            ]
+          }
         }
-      },
-      {
-        "kind": "Grid",
-        "spec": {
-          "display": {
-            "title": "Resource Usage"
-          },
-          "items": [
-            {
-              "x": 0,
-              "y": 0,
-              "width": 8,
-              "height": 10,
-              "content": {
-                "$ref": "#/spec/panels/2_0"
-              }
-            },
-            {
-              "x": 8,
-              "y": 0,
-              "width": 8,
-              "height": 10,
-              "content": {
-                "$ref": "#/spec/panels/2_1"
-              }
-            },
-            {
-              "x": 16,
-              "y": 0,
-              "width": 8,
-              "height": 10,
-              "content": {
-                "$ref": "#/spec/panels/2_2"
-              }
-            },
-            {
-              "x": 0,
-              "y": 10,
-              "width": 8,
-              "height": 10,
-              "content": {
-                "$ref": "#/spec/panels/2_3"
-              }
-            },
-            {
-              "x": 8,
-              "y": 10,
-              "width": 8,
-              "height": 10,
-              "content": {
-                "$ref": "#/spec/panels/2_4"
-              }
-            }
-          ]
-        }
-      },
-      {
-        "kind": "Grid",
-        "spec": {
-          "display": {
-            "title": "Plugins Usage"
-          },
-          "items": [
-            {
-              "x": 0,
-              "y": 0,
-              "width": 24,
-              "height": 8,
-              "content": {
-                "$ref": "#/spec/panels/3_0"
-              }
-            }
-          ]
-        }
-      }
-    ],
-    "duration": "1h"
+      ],
+      "duration": "1h"
+    }
   },
   "status": {}
 }

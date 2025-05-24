@@ -7,6 +7,7 @@ import (
 	"io"
 	"os"
 	"path"
+	"strings"
 
 	persesv1 "github.com/perses/perses-operator/api/v1alpha1"
 	"github.com/perses/perses/go-sdk/dashboard"
@@ -26,9 +27,10 @@ const (
 func init() {
 	flag.String("output", YAMLOutput, "output format of the exec")
 	flag.String("output-dir", "./built", "output directory of the exec")
+	flag.String("instance-selector", "", "label selector for instance matching (e.g. 'app=myapp,env=prod')")
 }
 
-func executeDashboardBuilder(builder dashboard.Builder, outputFormat string, outputDir string, errWriter io.Writer) {
+func executeDashboardBuilder(builder dashboard.Builder, outputFormat string, outputDir string, instanceSelector *metav1.LabelSelector, errWriter io.Writer) {
 	var err error
 	var output []byte
 	var ext string
@@ -41,10 +43,10 @@ func executeDashboardBuilder(builder dashboard.Builder, outputFormat string, out
 		output, err = json.MarshalIndent(builder.Dashboard, "", "  ")
 		ext = JSONOutput
 	case OperatorOutput:
-		output, err = k8syaml.Marshal(builderToOperatorResource(builder))
+		output, err = k8syaml.Marshal(builderToOperatorResource(builder, instanceSelector))
 		ext = YAMLOutput
 	case OperatorJSONOutput:
-		output, err = json.MarshalIndent(builderToOperatorResource(builder), "", "  ")
+		output, err = json.MarshalIndent(builderToOperatorResource(builder, instanceSelector), "", "  ")
 		ext = JSONOutput
 	default:
 		err = fmt.Errorf("--output must be %q, %q, %q or %q", JSONOutput, YAMLOutput, OperatorOutput, OperatorJSONOutput)
@@ -73,7 +75,7 @@ func executeDashboardBuilder(builder dashboard.Builder, outputFormat string, out
 	_ = os.WriteFile(fmt.Sprintf("%s/%s.%s", outputDir, builder.Dashboard.Metadata.Name, ext), output, os.ModePerm)
 }
 
-func builderToOperatorResource(builder dashboard.Builder) runtime.Object {
+func builderToOperatorResource(builder dashboard.Builder, instanceSelector *metav1.LabelSelector) runtime.Object {
 	return &persesv1.PersesDashboard{
 		TypeMeta: metav1.TypeMeta{
 			Kind:       "PersesDashboard",
@@ -89,8 +91,11 @@ func builderToOperatorResource(builder dashboard.Builder) runtime.Object {
 				"app.kubernetes.io/component": "dashboard",
 			},
 		},
-		Spec: persesv1.Dashboard{
-			DashboardSpec: builder.Dashboard.Spec,
+		Spec: persesv1.PersesDashboardSpec{
+			Config: persesv1.Dashboard{
+				DashboardSpec: builder.Dashboard.Spec,
+			},
+			InstanceSelector: instanceSelector,
 		},
 	}
 }
@@ -99,15 +104,30 @@ func NewExec() Exec {
 	output := flag.Lookup("output").Value.String()
 	outputDir := flag.Lookup("output-dir").Value.String()
 
+	var instanceSelector *metav1.LabelSelector
+	if selectorStr := flag.Lookup("instance-selector").Value.String(); selectorStr != "" {
+		instanceSelector = &metav1.LabelSelector{}
+		labels := make(map[string]string)
+		for _, pair := range strings.Split(selectorStr, ",") {
+			kv := strings.Split(pair, "=")
+			if len(kv) == 2 {
+				labels[strings.TrimSpace(kv[0])] = strings.TrimSpace(kv[1])
+			}
+		}
+		instanceSelector.MatchLabels = labels
+	}
+
 	return Exec{
-		outputFormat: output,
-		outputDir:    outputDir,
+		outputFormat:     output,
+		outputDir:        outputDir,
+		instanceSelector: instanceSelector,
 	}
 }
 
 type Exec struct {
-	outputFormat string
-	outputDir    string
+	outputFormat     string
+	outputDir        string
+	instanceSelector *metav1.LabelSelector
 }
 
 // BuildDashboard is a helper to print the result of a dashboard builder in stdout and errors to stderr
@@ -116,7 +136,7 @@ func (b *Exec) BuildDashboard(dr DashboardResult) {
 		fmt.Fprint(os.Stderr, dr.err)
 		os.Exit(-1)
 	}
-	executeDashboardBuilder(dr.builder, b.outputFormat, path.Join(b.outputDir, dr.component), os.Stdout)
+	executeDashboardBuilder(dr.builder, b.outputFormat, path.Join(b.outputDir, dr.component), b.instanceSelector, os.Stdout)
 }
 
 // BuildDashboardOperatorResource is a helper to return the operator resource of a dashboard builder as a runtime.Object.
@@ -125,5 +145,5 @@ func (b *Exec) BuildDashboardOperatorResource(dr DashboardResult) runtime.Object
 		fmt.Fprint(os.Stderr, dr.err)
 		os.Exit(-1)
 	}
-	return builderToOperatorResource(dr.builder)
+	return builderToOperatorResource(dr.builder, b.instanceSelector)
 }
