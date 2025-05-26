@@ -10,6 +10,7 @@ require (
 	github.com/perses/plugins/gaugechart v0.8.0
 	github.com/perses/plugins/markdown v0.8.0
 	github.com/perses/plugins/prometheus v0.6.0
+	github.com/perses/plugins/barchart v0.7.0
 	github.com/perses/plugins/statchart v0.8.0
 	github.com/perses/plugins/table v0.7.1
 	github.com/perses/plugins/timeserieschart v0.9.1
