@@ -10,10 +10,10 @@ import (
 	"github.com/perses/community-dashboards/pkg/promql"
 )
 
-func withThanosResourcesGroup(datasource string, labelMatcher promql.LabelMatcher) dashboard.Option {
-	labelMatchersToUse := []promql.LabelMatcher{
-		promql.NamespaceVar,
-		promql.JobVar,
+func withThanosResourcesGroup(datasource string, labelMatcher *labels.Matcher) dashboard.Option {
+	labelMatchersToUse := []*labels.Matcher{
+		promql.NamespaceVarV2,
+		promql.JobVarV2,
 	}
 	labelMatchersToUse = append(labelMatchersToUse, labelMatcher)
 

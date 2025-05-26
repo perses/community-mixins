@@ -94,7 +94,6 @@ func withPrometheusStorageGroup(datasource string, labelMatcher *labels.Matcher)
 }
 
 func BuildThanosReceiveOverview(project string, datasource string, clusterLabelName string) dashboards.DashboardResult {
-	clusterLabelMatcher := dashboards.GetClusterLabelMatcher(clusterLabelName)
 	clusterLabelMatcherV2 := dashboards.GetClusterLabelMatcherV2(clusterLabelName)
 	return dashboards.NewDashboardResult(
 		dashboard.New("thanos-receive-overview",
@@ -155,7 +154,7 @@ func BuildThanosReceiveOverview(project string, datasource string, clusterLabelN
 			withThanosReadGRPCStreamGroup(datasource, clusterLabelMatcherV2),
 			withThanosBucketUploadGroup(datasource, clusterLabelMatcherV2),
 			withPrometheusStorageGroup(datasource, clusterLabelMatcherV2),
-			withThanosResourcesGroup(datasource, clusterLabelMatcher),
+			withThanosResourcesGroup(datasource, clusterLabelMatcherV2),
 		),
 	).Component("thanos")
 }

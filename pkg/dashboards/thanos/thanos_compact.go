@@ -81,7 +81,6 @@ func withThanosCompactGarbageCollectionGroup(datasource string, labelMatcher *la
 
 func BuildThanosCompactOverview(project string, datasource string, clusterLabelName string) dashboards.DashboardResult {
 	clusterLabelMatcher := dashboards.GetClusterLabelMatcherV2(clusterLabelName)
-	clusterLabelMatcherV1 := dashboards.GetClusterLabelMatcher(clusterLabelName)
 	return dashboards.NewDashboardResult(
 		dashboard.New("thanos-compact-overview",
 			dashboard.ProjectName(project),
@@ -114,7 +113,7 @@ func BuildThanosCompactOverview(project string, datasource string, clusterLabelN
 			withThanosBucketOperationsGroup(datasource, clusterLabelMatcher),
 			withThanosCompactHaltedGroup(datasource, clusterLabelMatcher),
 			withThanosCompactGarbageCollectionGroup(datasource, clusterLabelMatcher),
-			withThanosResourcesGroup(datasource, clusterLabelMatcherV1),
+			withThanosResourcesGroup(datasource, clusterLabelMatcher),
 		),
 	).Component("thanos")
 }

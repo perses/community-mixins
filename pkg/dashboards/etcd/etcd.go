@@ -9,6 +9,7 @@ import (
 	panelgroup "github.com/perses/perses/go-sdk/panel-group"
 	listVar "github.com/perses/perses/go-sdk/variable/list-variable"
 	labelValuesVar "github.com/perses/plugins/prometheus/sdk/go/variable/label-values"
+	"github.com/prometheus/prometheus/model/labels"
 )
 
 func withETCDStatsGroup(datasource string, labelMatcher promql.LabelMatcher) dashboard.Option {
@@ -64,14 +65,14 @@ func withRoundTripTimeGroup(datasource string, labelMatcher promql.LabelMatcher)
 	)
 }
 
-func withETCDResources(datasource string, clusterLabelMatcher promql.LabelMatcher) dashboard.Option {
+func withETCDResources(datasource string, clusterLabelMatcher *labels.Matcher) dashboard.Option {
 	// TODO(saswatamcode): Add a way to configure these.
-	labelMatchersToUse := []promql.LabelMatcher{
-		promql.ClusterVar,
+	labelMatchersToUse := []*labels.Matcher{
+		promql.ClusterVarV2,
 		{
 			Name:  "job",
 			Value: ".*etcd.*",
-			Type:  "=~",
+			Type:  labels.MatchRegexp,
 		},
 	}
 
@@ -89,6 +90,7 @@ func withETCDResources(datasource string, clusterLabelMatcher promql.LabelMatche
 
 func BuildETCDOverview(project string, datasource string, clusterLabelName string) dashboards.DashboardResult {
 	clusterLabelMatcher := dashboards.GetClusterLabelMatcher(clusterLabelName)
+	clusterLabelMatcherV2 := dashboards.GetClusterLabelMatcherV2(clusterLabelName)
 	return dashboards.NewDashboardResult(
 		dashboard.New("etcd-overview",
 			dashboard.ProjectName(project),
@@ -108,7 +110,7 @@ func BuildETCDOverview(project string, datasource string, clusterLabelName strin
 			withRaftGroup(datasource, clusterLabelMatcher),
 			withTrafficGroup(datasource, clusterLabelMatcher),
 			withRoundTripTimeGroup(datasource, clusterLabelMatcher),
-			withETCDResources(datasource, clusterLabelMatcher),
+			withETCDResources(datasource, clusterLabelMatcherV2),
 		),
 	).Component("etcd")
 }

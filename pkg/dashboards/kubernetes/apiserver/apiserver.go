@@ -9,6 +9,7 @@ import (
 	panelgroup "github.com/perses/perses/go-sdk/panel-group"
 	listVar "github.com/perses/perses/go-sdk/variable/list-variable"
 	labelValuesVar "github.com/perses/plugins/prometheus/sdk/go/variable/label-values"
+	"github.com/prometheus/prometheus/model/labels"
 )
 
 func withMarkdown(datasource string, labelMatcher promql.LabelMatcher) dashboard.Option {
@@ -60,14 +61,14 @@ func withWorkQueueGroup(datasource string, labelMatcher promql.LabelMatcher) das
 	)
 }
 
-func withAPIServerResources(datasource string, clusterLabelMatcher promql.LabelMatcher) dashboard.Option {
-	labelMatchersToUse := []promql.LabelMatcher{
-		promql.ClusterVar,
-		promql.InstanceVar,
+func withAPIServerResources(datasource string, clusterLabelMatcher *labels.Matcher) dashboard.Option {
+	labelMatchersToUse := []*labels.Matcher{
+		promql.ClusterVarV2,
+		promql.InstanceVarV2,
 		{
 			Name:  "job",
 			Value: "kube-apiserver",
-			Type:  "=",
+			Type:  labels.MatchEqual,
 		},
 	}
 
@@ -85,6 +86,7 @@ func withAPIServerResources(datasource string, clusterLabelMatcher promql.LabelM
 
 func BuildAPIServerOverview(project string, datasource string, clusterLabelName string) dashboards.DashboardResult {
 	clusterLabelMatcher := dashboards.GetClusterLabelMatcher(clusterLabelName)
+	clusterLabelMatcherV2 := dashboards.GetClusterLabelMatcherV2(clusterLabelName)
 	return dashboards.NewDashboardResult(
 		dashboard.New("api-server-overview",
 			dashboard.ProjectName(project),
@@ -117,7 +119,7 @@ func BuildAPIServerOverview(project string, datasource string, clusterLabelName 
 			withReadStats(datasource, clusterLabelMatcher),
 			withWriteStats(datasource, clusterLabelMatcher),
 			withWorkQueueGroup(datasource, clusterLabelMatcher),
-			withAPIServerResources(datasource, clusterLabelMatcher),
+			withAPIServerResources(datasource, clusterLabelMatcherV2),
 		),
 	).Component("kubernetes")
 }

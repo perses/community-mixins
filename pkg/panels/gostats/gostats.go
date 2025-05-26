@@ -4,6 +4,7 @@ import (
 	"github.com/perses/perses/go-sdk/panel"
 	panelgroup "github.com/perses/perses/go-sdk/panel-group"
 	"github.com/perses/plugins/prometheus/sdk/go/query"
+	"github.com/prometheus/prometheus/model/labels"
 
 	"github.com/perses/community-dashboards/pkg/dashboards"
 	"github.com/perses/community-dashboards/pkg/promql"
@@ -12,7 +13,7 @@ import (
 	timeSeriesPanel "github.com/perses/plugins/timeserieschart/sdk/go"
 )
 
-func MemoryUsage(datasourceName string, seriesNameToUse string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
+func MemoryUsage(datasourceName string, seriesNameToUse string, labelMatchers ...*labels.Matcher) panelgroup.Option {
 	return panelgroup.AddPanel("Memory Usage",
 		panel.Description("Shows various memory usage metrics of the component."),
 		timeSeriesPanel.Chart(
@@ -36,70 +37,70 @@ func MemoryUsage(datasourceName string, seriesNameToUse string, labelMatchers ..
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchers(
-					"go_memstats_alloc_bytes",
+				promql.SetLabelMatchersV2(
+					GoCommonPanelQueries["MemoryUsage_allocAll"],
 					labelMatchers,
-				),
+				).Pretty(0),
 				dashboards.AddQueryDataSource(datasourceName),
 				query.SeriesNameFormat("Alloc All {{"+seriesNameToUse+"}}"),
 			),
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchers(
-					"go_memstats_heap_alloc_bytes",
+				promql.SetLabelMatchersV2(
+					GoCommonPanelQueries["MemoryUsage_allocHeap"],
 					labelMatchers,
-				),
+				).Pretty(0),
 				dashboards.AddQueryDataSource(datasourceName),
 				query.SeriesNameFormat("Alloc Heap {{"+seriesNameToUse+"}}"),
 			),
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchers(
-					"rate(go_memstats_alloc_bytes_total[$__rate_interval])",
+				promql.SetLabelMatchersV2(
+					GoCommonPanelQueries["MemoryUsage_allocRateAll"],
 					labelMatchers,
-				),
+				).Pretty(0),
 				dashboards.AddQueryDataSource(datasourceName),
 				query.SeriesNameFormat("Alloc Rate All {{"+seriesNameToUse+"}}"),
 			),
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchers(
-					"rate(go_memstats_heap_alloc_bytes[$__rate_interval])",
+				promql.SetLabelMatchersV2(
+					GoCommonPanelQueries["MemoryUsage_allocRateHeap"],
 					labelMatchers,
-				),
+				).Pretty(0),
 				dashboards.AddQueryDataSource(datasourceName),
 				query.SeriesNameFormat("Alloc Rate Heap {{"+seriesNameToUse+"}}"),
 			),
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchers(
-					"go_memstats_stack_inuse_bytes",
+				promql.SetLabelMatchersV2(
+					GoCommonPanelQueries["MemoryUsage_inuseStack"],
 					labelMatchers,
-				),
+				).Pretty(0),
 				dashboards.AddQueryDataSource(datasourceName),
 				query.SeriesNameFormat("Inuse Stack {{"+seriesNameToUse+"}}"),
 			),
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchers(
-					"go_memstats_heap_inuse_bytes",
+				promql.SetLabelMatchersV2(
+					GoCommonPanelQueries["MemoryUsage_inuseHeap"],
 					labelMatchers,
-				),
+				).Pretty(0),
 				dashboards.AddQueryDataSource(datasourceName),
 				query.SeriesNameFormat("Inuse Heap {{"+seriesNameToUse+"}}"),
 			),
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchers(
-					"process_resident_memory_bytes",
+				promql.SetLabelMatchersV2(
+					GoCommonPanelQueries["MemoryUsage_processResident"],
 					labelMatchers,
-				),
+				).Pretty(0),
 				dashboards.AddQueryDataSource(datasourceName),
 				query.SeriesNameFormat("Resident Memory {{"+seriesNameToUse+"}}"),
 			),
@@ -107,7 +108,7 @@ func MemoryUsage(datasourceName string, seriesNameToUse string, labelMatchers ..
 	)
 }
 
-func Goroutines(datasourceName string, seriesNameToUse string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
+func Goroutines(datasourceName string, seriesNameToUse string, labelMatchers ...*labels.Matcher) panelgroup.Option {
 	return panelgroup.AddPanel("Goroutines",
 		panel.Description("Shows the number of goroutines being used by the component."),
 		timeSeriesPanel.Chart(
@@ -131,10 +132,10 @@ func Goroutines(datasourceName string, seriesNameToUse string, labelMatchers ...
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchers(
-					"go_goroutines",
+				promql.SetLabelMatchersV2(
+					GoCommonPanelQueries["Goroutines"],
 					labelMatchers,
-				),
+				).Pretty(0),
 				dashboards.AddQueryDataSource(datasourceName),
 				query.SeriesNameFormat("{{"+seriesNameToUse+"}}"),
 			),
@@ -142,7 +143,7 @@ func Goroutines(datasourceName string, seriesNameToUse string, labelMatchers ...
 	)
 }
 
-func GarbageCollectionPauseTimeQuantiles(datasourceName string, seriesNameToUse string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
+func GarbageCollectionPauseTimeQuantiles(datasourceName string, seriesNameToUse string, labelMatchers ...*labels.Matcher) panelgroup.Option {
 	return panelgroup.AddPanel("GC Duration",
 		panel.Description("Shows the Go garbage collection pause durations for the component."),
 		timeSeriesPanel.Chart(
@@ -166,10 +167,10 @@ func GarbageCollectionPauseTimeQuantiles(datasourceName string, seriesNameToUse 
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchers(
-					"go_gc_duration_seconds",
+				promql.SetLabelMatchersV2(
+					GoCommonPanelQueries["GarbageCollectionPauseTimeQuantiles"],
 					labelMatchers,
-				),
+				).Pretty(0),
 				dashboards.AddQueryDataSource(datasourceName),
 				query.SeriesNameFormat("{{quantile}} - {{"+seriesNameToUse+"}}"),
 			),
@@ -177,7 +178,7 @@ func GarbageCollectionPauseTimeQuantiles(datasourceName string, seriesNameToUse 
 	)
 }
 
-func CPUUsage(datasourceName string, seriesNameToUse string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
+func CPUUsage(datasourceName string, seriesNameToUse string, labelMatchers ...*labels.Matcher) panelgroup.Option {
 	return panelgroup.AddPanel("CPU Usage",
 		panel.Description("Shows the CPU usage of the component."),
 		timeSeriesPanel.Chart(
@@ -201,10 +202,10 @@ func CPUUsage(datasourceName string, seriesNameToUse string, labelMatchers ...pr
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchers(
-					"rate(process_cpu_seconds_total[$__rate_interval])",
+				promql.SetLabelMatchersV2(
+					GoCommonPanelQueries["CPUUsage"],
 					labelMatchers,
-				),
+				).Pretty(0),
 				dashboards.AddQueryDataSource(datasourceName),
 				query.SeriesNameFormat("{{"+seriesNameToUse+"}}"),
 			),

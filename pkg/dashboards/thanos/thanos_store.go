@@ -63,7 +63,6 @@ func withThanosStoreSentGroup(datasource string, labelMatcher *labels.Matcher) d
 }
 
 func BuildThanosStoreOverview(project string, datasource string, clusterLabelName string) dashboards.DashboardResult {
-	clusterLabelMatcher := dashboards.GetClusterLabelMatcher(clusterLabelName)
 	clusterLabelMatcherV2 := dashboards.GetClusterLabelMatcherV2(clusterLabelName)
 	return dashboards.NewDashboardResult(
 		dashboard.New("thanos-store-overview",
@@ -97,7 +96,7 @@ func BuildThanosStoreOverview(project string, datasource string, clusterLabelNam
 			withThanosQueryOperationsGroup(datasource, clusterLabelMatcherV2),
 			withThanosQueryOperationDurationGroup(datasource, clusterLabelMatcherV2),
 			withThanosStoreSentGroup(datasource, clusterLabelMatcherV2),
-			withThanosResourcesGroup(datasource, clusterLabelMatcher),
+			withThanosResourcesGroup(datasource, clusterLabelMatcherV2),
 		),
 	).Component("thanos")
 }

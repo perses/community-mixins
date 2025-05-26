@@ -44,7 +44,6 @@ func withThanosAlertQueueGroup(datasource string, labelMatcher *labels.Matcher) 
 }
 
 func BuildThanosRulerOverview(project string, datasource string, clusterLabelName string) dashboards.DashboardResult {
-	clusterLabelMatcher := dashboards.GetClusterLabelMatcher(clusterLabelName)
 	clusterLabelMatcherV2 := dashboards.GetClusterLabelMatcherV2(clusterLabelName)
 	return dashboards.NewDashboardResult(
 		dashboard.New("thanos-ruler-overview",
@@ -75,7 +74,7 @@ func BuildThanosRulerOverview(project string, datasource string, clusterLabelNam
 			withThanosAlertQueueGroup(datasource, clusterLabelMatcherV2),
 			withThanosReadGRPCUnaryGroup(datasource, clusterLabelMatcherV2),
 			withThanosReadGRPCStreamGroup(datasource, clusterLabelMatcherV2),
-			withThanosResourcesGroup(datasource, clusterLabelMatcher),
+			withThanosResourcesGroup(datasource, clusterLabelMatcherV2),
 		),
 	).Component("thanos")
 }

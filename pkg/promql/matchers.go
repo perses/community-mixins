@@ -1,15 +1,17 @@
 package promql
 
 import (
+	promqlbuilder "github.com/perses/promql-builder"
 	"github.com/prometheus/prometheus/model/labels"
 	"github.com/prometheus/prometheus/promql/parser"
 )
 
 func SetLabelMatchersV2(query parser.Expr, matchers []*labels.Matcher) parser.Expr {
+	copy := promqlbuilder.DeepCopyExpr(query)
 	for _, l := range matchers {
-		query = LabelsSetPromQLV2(query, l.Type, l.Name, l.Value)
+		copy = LabelsSetPromQLV2(copy, l.Type, l.Name, l.Value)
 	}
-	return query
+	return copy
 }
 
 func LabelsSetPromQLV2(query parser.Expr, matchType labels.MatchType, name, value string) parser.Expr {
@@ -17,7 +19,7 @@ func LabelsSetPromQLV2(query parser.Expr, matchType labels.MatchType, name, valu
 		return query
 	}
 
-	parser.Inspect(query, func(node parser.Node, path []parser.Node) error {
+	promqlbuilder.Inspect(query, func(node parser.Node, path []parser.Node) error {
 		if n, ok := node.(*parser.VectorSelector); ok {
 			var found bool
 			for i, l := range n.LabelMatchers {

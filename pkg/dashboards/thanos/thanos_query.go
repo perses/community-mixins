@@ -49,7 +49,6 @@ func withThanosQueryDNSLookupGroup(datasource string, labelMatcher *labels.Match
 }
 
 func BuildThanosQueryOverview(project string, datasource string, clusterLabelName string) dashboards.DashboardResult {
-	clusterLabelMatcher := dashboards.GetClusterLabelMatcher(clusterLabelName)
 	clusterLabelMatcherV2 := dashboards.GetClusterLabelMatcherV2(clusterLabelName)
 	return dashboards.NewDashboardResult(
 		dashboard.New("thanos-query-overview",
@@ -81,7 +80,7 @@ func BuildThanosQueryOverview(project string, datasource string, clusterLabelNam
 			withThanosReadGRPCStreamGroup(datasource, clusterLabelMatcherV2),
 			withThanosQueryConcurrencyGroup(datasource, clusterLabelMatcherV2),
 			withThanosQueryDNSLookupGroup(datasource, clusterLabelMatcherV2),
-			withThanosResourcesGroup(datasource, clusterLabelMatcher),
+			withThanosResourcesGroup(datasource, clusterLabelMatcherV2),
 		),
 	).Component("thanos")
 }

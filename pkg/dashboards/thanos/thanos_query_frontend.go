@@ -34,7 +34,6 @@ func withThanosQueryFrontendCacheGroup(datasource string, labelMatcher *labels.M
 }
 
 func BuildThanosQueryFrontendOverview(project string, datasource string, clusterLabelName string) dashboards.DashboardResult {
-	clusterLabelMatcher := dashboards.GetClusterLabelMatcher(clusterLabelName)
 	clusterLabelMatcherV2 := dashboards.GetClusterLabelMatcherV2(clusterLabelName)
 
 	return dashboards.NewDashboardResult(
@@ -63,7 +62,7 @@ func BuildThanosQueryFrontendOverview(project string, datasource string, cluster
 			),
 			withThanosQueryFrontendRequestsGroup(datasource, clusterLabelMatcherV2),
 			withThanosQueryFrontendCacheGroup(datasource, clusterLabelMatcherV2),
-			withThanosResourcesGroup(datasource, clusterLabelMatcher),
+			withThanosResourcesGroup(datasource, clusterLabelMatcherV2),
 		),
 	).Component("thanos")
 }

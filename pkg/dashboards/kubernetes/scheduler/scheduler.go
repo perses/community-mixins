@@ -9,6 +9,7 @@ import (
 	panelgroup "github.com/perses/perses/go-sdk/panel-group"
 	listVar "github.com/perses/perses/go-sdk/variable/list-variable"
 	labelValuesVar "github.com/perses/plugins/prometheus/sdk/go/variable/label-values"
+	"github.com/prometheus/prometheus/model/labels"
 )
 
 func withSchedulerStatsGroup(datasource string, labelMatcher promql.LabelMatcher) dashboard.Option {
@@ -50,15 +51,15 @@ func withSchedulerKubeAPIRequestsGroup(datasource string, labelMatcher promql.La
 	)
 }
 
-func withSchedulerResources(datasource string, clusterLabelMatcher promql.LabelMatcher) dashboard.Option {
+func withSchedulerResources(datasource string, clusterLabelMatcher *labels.Matcher) dashboard.Option {
 	// TODO(saswatamcode): Add a way to configure these.
-	labelMatchersToUse := []promql.LabelMatcher{
-		promql.ClusterVar,
-		promql.InstanceVar,
+	labelMatchersToUse := []*labels.Matcher{
+		promql.ClusterVarV2,
+		promql.InstanceVarV2,
 		{
 			Name:  "job",
 			Value: "kube-scheduler",
-			Type:  "=",
+			Type:  labels.MatchEqual,
 		},
 	}
 
@@ -76,6 +77,7 @@ func withSchedulerResources(datasource string, clusterLabelMatcher promql.LabelM
 
 func BuildSchedulerOverview(project string, datasource string, clusterLabelName string) dashboards.DashboardResult {
 	clusterLabelMatcher := dashboards.GetClusterLabelMatcher(clusterLabelName)
+	clusterLabelMatcherV2 := dashboards.GetClusterLabelMatcherV2(clusterLabelName)
 	return dashboards.NewDashboardResult(
 		dashboard.New("scheduler-overview",
 			dashboard.ProjectName(project),
@@ -106,7 +108,7 @@ func BuildSchedulerOverview(project string, datasource string, clusterLabelName 
 			withSchedulerStatsGroup(datasource, clusterLabelMatcher),
 			withSchedulingRateGroup(datasource, clusterLabelMatcher),
 			withSchedulerKubeAPIRequestsGroup(datasource, clusterLabelMatcher),
-			withSchedulerResources(datasource, clusterLabelMatcher),
+			withSchedulerResources(datasource, clusterLabelMatcherV2),
 		),
 	).Component("kubernetes")
 }

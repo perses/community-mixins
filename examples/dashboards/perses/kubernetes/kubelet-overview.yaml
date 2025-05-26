@@ -1006,7 +1006,10 @@ spec:
                                 datasource:
                                     kind: PrometheusDatasource
                                     name: prometheus-datasource
-                                query: rate(process_cpu_seconds_total{cluster=~"$cluster",instance=~"$instance",job="kubelet"}[$__rate_interval])
+                                query: |-
+                                    rate(
+                                      process_cpu_seconds_total{cluster=~"$cluster",instance=~"$instance",job="kubelet"}[$__rate_interval]
+                                    )
                                 seriesNameFormat: '{{instance}}'
         "11_2":
             kind: Panel

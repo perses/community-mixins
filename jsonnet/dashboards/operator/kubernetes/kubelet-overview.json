@@ -522,7 +522,7 @@
                       "kind": "PrometheusDatasource",
                       "name": "prometheus-datasource"
                     },
-                    "query": "rate(process_cpu_seconds_total{cluster=~\"$cluster\",instance=~\"$instance\",job=\"kubelet\"}[$__rate_interval])",
+                    "query": "rate(\n  process_cpu_seconds_total{cluster=~\"$cluster\",instance=~\"$instance\",job=\"kubelet\"}[$__rate_interval]\n)",
                     "seriesNameFormat": "{{instance}}"
                   }
                 }
