@@ -5,13 +5,13 @@ import (
 	panelgroup "github.com/perses/perses/go-sdk/panel-group"
 	listVar "github.com/perses/perses/go-sdk/variable/list-variable"
 	labelValuesVar "github.com/perses/plugins/prometheus/sdk/go/variable/label-values"
+	"github.com/prometheus/prometheus/model/labels"
 
 	"github.com/perses/community-dashboards/pkg/dashboards"
 	panels "github.com/perses/community-dashboards/pkg/panels/thanos"
-	"github.com/perses/community-dashboards/pkg/promql"
 )
 
-func withThanosCompactTODOGroup(datasource string, labelMatcher promql.LabelMatcher) dashboard.Option {
+func withThanosCompactTODOGroup(datasource string, labelMatcher *labels.Matcher) dashboard.Option {
 	return dashboard.AddPanelGroup("TODO Operations",
 		panelgroup.PanelsPerLine(4),
 		panelgroup.PanelHeight(6),
@@ -22,7 +22,7 @@ func withThanosCompactTODOGroup(datasource string, labelMatcher promql.LabelMatc
 	)
 }
 
-func withThanosCompactGroupCompactionGroup(datasource string, labelMatcher promql.LabelMatcher) dashboard.Option {
+func withThanosCompactGroupCompactionGroup(datasource string, labelMatcher *labels.Matcher) dashboard.Option {
 	return dashboard.AddPanelGroup("Group Compactions",
 		panelgroup.PanelsPerLine(2),
 		panelgroup.PanelHeight(8),
@@ -31,7 +31,7 @@ func withThanosCompactGroupCompactionGroup(datasource string, labelMatcher promq
 	)
 }
 
-func withThanosCompactDownsampleGroup(datasource string, labelMatcher promql.LabelMatcher) dashboard.Option {
+func withThanosCompactDownsampleGroup(datasource string, labelMatcher *labels.Matcher) dashboard.Option {
 	return dashboard.AddPanelGroup("Downsample Operations",
 		panelgroup.PanelsPerLine(3),
 		panelgroup.PanelHeight(8),
@@ -41,7 +41,7 @@ func withThanosCompactDownsampleGroup(datasource string, labelMatcher promql.Lab
 	)
 }
 
-func withThanosCompactSyncMetaGroup(datasource string, labelMatcher promql.LabelMatcher) dashboard.Option {
+func withThanosCompactSyncMetaGroup(datasource string, labelMatcher *labels.Matcher) dashboard.Option {
 	return dashboard.AddPanelGroup("Sync Meta",
 		panelgroup.PanelsPerLine(3),
 		panelgroup.PanelHeight(8),
@@ -51,7 +51,7 @@ func withThanosCompactSyncMetaGroup(datasource string, labelMatcher promql.Label
 	)
 }
 
-func withThanosCompactBlockDeletionGroup(datasource string, labelMatcher promql.LabelMatcher) dashboard.Option {
+func withThanosCompactBlockDeletionGroup(datasource string, labelMatcher *labels.Matcher) dashboard.Option {
 	return dashboard.AddPanelGroup("Block Deletion",
 		panelgroup.PanelsPerLine(3),
 		panelgroup.PanelHeight(8),
@@ -61,7 +61,7 @@ func withThanosCompactBlockDeletionGroup(datasource string, labelMatcher promql.
 	)
 }
 
-func withThanosCompactHaltedGroup(datasource string, labelMatcher promql.LabelMatcher) dashboard.Option {
+func withThanosCompactHaltedGroup(datasource string, labelMatcher *labels.Matcher) dashboard.Option {
 	return dashboard.AddPanelGroup("Halted Compactors",
 		panelgroup.PanelsPerLine(1),
 		panelgroup.PanelHeight(8),
@@ -69,7 +69,7 @@ func withThanosCompactHaltedGroup(datasource string, labelMatcher promql.LabelMa
 	)
 }
 
-func withThanosCompactGarbageCollectionGroup(datasource string, labelMatcher promql.LabelMatcher) dashboard.Option {
+func withThanosCompactGarbageCollectionGroup(datasource string, labelMatcher *labels.Matcher) dashboard.Option {
 	return dashboard.AddPanelGroup("Garbage Collection",
 		panelgroup.PanelsPerLine(3),
 		panelgroup.PanelHeight(8),
@@ -80,7 +80,7 @@ func withThanosCompactGarbageCollectionGroup(datasource string, labelMatcher pro
 }
 
 func BuildThanosCompactOverview(project string, datasource string, clusterLabelName string) dashboards.DashboardResult {
-	clusterLabelMatcher := dashboards.GetClusterLabelMatcher(clusterLabelName)
+	clusterLabelMatcher := dashboards.GetClusterLabelMatcherV2(clusterLabelName)
 	return dashboards.NewDashboardResult(
 		dashboard.New("thanos-compact-overview",
 			dashboard.ProjectName(project),

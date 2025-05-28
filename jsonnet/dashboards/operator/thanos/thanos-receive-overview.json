@@ -185,7 +185,7 @@
                       "kind": "PrometheusDatasource",
                       "name": "prometheus-datasource"
                     },
-                    "query": "  (\n      sum by (namespace, job, code) (\n        rate(\n          http_requests_total{code=~\"5..\",handler=\"receive\",job=~\"$job\",namespace=\"$namespace\"}[$__rate_interval]\n        )\n      )\n    / ignoring (code) group_left ()\n      sum by (namespace, job) (\n        rate(http_requests_total{handler=\"receive\",job=~\"$job\",namespace=\"$namespace\"}[$__rate_interval])\n      )\n  )\n*\n  100",
+                    "query": "    sum by (namespace, job, code) (\n      rate(\n        http_requests_total{code=~\"5..\",handler=\"receive\",job=~\"$job\",namespace=\"$namespace\"}[$__rate_interval]\n      )\n    )\n  / ignoring (code) group_left ()\n    sum by (namespace, job) (\n      rate(http_requests_total{handler=\"receive\",job=~\"$job\",namespace=\"$namespace\"}[$__rate_interval])\n    )\n*\n  100",
                     "seriesNameFormat": "{{job}} {{namespace}} {{code}} {{handler}}"
                   }
                 }
@@ -310,7 +310,7 @@
                       "kind": "PrometheusDatasource",
                       "name": "prometheus-datasource"
                     },
-                    "query": "sum by (namespace, job) (\n  rate(prometheus_tsdb_head_samples_appended_total{job=~\"$job\",namespace=~\"$namespace\"}[$__rate_interval])\n)",
+                    "query": "sum by (namespace, job) (\n  rate(\n    prometheus_tsdb_head_samples_appended_total{job=~\"$job\",namespace=\"$namespace\"}[$__rate_interval]\n  )\n)",
                     "seriesNameFormat": "{{job}} - {{namespace}}"
                   }
                 }
@@ -354,7 +354,7 @@
                       "kind": "PrometheusDatasource",
                       "name": "prometheus-datasource"
                     },
-                    "query": "sum by (namespace, job) (prometheus_tsdb_head_series{job=~\"$job\",namespace=~\"$namespace\"})",
+                    "query": "sum by (namespace, job) (prometheus_tsdb_head_series{job=~\"$job\",namespace=\"$namespace\"})",
                     "seriesNameFormat": "{{job}} - {{namespace}} - Head Series"
                   }
                 }
@@ -398,7 +398,7 @@
                       "kind": "PrometheusDatasource",
                       "name": "prometheus-datasource"
                     },
-                    "query": "sum by (namespace, job) (prometheus_tsdb_head_chunks{job=~\"$job\",namespace=~\"$namespace\"})",
+                    "query": "sum by (namespace, job) (prometheus_tsdb_head_chunks{job=~\"$job\",namespace=\"$namespace\"})",
                     "seriesNameFormat": "{{job}} - {{namespace}} - Head Chunks"
                   }
                 }
@@ -800,7 +800,7 @@
                       "kind": "PrometheusDatasource",
                       "name": "prometheus-datasource"
                     },
-                    "query": "  (\n      sum by (tenant, namespace, job, code) (\n        rate(\n          http_requests_total{code!~\"2..\",handler=\"receive\",job=~\"$job\",namespace=\"$namespace\",tenant=~\"$tenant\"}[$__rate_interval]\n        )\n      )\n    / ignoring (code) group_left ()\n      sum by (tenant, namespace, job) (\n        rate(\n          http_requests_total{handler=\"receive\",job=~\"$job\",namespace=\"$namespace\",tenant=~\"$tenant\"}[$__rate_interval]\n        )\n      )\n  )\n*\n  100",
+                    "query": "    sum by (tenant, namespace, job, code) (\n      rate(\n        http_requests_total{code!~\"2..\",handler=\"receive\",job=~\"$job\",namespace=\"$namespace\",tenant=~\"$tenant\"}[$__rate_interval]\n      )\n    )\n  / ignoring (code) group_left ()\n    sum by (tenant, namespace, job) (\n      rate(\n        http_requests_total{handler=\"receive\",job=~\"$job\",namespace=\"$namespace\",tenant=~\"$tenant\"}[$__rate_interval]\n      )\n    )\n*\n  100",
                     "seriesNameFormat": "{{tenant}} {{code}} {{job}} {{namespace}}"
                   }
                 }
@@ -849,7 +849,7 @@
                       "kind": "PrometheusDatasource",
                       "name": "prometheus-datasource"
                     },
-                    "query": "  sum by (namespace, job, tenant) (\n    rate(\n      http_request_duration_seconds_sum{handler=\"receive\",job=~\"$job\",namespace=\"$namespace\",tenant=~\"$tenant\"}[$__rate_interval]\n    )\n  )\n/\n  sum by (namespace, job, tenant) (\n    http_request_duration_seconds_count{handler=\"receive\",job=~\"$job\",namespace=\"$namespace\",tenant=~\"$tenant\"}\n  )",
+                    "query": "  sum by (tenant, namespace, job) (\n    rate(\n      http_request_duration_seconds_sum{handler=\"receive\",job=~\"$job\",namespace=\"$namespace\",tenant=~\"$tenant\"}[$__rate_interval]\n    )\n  )\n/\n  sum by (tenant, namespace, job) (\n    http_request_duration_seconds_count{handler=\"receive\",job=~\"$job\",namespace=\"$namespace\",tenant=~\"$tenant\"}\n  )",
                     "seriesNameFormat": "{{tenant}} {{namespace}} {{job}}"
                   }
                 }
@@ -898,7 +898,7 @@
                       "kind": "PrometheusDatasource",
                       "name": "prometheus-datasource"
                     },
-                    "query": "  sum by (namespace, job, tenant) (\n    rate(\n      http_request_size_bytes_sum{code=~\"2..\",handler=\"receive\",job=~\"$job\",namespace=\"$namespace\",tenant=~\"$tenant\"}[$__rate_interval]\n    )\n  )\n/\n  sum by (namespace, job, tenant) (\n    rate(\n      http_request_size_bytes_count{code=~\"2..\",handler=\"receive\",job=~\"$job\",namespace=\"$namespace\",tenant=~\"$tenant\"}[$__rate_interval]\n    )\n  )",
+                    "query": "  sum by (tenant, namespace, job) (\n    rate(\n      http_request_size_bytes_sum{code=~\"2..\",handler=\"receive\",job=~\"$job\",namespace=\"$namespace\",tenant=~\"$tenant\"}[$__rate_interval]\n    )\n  )\n/\n  sum by (tenant, namespace, job) (\n    rate(\n      http_request_size_bytes_count{code=~\"2..\",handler=\"receive\",job=~\"$job\",namespace=\"$namespace\",tenant=~\"$tenant\"}[$__rate_interval]\n    )\n  )",
                     "seriesNameFormat": "{{tenant}}"
                   }
                 }
@@ -947,7 +947,7 @@
                       "kind": "PrometheusDatasource",
                       "name": "prometheus-datasource"
                     },
-                    "query": "  sum by (namespace, job, tenant) (\n    rate(\n      http_request_size_bytes_sum{code!~\"2..\",handler=\"receive\",job=~\"$job\",namespace=\"$namespace\",tenant=~\"$tenant\"}[$__rate_interval]\n    )\n  )\n/\n  sum by (namespace, job, tenant) (\n    rate(\n      http_request_size_bytes_count{code!~\"2..\",handler=\"receive\",job=~\"$job\",namespace=\"$namespace\",tenant=~\"$tenant\"}[$__rate_interval]\n    )\n  )",
+                    "query": "  sum by (tenant, namespace, job) (\n    rate(\n      http_request_size_bytes_sum{code!~\"2..\",handler=\"receive\",job=~\"$job\",namespace=\"$namespace\",tenant=~\"$tenant\"}[$__rate_interval]\n    )\n  )\n/\n  sum by (tenant, namespace, job) (\n    rate(\n      http_request_size_bytes_count{code!~\"2..\",handler=\"receive\",job=~\"$job\",namespace=\"$namespace\",tenant=~\"$tenant\"}[$__rate_interval]\n    )\n  )",
                     "seriesNameFormat": "{{tenant}}"
                   }
                 }
@@ -996,7 +996,7 @@
                       "kind": "PrometheusDatasource",
                       "name": "prometheus-datasource"
                     },
-                    "query": "sum by (namespace, job, tenant, method) (\n  http_inflight_requests{handler=\"receive\",job=~\"$job\",namespace=\"$namespace\",tenant=~\"tenant\"}\n)",
+                    "query": "sum by (tenant, namespace, job, method) (\n  http_inflight_requests{handler=\"receive\",job=~\"$job\",namespace=\"$namespace\",tenant=~\"$tenant\"}\n)",
                     "seriesNameFormat": "{{method}} {{tenant}}"
                   }
                 }
@@ -1040,7 +1040,7 @@
                       "kind": "PrometheusDatasource",
                       "name": "prometheus-datasource"
                     },
-                    "query": "sum by (namespace, job, tenant) (\n  rate(\n    thanos_receive_write_timeseries_sum{code=~\"2..\",job=~\"$job\",namespace=\"$namespace\",tenant=~\"$tenant\"}[$__rate_interval]\n  )\n)",
+                    "query": "sum by (tenant, namespace, job) (\n  rate(\n    thanos_receive_write_timeseries_sum{code=~\"2..\",job=~\"$job\",namespace=\"$namespace\",tenant=~\"$tenant\"}[$__rate_interval]\n  )\n)",
                     "seriesNameFormat": "{{tenant}}"
                   }
                 }
@@ -1084,7 +1084,7 @@
                       "kind": "PrometheusDatasource",
                       "name": "prometheus-datasource"
                     },
-                    "query": "sum by (namespace, job, tenant) (\n  rate(\n    thanos_receive_write_timeseries_sum{code!~\"2..\",job=~\"$job\",namespace=\"$namespace\",tenant=~\"$tenant\"}[$__rate_interval]\n  )\n)",
+                    "query": "sum by (tenant, namespace, job) (\n  rate(\n    thanos_receive_write_timeseries_sum{code!~\"2..\",job=~\"$job\",namespace=\"$namespace\",tenant=~\"$tenant\"}[$__rate_interval]\n  )\n)",
                     "seriesNameFormat": "{{tenant}}"
                   }
                 }
@@ -1128,7 +1128,7 @@
                       "kind": "PrometheusDatasource",
                       "name": "prometheus-datasource"
                     },
-                    "query": "sum by (namespace, job, tenant) (\n  rate(\n    thanos_receive_write_samples_sum{code=~\"2..\",job=~\"$job\",namespace=\"$namespace\",tenant=~\"$tenant\"}[$__rate_interval]\n  )\n)",
+                    "query": "sum by (tenant, namespace, job) (\n  rate(\n    thanos_receive_write_samples_sum{code=~\"2..\",job=~\"$job\",namespace=\"$namespace\",tenant=~\"$tenant\"}[$__rate_interval]\n  )\n)",
                     "seriesNameFormat": "{{tenant}}"
                   }
                 }
@@ -1172,7 +1172,7 @@
                       "kind": "PrometheusDatasource",
                       "name": "prometheus-datasource"
                     },
-                    "query": "sum by (namespace, job, tenant) (\n  rate(\n    thanos_receive_write_samples_sum{code!~\"2..\",job=~\"$job\",namespace=\"$namespace\",tenant=~\"$tenant\"}[$__rate_interval]\n  )\n)",
+                    "query": "sum by (tenant, namespace, job) (\n  rate(\n    thanos_receive_write_samples_sum{code!~\"2..\",job=~\"$job\",namespace=\"$namespace\",tenant=~\"$tenant\"}[$__rate_interval]\n  )\n)",
                     "seriesNameFormat": "{{tenant}}"
                   }
                 }

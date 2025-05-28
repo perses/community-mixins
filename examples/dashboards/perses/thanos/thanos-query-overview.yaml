@@ -112,15 +112,15 @@ spec:
                                     kind: PrometheusDatasource
                                     name: prometheus-datasource
                                 query: |4-
-                                      (
-                                          sum by (namespace, job, code) (
-                                            rate(http_requests_total{code=~"5..",handler="query",job=~"$job",namespace="$namespace"}[$__rate_interval])
+                                        sum by (namespace, job, code) (
+                                          rate(
+                                            http_requests_total{code=~"5..",handler="query",job=~"$job",namespace="$namespace"}[$__rate_interval]
                                           )
-                                        / ignoring (code) group_left ()
-                                          sum by (namespace, job) (
-                                            rate(http_requests_total{handler="query",job=~"$job",namespace="$namespace"}[$__rate_interval])
-                                          )
-                                      )
+                                        )
+                                      / ignoring (code) group_left ()
+                                        sum by (namespace, job) (
+                                          rate(http_requests_total{handler="query",job=~"$job",namespace="$namespace"}[$__rate_interval])
+                                        )
                                     *
                                       100
                                 seriesNameFormat: '{{job}} {{namespace}} {{code}} {{handler}}'
@@ -233,7 +233,9 @@ spec:
                                     name: prometheus-datasource
                                 query: |-
                                     sum by (namespace, job, handler, code) (
-                                      rate(http_requests_total{handler="query_range",job=~"$job",namespace="$namespace"}[$__rate_interval])
+                                      rate(
+                                        http_requests_total{handler="query_range",job=~"$job",namespace="$namespace"}[$__rate_interval]
+                                      )
                                     )
                                 seriesNameFormat: '{{job}} {{namespace}} {{handler}} {{code}}'
         "1_1":
@@ -268,17 +270,17 @@ spec:
                                     kind: PrometheusDatasource
                                     name: prometheus-datasource
                                 query: |4-
-                                      (
-                                          sum by (namespace, job, code) (
-                                            rate(
-                                              http_requests_total{code=~"5..",handler="query_range",job=~"$job",namespace="$namespace"}[$__rate_interval]
-                                            )
+                                        sum by (namespace, job, code) (
+                                          rate(
+                                            http_requests_total{code=~"5..",handler="query_range",job=~"$job",namespace="$namespace"}[$__rate_interval]
                                           )
-                                        / ignoring (code) group_left ()
-                                          sum by (namespace, job) (
-                                            rate(http_requests_total{handler="query_range",job=~"$job",namespace="$namespace"}[$__rate_interval])
+                                        )
+                                      / ignoring (code) group_left ()
+                                        sum by (namespace, job) (
+                                          rate(
+                                            http_requests_total{handler="query_range",job=~"$job",namespace="$namespace"}[$__rate_interval]
                                           )
-                                      )
+                                        )
                                     *
                                       100
                                 seriesNameFormat: '{{job}} {{namespace}} {{code}} {{handler}}'
@@ -743,7 +745,9 @@ spec:
                                     name: prometheus-datasource
                                 query: |-
                                     sum by (namespace, job) (
-                                      rate(thanos_query_store_apis_dns_lookups_total{job=~"$job",namespace="$namespace"}[$__rate_interval])
+                                      rate(
+                                        thanos_query_store_apis_dns_lookups_total{job=~"$job",namespace="$namespace"}[$__rate_interval]
+                                      )
                                     )
                                 seriesNameFormat: '{{job}}'
         "5_1":
@@ -779,11 +783,15 @@ spec:
                                     name: prometheus-datasource
                                 query: |4-
                                       sum by (namespace, job) (
-                                        rate(thanos_query_store_apis_dns_failures_total{job=~"$job",namespace="$namespace"}[$__rate_interval])
+                                        rate(
+                                          thanos_query_store_apis_dns_failures_total{job=~"$job",namespace="$namespace"}[$__rate_interval]
+                                        )
                                       )
                                     /
                                       sum by (namespace, job) (
-                                        rate(thanos_query_store_apis_dns_lookups_total{job=~"$job",namespace="$namespace"}[$__rate_interval])
+                                        rate(
+                                          thanos_query_store_apis_dns_lookups_total{job=~"$job",namespace="$namespace"}[$__rate_interval]
+                                        )
                                       )
                                 seriesNameFormat: '{{job}}'
         "6_0":

@@ -618,15 +618,15 @@ spec:
                   kind: PrometheusDatasource
                   name: custom-datasource
                 query: |2-
-                    (
-                        sum by (namespace, job, operation) (
-                          rate(thanos_objstore_bucket_operation_failures_total{job=~"$job",namespace="$namespace"}[$__rate_interval])
+                      sum by (namespace, job, operation) (
+                        rate(
+                          thanos_objstore_bucket_operation_failures_total{job=~"$job",namespace="$namespace"}[$__rate_interval]
                         )
-                      /
-                        sum by (namespace, job, operation) (
-                          rate(thanos_objstore_bucket_operations_total{job=~"$job",namespace="$namespace"}[$__rate_interval])
-                        )
-                    )
+                      )
+                    /
+                      sum by (namespace, job, operation) (
+                        rate(thanos_objstore_bucket_operations_total{job=~"$job",namespace="$namespace"}[$__rate_interval])
+                      )
                   *
                     100
                 seriesNameFormat: '{{job}} {{operation}} {{namespace}}'
@@ -774,15 +774,15 @@ spec:
                   kind: PrometheusDatasource
                   name: custom-datasource
                 query: |2-
-                    (
-                        sum by (namespace, job) (
-                          rate(thanos_bucket_store_block_load_failures_total{job=~"$job",namespace="$namespace"}[$__rate_interval])
+                      sum by (namespace, job) (
+                        rate(
+                          thanos_bucket_store_block_load_failures_total{job=~"$job",namespace="$namespace"}[$__rate_interval]
                         )
-                      /
-                        sum by (namespace, job) (
-                          rate(thanos_bucket_store_block_loads_total{job=~"$job",namespace="$namespace"}[$__rate_interval])
-                        )
-                    )
+                      )
+                    /
+                      sum by (namespace, job) (
+                        rate(thanos_bucket_store_block_loads_total{job=~"$job",namespace="$namespace"}[$__rate_interval])
+                      )
                   *
                     100
                 seriesNameFormat: '{{job}} {{namespace}}'
@@ -854,15 +854,15 @@ spec:
                   kind: PrometheusDatasource
                   name: custom-datasource
                 query: |2-
-                    (
-                        sum by (namespace, job) (
-                          rate(thanos_bucket_store_block_drop_failures_total{job=~"$job",namespace="$namespace"}[$__rate_interval])
+                      sum by (namespace, job) (
+                        rate(
+                          thanos_bucket_store_block_drop_failures_total{job=~"$job",namespace="$namespace"}[$__rate_interval]
                         )
-                      /
-                        sum by (namespace, job) (
-                          rate(thanos_bucket_store_block_drops_total{job=~"$job",namespace="$namespace"}[$__rate_interval])
-                        )
-                    )
+                      )
+                    /
+                      sum by (namespace, job) (
+                        rate(thanos_bucket_store_block_drops_total{job=~"$job",namespace="$namespace"}[$__rate_interval])
+                      )
                   *
                     100
                 seriesNameFormat: '{{job}} {{namespace}}'
@@ -971,7 +971,9 @@ spec:
                   name: custom-datasource
                 query: |-
                   sum by (namespace, job, item_type) (
-                    rate(thanos_store_index_cache_items_added_total{job=~"$job",namespace="$namespace"}[$__rate_interval])
+                    rate(
+                      thanos_store_index_cache_items_added_total{job=~"$job",namespace="$namespace"}[$__rate_interval]
+                    )
                   )
                 seriesNameFormat: '{{job}} {{item_type}} {{namespace}}'
     "4_3":
@@ -1007,7 +1009,9 @@ spec:
                   name: custom-datasource
                 query: |-
                   sum by (namespace, job, item_type) (
-                    rate(thanos_store_index_cache_items_evicted_total{job=~"$job",namespace="$namespace"}[$__rate_interval])
+                    rate(
+                      thanos_store_index_cache_items_evicted_total{job=~"$job",namespace="$namespace"}[$__rate_interval]
+                    )
                   )
                 seriesNameFormat: '{{job}} {{item_type}} {{namespace}}'
     "5_0":
@@ -1042,11 +1046,15 @@ spec:
                   name: custom-datasource
                 query: |2-
                     sum by (namespace, job) (
-                      rate(thanos_bucket_store_series_blocks_queried_sum{job=~"$job",namespace="$namespace"}[$__rate_interval])
+                      rate(
+                        thanos_bucket_store_series_blocks_queried_sum{job=~"$job",namespace="$namespace"}[$__rate_interval]
+                      )
                     )
                   /
                     sum by (namespace, job) (
-                      rate(thanos_bucket_store_series_blocks_queried_count{job=~"$job",namespace="$namespace"}[$__rate_interval])
+                      rate(
+                        thanos_bucket_store_series_blocks_queried_count{job=~"$job",namespace="$namespace"}[$__rate_interval]
+                      )
                     )
                 seriesNameFormat: mean {{job}} {{namespace}}
         - kind: TimeSeriesQuery
@@ -1329,11 +1337,15 @@ spec:
                   name: custom-datasource
                 query: |2-
                     sum by (namespace, job) (
-                      rate(thanos_bucket_store_series_result_series_sum{job=~"$job",namespace="$namespace"}[$__rate_interval])
+                      rate(
+                        thanos_bucket_store_series_result_series_sum{job=~"$job",namespace="$namespace"}[$__rate_interval]
+                      )
                     )
                   /
                     sum by (namespace, job) (
-                      rate(thanos_bucket_store_series_result_series_count{job=~"$job",namespace="$namespace"}[$__rate_interval])
+                      rate(
+                        thanos_bucket_store_series_result_series_count{job=~"$job",namespace="$namespace"}[$__rate_interval]
+                      )
                     )
                 seriesNameFormat: mean {{job}} {{namespace}}
         - kind: TimeSeriesQuery
@@ -1348,7 +1360,9 @@ spec:
                   histogram_quantile(
                     0.5,
                     sum by (namespace, job, le) (
-                      rate(thanos_bucket_store_series_result_series_bucket{job=~"$job",namespace="$namespace"}[$__rate_interval])
+                      rate(
+                        thanos_bucket_store_series_result_series_bucket{job=~"$job",namespace="$namespace"}[$__rate_interval]
+                      )
                     )
                   )
                 seriesNameFormat: p50 {{job}} {{namespace}}
@@ -1364,7 +1378,9 @@ spec:
                   histogram_quantile(
                     0.9,
                     sum by (namespace, job, le) (
-                      rate(thanos_bucket_store_series_result_series_bucket{job=~"$job",namespace="$namespace"}[$__rate_interval])
+                      rate(
+                        thanos_bucket_store_series_result_series_bucket{job=~"$job",namespace="$namespace"}[$__rate_interval]
+                      )
                     )
                   )
                 seriesNameFormat: p90 {{job}} {{namespace}}
@@ -1380,7 +1396,9 @@ spec:
                   histogram_quantile(
                     0.99,
                     sum by (namespace, job, le) (
-                      rate(thanos_bucket_store_series_result_series_bucket{job=~"$job",namespace="$namespace"}[$__rate_interval])
+                      rate(
+                        thanos_bucket_store_series_result_series_bucket{job=~"$job",namespace="$namespace"}[$__rate_interval]
+                      )
                     )
                   )
                 seriesNameFormat: p99 {{job}} {{namespace}}
@@ -1644,11 +1662,15 @@ spec:
                   name: custom-datasource
                 query: |2-
                     sum by (namespace, job) (
-                      rate(thanos_bucket_store_sent_chunk_size_bytes_sum{job=~"$job",namespace="$namespace"}[$__rate_interval])
+                      rate(
+                        thanos_bucket_store_sent_chunk_size_bytes_sum{job=~"$job",namespace="$namespace"}[$__rate_interval]
+                      )
                     )
                   /
                     sum by (namespace, job) (
-                      rate(thanos_bucket_store_sent_chunk_size_bytes_count{job=~"$job",namespace="$namespace"}[$__rate_interval])
+                      rate(
+                        thanos_bucket_store_sent_chunk_size_bytes_count{job=~"$job",namespace="$namespace"}[$__rate_interval]
+                      )
                     )
                 seriesNameFormat: mean {{job}} {{namespace}}
         - kind: TimeSeriesQuery

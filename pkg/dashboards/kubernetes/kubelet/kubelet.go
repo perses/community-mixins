@@ -9,6 +9,7 @@ import (
 	panelgroup "github.com/perses/perses/go-sdk/panel-group"
 	listVar "github.com/perses/perses/go-sdk/variable/list-variable"
 	labelValuesVar "github.com/perses/plugins/prometheus/sdk/go/variable/label-values"
+	"github.com/prometheus/prometheus/model/labels"
 )
 
 func withKubeletStats(datasource string, labelMatcher promql.LabelMatcher) dashboard.Option {
@@ -98,15 +99,15 @@ func withRequestDurationQuantile(datasource string, labelMatcher promql.LabelMat
 	)
 }
 
-func withKubeletResources(datasource string, clusterLabelMatcher promql.LabelMatcher) dashboard.Option {
+func withKubeletResources(datasource string, clusterLabelMatcher *labels.Matcher) dashboard.Option {
 	// TODO(saswatamcode): Add a way to configure these.
-	labelMatchersToUse := []promql.LabelMatcher{
-		promql.ClusterVar,
-		promql.InstanceVar,
+	labelMatchersToUse := []*labels.Matcher{
+		promql.ClusterVarV2,
+		promql.InstanceVarV2,
 		{
 			Name:  "job",
 			Value: "kubelet",
-			Type:  "=",
+			Type:  labels.MatchEqual,
 		},
 	}
 
@@ -124,6 +125,7 @@ func withKubeletResources(datasource string, clusterLabelMatcher promql.LabelMat
 
 func BuildKubeletOverview(project string, datasource string, clusterLabelName string) dashboards.DashboardResult {
 	clusterLabelMatcher := dashboards.GetClusterLabelMatcher(clusterLabelName)
+	clusterLabelMatcherV2 := dashboards.GetClusterLabelMatcherV2(clusterLabelName)
 	return dashboards.NewDashboardResult(
 		dashboard.New("kubelet-overview",
 			dashboard.ProjectName(project),
@@ -162,7 +164,7 @@ func BuildKubeletOverview(project string, datasource string, clusterLabelName st
 			withPLEGRelistDuration(datasource, clusterLabelMatcher),
 			withRPCRate(datasource, clusterLabelMatcher),
 			withRequestDurationQuantile(datasource, clusterLabelMatcher),
-			withKubeletResources(datasource, clusterLabelMatcher),
+			withKubeletResources(datasource, clusterLabelMatcherV2),
 		),
 	).Component("kubernetes")
 }

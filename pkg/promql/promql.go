@@ -9,11 +9,13 @@ import (
 	"github.com/prometheus/prometheus/promql/parser"
 )
 
+// Use SetLabelMatchersV2 instead, which uses perses/promql-builder with inbuilt support for variables.
 type PersesVarProcessor struct {
 	Replacements map[string]string
 	SortedKeys   []string
 }
 
+// Use SetLabelMatchersV2 instead, which uses perses/promql-builder with inbuilt support for variables.
 // NewPersesVarProcessor creates a new PersesVarProcessor which will help replace/restore Perses variables in a query
 // to make it compatible with PromQL parser.
 // Sort of a hack, by modifying the query in place with random values
@@ -82,12 +84,14 @@ func (p *PersesVarProcessor) Restore(query string, original map[string]string) s
 	return query
 }
 
+// Use SetLabelMatchersV2 with prometheus []*labels.Matcher instead.
 type LabelMatcher struct {
 	Name  string
 	Value string
 	Type  string
 }
 
+// Use SetLabelMatchersV2 instead.
 func SetLabelMatchers(query string, labelMatchers []LabelMatcher) string {
 	processor := NewPersesVarProcessor()
 
@@ -97,6 +101,7 @@ func SetLabelMatchers(query string, labelMatchers []LabelMatcher) string {
 	return query
 }
 
+// Use LabelsSetPromQLV2 instead.
 func LabelsSetPromQL(query, labelMatchType, name, value string, processor *PersesVarProcessor) string {
 	modifiedQuery, originalVars := processor.Replace(query)
 	expr, err := parser.ParseExpr(modifiedQuery)

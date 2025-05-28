@@ -4,6 +4,7 @@ import (
 	"github.com/perses/perses/go-sdk/panel"
 	panelgroup "github.com/perses/perses/go-sdk/panel-group"
 	"github.com/perses/plugins/prometheus/sdk/go/query"
+	"github.com/prometheus/prometheus/model/labels"
 
 	"github.com/perses/community-dashboards/pkg/dashboards"
 	"github.com/perses/community-dashboards/pkg/promql"
@@ -12,7 +13,7 @@ import (
 	timeSeriesPanel "github.com/perses/plugins/timeserieschart/sdk/go"
 )
 
-func GroupCompactionRate(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
+func GroupCompactionRate(datasourceName string, labelMatchers ...*labels.Matcher) panelgroup.Option {
 	return panelgroup.AddPanel("Group Compactions",
 		panel.Description("Shows rate of execution of compaction operations against blocks in a bucket, split by compaction resolution."),
 		timeSeriesPanel.Chart(
@@ -36,10 +37,10 @@ func GroupCompactionRate(datasourceName string, labelMatchers ...promql.LabelMat
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchers(
-					"sum by (namespace, job, resolution) (rate(thanos_compact_group_compactions_total{namespace='$namespace', job=~'$job'}[$__rate_interval]))",
+				promql.SetLabelMatchersV2(
+					ThanosCommonPanelQueries["GroupCompactionRate"],
 					labelMatchers,
-				),
+				).Pretty(0),
 				dashboards.AddQueryDataSource(datasourceName),
 				query.SeriesNameFormat("Resolution: {{resolution}} - {{job}} {{namespace}}"),
 			),
@@ -47,7 +48,7 @@ func GroupCompactionRate(datasourceName string, labelMatchers ...promql.LabelMat
 	)
 }
 
-func GroupCompactionErrors(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
+func GroupCompactionErrors(datasourceName string, labelMatchers ...*labels.Matcher) panelgroup.Option {
 	return panelgroup.AddPanel("Group Compaction Errors",
 		panel.Description("Shows the percentage of errors compared to the total number of executed compaction operations against blocks stored in bucket."),
 		timeSeriesPanel.Chart(
@@ -71,10 +72,10 @@ func GroupCompactionErrors(datasourceName string, labelMatchers ...promql.LabelM
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchers(
-					"(sum by (namespace, job) (rate(thanos_compact_group_compactions_failures_total{namespace='$namespace', job=~'$job'}[$__rate_interval])) / sum by (namespace, job) (rate(thanos_compact_group_compactions_total{namespace='$namespace', job=~'$job'}[$__rate_interval]))) * 100",
+				promql.SetLabelMatchersV2(
+					ThanosCommonPanelQueries["GroupCompactionErrors"],
 					labelMatchers,
-				),
+				).Pretty(0),
 				dashboards.AddQueryDataSource(datasourceName),
 				query.SeriesNameFormat("{{job}} {{namespace}}"),
 			),
@@ -82,7 +83,7 @@ func GroupCompactionErrors(datasourceName string, labelMatchers ...promql.LabelM
 	)
 }
 
-func DownsampleRate(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
+func DownsampleRate(datasourceName string, labelMatchers ...*labels.Matcher) panelgroup.Option {
 	return panelgroup.AddPanel("Downsample Rate",
 		panel.Description("Shows rate of execution of downsample operations against blocks stored in a bucket, split by resolution."),
 		timeSeriesPanel.Chart(
@@ -106,10 +107,10 @@ func DownsampleRate(datasourceName string, labelMatchers ...promql.LabelMatcher)
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchers(
-					"sum by (namespace, job, resolution) (rate(thanos_compact_downsample_total{namespace='$namespace', job=~'$job'}[$__rate_interval]))",
+				promql.SetLabelMatchersV2(
+					ThanosCommonPanelQueries["DownsampleRate"],
 					labelMatchers,
-				),
+				).Pretty(0),
 				dashboards.AddQueryDataSource(datasourceName),
 				query.SeriesNameFormat("Resolution: {{resolution}} - {{job}} {{namespace}}"),
 			),
@@ -117,7 +118,7 @@ func DownsampleRate(datasourceName string, labelMatchers ...promql.LabelMatcher)
 	)
 }
 
-func DownsampleErrors(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
+func DownsampleErrors(datasourceName string, labelMatchers ...*labels.Matcher) panelgroup.Option {
 	return panelgroup.AddPanel("Downsample Errors",
 		panel.Description("Shows the percentage of downsample errors compared to the total number of downsample operations done on block in buckets."),
 		timeSeriesPanel.Chart(
@@ -141,10 +142,10 @@ func DownsampleErrors(datasourceName string, labelMatchers ...promql.LabelMatche
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchers(
-					"(sum by (namespace, job) (rate(thanos_compact_downsample_failed_total{namespace='$namespace', job=~'$job'}[$__rate_interval])) / sum by (namespace, job) (rate(thanos_compact_downsample_total{namespace='$namespace', job=~'$job'}[$__rate_interval]))) * 100",
+				promql.SetLabelMatchersV2(
+					ThanosCommonPanelQueries["DownsampleErrors"],
 					labelMatchers,
-				),
+				).Pretty(0),
 				dashboards.AddQueryDataSource(datasourceName),
 				query.SeriesNameFormat("{{job}} {{namespace}}"),
 			),
@@ -152,7 +153,7 @@ func DownsampleErrors(datasourceName string, labelMatchers ...promql.LabelMatche
 	)
 }
 
-func DownsampleDurations(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
+func DownsampleDurations(datasourceName string, labelMatchers ...*labels.Matcher) panelgroup.Option {
 	return panelgroup.AddPanel("Downsample Durations",
 		panel.Description("Shows the p50, p90, and p99 of the time it takes to complete downsample operation against blocks in a bucket, split by resolution."),
 		timeSeriesPanel.Chart(
@@ -175,30 +176,30 @@ func DownsampleDurations(datasourceName string, labelMatchers ...promql.LabelMat
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchers(
-					"histogram_quantile(0.50, sum by (namespace, job, resolution, le) (rate(thanos_compact_downsample_duration_seconds_bucket{namespace='$namespace', job=~'$job'}[$__rate_interval])))",
+				promql.SetLabelMatchersV2(
+					ThanosCommonPanelQueries["DownsampleDurations_50"],
 					labelMatchers,
-				),
+				).Pretty(0),
 				dashboards.AddQueryDataSource(datasourceName),
 				query.SeriesNameFormat("p50 Resolution: {{resolution}} - {{job}} {{namespace}}"),
 			),
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchers(
-					"histogram_quantile(0.90, sum by (namespace, job, resolution, le) (rate(thanos_compact_downsample_duration_seconds_bucket{namespace='$namespace', job=~'$job'}[$__rate_interval])))",
+				promql.SetLabelMatchersV2(
+					ThanosCommonPanelQueries["DownsampleDurations_90"],
 					labelMatchers,
-				),
+				).Pretty(0),
 				dashboards.AddQueryDataSource(datasourceName),
 				query.SeriesNameFormat("p90 Resolution: {{resolution}} - {{job}} {{namespace}}"),
 			),
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchers(
-					"histogram_quantile(0.99, sum by (namespace, job, resolution, le) (rate(thanos_compact_downsample_duration_seconds_bucket{namespace='$namespace', job=~'$job'}[$__rate_interval])))",
+				promql.SetLabelMatchersV2(
+					ThanosCommonPanelQueries["DownsampleDurations_99"],
 					labelMatchers,
-				),
+				).Pretty(0),
 				dashboards.AddQueryDataSource(datasourceName),
 				query.SeriesNameFormat("p99 Resolution: {{resolution}} - {{job}} {{namespace}}"),
 			),
@@ -206,7 +207,7 @@ func DownsampleDurations(datasourceName string, labelMatchers ...promql.LabelMat
 	)
 }
 
-func SyncMetaRate(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
+func SyncMetaRate(datasourceName string, labelMatchers ...*labels.Matcher) panelgroup.Option {
 	return panelgroup.AddPanel("Sync Meta Rate",
 		panel.Description("Shows rate of syncing block meta files from bucket into memory."),
 		timeSeriesPanel.Chart(
@@ -230,10 +231,10 @@ func SyncMetaRate(datasourceName string, labelMatchers ...promql.LabelMatcher) p
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchers(
-					"sum by (namespace, job) (rate(thanos_blocks_meta_syncs_total{namespace='$namespace', job=~'$job'}[$__rate_interval]))",
+				promql.SetLabelMatchersV2(
+					ThanosCommonPanelQueries["SyncMetaRate"],
 					labelMatchers,
-				),
+				).Pretty(0),
 				dashboards.AddQueryDataSource(datasourceName),
 				query.SeriesNameFormat("{{job}} {{namespace}}"),
 			),
@@ -241,7 +242,7 @@ func SyncMetaRate(datasourceName string, labelMatchers ...promql.LabelMatcher) p
 	)
 }
 
-func SyncMetaErrors(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
+func SyncMetaErrors(datasourceName string, labelMatchers ...*labels.Matcher) panelgroup.Option {
 	return panelgroup.AddPanel("Sync Meta Errors",
 		panel.Description("Shows percentage of errors of meta file sync operation compared to total number of meta file syncs from bucket."),
 		timeSeriesPanel.Chart(
@@ -265,10 +266,10 @@ func SyncMetaErrors(datasourceName string, labelMatchers ...promql.LabelMatcher)
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchers(
-					"(sum by (namespace, job) (rate(thanos_blocks_meta_sync_failures_total{namespace='$namespace', job=~'$job'}[$__rate_interval])) / sum by (namespace, job) (rate(thanos_blocks_meta_syncs_total{namespace='$namespace', job=~'$job'}[$__rate_interval]))) * 100",
+				promql.SetLabelMatchersV2(
+					ThanosCommonPanelQueries["SyncMetaErrors"],
 					labelMatchers,
-				),
+				).Pretty(0),
 				dashboards.AddQueryDataSource(datasourceName),
 				query.SeriesNameFormat("{{job}} {{namespace}}"),
 			),
@@ -276,7 +277,7 @@ func SyncMetaErrors(datasourceName string, labelMatchers ...promql.LabelMatcher)
 	)
 }
 
-func SyncMetaDurations(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
+func SyncMetaDurations(datasourceName string, labelMatchers ...*labels.Matcher) panelgroup.Option {
 	return panelgroup.AddPanel("Sync Meta Durations",
 		panel.Description("Shows p50, p90 and p99 durations of the time it takes to sync meta files from blocks in bucket."),
 		timeSeriesPanel.Chart(
@@ -299,30 +300,30 @@ func SyncMetaDurations(datasourceName string, labelMatchers ...promql.LabelMatch
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchers(
-					"histogram_quantile(0.50, sum by (namespace, job, le) (rate(thanos_blocks_meta_sync_duration_seconds_bucket{namespace='$namespace', job=~'$job'}[$__rate_interval])))",
+				promql.SetLabelMatchersV2(
+					ThanosCommonPanelQueries["SyncMetaDurations_50"],
 					labelMatchers,
-				),
+				).Pretty(0),
 				dashboards.AddQueryDataSource(datasourceName),
 				query.SeriesNameFormat("p50 {{job}} {{namespace}}"),
 			),
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchers(
-					"histogram_quantile(0.90, sum by (namespace, job, le) (rate(thanos_blocks_meta_sync_duration_seconds_bucket{namespace='$namespace', job=~'$job'}[$__rate_interval])))",
+				promql.SetLabelMatchersV2(
+					ThanosCommonPanelQueries["SyncMetaDurations_90"],
 					labelMatchers,
-				),
+				).Pretty(0),
 				dashboards.AddQueryDataSource(datasourceName),
 				query.SeriesNameFormat("p90 {{job}} {{namespace}}"),
 			),
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchers(
-					"histogram_quantile(0.99, sum by (namespace, job, le) (rate(thanos_blocks_meta_sync_duration_seconds_bucket{namespace='$namespace', job=~'$job'}[$__rate_interval])))",
+				promql.SetLabelMatchersV2(
+					ThanosCommonPanelQueries["SyncMetaDurations_99"],
 					labelMatchers,
-				),
+				).Pretty(0),
 				dashboards.AddQueryDataSource(datasourceName),
 				query.SeriesNameFormat("p99 {{job}} {{namespace}}"),
 			),
@@ -330,7 +331,7 @@ func SyncMetaDurations(datasourceName string, labelMatchers ...promql.LabelMatch
 	)
 }
 
-func DeletionRate(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
+func DeletionRate(datasourceName string, labelMatchers ...*labels.Matcher) panelgroup.Option {
 	return panelgroup.AddPanel("Deletion Rate",
 		panel.Description("Shows the deletion rate of blocks already marked for deletion."),
 		timeSeriesPanel.Chart(
@@ -354,10 +355,10 @@ func DeletionRate(datasourceName string, labelMatchers ...promql.LabelMatcher) p
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchers(
-					"sum by (namespace, job) (rate(thanos_compact_blocks_cleaned_total{namespace='$namespace', job=~'$job'}[$__rate_interval]))",
+				promql.SetLabelMatchersV2(
+					ThanosCommonPanelQueries["DeletionRate"],
 					labelMatchers,
-				),
+				).Pretty(0),
 				dashboards.AddQueryDataSource(datasourceName),
 				query.SeriesNameFormat("{{job}} {{namespace}}"),
 			),
@@ -365,7 +366,7 @@ func DeletionRate(datasourceName string, labelMatchers ...promql.LabelMatcher) p
 	)
 }
 
-func DeletionErrors(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
+func DeletionErrors(datasourceName string, labelMatchers ...*labels.Matcher) panelgroup.Option {
 	return panelgroup.AddPanel("Deletion Errors",
 		panel.Description("Shows rate of deletion failures for blocks already marked for deletion."),
 		timeSeriesPanel.Chart(
@@ -389,10 +390,10 @@ func DeletionErrors(datasourceName string, labelMatchers ...promql.LabelMatcher)
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchers(
-					"sum by (namespace, job) (rate(thanos_compact_block_cleanup_failures_total{namespace='$namespace', job=~'$job'}[$__rate_interval]))",
+				promql.SetLabelMatchersV2(
+					ThanosCommonPanelQueries["DeletionErrors"],
 					labelMatchers,
-				),
+				).Pretty(0),
 				dashboards.AddQueryDataSource(datasourceName),
 				query.SeriesNameFormat("{{job}} {{namespace}}"),
 			),
@@ -400,7 +401,7 @@ func DeletionErrors(datasourceName string, labelMatchers ...promql.LabelMatcher)
 	)
 }
 
-func MarkingRate(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
+func MarkingRate(datasourceName string, labelMatchers ...*labels.Matcher) panelgroup.Option {
 	return panelgroup.AddPanel("Marking Rate",
 		panel.Description("Shows the rate at which blocks are marked for deletion (from GC and retention policy)."),
 		timeSeriesPanel.Chart(
@@ -424,10 +425,10 @@ func MarkingRate(datasourceName string, labelMatchers ...promql.LabelMatcher) pa
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchers(
-					"sum by (namespace, job) (rate(thanos_compact_blocks_marked_total{namespace='$namespace', job=~'$job', marker=\"deletion-mark.json\"}[$__rate_interval]))",
+				promql.SetLabelMatchersV2(
+					ThanosCommonPanelQueries["MarkingRate"],
 					labelMatchers,
-				),
+				).Pretty(0),
 				dashboards.AddQueryDataSource(datasourceName),
 				query.SeriesNameFormat("{{job}} {{namespace}}"),
 			),
@@ -435,7 +436,7 @@ func MarkingRate(datasourceName string, labelMatchers ...promql.LabelMatcher) pa
 	)
 }
 
-func GarbageCollectionRate(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
+func GarbageCollectionRate(datasourceName string, labelMatchers ...*labels.Matcher) panelgroup.Option {
 	return panelgroup.AddPanel("Garbage Collection",
 		panel.Description("Shows rate of execution of removal of blocks, if their data is available as part of a block with a higher compaction level."),
 		timeSeriesPanel.Chart(
@@ -459,10 +460,10 @@ func GarbageCollectionRate(datasourceName string, labelMatchers ...promql.LabelM
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchers(
-					"sum by (namespace, job) (rate(thanos_compact_garbage_collection_total{namespace='$namespace', job=~'$job'}[$__rate_interval]))",
+				promql.SetLabelMatchersV2(
+					ThanosCommonPanelQueries["GarbageCollectionRate"],
 					labelMatchers,
-				),
+				).Pretty(0),
 				dashboards.AddQueryDataSource(datasourceName),
 				query.SeriesNameFormat("{{job}} {{namespace}}"),
 			),
@@ -470,7 +471,7 @@ func GarbageCollectionRate(datasourceName string, labelMatchers ...promql.LabelM
 	)
 }
 
-func GarbageCollectionErrors(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
+func GarbageCollectionErrors(datasourceName string, labelMatchers ...*labels.Matcher) panelgroup.Option {
 	return panelgroup.AddPanel("Garbage Collection Errors",
 		panel.Description("Shows the percentage of garbage collection operations that resulted in errors."),
 		timeSeriesPanel.Chart(
@@ -494,10 +495,10 @@ func GarbageCollectionErrors(datasourceName string, labelMatchers ...promql.Labe
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchers(
-					"(sum by (namespace, job) (rate(thanos_compact_garbage_collection_failures_total{namespace='$namespace', job=~'$job'}[$__rate_interval])) / sum by (namespace, job) (rate(thanos_compact_garbage_collection_total{namespace='$namespace', job=~'$job'}[$__rate_interval]))) * 100",
+				promql.SetLabelMatchersV2(
+					ThanosCommonPanelQueries["GarbageCollectionErrors"],
 					labelMatchers,
-				),
+				).Pretty(0),
 				dashboards.AddQueryDataSource(datasourceName),
 				query.SeriesNameFormat("{{job}} {{namespace}}"),
 			),
@@ -505,7 +506,7 @@ func GarbageCollectionErrors(datasourceName string, labelMatchers ...promql.Labe
 	)
 }
 
-func GarbageCollectionDurations(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
+func GarbageCollectionDurations(datasourceName string, labelMatchers ...*labels.Matcher) panelgroup.Option {
 	return panelgroup.AddPanel("Garbage Collection Durations",
 		panel.Description("Shows p50, p90 and p99 of how long it takes to execute garbage collection operations."),
 		timeSeriesPanel.Chart(
@@ -528,30 +529,30 @@ func GarbageCollectionDurations(datasourceName string, labelMatchers ...promql.L
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchers(
-					"histogram_quantile(0.50, sum by (namespace, job, le) (rate(thanos_compact_garbage_collection_duration_seconds_bucket{namespace='$namespace', job=~'$job'}[$__rate_interval])))",
+				promql.SetLabelMatchersV2(
+					ThanosCommonPanelQueries["GarbageCollectionDurations_50"],
 					labelMatchers,
-				),
+				).Pretty(0),
 				dashboards.AddQueryDataSource(datasourceName),
 				query.SeriesNameFormat("p50 {{job}} {{namespace}}"),
 			),
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchers(
-					"histogram_quantile(0.90, sum by (namespace, job, le) (rate(thanos_compact_garbage_collection_duration_seconds_bucket{namespace='$namespace', job=~'$job'}[$__rate_interval])))",
+				promql.SetLabelMatchersV2(
+					ThanosCommonPanelQueries["GarbageCollectionDurations_90"],
 					labelMatchers,
-				),
+				).Pretty(0),
 				dashboards.AddQueryDataSource(datasourceName),
 				query.SeriesNameFormat("p90 {{job}} {{namespace}}"),
 			),
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchers(
-					"histogram_quantile(0.99, sum by (namespace, job, le) (rate(thanos_compact_garbage_collection_duration_seconds_bucket{namespace='$namespace', job=~'$job'}[$__rate_interval])))",
+				promql.SetLabelMatchersV2(
+					ThanosCommonPanelQueries["GarbageCollectionDurations_99"],
 					labelMatchers,
-				),
+				).Pretty(0),
 				dashboards.AddQueryDataSource(datasourceName),
 				query.SeriesNameFormat("p99 {{job}} {{namespace}}"),
 			),
@@ -559,7 +560,7 @@ func GarbageCollectionDurations(datasourceName string, labelMatchers ...promql.L
 	)
 }
 
-func TodoCompactionBlocks(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
+func TodoCompactionBlocks(datasourceName string, labelMatchers ...*labels.Matcher) panelgroup.Option {
 	return panelgroup.AddPanel("TODO Compaction Blocks",
 		panel.Description("Shows number of blocks planned to be compacted."),
 		timeSeriesPanel.Chart(
@@ -583,10 +584,10 @@ func TodoCompactionBlocks(datasourceName string, labelMatchers ...promql.LabelMa
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchers(
-					"sum by (namespace, job) (thanos_compact_todo_compaction_blocks{namespace='$namespace', job=~'$job'})",
+				promql.SetLabelMatchersV2(
+					ThanosCommonPanelQueries["TodoCompactionBlocks"],
 					labelMatchers,
-				),
+				).Pretty(0),
 				dashboards.AddQueryDataSource(datasourceName),
 				query.SeriesNameFormat("{{job}} {{namespace}}"),
 			),
@@ -594,7 +595,7 @@ func TodoCompactionBlocks(datasourceName string, labelMatchers ...promql.LabelMa
 	)
 }
 
-func TodoCompactions(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
+func TodoCompactions(datasourceName string, labelMatchers ...*labels.Matcher) panelgroup.Option {
 	return panelgroup.AddPanel("TODO Compactions",
 		panel.Description("Shows number of compaction operations to be done."),
 		timeSeriesPanel.Chart(
@@ -618,10 +619,10 @@ func TodoCompactions(datasourceName string, labelMatchers ...promql.LabelMatcher
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchers(
-					"sum by (namespace, job) (thanos_compact_todo_compactions{namespace='$namespace', job=~'$job'})",
+				promql.SetLabelMatchersV2(
+					ThanosCommonPanelQueries["TodoCompactions"],
 					labelMatchers,
-				),
+				).Pretty(0),
 				dashboards.AddQueryDataSource(datasourceName),
 				query.SeriesNameFormat("{{job}} {{namespace}}"),
 			),
@@ -629,7 +630,7 @@ func TodoCompactions(datasourceName string, labelMatchers ...promql.LabelMatcher
 	)
 }
 
-func TodoDeletions(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
+func TodoDeletions(datasourceName string, labelMatchers ...*labels.Matcher) panelgroup.Option {
 	return panelgroup.AddPanel("TODO Deletions",
 		panel.Description("Shows number of blocks that have crossed their retention periods."),
 		timeSeriesPanel.Chart(
@@ -653,10 +654,10 @@ func TodoDeletions(datasourceName string, labelMatchers ...promql.LabelMatcher) 
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchers(
-					"sum by (namespace, job) (thanos_compact_todo_deletion_blocks{namespace='$namespace', job=~'$job'})",
+				promql.SetLabelMatchersV2(
+					ThanosCommonPanelQueries["TodoDeletions"],
 					labelMatchers,
-				),
+				).Pretty(0),
 				dashboards.AddQueryDataSource(datasourceName),
 				query.SeriesNameFormat("{{job}} {{namespace}}"),
 			),
@@ -664,7 +665,7 @@ func TodoDeletions(datasourceName string, labelMatchers ...promql.LabelMatcher) 
 	)
 }
 
-func TodoDownsamples(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
+func TodoDownsamples(datasourceName string, labelMatchers ...*labels.Matcher) panelgroup.Option {
 	return panelgroup.AddPanel("TODO Downsamples",
 		panel.Description("Shows number of blocks to be downsampled."),
 		timeSeriesPanel.Chart(
@@ -688,10 +689,10 @@ func TodoDownsamples(datasourceName string, labelMatchers ...promql.LabelMatcher
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchers(
-					"sum by (namespace, job) (thanos_compact_todo_downsample_blocks{namespace='$namespace', job=~'$job'})",
+				promql.SetLabelMatchersV2(
+					ThanosCommonPanelQueries["TodoDownsamples"],
 					labelMatchers,
-				),
+				).Pretty(0),
 				dashboards.AddQueryDataSource(datasourceName),
 				query.SeriesNameFormat("{{job}} {{namespace}}"),
 			),
@@ -699,7 +700,7 @@ func TodoDownsamples(datasourceName string, labelMatchers ...promql.LabelMatcher
 	)
 }
 
-func HaltedCompactors(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
+func HaltedCompactors(datasourceName string, labelMatchers ...*labels.Matcher) panelgroup.Option {
 	return panelgroup.AddPanel("Halted Compactors",
 		panel.Description("Shows compactors that have been halted due to unexpected errors."),
 		timeSeriesPanel.Chart(
@@ -723,10 +724,10 @@ func HaltedCompactors(datasourceName string, labelMatchers ...promql.LabelMatche
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchers(
-					"sum by (namespace, job) (thanos_compact_halted{namespace='$namespace', job=~'$job'})",
+				promql.SetLabelMatchersV2(
+					ThanosCommonPanelQueries["HaltedCompactors"],
 					labelMatchers,
-				),
+				).Pretty(0),
 				dashboards.AddQueryDataSource(datasourceName),
 				query.SeriesNameFormat("{{job}} {{namespace}}"),
 			),

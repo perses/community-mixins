@@ -522,7 +522,7 @@
                       "kind": "PrometheusDatasource",
                       "name": "prometheus-datasource"
                     },
-                    "query": "  (\n      sum by (namespace, job, operation) (\n        rate(thanos_objstore_bucket_operation_failures_total{job=~\"$job\",namespace=\"$namespace\"}[$__rate_interval])\n      )\n    /\n      sum by (namespace, job, operation) (\n        rate(thanos_objstore_bucket_operations_total{job=~\"$job\",namespace=\"$namespace\"}[$__rate_interval])\n      )\n  )\n*\n  100",
+                    "query": "    sum by (namespace, job, operation) (\n      rate(\n        thanos_objstore_bucket_operation_failures_total{job=~\"$job\",namespace=\"$namespace\"}[$__rate_interval]\n      )\n    )\n  /\n    sum by (namespace, job, operation) (\n      rate(thanos_objstore_bucket_operations_total{job=~\"$job\",namespace=\"$namespace\"}[$__rate_interval])\n    )\n*\n  100",
                     "seriesNameFormat": "{{job}} {{operation}} {{namespace}}"
                   }
                 }
@@ -703,7 +703,7 @@
                       "kind": "PrometheusDatasource",
                       "name": "prometheus-datasource"
                     },
-                    "query": "  (\n      sum by (namespace, job) (\n        rate(thanos_bucket_store_block_load_failures_total{job=~\"$job\",namespace=\"$namespace\"}[$__rate_interval])\n      )\n    /\n      sum by (namespace, job) (\n        rate(thanos_bucket_store_block_loads_total{job=~\"$job\",namespace=\"$namespace\"}[$__rate_interval])\n      )\n  )\n*\n  100",
+                    "query": "    sum by (namespace, job) (\n      rate(\n        thanos_bucket_store_block_load_failures_total{job=~\"$job\",namespace=\"$namespace\"}[$__rate_interval]\n      )\n    )\n  /\n    sum by (namespace, job) (\n      rate(thanos_bucket_store_block_loads_total{job=~\"$job\",namespace=\"$namespace\"}[$__rate_interval])\n    )\n*\n  100",
                     "seriesNameFormat": "{{job}} {{namespace}}"
                   }
                 }
@@ -803,7 +803,7 @@
                       "kind": "PrometheusDatasource",
                       "name": "prometheus-datasource"
                     },
-                    "query": "  (\n      sum by (namespace, job) (\n        rate(thanos_bucket_store_block_drop_failures_total{job=~\"$job\",namespace=\"$namespace\"}[$__rate_interval])\n      )\n    /\n      sum by (namespace, job) (\n        rate(thanos_bucket_store_block_drops_total{job=~\"$job\",namespace=\"$namespace\"}[$__rate_interval])\n      )\n  )\n*\n  100",
+                    "query": "    sum by (namespace, job) (\n      rate(\n        thanos_bucket_store_block_drop_failures_total{job=~\"$job\",namespace=\"$namespace\"}[$__rate_interval]\n      )\n    )\n  /\n    sum by (namespace, job) (\n      rate(thanos_bucket_store_block_drops_total{job=~\"$job\",namespace=\"$namespace\"}[$__rate_interval])\n    )\n*\n  100",
                     "seriesNameFormat": "{{job}} {{namespace}}"
                   }
                 }
@@ -953,7 +953,7 @@
                       "kind": "PrometheusDatasource",
                       "name": "prometheus-datasource"
                     },
-                    "query": "sum by (namespace, job, item_type) (\n  rate(thanos_store_index_cache_items_added_total{job=~\"$job\",namespace=\"$namespace\"}[$__rate_interval])\n)",
+                    "query": "sum by (namespace, job, item_type) (\n  rate(\n    thanos_store_index_cache_items_added_total{job=~\"$job\",namespace=\"$namespace\"}[$__rate_interval]\n  )\n)",
                     "seriesNameFormat": "{{job}} {{item_type}} {{namespace}}"
                   }
                 }
@@ -1003,7 +1003,7 @@
                       "kind": "PrometheusDatasource",
                       "name": "prometheus-datasource"
                     },
-                    "query": "sum by (namespace, job, item_type) (\n  rate(thanos_store_index_cache_items_evicted_total{job=~\"$job\",namespace=\"$namespace\"}[$__rate_interval])\n)",
+                    "query": "sum by (namespace, job, item_type) (\n  rate(\n    thanos_store_index_cache_items_evicted_total{job=~\"$job\",namespace=\"$namespace\"}[$__rate_interval]\n  )\n)",
                     "seriesNameFormat": "{{job}} {{item_type}} {{namespace}}"
                   }
                 }
@@ -1052,7 +1052,7 @@
                       "kind": "PrometheusDatasource",
                       "name": "prometheus-datasource"
                     },
-                    "query": "  sum by (namespace, job) (\n    rate(thanos_bucket_store_series_blocks_queried_sum{job=~\"$job\",namespace=\"$namespace\"}[$__rate_interval])\n  )\n/\n  sum by (namespace, job) (\n    rate(thanos_bucket_store_series_blocks_queried_count{job=~\"$job\",namespace=\"$namespace\"}[$__rate_interval])\n  )",
+                    "query": "  sum by (namespace, job) (\n    rate(\n      thanos_bucket_store_series_blocks_queried_sum{job=~\"$job\",namespace=\"$namespace\"}[$__rate_interval]\n    )\n  )\n/\n  sum by (namespace, job) (\n    rate(\n      thanos_bucket_store_series_blocks_queried_count{job=~\"$job\",namespace=\"$namespace\"}[$__rate_interval]\n    )\n  )",
                     "seriesNameFormat": "mean {{job}} {{namespace}}"
                   }
                 }
@@ -1343,7 +1343,7 @@
                       "kind": "PrometheusDatasource",
                       "name": "prometheus-datasource"
                     },
-                    "query": "  sum by (namespace, job) (\n    rate(thanos_bucket_store_series_result_series_sum{job=~\"$job\",namespace=\"$namespace\"}[$__rate_interval])\n  )\n/\n  sum by (namespace, job) (\n    rate(thanos_bucket_store_series_result_series_count{job=~\"$job\",namespace=\"$namespace\"}[$__rate_interval])\n  )",
+                    "query": "  sum by (namespace, job) (\n    rate(\n      thanos_bucket_store_series_result_series_sum{job=~\"$job\",namespace=\"$namespace\"}[$__rate_interval]\n    )\n  )\n/\n  sum by (namespace, job) (\n    rate(\n      thanos_bucket_store_series_result_series_count{job=~\"$job\",namespace=\"$namespace\"}[$__rate_interval]\n    )\n  )",
                     "seriesNameFormat": "mean {{job}} {{namespace}}"
                   }
                 }
@@ -1359,7 +1359,7 @@
                       "kind": "PrometheusDatasource",
                       "name": "prometheus-datasource"
                     },
-                    "query": "histogram_quantile(\n  0.5,\n  sum by (namespace, job, le) (\n    rate(thanos_bucket_store_series_result_series_bucket{job=~\"$job\",namespace=\"$namespace\"}[$__rate_interval])\n  )\n)",
+                    "query": "histogram_quantile(\n  0.5,\n  sum by (namespace, job, le) (\n    rate(\n      thanos_bucket_store_series_result_series_bucket{job=~\"$job\",namespace=\"$namespace\"}[$__rate_interval]\n    )\n  )\n)",
                     "seriesNameFormat": "p50 {{job}} {{namespace}}"
                   }
                 }
@@ -1375,7 +1375,7 @@
                       "kind": "PrometheusDatasource",
                       "name": "prometheus-datasource"
                     },
-                    "query": "histogram_quantile(\n  0.9,\n  sum by (namespace, job, le) (\n    rate(thanos_bucket_store_series_result_series_bucket{job=~\"$job\",namespace=\"$namespace\"}[$__rate_interval])\n  )\n)",
+                    "query": "histogram_quantile(\n  0.9,\n  sum by (namespace, job, le) (\n    rate(\n      thanos_bucket_store_series_result_series_bucket{job=~\"$job\",namespace=\"$namespace\"}[$__rate_interval]\n    )\n  )\n)",
                     "seriesNameFormat": "p90 {{job}} {{namespace}}"
                   }
                 }
@@ -1391,7 +1391,7 @@
                       "kind": "PrometheusDatasource",
                       "name": "prometheus-datasource"
                     },
-                    "query": "histogram_quantile(\n  0.99,\n  sum by (namespace, job, le) (\n    rate(thanos_bucket_store_series_result_series_bucket{job=~\"$job\",namespace=\"$namespace\"}[$__rate_interval])\n  )\n)",
+                    "query": "histogram_quantile(\n  0.99,\n  sum by (namespace, job, le) (\n    rate(\n      thanos_bucket_store_series_result_series_bucket{job=~\"$job\",namespace=\"$namespace\"}[$__rate_interval]\n    )\n  )\n)",
                     "seriesNameFormat": "p99 {{job}} {{namespace}}"
                   }
                 }
@@ -1683,7 +1683,7 @@
                       "kind": "PrometheusDatasource",
                       "name": "prometheus-datasource"
                     },
-                    "query": "  sum by (namespace, job) (\n    rate(thanos_bucket_store_sent_chunk_size_bytes_sum{job=~\"$job\",namespace=\"$namespace\"}[$__rate_interval])\n  )\n/\n  sum by (namespace, job) (\n    rate(thanos_bucket_store_sent_chunk_size_bytes_count{job=~\"$job\",namespace=\"$namespace\"}[$__rate_interval])\n  )",
+                    "query": "  sum by (namespace, job) (\n    rate(\n      thanos_bucket_store_sent_chunk_size_bytes_sum{job=~\"$job\",namespace=\"$namespace\"}[$__rate_interval]\n    )\n  )\n/\n  sum by (namespace, job) (\n    rate(\n      thanos_bucket_store_sent_chunk_size_bytes_count{job=~\"$job\",namespace=\"$namespace\"}[$__rate_interval]\n    )\n  )",
                     "seriesNameFormat": "mean {{job}} {{namespace}}"
                   }
                 }

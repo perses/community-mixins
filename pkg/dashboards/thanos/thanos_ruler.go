@@ -5,13 +5,13 @@ import (
 	panelgroup "github.com/perses/perses/go-sdk/panel-group"
 	listVar "github.com/perses/perses/go-sdk/variable/list-variable"
 	labelValuesVar "github.com/perses/plugins/prometheus/sdk/go/variable/label-values"
+	"github.com/prometheus/prometheus/model/labels"
 
 	"github.com/perses/community-dashboards/pkg/dashboards"
 	panels "github.com/perses/community-dashboards/pkg/panels/thanos"
-	"github.com/perses/community-dashboards/pkg/promql"
 )
 
-func withThanosRuleGroupEvaluationGroup(datasource string, labelMatcher promql.LabelMatcher) dashboard.Option {
+func withThanosRuleGroupEvaluationGroup(datasource string, labelMatcher *labels.Matcher) dashboard.Option {
 	return dashboard.AddPanelGroup("Rule Group Evaluations",
 		panelgroup.PanelsPerLine(4),
 		panelgroup.PanelHeight(8),
@@ -22,7 +22,7 @@ func withThanosRuleGroupEvaluationGroup(datasource string, labelMatcher promql.L
 	)
 }
 
-func withThanosAlertsSentGroup(datasource string, labelMatcher promql.LabelMatcher) dashboard.Option {
+func withThanosAlertsSentGroup(datasource string, labelMatcher *labels.Matcher) dashboard.Option {
 	return dashboard.AddPanelGroup("Alerts Sent",
 		panelgroup.PanelsPerLine(4),
 		panelgroup.PanelHeight(8),
@@ -33,7 +33,7 @@ func withThanosAlertsSentGroup(datasource string, labelMatcher promql.LabelMatch
 	)
 }
 
-func withThanosAlertQueueGroup(datasource string, labelMatcher promql.LabelMatcher) dashboard.Option {
+func withThanosAlertQueueGroup(datasource string, labelMatcher *labels.Matcher) dashboard.Option {
 	return dashboard.AddPanelGroup("Alert Queue",
 		panelgroup.PanelsPerLine(3),
 		panelgroup.PanelHeight(6),
@@ -44,7 +44,7 @@ func withThanosAlertQueueGroup(datasource string, labelMatcher promql.LabelMatch
 }
 
 func BuildThanosRulerOverview(project string, datasource string, clusterLabelName string) dashboards.DashboardResult {
-	clusterLabelMatcher := dashboards.GetClusterLabelMatcher(clusterLabelName)
+	clusterLabelMatcherV2 := dashboards.GetClusterLabelMatcherV2(clusterLabelName)
 	return dashboards.NewDashboardResult(
 		dashboard.New("thanos-ruler-overview",
 			dashboard.ProjectName(project),
@@ -69,12 +69,12 @@ func BuildThanosRulerOverview(project string, datasource string, clusterLabelNam
 					listVar.DisplayName("namespace"),
 				),
 			),
-			withThanosRuleGroupEvaluationGroup(datasource, clusterLabelMatcher),
-			withThanosAlertsSentGroup(datasource, clusterLabelMatcher),
-			withThanosAlertQueueGroup(datasource, clusterLabelMatcher),
-			withThanosReadGRPCUnaryGroup(datasource, clusterLabelMatcher),
-			withThanosReadGRPCStreamGroup(datasource, clusterLabelMatcher),
-			withThanosResourcesGroup(datasource, clusterLabelMatcher),
+			withThanosRuleGroupEvaluationGroup(datasource, clusterLabelMatcherV2),
+			withThanosAlertsSentGroup(datasource, clusterLabelMatcherV2),
+			withThanosAlertQueueGroup(datasource, clusterLabelMatcherV2),
+			withThanosReadGRPCUnaryGroup(datasource, clusterLabelMatcherV2),
+			withThanosReadGRPCStreamGroup(datasource, clusterLabelMatcherV2),
+			withThanosResourcesGroup(datasource, clusterLabelMatcherV2),
 		),
 	).Component("thanos")
 }

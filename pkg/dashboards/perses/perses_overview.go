@@ -9,10 +9,12 @@ import (
 	panelgroup "github.com/perses/perses/go-sdk/panel-group"
 	listvariable "github.com/perses/perses/go-sdk/variable/list-variable"
 	labelvalues "github.com/perses/plugins/prometheus/sdk/go/variable/label-values"
+	"github.com/prometheus/prometheus/model/labels"
 )
 
 func BuildPersesOverview(project string, datasource string, clusterLabelName string) dashboards.DashboardResult {
 	clusterLabelMatcher := dashboards.GetClusterLabelMatcher(clusterLabelName)
+	clusterLabelMatcherV2 := dashboards.GetClusterLabelMatcherV2(clusterLabelName)
 	return dashboards.NewDashboardResult(
 		dashboard.New("perses-overview",
 			dashboard.ProjectName(project),
@@ -42,7 +44,7 @@ func BuildPersesOverview(project string, datasource string, clusterLabelName str
 			),
 			withPersesOverviewStatsGroup(datasource, clusterLabelMatcher),
 			withPersesAPiRequestGroup(datasource, clusterLabelMatcher),
-			withPersesResources(datasource, clusterLabelMatcher),
+			withPersesResources(datasource, clusterLabelMatcherV2, clusterLabelMatcher),
 			withPersesPlugins(datasource, clusterLabelMatcher),
 		),
 	).Component("perses")
@@ -61,12 +63,12 @@ func withPersesAPiRequestGroup(datasource string, clusterLabelMatcher promql.Lab
 	)
 }
 
-func withPersesResources(datasource string, clusterLabelMatcher promql.LabelMatcher) dashboard.Option {
-	labelMatchersToUse := []promql.LabelMatcher{
-		promql.InstanceVar,
-		promql.JobVar,
+func withPersesResources(datasource string, clusterLabelMatcherV2 *labels.Matcher, clusterLabelMatcher promql.LabelMatcher) dashboard.Option {
+	labelMatchersToUse := []*labels.Matcher{
+		promql.InstanceVarV2,
+		promql.JobVarV2,
 	}
-	labelMatchersToUse = append(labelMatchersToUse, clusterLabelMatcher)
+	labelMatchersToUse = append(labelMatchersToUse, clusterLabelMatcherV2)
 
 	return dashboard.AddPanelGroup("Resource Usage",
 		panelgroup.PanelsPerLine(3),

@@ -4,6 +4,7 @@ import (
 	"github.com/perses/perses/go-sdk/panel"
 	panelgroup "github.com/perses/perses/go-sdk/panel-group"
 	"github.com/perses/plugins/prometheus/sdk/go/query"
+	"github.com/prometheus/prometheus/model/labels"
 
 	"github.com/perses/community-dashboards/pkg/dashboards"
 	"github.com/perses/community-dashboards/pkg/promql"
@@ -12,7 +13,7 @@ import (
 	timeSeriesPanel "github.com/perses/plugins/timeserieschart/sdk/go"
 )
 
-func BucketOperationRate(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
+func BucketOperationRate(datasourceName string, labelMatchers ...*labels.Matcher) panelgroup.Option {
 	return panelgroup.AddPanel("Bucket Operations",
 		panel.Description("Shows rate of executions of operations against object storage bucket."),
 		timeSeriesPanel.Chart(
@@ -36,10 +37,10 @@ func BucketOperationRate(datasourceName string, labelMatchers ...promql.LabelMat
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchers(
-					"sum by (namespace, job, operation) (rate(thanos_objstore_bucket_operations_total{namespace='$namespace', job=~'$job'}[$__rate_interval]))",
+				promql.SetLabelMatchersV2(
+					ThanosCommonPanelQueries["BucketOperationRate"],
 					labelMatchers,
-				),
+				).Pretty(0),
 				dashboards.AddQueryDataSource(datasourceName),
 				query.SeriesNameFormat("{{job}} {{operation}} {{namespace}}"),
 			),
@@ -47,7 +48,7 @@ func BucketOperationRate(datasourceName string, labelMatchers ...promql.LabelMat
 	)
 }
 
-func BucketOperationErrors(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
+func BucketOperationErrors(datasourceName string, labelMatchers ...*labels.Matcher) panelgroup.Option {
 	return panelgroup.AddPanel("Bucket Operation Errors",
 		panel.Description("Shows percentage of errors of operations against object storage bucket."),
 		timeSeriesPanel.Chart(
@@ -71,10 +72,10 @@ func BucketOperationErrors(datasourceName string, labelMatchers ...promql.LabelM
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchers(
-					"(sum by (namespace, job, operation) (rate(thanos_objstore_bucket_operation_failures_total{namespace='$namespace', job=~'$job'}[$__rate_interval])) / sum by (namespace, job, operation) (rate(thanos_objstore_bucket_operations_total{namespace='$namespace', job=~'$job'}[$__rate_interval]))) * 100",
+				promql.SetLabelMatchersV2(
+					ThanosCommonPanelQueries["BucketOperationErrors"],
 					labelMatchers,
-				),
+				).Pretty(0),
 				dashboards.AddQueryDataSource(datasourceName),
 				query.SeriesNameFormat("{{job}} {{operation}} {{namespace}}"),
 			),
@@ -82,7 +83,7 @@ func BucketOperationErrors(datasourceName string, labelMatchers ...promql.LabelM
 	)
 }
 
-func BucketOperationDurations(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
+func BucketOperationDurations(datasourceName string, labelMatchers ...*labels.Matcher) panelgroup.Option {
 	return panelgroup.AddPanel("Bucket Operation Latency",
 		panel.Description("Shows latency of operations against object storage bucket."),
 		timeSeriesPanel.Chart(
@@ -105,30 +106,30 @@ func BucketOperationDurations(datasourceName string, labelMatchers ...promql.Lab
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchers(
-					"histogram_quantile(0.99, sum by (namespace, job, operation, le) (rate(thanos_objstore_bucket_operation_duration_seconds_bucket{namespace='$namespace', job=~'$job'}[$__rate_interval])))",
+				promql.SetLabelMatchersV2(
+					ThanosCommonPanelQueries["BucketOperationDurations_99"],
 					labelMatchers,
-				),
+				).Pretty(0),
 				dashboards.AddQueryDataSource(datasourceName),
 				query.SeriesNameFormat("p99 {{job}} {{operation}} {{namespace}}"),
 			),
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchers(
-					"histogram_quantile(0.90, sum by (namespace, job, operation, le) (rate(thanos_objstore_bucket_operation_duration_seconds_bucket{namespace='$namespace', job=~'$job'}[$__rate_interval])))",
+				promql.SetLabelMatchersV2(
+					ThanosCommonPanelQueries["BucketOperationDurations_90"],
 					labelMatchers,
-				),
+				).Pretty(0),
 				dashboards.AddQueryDataSource(datasourceName),
 				query.SeriesNameFormat("p90 {{job}} {{operation}} {{namespace}}"),
 			),
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchers(
-					"histogram_quantile(0.50, sum by (namespace, job, operation, le) (rate(thanos_objstore_bucket_operation_duration_seconds_bucket{namespace='$namespace', job=~'$job'}[$__rate_interval])))",
+				promql.SetLabelMatchersV2(
+					ThanosCommonPanelQueries["BucketOperationDurations_50"],
 					labelMatchers,
-				),
+				).Pretty(0),
 				dashboards.AddQueryDataSource(datasourceName),
 				query.SeriesNameFormat("p50 {{job}} {{operation}} {{namespace}}"),
 			),
@@ -136,7 +137,7 @@ func BucketOperationDurations(datasourceName string, labelMatchers ...promql.Lab
 	)
 }
 
-func ReadGRPCUnaryRate(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
+func ReadGRPCUnaryRate(datasourceName string, labelMatchers ...*labels.Matcher) panelgroup.Option {
 	return panelgroup.AddPanel("Unary gRPC Read request rate",
 		panel.Description("Shows rate of handled Unary gRPC Read requests (StoreAPI)."),
 		timeSeriesPanel.Chart(
@@ -160,10 +161,10 @@ func ReadGRPCUnaryRate(datasourceName string, labelMatchers ...promql.LabelMatch
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchers(
-					"sum by (namespace, job, grpc_method, grpc_code) (rate(grpc_server_handled_total{namespace='$namespace', job=~'$job', grpc_type=\"unary\", grpc_method!=\"RemoteWrite\"}[$__rate_interval]))",
+				promql.SetLabelMatchersV2(
+					ThanosCommonPanelQueries["ReadGRPCUnaryRate"],
 					labelMatchers,
-				),
+				).Pretty(0),
 				dashboards.AddQueryDataSource(datasourceName),
 				query.SeriesNameFormat("{{namespace}} {{job}} {{grpc_method}} {{grpc_code}}"),
 			),
@@ -171,7 +172,7 @@ func ReadGRPCUnaryRate(datasourceName string, labelMatchers ...promql.LabelMatch
 	)
 }
 
-func ReadGRPCUnaryErrors(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
+func ReadGRPCUnaryErrors(datasourceName string, labelMatchers ...*labels.Matcher) panelgroup.Option {
 	return panelgroup.AddPanel("Unary gRPC Read error rate",
 		panel.Description("Shows percentage of errors of Unary gRPC Read requests (StoreAPI)."),
 		timeSeriesPanel.Chart(
@@ -195,10 +196,10 @@ func ReadGRPCUnaryErrors(datasourceName string, labelMatchers ...promql.LabelMat
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchers(
-					"sum by (namespace, job, grpc_code) (rate(grpc_server_handled_total{grpc_code=~\"Unknown|ResourceExhausted|Internal|Unavailable|DataLoss\",namespace='$namespace', job=~'$job', grpc_type=\"unary\", grpc_method!=\"RemoteWrite\"}[$__rate_interval])) / ignoring (grpc_code) group_left() sum by (namespace, job) (rate(grpc_server_handled_total{namespace='$namespace', job=~'$job', grpc_type=\"unary\", grpc_method!=\"RemoteWrite\"}[$__rate_interval]))",
+				promql.SetLabelMatchersV2(
+					ThanosCommonPanelQueries["ReadGRPCUnaryErrors"],
 					labelMatchers,
-				),
+				).Pretty(0),
 				dashboards.AddQueryDataSource(datasourceName),
 				query.SeriesNameFormat("{{namespace}} {{job}} {{grpc_method}} {{grpc_code}}"),
 			),
@@ -206,7 +207,7 @@ func ReadGRPCUnaryErrors(datasourceName string, labelMatchers ...promql.LabelMat
 	)
 }
 
-func ReadGPRCUnaryDurations(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
+func ReadGPRCUnaryDurations(datasourceName string, labelMatchers ...*labels.Matcher) panelgroup.Option {
 	return panelgroup.AddPanel("Unary gRPC Read duration",
 		panel.Description("Shows duration percentiles of handled Unary gRPC Read requests (StoreAPI)."),
 		timeSeriesPanel.Chart(
@@ -229,30 +230,30 @@ func ReadGPRCUnaryDurations(datasourceName string, labelMatchers ...promql.Label
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchers(
-					"histogram_quantile(0.50, sum by (namespace, job, le) (rate(grpc_server_handling_seconds_bucket{namespace='$namespace', job=~'$job', grpc_type=\"unary\", grpc_method!=\"RemoteWrite\"}[$__rate_interval])))",
+				promql.SetLabelMatchersV2(
+					ThanosCommonPanelQueries["ReadGPRCUnaryDurations_50"],
 					labelMatchers,
-				),
+				).Pretty(0),
 				dashboards.AddQueryDataSource(datasourceName),
 				query.SeriesNameFormat("p50 {{namespace}} {{job}}"),
 			),
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchers(
-					"histogram_quantile(0.90, sum by (namespace, job, le) (rate(grpc_server_handling_seconds_bucket{namespace='$namespace', job=~'$job', grpc_type=\"unary\", grpc_method!=\"RemoteWrite\"}[$__rate_interval])))",
+				promql.SetLabelMatchersV2(
+					ThanosCommonPanelQueries["ReadGPRCUnaryDurations_90"],
 					labelMatchers,
-				),
+				).Pretty(0),
 				dashboards.AddQueryDataSource(datasourceName),
 				query.SeriesNameFormat("p90 {{namespace}} {{job}}"),
 			),
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchers(
-					"histogram_quantile(0.99, sum by (namespace, job, le) (rate(grpc_server_handling_seconds_bucket{namespace='$namespace', job=~'$job', grpc_type=\"unary\", grpc_method!=\"RemoteWrite\"}[$__rate_interval])))",
+				promql.SetLabelMatchersV2(
+					ThanosCommonPanelQueries["ReadGPRCUnaryDurations_99"],
 					labelMatchers,
-				),
+				).Pretty(0),
 				dashboards.AddQueryDataSource(datasourceName),
 				query.SeriesNameFormat("p99 {{namespace}} {{job}}"),
 			),
@@ -260,7 +261,7 @@ func ReadGPRCUnaryDurations(datasourceName string, labelMatchers ...promql.Label
 	)
 }
 
-func ReadGRPCStreamRate(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
+func ReadGRPCStreamRate(datasourceName string, labelMatchers ...*labels.Matcher) panelgroup.Option {
 	return panelgroup.AddPanel("Stream gRPC Read request rate",
 		panel.Description("Shows rate of handled Stream gRPC Read requests (StoreAPI Series/Exemplar calls)."),
 		timeSeriesPanel.Chart(
@@ -284,10 +285,10 @@ func ReadGRPCStreamRate(datasourceName string, labelMatchers ...promql.LabelMatc
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchers(
-					"sum by (namespace, job, grpc_method, grpc_code) (rate(grpc_server_handled_total{namespace='$namespace', job=~'$job', grpc_type=\"server_stream\"}[$__rate_interval]))",
+				promql.SetLabelMatchersV2(
+					ThanosCommonPanelQueries["ReadGRPCStreamRate"],
 					labelMatchers,
-				),
+				).Pretty(0),
 				dashboards.AddQueryDataSource(datasourceName),
 				query.SeriesNameFormat("{{namespace}} {{job}} {{grpc_method}} {{grpc_code}}"),
 			),
@@ -295,7 +296,7 @@ func ReadGRPCStreamRate(datasourceName string, labelMatchers ...promql.LabelMatc
 	)
 }
 
-func ReadGRPCStreamErrors(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
+func ReadGRPCStreamErrors(datasourceName string, labelMatchers ...*labels.Matcher) panelgroup.Option {
 	return panelgroup.AddPanel("Stream gRPC Read error rate",
 		panel.Description("Shows percentage of errors of Stream gRPC Read requests (StoreAPI Series/Exemplar calls)."),
 		timeSeriesPanel.Chart(
@@ -319,10 +320,10 @@ func ReadGRPCStreamErrors(datasourceName string, labelMatchers ...promql.LabelMa
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchers(
-					"sum by (namespace, job, grpc_code) (rate(grpc_server_handled_total{grpc_code=~\"Unknown|ResourceExhausted|Internal|Unavailable|DataLoss\",namespace='$namespace', job=~'$job', grpc_type=\"server_stream\"}[$__rate_interval])) / ignoring (grpc_code) group_left() sum by (namespace, job) (rate(grpc_server_handled_total{namespace='$namespace', job=~'$job', grpc_type=\"server_stream\"}[$__rate_interval]))",
+				promql.SetLabelMatchersV2(
+					ThanosCommonPanelQueries["ReadGRPCStreamErrors"],
 					labelMatchers,
-				),
+				).Pretty(0),
 				dashboards.AddQueryDataSource(datasourceName),
 				query.SeriesNameFormat("{{namespace}} {{job}} {{grpc_method}} {{grpc_code}}"),
 			),
@@ -330,7 +331,7 @@ func ReadGRPCStreamErrors(datasourceName string, labelMatchers ...promql.LabelMa
 	)
 }
 
-func ReadGPRCStreamDurations(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
+func ReadGPRCStreamDurations(datasourceName string, labelMatchers ...*labels.Matcher) panelgroup.Option {
 	return panelgroup.AddPanel("Stream gRPC Read duration",
 		panel.Description("Shows duration percentiles of handled Stream gRPC Read requests (StoreAPI Series/Exemplar calls)."),
 		timeSeriesPanel.Chart(
@@ -353,30 +354,30 @@ func ReadGPRCStreamDurations(datasourceName string, labelMatchers ...promql.Labe
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchers(
-					"histogram_quantile(0.50, sum by (namespace, job, le) (rate(grpc_server_handling_seconds_bucket{namespace='$namespace', job=~'$job', grpc_type=\"server_stream\"}[$__rate_interval])))",
+				promql.SetLabelMatchersV2(
+					ThanosCommonPanelQueries["ReadGPRCStreamDurations_50"],
 					labelMatchers,
-				),
+				).Pretty(0),
 				dashboards.AddQueryDataSource(datasourceName),
 				query.SeriesNameFormat("p50 {{namespace}} {{job}}"),
 			),
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchers(
-					"histogram_quantile(0.90, sum by (namespace, job, le) (rate(grpc_server_handling_seconds_bucket{namespace='$namespace', job=~'$job', grpc_type=\"server_stream\"}[$__rate_interval])))",
+				promql.SetLabelMatchersV2(
+					ThanosCommonPanelQueries["ReadGPRCStreamDurations_90"],
 					labelMatchers,
-				),
+				).Pretty(0),
 				dashboards.AddQueryDataSource(datasourceName),
 				query.SeriesNameFormat("p90 {{namespace}} {{job}}"),
 			),
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchers(
-					"histogram_quantile(0.99, sum by (namespace, job, le) (rate(grpc_server_handling_seconds_bucket{namespace='$namespace', job=~'$job', grpc_type=\"server_stream\"}[$__rate_interval])))",
+				promql.SetLabelMatchersV2(
+					ThanosCommonPanelQueries["ReadGPRCStreamDurations_99"],
 					labelMatchers,
-				),
+				).Pretty(0),
 				dashboards.AddQueryDataSource(datasourceName),
 				query.SeriesNameFormat("p99 {{namespace}} {{job}}"),
 			),

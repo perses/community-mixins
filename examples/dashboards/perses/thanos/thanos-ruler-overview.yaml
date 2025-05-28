@@ -112,7 +112,9 @@ spec:
                                     name: prometheus-datasource
                                 query: |-
                                     sum by (namespace, job, rule_group, strategy) (
-                                      rate(prometheus_rule_evaluation_failures_total{job=~"$job",namespace="$namespace"}[$__rate_interval])
+                                      rate(
+                                        prometheus_rule_evaluation_failures_total{job=~"$job",namespace="$namespace"}[$__rate_interval]
+                                      )
                                     )
                                 seriesNameFormat: '{{rule_group}} {{strategy}} - {{job}} {{namespace}}'
         "0_2":
@@ -148,7 +150,9 @@ spec:
                                     name: prometheus-datasource
                                 query: |-
                                     sum by (namespace, job, rule_group, strategy) (
-                                      rate(prometheus_rule_group_iterations_missed_total{job=~"$job",namespace="$namespace"}[$__rate_interval])
+                                      rate(
+                                        prometheus_rule_group_iterations_missed_total{job=~"$job",namespace="$namespace"}[$__rate_interval]
+                                      )
                                     )
                                 seriesNameFormat: '{{rule_group}} {{strategy}} - {{job}} {{namespace}}'
         "0_3":
@@ -181,16 +185,14 @@ spec:
                                 datasource:
                                     kind: PrometheusDatasource
                                     name: prometheus-datasource
-                                query: |-
-                                    (
-                                        sum by (namespace, job, rule_group) (
-                                          prometheus_rule_group_last_duration_seconds{job=~"$job",namespace="$namespace"}
-                                        )
-                                      >
-                                        sum by (namespace, job, rule_group) (
-                                          prometheus_rule_group_interval_seconds{job=~"$job",namespace="$namespace"}
-                                        )
-                                    )
+                                query: |4-
+                                      sum by (namespace, job, rule_group) (
+                                        prometheus_rule_group_last_duration_seconds{job=~"$job",namespace="$namespace"}
+                                      )
+                                    >
+                                      sum by (namespace, job, rule_group) (
+                                        prometheus_rule_group_interval_seconds{job=~"$job",namespace="$namespace"}
+                                      )
                                 seriesNameFormat: '{{rule_group}} - {{job}} {{namespace}}'
         "1_0":
             kind: Panel
@@ -338,7 +340,9 @@ spec:
                                     histogram_quantile(
                                       0.5,
                                       sum by (namespace, job, le) (
-                                        rate(thanos_alert_sender_latency_seconds_bucket{job=~"$job",namespace="$namespace"}[$__rate_interval])
+                                        rate(
+                                          thanos_alert_sender_latency_seconds_bucket{job=~"$job",namespace="$namespace"}[$__rate_interval]
+                                        )
                                       )
                                     )
                                 seriesNameFormat: p50 {{job}} {{namespace}}
@@ -354,7 +358,9 @@ spec:
                                     histogram_quantile(
                                       0.9,
                                       sum by (namespace, job, le) (
-                                        rate(thanos_alert_sender_latency_seconds_bucket{job=~"$job",namespace="$namespace"}[$__rate_interval])
+                                        rate(
+                                          thanos_alert_sender_latency_seconds_bucket{job=~"$job",namespace="$namespace"}[$__rate_interval]
+                                        )
                                       )
                                     )
                                 seriesNameFormat: p90 {{job}} {{namespace}}
@@ -370,7 +376,9 @@ spec:
                                     histogram_quantile(
                                       0.99,
                                       sum by (namespace, job, le) (
-                                        rate(thanos_alert_sender_latency_seconds_bucket{job=~"$job",namespace="$namespace"}[$__rate_interval])
+                                        rate(
+                                          thanos_alert_sender_latency_seconds_bucket{job=~"$job",namespace="$namespace"}[$__rate_interval]
+                                        )
                                       )
                                     )
                                 seriesNameFormat: p99 {{job}} {{namespace}}

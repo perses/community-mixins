@@ -9,6 +9,7 @@ import (
 	panelgroup "github.com/perses/perses/go-sdk/panel-group"
 	listVar "github.com/perses/perses/go-sdk/variable/list-variable"
 	labelValuesVar "github.com/perses/plugins/prometheus/sdk/go/variable/label-values"
+	"github.com/prometheus/prometheus/model/labels"
 )
 
 func withProxyStatsGroup(datasource string, labelMatcher promql.LabelMatcher) dashboard.Option {
@@ -60,15 +61,15 @@ func withProxyKubeAPIRequestsGroup(datasource string, labelMatcher promql.LabelM
 	)
 }
 
-func withProxyResources(datasource string, clusterLabelMatcher promql.LabelMatcher) dashboard.Option {
+func withProxyResources(datasource string, clusterLabelMatcher *labels.Matcher) dashboard.Option {
 	// TODO(saswatamcode): Add a way to configure these.
-	labelMatchersToUse := []promql.LabelMatcher{
-		promql.ClusterVar,
-		promql.InstanceVar,
+	labelMatchersToUse := []*labels.Matcher{
+		promql.ClusterVarV2,
+		promql.InstanceVarV2,
 		{
 			Name:  "job",
 			Value: "kube-proxy",
-			Type:  "=",
+			Type:  labels.MatchEqual,
 		},
 	}
 
@@ -86,6 +87,7 @@ func withProxyResources(datasource string, clusterLabelMatcher promql.LabelMatch
 
 func BuildProxyOverview(project string, datasource string, clusterLabelName string) dashboards.DashboardResult {
 	clusterLabelMatcher := dashboards.GetClusterLabelMatcher(clusterLabelName)
+	clusterLabelMatcherV2 := dashboards.GetClusterLabelMatcherV2(clusterLabelName)
 	return dashboards.NewDashboardResult(
 		dashboard.New("proxy-overview",
 			dashboard.ProjectName(project),
@@ -117,7 +119,7 @@ func BuildProxyOverview(project string, datasource string, clusterLabelName stri
 			withProxyRulesSyncRateGroup(datasource, clusterLabelMatcher),
 			withProxyNetworkProgrammingRateGroup(datasource, clusterLabelMatcher),
 			withProxyKubeAPIRequestsGroup(datasource, clusterLabelMatcher),
-			withProxyResources(datasource, clusterLabelMatcher),
+			withProxyResources(datasource, clusterLabelMatcherV2),
 		),
 	).Component("kubernetes")
 }

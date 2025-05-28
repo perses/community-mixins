@@ -110,7 +110,7 @@
                       "kind": "PrometheusDatasource",
                       "name": "prometheus-datasource"
                     },
-                    "query": "sum by (namespace, job, handler, code) (\n  rate(http_requests_total{handler=\"query-frontend\",job=~\"$job\",namespace=\"$namespace\"}[$__rate_interval])\n)",
+                    "query": "sum by (namespace, job, handler, code) (\n  rate(\n    http_requests_total{handler=\"query-frontend\",job=~\"$job\",namespace=\"$namespace\"}[$__rate_interval]\n  )\n)",
                     "seriesNameFormat": "{{code}} - {{job}} {{namespace}}"
                   }
                 }
@@ -210,7 +210,7 @@
                       "kind": "PrometheusDatasource",
                       "name": "prometheus-datasource"
                     },
-                    "query": "  sum by (namespace, job, code) (\n    rate(\n      http_requests_total{code=~\"5..\",handler=\"query-frontend\",job=~\"$job\",namespace=\"$namespace\"}[$__rate_interval]\n    )\n  )\n/ ignoring (code) group_left ()\n  sum by (namespace, job) (\n    rate(http_requests_total{handler=\"query-frontend\",job=~\"$job\",namespace=\"$namespace\"}[$__rate_interval])\n  )",
+                    "query": "    sum by (namespace, job, code) (\n      rate(\n        http_requests_total{code=~\"5..\",handler=\"query-frontend\",job=~\"$job\",namespace=\"$namespace\"}[$__rate_interval]\n      )\n    )\n  / ignoring (code) group_left ()\n    sum by (namespace, job) (\n      rate(\n        http_requests_total{handler=\"query-frontend\",job=~\"$job\",namespace=\"$namespace\"}[$__rate_interval]\n      )\n    )\n*\n  100",
                     "seriesNameFormat": "{{code}} - {{job}} {{namespace}}"
                   }
                 }
@@ -341,7 +341,7 @@
                       "kind": "PrometheusDatasource",
                       "name": "prometheus-datasource"
                     },
-                    "query": "sum by (namespace, job, tripperware) (\n  rate(cortex_cache_request_duration_seconds_count{job=~\"$job\",namespace=\"$namespace\"}[$__rate_interval])\n)",
+                    "query": "sum by (namespace, job, tripperware) (\n  rate(\n    cortex_cache_request_duration_seconds_count{job=~\"$job\",namespace=\"$namespace\"}[$__rate_interval]\n  )\n)",
                     "seriesNameFormat": "{{tripperware}} - {{job}} {{namespace}}"
                   }
                 }

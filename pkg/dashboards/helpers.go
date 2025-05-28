@@ -6,6 +6,7 @@ import (
 	listVar "github.com/perses/perses/go-sdk/variable/list-variable"
 	"github.com/perses/plugins/prometheus/sdk/go/query"
 	labelValuesVar "github.com/perses/plugins/prometheus/sdk/go/variable/label-values"
+	"github.com/prometheus/prometheus/model/labels"
 )
 
 func AddVariableDatasource(datasourceName string) labelValuesVar.Option {
@@ -48,5 +49,13 @@ func GetClusterLabelMatcher(clusterLabelName string) promql.LabelMatcher {
 		Name:  clusterLabelName,
 		Value: "$cluster",
 		Type:  "=",
+	}
+}
+
+func GetClusterLabelMatcherV2(clusterLabelName string) *labels.Matcher {
+	return &labels.Matcher{
+		Name:  clusterLabelName,
+		Value: "$cluster",
+		Type:  labels.MatchEqual,
 	}
 }

@@ -4,6 +4,7 @@ import (
 	"github.com/perses/perses/go-sdk/panel"
 	panelgroup "github.com/perses/perses/go-sdk/panel-group"
 	"github.com/perses/plugins/prometheus/sdk/go/query"
+	"github.com/prometheus/prometheus/model/labels"
 
 	"github.com/perses/community-dashboards/pkg/dashboards"
 	"github.com/perses/community-dashboards/pkg/promql"
@@ -12,7 +13,7 @@ import (
 	timeSeriesPanel "github.com/perses/plugins/timeserieschart/sdk/go"
 )
 
-func RuleEvaluationRate(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
+func RuleEvaluationRate(datasourceName string, labelMatchers ...*labels.Matcher) panelgroup.Option {
 	return panelgroup.AddPanel("Rule Group Evaluation Rate",
 		panel.Description("Shows the rate of rule group evaluations."),
 		timeSeriesPanel.Chart(
@@ -35,10 +36,10 @@ func RuleEvaluationRate(datasourceName string, labelMatchers ...promql.LabelMatc
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchers(
-					"sum by (namespace, job, rule_group, strategy) (rate(prometheus_rule_evaluations_total{namespace='$namespace', job=~'$job'}[$__rate_interval]))",
+				promql.SetLabelMatchersV2(
+					ThanosCommonPanelQueries["RuleEvaluationRate"],
 					labelMatchers,
-				),
+				).Pretty(0),
 				dashboards.AddQueryDataSource(datasourceName),
 				query.SeriesNameFormat("{{rule_group}} {{strategy}} - {{job}} {{namespace}}"),
 			),
@@ -46,7 +47,7 @@ func RuleEvaluationRate(datasourceName string, labelMatchers ...promql.LabelMatc
 	)
 }
 
-func RuleEvaluationFailureRate(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
+func RuleEvaluationFailureRate(datasourceName string, labelMatchers ...*labels.Matcher) panelgroup.Option {
 	return panelgroup.AddPanel("Rule Group Evaluation Failures",
 		panel.Description("Shows the rate of failed rule group evaluations."),
 		timeSeriesPanel.Chart(
@@ -70,10 +71,10 @@ func RuleEvaluationFailureRate(datasourceName string, labelMatchers ...promql.La
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchers(
-					"sum by (namespace, job, rule_group, strategy) (rate(prometheus_rule_evaluation_failures_total{namespace='$namespace', job=~'$job'}[$__rate_interval]))",
+				promql.SetLabelMatchersV2(
+					ThanosCommonPanelQueries["RuleEvaluationFailureRate"],
 					labelMatchers,
-				),
+				).Pretty(0),
 				dashboards.AddQueryDataSource(datasourceName),
 				query.SeriesNameFormat("{{rule_group}} {{strategy}} - {{job}} {{namespace}}"),
 			),
@@ -81,7 +82,7 @@ func RuleEvaluationFailureRate(datasourceName string, labelMatchers ...promql.La
 	)
 }
 
-func RuleGroupEvaluationsMissRate(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
+func RuleGroupEvaluationsMissRate(datasourceName string, labelMatchers ...*labels.Matcher) panelgroup.Option {
 	return panelgroup.AddPanel("Rule Group Evaluations Missed",
 		panel.Description("Shows rate of rule group evaluations missed due to slow rule evaluations."),
 		timeSeriesPanel.Chart(
@@ -105,10 +106,10 @@ func RuleGroupEvaluationsMissRate(datasourceName string, labelMatchers ...promql
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchers(
-					"sum by (namespace, job, rule_group, strategy) (rate(prometheus_rule_group_iterations_missed_total{namespace='$namespace', job=~'$job'}[$__rate_interval]))",
+				promql.SetLabelMatchersV2(
+					ThanosCommonPanelQueries["RuleGroupEvaluationsMissRate"],
 					labelMatchers,
-				),
+				).Pretty(0),
 				dashboards.AddQueryDataSource(datasourceName),
 				query.SeriesNameFormat("{{rule_group}} {{strategy}} - {{job}} {{namespace}}"),
 			),
@@ -116,7 +117,7 @@ func RuleGroupEvaluationsMissRate(datasourceName string, labelMatchers ...promql
 	)
 }
 
-func RuleGroupEvaluationsTooSlow(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
+func RuleGroupEvaluationsTooSlow(datasourceName string, labelMatchers ...*labels.Matcher) panelgroup.Option {
 	return panelgroup.AddPanel("Rule Group Evaluations Too Slow",
 		panel.Description("Shows rule groups with evaluations taking longer than their set interval."),
 		timeSeriesPanel.Chart(
@@ -139,14 +140,10 @@ func RuleGroupEvaluationsTooSlow(datasourceName string, labelMatchers ...promql.
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchers(
-					`(
-  sum by(namespace, job, rule_group) (prometheus_rule_group_last_duration_seconds{namespace='$namespace', job=~'$job'})
-  >
-  sum by(namespace, job, rule_group) (prometheus_rule_group_interval_seconds{namespace='$namespace', job=~'$job'})
-)`,
+				promql.SetLabelMatchersV2(
+					ThanosCommonPanelQueries["RuleGroupEvaluationsTooSlow"],
 					labelMatchers,
-				),
+				).Pretty(0),
 				dashboards.AddQueryDataSource(datasourceName),
 				query.SeriesNameFormat("{{rule_group}} - {{job}} {{namespace}}"),
 			),
@@ -154,7 +151,7 @@ func RuleGroupEvaluationsTooSlow(datasourceName string, labelMatchers ...promql.
 	)
 }
 
-func AlertsDroppedRate(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
+func AlertsDroppedRate(datasourceName string, labelMatchers ...*labels.Matcher) panelgroup.Option {
 	return panelgroup.AddPanel("Alerts Dropped",
 		panel.Description("Shows rate of alerts dropped by Ruler when sending."),
 		timeSeriesPanel.Chart(
@@ -178,10 +175,10 @@ func AlertsDroppedRate(datasourceName string, labelMatchers ...promql.LabelMatch
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchers(
-					"sum by (namespace, job, alertmanager) (rate(thanos_alert_sender_alerts_dropped_total{namespace='$namespace', job=~'$job'}[$__rate_interval]))",
+				promql.SetLabelMatchersV2(
+					ThanosCommonPanelQueries["AlertsDroppedRate"],
 					labelMatchers,
-				),
+				).Pretty(0),
 				dashboards.AddQueryDataSource(datasourceName),
 				query.SeriesNameFormat("{{alertmanager}} - {{job}} {{namespace}}"),
 			),
@@ -189,7 +186,7 @@ func AlertsDroppedRate(datasourceName string, labelMatchers ...promql.LabelMatch
 	)
 }
 
-func AlertsSentRate(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
+func AlertsSentRate(datasourceName string, labelMatchers ...*labels.Matcher) panelgroup.Option {
 	return panelgroup.AddPanel("Alerts Sent",
 		panel.Description("Shows rate of alerts sent by ruler."),
 		timeSeriesPanel.Chart(
@@ -213,10 +210,10 @@ func AlertsSentRate(datasourceName string, labelMatchers ...promql.LabelMatcher)
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchers(
-					"sum by (namespace, job, alertmanager) (rate(thanos_alert_sender_alerts_sent_total{namespace='$namespace', job=~'$job'}[$__rate_interval]))",
+				promql.SetLabelMatchersV2(
+					ThanosCommonPanelQueries["AlertsSentRate"],
 					labelMatchers,
-				),
+				).Pretty(0),
 				dashboards.AddQueryDataSource(datasourceName),
 				query.SeriesNameFormat("{{alertmanager}} - {{job}} {{namespace}}"),
 			),
@@ -224,7 +221,7 @@ func AlertsSentRate(datasourceName string, labelMatchers ...promql.LabelMatcher)
 	)
 }
 
-func AlertSendingErrors(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
+func AlertSendingErrors(datasourceName string, labelMatchers ...*labels.Matcher) panelgroup.Option {
 	return panelgroup.AddPanel("Alert Sending Errors",
 		panel.Description("Shows percentage of alert sending operations that have resulted in errors."),
 		timeSeriesPanel.Chart(
@@ -248,10 +245,10 @@ func AlertSendingErrors(datasourceName string, labelMatchers ...promql.LabelMatc
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchers(
-					`sum by (namespace, job) (rate(thanos_alert_sender_errors_total{namespace='$namespace', job=~'$job'}[$__rate_interval])) / sum by (namespace, job) (rate(thanos_alert_sender_alerts_sent_total{namespace='$namespace', job=~'$job'}[$__rate_interval]))`,
+				promql.SetLabelMatchersV2(
+					ThanosCommonPanelQueries["AlertSendingErrors"],
 					labelMatchers,
-				),
+				).Pretty(0),
 				dashboards.AddQueryDataSource(datasourceName),
 				query.SeriesNameFormat("{{job}} {{namespace}}"),
 			),
@@ -259,7 +256,7 @@ func AlertSendingErrors(datasourceName string, labelMatchers ...promql.LabelMatc
 	)
 }
 
-func AlertSendingDurations(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
+func AlertSendingDurations(datasourceName string, labelMatchers ...*labels.Matcher) panelgroup.Option {
 	return panelgroup.AddPanel("Alert Sending Durations",
 		panel.Description("Shows p50, p90 and p99 durations for alerts being sent from the ruler."),
 		timeSeriesPanel.Chart(
@@ -282,30 +279,30 @@ func AlertSendingDurations(datasourceName string, labelMatchers ...promql.LabelM
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchers(
-					"histogram_quantile(0.50, sum by (namespace, job, le) (rate(thanos_alert_sender_latency_seconds_bucket{namespace='$namespace', job=~'$job'}[$__rate_interval])))",
+				promql.SetLabelMatchersV2(
+					ThanosCommonPanelQueries["AlertSendingDurations_50"],
 					labelMatchers,
-				),
+				).Pretty(0),
 				dashboards.AddQueryDataSource(datasourceName),
 				query.SeriesNameFormat("p50 {{job}} {{namespace}}"),
 			),
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchers(
-					"histogram_quantile(0.90, sum by (namespace, job, le) (rate(thanos_alert_sender_latency_seconds_bucket{namespace='$namespace', job=~'$job'}[$__rate_interval])))",
+				promql.SetLabelMatchersV2(
+					ThanosCommonPanelQueries["AlertSendingDurations_90"],
 					labelMatchers,
-				),
+				).Pretty(0),
 				dashboards.AddQueryDataSource(datasourceName),
 				query.SeriesNameFormat("p90 {{job}} {{namespace}}"),
 			),
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchers(
-					"histogram_quantile(0.99, sum by (namespace, job, le) (rate(thanos_alert_sender_latency_seconds_bucket{namespace='$namespace', job=~'$job'}[$__rate_interval])))",
+				promql.SetLabelMatchersV2(
+					ThanosCommonPanelQueries["AlertSendingDurations_99"],
 					labelMatchers,
-				),
+				).Pretty(0),
 				dashboards.AddQueryDataSource(datasourceName),
 				query.SeriesNameFormat("p99 {{job}} {{namespace}}"),
 			),
@@ -313,7 +310,7 @@ func AlertSendingDurations(datasourceName string, labelMatchers ...promql.LabelM
 	)
 }
 
-func AlertQueuePushedRate(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
+func AlertQueuePushedRate(datasourceName string, labelMatchers ...*labels.Matcher) panelgroup.Option {
 	return panelgroup.AddPanel("Alert Queue Pushed",
 		panel.Description("Shows the rate of alerts being pushed to sender queue."),
 		timeSeriesPanel.Chart(
@@ -336,10 +333,10 @@ func AlertQueuePushedRate(datasourceName string, labelMatchers ...promql.LabelMa
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchers(
-					"sum by (namespace, job) (rate(thanos_alert_queue_alerts_pushed_total{namespace='$namespace', job=~'$job'}[$__rate_interval]))",
+				promql.SetLabelMatchersV2(
+					ThanosCommonPanelQueries["AlertQueuePushedRate"],
 					labelMatchers,
-				),
+				).Pretty(0),
 				dashboards.AddQueryDataSource(datasourceName),
 				query.SeriesNameFormat("{{job}} {{namespace}}"),
 			),
@@ -347,7 +344,7 @@ func AlertQueuePushedRate(datasourceName string, labelMatchers ...promql.LabelMa
 	)
 }
 
-func AlertQueuePoppedRate(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
+func AlertQueuePoppedRate(datasourceName string, labelMatchers ...*labels.Matcher) panelgroup.Option {
 	return panelgroup.AddPanel("Alert Queue Popped",
 		panel.Description("Shows rate of alerts popped from queue, to be sent to Alertmanagers."),
 		timeSeriesPanel.Chart(
@@ -370,10 +367,10 @@ func AlertQueuePoppedRate(datasourceName string, labelMatchers ...promql.LabelMa
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchers(
-					"sum by (namespace, job) (rate(thanos_alert_queue_alerts_popped_total{namespace='$namespace', job=~'$job'}[$__rate_interval]))",
+				promql.SetLabelMatchersV2(
+					ThanosCommonPanelQueries["AlertQueuePoppedRate"],
 					labelMatchers,
-				),
+				).Pretty(0),
 				dashboards.AddQueryDataSource(datasourceName),
 				query.SeriesNameFormat("{{job}} {{namespace}}"),
 			),
@@ -381,7 +378,7 @@ func AlertQueuePoppedRate(datasourceName string, labelMatchers ...promql.LabelMa
 	)
 }
 
-func DroppedRatio(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
+func DroppedRatio(datasourceName string, labelMatchers ...*labels.Matcher) panelgroup.Option {
 	return panelgroup.AddPanel("Dropped Percentage",
 		panel.Description("Shows percentage of alerts dropped as compared to alerts being queued for sending."),
 		timeSeriesPanel.Chart(
@@ -405,10 +402,10 @@ func DroppedRatio(datasourceName string, labelMatchers ...promql.LabelMatcher) p
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchers(
-					`sum by (namespace, job) (rate(thanos_alert_queue_alerts_dropped_total{namespace='$namespace', job=~'$job'}[$__rate_interval])) / sum by (namespace, job) (rate(thanos_alert_queue_alerts_pushed_total{namespace='$namespace', job=~'$job'}[$__rate_interval]))`,
+				promql.SetLabelMatchersV2(
+					ThanosCommonPanelQueries["DroppedRatio"],
 					labelMatchers,
-				),
+				).Pretty(0),
 				dashboards.AddQueryDataSource(datasourceName),
 				query.SeriesNameFormat("{{job}} {{namespace}}"),
 			),
