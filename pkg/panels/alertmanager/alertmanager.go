@@ -8,6 +8,7 @@ import (
 	panelgroup "github.com/perses/perses/go-sdk/panel-group"
 	"github.com/perses/plugins/prometheus/sdk/go/query"
 	timeSeriesPanel "github.com/perses/plugins/timeserieschart/sdk/go"
+	"github.com/prometheus/prometheus/model/labels"
 )
 
 // Alerts creates a panel option for displaying the count of alerts
@@ -23,7 +24,7 @@ import (
 //
 // Returns:
 //   - panelgroup.Option: A panel option that can be added to a panel group.
-func Alerts(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
+func Alerts(datasourceName string, labelMatchers ...*labels.Matcher) panelgroup.Option {
 	return panelgroup.AddPanel("Alerts",
 		panel.Description("Shows current alerts in Alertmanager"),
 		timeSeriesPanel.Chart(
@@ -42,10 +43,10 @@ func Alerts(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgr
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchers(
-					"sum(alertmanager_alerts{job=~'$job'}) by (instance)",
+				promql.SetLabelMatchersV2(
+					AlertmanagerCommonPanelQueries["Alerts"],
 					labelMatchers,
-				),
+				).Pretty(0),
 				dashboards.AddQueryDataSource(datasourceName),
 				query.SeriesNameFormat("{{instance}} - Alertmanager - Alerts"),
 			),
@@ -68,7 +69,7 @@ func Alerts(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgr
 //
 // Returns:
 //   - panelgroup.Option: The configured panel option.
-func AlertsReceiveRate(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
+func AlertsReceiveRate(datasourceName string, labelMatchers ...*labels.Matcher) panelgroup.Option {
 	return panelgroup.AddPanel("Alerts receive rate",
 		panel.Description("Shows alert receive rate in Alertmanager"),
 		timeSeriesPanel.Chart(
@@ -88,20 +89,20 @@ func AlertsReceiveRate(datasourceName string, labelMatchers ...promql.LabelMatch
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchers(
-					"sum(rate(alertmanager_alerts_received_total{job=~'$job'}[$__rate_interval])) by (job,instance)",
+				promql.SetLabelMatchersV2(
+					AlertmanagerCommonPanelQueries["AlertsReceiveRate_received"],
 					labelMatchers,
-				),
+				).Pretty(0),
 				dashboards.AddQueryDataSource(datasourceName),
 				query.SeriesNameFormat("{{instance}} - Alertmanager - Received"),
 			),
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchers(
-					"sum(rate(alertmanager_alerts_invalid_total{job=~'$job'}[$__rate_interval])) by (job,instance)",
+				promql.SetLabelMatchersV2(
+					AlertmanagerCommonPanelQueries["AlertsReceiveRate_invalid"],
 					labelMatchers,
-				),
+				).Pretty(0),
 				dashboards.AddQueryDataSource(datasourceName),
 				query.SeriesNameFormat("{{instance}} - Alertmanager - Invalid"),
 			),
@@ -130,7 +131,7 @@ func AlertsReceiveRate(datasourceName string, labelMatchers ...promql.LabelMatch
 //
 // Returns:
 // - panelgroup.Option: The configured panel option.
-func NotificationsSendRate(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
+func NotificationsSendRate(datasourceName string, labelMatchers ...*labels.Matcher) panelgroup.Option {
 	return panelgroup.AddPanel("Notifications Send Rate",
 		panel.Description("Shows notification send rate for the Alertmanager"),
 		timeSeriesPanel.Chart(
@@ -150,20 +151,20 @@ func NotificationsSendRate(datasourceName string, labelMatchers ...promql.LabelM
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchers(
-					"sum(rate(alertmanager_notifications_total{job=~'$job', integration=~'$integration'}[$__rate_interval])) by (integration, instance)",
+				promql.SetLabelMatchersV2(
+					AlertmanagerCommonPanelQueries["NotificationsSendRate_total"],
 					labelMatchers,
-				),
+				).Pretty(0),
 				dashboards.AddQueryDataSource(datasourceName),
 				query.SeriesNameFormat("{{instance}} - {{integration}} - Total"),
 			),
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchers(
-					"sum(rate(alertmanager_notifications_failed_total{job=~'$job', integration=~'$integration'}[$__rate_interval])) by (integration, instance)",
+				promql.SetLabelMatchersV2(
+					AlertmanagerCommonPanelQueries["NotificationsSendRate_failed"],
 					labelMatchers,
-				),
+				).Pretty(0),
 				dashboards.AddQueryDataSource(datasourceName),
 				query.SeriesNameFormat("{{instance}} - {{integration}} - Failed"),
 			),
@@ -191,7 +192,7 @@ func NotificationsSendRate(datasourceName string, labelMatchers ...promql.LabelM
 //
 // Returns:
 //   - panelgroup.Option: An option that adds the configured panel to a panel group.
-func NotificationDuration(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
+func NotificationDuration(datasourceName string, labelMatchers ...*labels.Matcher) panelgroup.Option {
 	return panelgroup.AddPanel("Notification Duration",
 		panel.Description("Shows notification latency for the Alertmanager"),
 		timeSeriesPanel.Chart(
@@ -215,30 +216,30 @@ func NotificationDuration(datasourceName string, labelMatchers ...promql.LabelMa
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchers(
-					"histogram_quantile(0.99, sum(rate(alertmanager_notification_latency_seconds_bucket{job=~'$job', integration=~'$integration'}[$__rate_interval])) by (le,integration,instance))",
+				promql.SetLabelMatchersV2(
+					AlertmanagerCommonPanelQueries["NotificationDuration_p99"],
 					labelMatchers,
-				),
+				).Pretty(0),
 				dashboards.AddQueryDataSource(datasourceName),
 				query.SeriesNameFormat("{{instance}} - {{integration}} - 99th Percentile"),
 			),
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchers(
-					"histogram_quantile(0.50, sum(rate(alertmanager_notification_latency_seconds_bucket{job=~'$job', integration=~'$integration'}[$__rate_interval])) by (le,integration,instance))",
+				promql.SetLabelMatchersV2(
+					AlertmanagerCommonPanelQueries["NotificationDuration_p50"],
 					labelMatchers,
-				),
+				).Pretty(0),
 				dashboards.AddQueryDataSource(datasourceName),
 				query.SeriesNameFormat("{{instance}} - {{integration}} - Median"),
 			),
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchers(
-					"sum(rate(alertmanager_notification_latency_seconds_sum{job=~'$job', integration=~'$integration'}[$__rate_interval])) by (integration,instance) / sum(rate(alertmanager_notification_latency_seconds_count{job=~'$job', integration=~'$integration'}[$__rate_interval])) by (integration,instance)",
+				promql.SetLabelMatchersV2(
+					AlertmanagerCommonPanelQueries["NotificationDuration_avg"],
 					labelMatchers,
-				),
+				).Pretty(0),
 				dashboards.AddQueryDataSource(datasourceName),
 				query.SeriesNameFormat("{{instance}} - {{integration}} - Average"),
 			),
