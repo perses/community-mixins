@@ -96,7 +96,7 @@
                       "kind": "PrometheusDatasource",
                       "name": "prometheus-datasource"
                     },
-                    "query": "(\n    prometheus_remote_storage_highest_timestamp_in_seconds{instance=~\"$instance\"}\n  - ignoring (remote_name, url) group_right (instance)\n    (\n        prometheus_remote_storage_queue_highest_sent_timestamp_seconds{instance=~\"$instance\",url=\"$url\"}\n      !=\n        0\n    )\n)",
+                    "query": "  prometheus_remote_storage_highest_timestamp_in_seconds{instance=~\"$instance\"}\n- ignoring (remote_name, url) group_right (instance)\n    prometheus_remote_storage_queue_highest_sent_timestamp_seconds{instance=~\"$instance\",url=\"$url\"}\n  !=\n    0",
                     "seriesNameFormat": "{{instance}} - {{remote_name}} - {{url}} - Segment"
                   }
                 }
@@ -132,7 +132,7 @@
                       "kind": "PrometheusDatasource",
                       "name": "prometheus-datasource"
                     },
-                    "query": "clamp_min(\n    rate(prometheus_remote_storage_highest_timestamp_in_seconds{instance=~\"$instance\"}[$__rate_interval])\n  - ignoring (remote_name, url) group_right (instance)\n    rate(\n      prometheus_remote_storage_queue_highest_sent_timestamp_seconds{instance=~\"$instance\",url=\"$url\"}[$__rate_interval]\n    ),\n  0\n)",
+                    "query": "clamp_min(\n    rate(\n      prometheus_remote_storage_highest_timestamp_in_seconds{instance=~\"$instance\"}[$__rate_interval]\n    )\n  - ignoring (remote_name, url) group_right (instance)\n    rate(\n      prometheus_remote_storage_queue_highest_sent_timestamp_seconds{instance=~\"$instance\",url=\"$url\"}[$__rate_interval]\n    ),\n  0\n)",
                     "seriesNameFormat": "{{instance}} - {{remote_name}} - {{url}} - Metrics"
                   }
                 }
@@ -168,7 +168,7 @@
                       "kind": "PrometheusDatasource",
                       "name": "prometheus-datasource"
                     },
-                    "query": "    rate(prometheus_remote_storage_samples_in_total{instance=~\"$instance\"}[$__rate_interval])\n  - ignoring (remote_name, url) group_right (instance)\n    (\n        rate(prometheus_remote_storage_succeeded_samples_total{instance=~\"$instance\",url=\"$url\"}[$__rate_interval])\n      or\n        rate(prometheus_remote_storage_samples_total{instance=~\"$instance\",url=\"$url\"}[$__rate_interval])\n    )\n-\n  (\n      rate(prometheus_remote_storage_dropped_samples_total{instance=~\"$instance\",url=\"$url\"}[$__rate_interval])\n    or\n      rate(prometheus_remote_storage_samples_dropped_total{instance=~\"$instance\",url=\"$url\"}[$__rate_interval])\n  )",
+                    "query": "  rate(prometheus_remote_storage_samples_in_total{instance=~\"$instance\"}[$__rate_interval])\n- ignoring (remote_name, url) group_right (instance)\n      rate(\n        prometheus_remote_storage_succeeded_samples_total{instance=~\"$instance\",url=\"$url\"}[$__rate_interval]\n      )\n    or\n      rate(prometheus_remote_storage_samples_total{instance=~\"$instance\",url=\"$url\"}[$__rate_interval])\n  -\n      rate(\n        prometheus_remote_storage_dropped_samples_total{instance=~\"$instance\",url=\"$url\"}[$__rate_interval]\n      )\n    or\n      rate(\n        prometheus_remote_storage_samples_dropped_total{instance=~\"$instance\",url=\"$url\"}[$__rate_interval]\n      )",
                     "seriesNameFormat": "{{instance}} - {{remote_name}} - {{url}} - Metrics"
                   }
                 }
@@ -492,7 +492,7 @@
                       "kind": "PrometheusDatasource",
                       "name": "prometheus-datasource"
                     },
-                    "query": "  rate(prometheus_remote_storage_dropped_samples_total{instance=~\"$instance\",url=\"$url\"}[$__rate_interval])\nor\n  rate(prometheus_remote_storage_samples_dropped_total{instance=~\"$instance\",url=\"$url\"}[$__rate_interval])",
+                    "query": "  rate(\n    prometheus_remote_storage_dropped_samples_total{instance=~\"$instance\",url=\"$url\"}[$__rate_interval]\n  )\nor\n  rate(\n    prometheus_remote_storage_samples_dropped_total{instance=~\"$instance\",url=\"$url\"}[$__rate_interval]\n  )",
                     "seriesNameFormat": "{{instance}} - {{remote_name}} - {{url}} - Metrics"
                   }
                 }
@@ -528,7 +528,7 @@
                       "kind": "PrometheusDatasource",
                       "name": "prometheus-datasource"
                     },
-                    "query": "  rate(prometheus_remote_storage_failed_samples_total{instance=~\"$instance\",url=\"$url\"}[$__rate_interval])\nor\n  rate(prometheus_remote_storage_samples_failed_total{instance=~\"$instance\",url=\"$url\"}[$__rate_interval])",
+                    "query": "  rate(\n    prometheus_remote_storage_failed_samples_total{instance=~\"$instance\",url=\"$url\"}[$__rate_interval]\n  )\nor\n  rate(\n    prometheus_remote_storage_samples_failed_total{instance=~\"$instance\",url=\"$url\"}[$__rate_interval]\n  )",
                     "seriesNameFormat": "{{instance}} - {{remote_name}} - {{url}} - Metrics"
                   }
                 }
@@ -564,7 +564,7 @@
                       "kind": "PrometheusDatasource",
                       "name": "prometheus-datasource"
                     },
-                    "query": "  rate(prometheus_remote_storage_retried_samples_total{instance=~\"$instance\",url=~\"$url\"}[$__rate_interval])\nor\n  rate(prometheus_remote_storage_samples_retried_total{instance=~\"$instance\",url=~\"$url\"}[$__rate_interval])",
+                    "query": "  rate(\n    prometheus_remote_storage_retried_samples_total{instance=~\"$instance\",url=\"$url\"}[$__rate_interval]\n  )\nor\n  rate(\n    prometheus_remote_storage_samples_retried_total{instance=~\"$instance\",url=~\"$url\"}[$__rate_interval]\n  )",
                     "seriesNameFormat": "{{instance}} - {{remote_name}} - {{url}} - Metrics"
                   }
                 }
@@ -600,7 +600,7 @@
                       "kind": "PrometheusDatasource",
                       "name": "prometheus-datasource"
                     },
-                    "query": "rate(prometheus_remote_storage_enqueue_retries_total{instance=~\"$instance\",url=~\"$url\"}[$__rate_interval])",
+                    "query": "rate(\n  prometheus_remote_storage_enqueue_retries_total{instance=~\"$instance\",url=~\"$url\"}[$__rate_interval]\n)",
                     "seriesNameFormat": "{{instance}} - {{remote_name}} - {{url}} - Metrics"
                   }
                 }

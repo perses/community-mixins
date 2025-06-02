@@ -8,9 +8,12 @@ import (
 	panelgroup "github.com/perses/perses/go-sdk/panel-group"
 	listVar "github.com/perses/perses/go-sdk/variable/list-variable"
 	labelValuesVar "github.com/perses/plugins/prometheus/sdk/go/variable/label-values"
+	"github.com/perses/promql-builder/label"
+	"github.com/perses/promql-builder/vector"
+	"github.com/prometheus/prometheus/model/labels"
 )
 
-func withPrometheusRwTimestamps(datasource string, labelMatcher promql.LabelMatcher) dashboard.Option {
+func withPrometheusRwTimestamps(datasource string, labelMatcher *labels.Matcher) dashboard.Option {
 	return dashboard.AddPanelGroup("Timestamps",
 		panelgroup.PanelsPerLine(2),
 		panels.PrometheusRemoteStorageTimestampLag(datasource, labelMatcher),
@@ -18,14 +21,14 @@ func withPrometheusRwTimestamps(datasource string, labelMatcher promql.LabelMatc
 	)
 }
 
-func withPrometheusRwSamples(datasource string, labelMatcher promql.LabelMatcher) dashboard.Option {
+func withPrometheusRwSamples(datasource string, labelMatcher *labels.Matcher) dashboard.Option {
 	return dashboard.AddPanelGroup("Samples",
 		panelgroup.PanelsPerLine(1),
 		panels.PrometheusRemoteStorageSampleRate(datasource, labelMatcher),
 	)
 }
 
-func withPrometheusRwShard(datasource string, labelMatcher promql.LabelMatcher) dashboard.Option {
+func withPrometheusRwShard(datasource string, labelMatcher *labels.Matcher) dashboard.Option {
 	return dashboard.AddPanelGroup("Shards",
 		panelgroup.PanelsPerLine(2),
 		panels.PrometheusRemoteStorageCurrentShards(datasource, labelMatcher),
@@ -35,7 +38,7 @@ func withPrometheusRwShard(datasource string, labelMatcher promql.LabelMatcher) 
 	)
 }
 
-func withPrometheusRwShardDetails(datasource string, labelMatcher promql.LabelMatcher) dashboard.Option {
+func withPrometheusRwShardDetails(datasource string, labelMatcher *labels.Matcher) dashboard.Option {
 	return dashboard.AddPanelGroup("Shard Details",
 		panelgroup.PanelsPerLine(2),
 		panels.PrometheusRemoteStorageShardCapacity(datasource, labelMatcher),
@@ -43,7 +46,7 @@ func withPrometheusRwShardDetails(datasource string, labelMatcher promql.LabelMa
 	)
 }
 
-func withPrometheusRwSegments(datasource string, labelMatcher promql.LabelMatcher) dashboard.Option {
+func withPrometheusRwSegments(datasource string, labelMatcher *labels.Matcher) dashboard.Option {
 	return dashboard.AddPanelGroup("Segments",
 		panelgroup.PanelsPerLine(2),
 		panels.PrometheusTSDBCurrentSegment(datasource, labelMatcher),
@@ -51,7 +54,7 @@ func withPrometheusRwSegments(datasource string, labelMatcher promql.LabelMatche
 	)
 }
 
-func withPrometheusRwMiscRates(datasource string, labelMatcher promql.LabelMatcher) dashboard.Option {
+func withPrometheusRwMiscRates(datasource string, labelMatcher *labels.Matcher) dashboard.Option {
 	return dashboard.AddPanelGroup("Misc. Rates",
 		panelgroup.PanelsPerLine(4),
 		panels.PrometheusRemoteStorageDroppedSamplesRate(datasource, labelMatcher),
@@ -62,7 +65,7 @@ func withPrometheusRwMiscRates(datasource string, labelMatcher promql.LabelMatch
 }
 
 func BuildPrometheusRemoteWrite(project string, datasource string, clusterLabelName string) dashboards.DashboardResult {
-	clusterLabelMatcher := dashboards.GetClusterLabelMatcher(clusterLabelName)
+	clusterLabelMatcher := dashboards.GetClusterLabelMatcherV2(clusterLabelName)
 	return dashboards.NewDashboardResult(
 		dashboard.New("prometheus-remote-write",
 			dashboard.Name("Prometheus / Remote Write"),
@@ -72,10 +75,10 @@ func BuildPrometheusRemoteWrite(project string, datasource string, clusterLabelN
 				listVar.List(
 					labelValuesVar.PrometheusLabelValues("instance",
 						labelValuesVar.Matchers(
-							promql.SetLabelMatchers(
-								"prometheus_remote_storage_shards",
-								[]promql.LabelMatcher{clusterLabelMatcher},
-							),
+							promql.SetLabelMatchersV2(
+								vector.New(vector.WithMetricName("prometheus_remote_storage_shards")),
+								[]*labels.Matcher{clusterLabelMatcher},
+							).Pretty(0),
 						),
 						dashboards.AddVariableDatasource(datasource),
 					),
@@ -86,10 +89,15 @@ func BuildPrometheusRemoteWrite(project string, datasource string, clusterLabelN
 				listVar.List(
 					labelValuesVar.PrometheusLabelValues("url",
 						labelValuesVar.Matchers(
-							promql.SetLabelMatchers(
-								"prometheus_remote_storage_shards{instance='$instance'}",
-								[]promql.LabelMatcher{clusterLabelMatcher},
-							),
+							promql.SetLabelMatchersV2(
+								vector.New(
+									vector.WithMetricName("prometheus_remote_storage_shards"),
+									vector.WithLabelMatchers(
+										label.New("instance").Equal("$instance"),
+									),
+								),
+								[]*labels.Matcher{clusterLabelMatcher},
+							).Pretty(0),
 						),
 						dashboards.AddVariableDatasource(datasource),
 					),
