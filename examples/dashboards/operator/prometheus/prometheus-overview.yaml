@@ -206,9 +206,13 @@ spec:
                   kind: PrometheusDatasource
                   name: prometheus-datasource
                 query: |2-
-                    rate(prometheus_target_interval_length_seconds_sum{instance=~"$instance",job=~"$job"}[$__rate_interval])
+                    rate(
+                      prometheus_target_interval_length_seconds_sum{instance=~"$instance",job=~"$job"}[$__rate_interval]
+                    )
                   /
-                    rate(prometheus_target_interval_length_seconds_count{instance=~"$instance",job=~"$job"}[$__rate_interval])
+                    rate(
+                      prometheus_target_interval_length_seconds_count{instance=~"$instance",job=~"$job"}[$__rate_interval]
+                    )
                 seriesNameFormat: '{{job}} - {{instance}} - {{interval}} Configured'
     "2_1":
       kind: Panel
@@ -321,7 +325,10 @@ spec:
                 datasource:
                   kind: PrometheusDatasource
                   name: prometheus-datasource
-                query: rate(prometheus_tsdb_head_samples_appended_total{instance=~"$instance",job=~"$job"}[$__rate_interval])
+                query: |-
+                  rate(
+                    prometheus_tsdb_head_samples_appended_total{instance=~"$instance",job=~"$job"}[$__rate_interval]
+                  )
                 seriesNameFormat: '{{job}} - {{instance}} - {{remote_name}} - {{url}}'
     "3_0":
       kind: Panel

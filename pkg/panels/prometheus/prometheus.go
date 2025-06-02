@@ -6,6 +6,7 @@ import (
 	"github.com/perses/perses/go-sdk/panel"
 	panelgroup "github.com/perses/perses/go-sdk/panel-group"
 	"github.com/perses/plugins/prometheus/sdk/go/query"
+	"github.com/prometheus/prometheus/model/labels"
 
 	commonSdk "github.com/perses/perses/go-sdk/common"
 	tablePanel "github.com/perses/plugins/table/sdk/go"
@@ -20,7 +21,7 @@ import (
 // The panel shows:
 // - Instance count by job and version
 // - Version information per instance
-func PrometheusStatsTable(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
+func PrometheusStatsTable(datasourceName string, labelMatchers ...*labels.Matcher) panelgroup.Option {
 	return panelgroup.AddPanel("Prometheus Stats",
 		tablePanel.Table(
 			tablePanel.WithColumnSettings([]tablePanel.ColumnSettings{
@@ -48,7 +49,10 @@ func PrometheusStatsTable(datasourceName string, labelMatchers ...promql.LabelMa
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchers("count by (job, instance, version) (prometheus_build_info{job=~'$job', instance=~'$instance'})", labelMatchers),
+				promql.SetLabelMatchersV2(
+					PrometheusCommonPanelQueries["PrometheusStatsTable"],
+					labelMatchers,
+				).Pretty(0),
 				dashboards.AddQueryDataSource(datasourceName),
 			),
 		),
@@ -70,7 +74,7 @@ func PrometheusStatsTable(datasourceName string, labelMatchers ...promql.LabelMa
 //
 // Returns:
 //   - panelgroup.Option: The configured panel option.
-func PrometheusTargetSync(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
+func PrometheusTargetSync(datasourceName string, labelMatchers ...*labels.Matcher) panelgroup.Option {
 	return panelgroup.AddPanel("Target Sync",
 		panel.Description("Monitors target synchronization time for Prometheus instances"),
 		timeSeriesPanel.Chart(
@@ -86,7 +90,10 @@ func PrometheusTargetSync(datasourceName string, labelMatchers ...promql.LabelMa
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchers("sum(rate(prometheus_target_sync_length_seconds_sum{job=~'$job',instance=~'$instance'}[$__rate_interval])) by (job, scrape_job, instance)", labelMatchers),
+				promql.SetLabelMatchersV2(
+					PrometheusCommonPanelQueries["PrometheusTargetSync"],
+					labelMatchers,
+				).Pretty(0),
 				dashboards.AddQueryDataSource(datasourceName),
 				query.SeriesNameFormat("{{job}} - {{instance}} - Metrics"),
 			),
@@ -109,7 +116,7 @@ func PrometheusTargetSync(datasourceName string, labelMatchers ...promql.LabelMa
 //
 // Returns:
 //   - panelgroup.Option: The configured panel option.
-func PrometheusTargets(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
+func PrometheusTargets(datasourceName string, labelMatchers ...*labels.Matcher) panelgroup.Option {
 	return panelgroup.AddPanel("Targets",
 		panel.Description("Shows discovered targets across Prometheus instances"),
 		timeSeriesPanel.Chart(
@@ -120,7 +127,10 @@ func PrometheusTargets(datasourceName string, labelMatchers ...promql.LabelMatch
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchers("sum by (job, instance) (prometheus_sd_discovered_targets{job=~'$job',instance=~'$instance'})", labelMatchers),
+				promql.SetLabelMatchersV2(
+					PrometheusCommonPanelQueries["PrometheusTargets"],
+					labelMatchers,
+				).Pretty(0),
 				dashboards.AddQueryDataSource(datasourceName),
 				query.SeriesNameFormat("{{job}} - {{instance}} - Metrics"),
 			),
@@ -143,7 +153,7 @@ func PrometheusTargets(datasourceName string, labelMatchers ...promql.LabelMatch
 //
 // Returns:
 //   - panelgroup.Option: The configured panel option.
-func PrometheusAverageScrapeIntervalDuration(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
+func PrometheusAverageScrapeIntervalDuration(datasourceName string, labelMatchers ...*labels.Matcher) panelgroup.Option {
 	return panelgroup.AddPanel("Average Scrape Interval Duration",
 		panel.Description("Shows average interval between scrapes for Prometheus targets"),
 		timeSeriesPanel.Chart(
@@ -159,9 +169,10 @@ func PrometheusAverageScrapeIntervalDuration(datasourceName string, labelMatcher
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchers("rate(prometheus_target_interval_length_seconds_sum{job=~'$job',instance=~'$instance'}[$__rate_interval]) / rate(prometheus_target_interval_length_seconds_count{job=~'$job',instance=~'$instance'}[$__rate_interval])",
+				promql.SetLabelMatchersV2(
+					PrometheusCommonPanelQueries["PrometheusAverageScrapeIntervalDuration"],
 					labelMatchers,
-				),
+				).Pretty(0),
 				dashboards.AddQueryDataSource(datasourceName),
 				query.SeriesNameFormat("{{job}} - {{instance}} - {{interval}} Configured"),
 			),
@@ -181,7 +192,7 @@ func PrometheusAverageScrapeIntervalDuration(datasourceName string, labelMatcher
 // The panel shows:
 // - Different types of scrape failures
 // - Rate of failures per type and target
-func PrometheusScrapeFailures(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
+func PrometheusScrapeFailures(datasourceName string, labelMatchers ...*labels.Matcher) panelgroup.Option {
 	return panelgroup.AddPanel("Scrape failures",
 		panel.Description("Shows scrape failure metrics for Prometheus targets"),
 		timeSeriesPanel.Chart(
@@ -192,35 +203,50 @@ func PrometheusScrapeFailures(datasourceName string, labelMatchers ...promql.Lab
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchers("sum by (job, instance) (rate(prometheus_target_scrapes_exceeded_body_size_limit_total{job=~'$job',instance=~'$instance'}[$__rate_interval]))", labelMatchers),
+				promql.SetLabelMatchersV2(
+					PrometheusCommonPanelQueries["PrometheusScrapeFailures_exceededBodySizeLimit"],
+					labelMatchers,
+				).Pretty(0),
 				dashboards.AddQueryDataSource(datasourceName),
 				query.SeriesNameFormat("exceeded body size limit: {{job}} - {{instance}} - Metrics"),
 			),
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchers("sum by (job, instance) (rate(prometheus_target_scrapes_exceeded_sample_limit_total{job=~'$job',instance=~'$instance'}[$__rate_interval]))", labelMatchers),
+				promql.SetLabelMatchersV2(
+					PrometheusCommonPanelQueries["PrometheusScrapeFailures_exceededSampleLimit"],
+					labelMatchers,
+				).Pretty(0),
 				dashboards.AddQueryDataSource(datasourceName),
 				query.SeriesNameFormat("exceeded sample limit: {{job}} - {{instance}} - Metrics"),
 			),
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchers("sum by (job, instance) (rate(prometheus_target_scrapes_sample_duplicate_timestamp_total{job=~'$job',instance=~'$instance'}[$__rate_interval]))", labelMatchers),
+				promql.SetLabelMatchersV2(
+					PrometheusCommonPanelQueries["PrometheusScrapeFailures_duplicateTimestamp"],
+					labelMatchers,
+				).Pretty(0),
 				dashboards.AddQueryDataSource(datasourceName),
 				query.SeriesNameFormat("duplicate timestamp: {{job}} - {{instance}} - Metrics"),
 			),
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchers("sum by (job, instance) (rate(prometheus_target_scrapes_sample_out_of_bounds_total{job=~'$job',instance=~'$instance'}[$__rate_interval]))", labelMatchers),
+				promql.SetLabelMatchersV2(
+					PrometheusCommonPanelQueries["PrometheusScrapeFailures_outOfBounds"],
+					labelMatchers,
+				).Pretty(0),
 				dashboards.AddQueryDataSource(datasourceName),
 				query.SeriesNameFormat("out of bounds: {{job}} - {{instance}} - Metrics"),
 			),
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchers("sum by (job, instance) (rate(prometheus_target_scrapes_sample_out_of_order_total{job=~'$job',instance=~'$instance'}[$__rate_interval]))", labelMatchers),
+				promql.SetLabelMatchersV2(
+					PrometheusCommonPanelQueries["PrometheusScrapeFailures_outOfOrder"],
+					labelMatchers,
+				).Pretty(0),
 				dashboards.AddQueryDataSource(datasourceName),
 				query.SeriesNameFormat("out of order: {{job}} - {{instance}} - Metrics"),
 			),
@@ -236,7 +262,7 @@ func PrometheusScrapeFailures(datasourceName string, labelMatchers ...promql.Lab
 // The panel shows:
 // - Rate of samples being appended
 // - Breakdown by job and instance
-func PrometheusAppendedSamples(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
+func PrometheusAppendedSamples(datasourceName string, labelMatchers ...*labels.Matcher) panelgroup.Option {
 	return panelgroup.AddPanel("Appended Samples",
 		panel.Description("Shows rate of samples appended to Prometheus TSDB"),
 		timeSeriesPanel.Chart(
@@ -247,7 +273,10 @@ func PrometheusAppendedSamples(datasourceName string, labelMatchers ...promql.La
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchers("rate(prometheus_tsdb_head_samples_appended_total{job=~'$job',instance=~'$instance'}[$__rate_interval])", labelMatchers),
+				promql.SetLabelMatchersV2(
+					PrometheusCommonPanelQueries["PrometheusAppendedSamples"],
+					labelMatchers,
+				).Pretty(0),
 				dashboards.AddQueryDataSource(datasourceName),
 				query.SeriesNameFormat("{{job}} - {{instance}} - {{remote_name}} - {{url}}"),
 			),
@@ -262,7 +291,7 @@ func PrometheusAppendedSamples(datasourceName string, labelMatchers ...promql.La
 // The panel shows:
 // - Current number of active series in TSDB head
 // - Breakdown by job and instance
-func PrometheusHeadSeries(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
+func PrometheusHeadSeries(datasourceName string, labelMatchers ...*labels.Matcher) panelgroup.Option {
 	return panelgroup.AddPanel("Head Series",
 		panel.Description("Shows number of series in Prometheus TSDB head"),
 		timeSeriesPanel.Chart(
@@ -273,7 +302,10 @@ func PrometheusHeadSeries(datasourceName string, labelMatchers ...promql.LabelMa
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchers("prometheus_tsdb_head_series{job=~'$job',instance=~'$instance'}", labelMatchers),
+				promql.SetLabelMatchersV2(
+					PrometheusCommonPanelQueries["PrometheusHeadSeries"],
+					labelMatchers,
+				).Pretty(0),
 				dashboards.AddQueryDataSource(datasourceName),
 				query.SeriesNameFormat("{{job}} - {{instance}} - Head Series"),
 			),
@@ -289,7 +321,7 @@ func PrometheusHeadSeries(datasourceName string, labelMatchers ...promql.LabelMa
 // The panel shows:
 // - Current number of chunks in TSDB head
 // - Breakdown by job and instance
-func PrometheusHeadChunks(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
+func PrometheusHeadChunks(datasourceName string, labelMatchers ...*labels.Matcher) panelgroup.Option {
 	return panelgroup.AddPanel("Head Chunks",
 		panel.Description("Shows number of chunks in Prometheus TSDB head"),
 		timeSeriesPanel.Chart(
@@ -300,7 +332,10 @@ func PrometheusHeadChunks(datasourceName string, labelMatchers ...promql.LabelMa
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchers("prometheus_tsdb_head_chunks{job=~'$job',instance=~'$instance'}", labelMatchers),
+				promql.SetLabelMatchersV2(
+					PrometheusCommonPanelQueries["PrometheusHeadChunks"],
+					labelMatchers,
+				).Pretty(0),
 				dashboards.AddQueryDataSource(datasourceName),
 				query.SeriesNameFormat("{{job}} - {{instance}} - Head Chunks"),
 			),
@@ -322,7 +357,7 @@ func PrometheusHeadChunks(datasourceName string, labelMatchers ...promql.LabelMa
 //
 // Returns:
 //   - panelgroup.Option: The configured panel option.
-func PrometheusQueryRate(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
+func PrometheusQueryRate(datasourceName string, labelMatchers ...*labels.Matcher) panelgroup.Option {
 	return panelgroup.AddPanel("Query Rate",
 		panel.Description("Shows Prometheus query rate metrics"),
 		timeSeriesPanel.Chart(
@@ -333,7 +368,10 @@ func PrometheusQueryRate(datasourceName string, labelMatchers ...promql.LabelMat
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchers("rate(prometheus_engine_query_duration_seconds_count{job=~'$job',instance=~'$instance',slice='inner_eval'}[$__rate_interval])", labelMatchers),
+				promql.SetLabelMatchersV2(
+					PrometheusCommonPanelQueries["PrometheusQueryRate"],
+					labelMatchers,
+				).Pretty(0),
 				dashboards.AddQueryDataSource(datasourceName),
 				query.SeriesNameFormat("{{job}} - {{instance}} - Query Rate"),
 			),
@@ -357,7 +395,7 @@ func PrometheusQueryRate(datasourceName string, labelMatchers ...promql.LabelMat
 //
 // Returns:
 //   - panelgroup.Option: The configured panel option.
-func PrometheusQueryStateDuration(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
+func PrometheusQueryStateDuration(datasourceName string, labelMatchers ...*labels.Matcher) panelgroup.Option {
 	return panelgroup.AddPanel("Stage Duration",
 		panel.Description("Shows duration of different Prometheus query stages"),
 		timeSeriesPanel.Chart(
@@ -373,7 +411,10 @@ func PrometheusQueryStateDuration(datasourceName string, labelMatchers ...promql
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchers("max by (slice) (prometheus_engine_query_duration_seconds{quantile='0.9', job=~'$job',instance=~'$instance'})", labelMatchers),
+				promql.SetLabelMatchersV2(
+					PrometheusCommonPanelQueries["PrometheusQueryStateDuration"],
+					labelMatchers,
+				).Pretty(0),
 				dashboards.AddQueryDataSource(datasourceName),
 				query.SeriesNameFormat("{{slice}} - Duration"),
 			),
@@ -392,7 +433,7 @@ func PrometheusQueryStateDuration(datasourceName string, labelMatchers ...promql
 // The panel shows:
 // - Lag between storage and queue timestamps
 // - Breakdown by remote storage target
-func PrometheusRemoteStorageTimestampLag(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
+func PrometheusRemoteStorageTimestampLag(datasourceName string, labelMatchers ...*labels.Matcher) panelgroup.Option {
 	return panelgroup.AddPanel("Timestamp Lag",
 		panel.Description("Shows timestamp lag in remote storage"),
 		timeSeriesPanel.Chart(
@@ -403,10 +444,10 @@ func PrometheusRemoteStorageTimestampLag(datasourceName string, labelMatchers ..
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchers(
-					"(prometheus_remote_storage_highest_timestamp_in_seconds{instance=~'$instance'} -  ignoring(remote_name, url) group_right(instance) (prometheus_remote_storage_queue_highest_sent_timestamp_seconds{instance=~'$instance', url='$url'} != 0))",
+				promql.SetLabelMatchersV2(
+					PrometheusCommonPanelQueries["PrometheusRemoteStorageTimestampLag"],
 					labelMatchers,
-				),
+				).Pretty(0),
 				dashboards.AddQueryDataSource(datasourceName),
 				query.SeriesNameFormat("{{instance}} - {{remote_name}} - {{url}} - Segment"),
 			),
@@ -423,7 +464,7 @@ func PrometheusRemoteStorageTimestampLag(datasourceName string, labelMatchers ..
 // The panel shows:
 // - Rate of lag between storage and queue timestamps
 // - 5-minute rate changes per target
-func PrometheusRemoteStorageRateLag(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
+func PrometheusRemoteStorageRateLag(datasourceName string, labelMatchers ...*labels.Matcher) panelgroup.Option {
 	return panelgroup.AddPanel("Rate",
 		panel.Description("Shows rate metrics over 5 minute intervals"),
 		timeSeriesPanel.Chart(
@@ -434,10 +475,10 @@ func PrometheusRemoteStorageRateLag(datasourceName string, labelMatchers ...prom
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchers(
-					"clamp_min(rate(prometheus_remote_storage_highest_timestamp_in_seconds{instance=~'$instance'}[$__rate_interval])  - ignoring (remote_name, url) group_right(instance) rate(prometheus_remote_storage_queue_highest_sent_timestamp_seconds{instance=~'$instance', url='$url'}[$__rate_interval]), 0)",
+				promql.SetLabelMatchersV2(
+					PrometheusCommonPanelQueries["PrometheusRemoteStorageRateLag"],
 					labelMatchers,
-				),
+				).Pretty(0),
 				dashboards.AddQueryDataSource(datasourceName),
 				query.SeriesNameFormat("{{instance}} - {{remote_name}} - {{url}} - Metrics"),
 			),
@@ -463,7 +504,7 @@ func PrometheusRemoteStorageRateLag(datasourceName string, labelMatchers ...prom
 //
 // Returns:
 //   - panelgroup.Option: The configured panel option.
-func PrometheusRemoteStorageSampleRate(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
+func PrometheusRemoteStorageSampleRate(datasourceName string, labelMatchers ...*labels.Matcher) panelgroup.Option {
 	return panelgroup.AddPanel("Rate, in vs. succeeded or dropped",
 		panel.Description("Shows rate of samples in remote storage"),
 		timeSeriesPanel.Chart(
@@ -474,10 +515,10 @@ func PrometheusRemoteStorageSampleRate(datasourceName string, labelMatchers ...p
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchers(
-					"rate(prometheus_remote_storage_samples_in_total{instance=~'$instance'}[$__rate_interval]) - ignoring(remote_name, url) group_right(instance) (rate(prometheus_remote_storage_succeeded_samples_total{instance=~'$instance', url='$url'}[$__rate_interval]) or rate(prometheus_remote_storage_samples_total{instance=~'$instance', url='$url'}[$__rate_interval])) - (rate(prometheus_remote_storage_dropped_samples_total{instance=~'$instance', url='$url'}[$__rate_interval]) or rate(prometheus_remote_storage_samples_dropped_total{instance=~'$instance', url='$url'}[$__rate_interval]))",
+				promql.SetLabelMatchersV2(
+					PrometheusCommonPanelQueries["PrometheusRemoteStorageSampleRate"],
 					labelMatchers,
-				),
+				).Pretty(0),
 				dashboards.AddQueryDataSource(datasourceName),
 				query.SeriesNameFormat("{{instance}} - {{remote_name}} - {{url}} - Metrics"),
 			),
@@ -494,7 +535,7 @@ func PrometheusRemoteStorageSampleRate(datasourceName string, labelMatchers ...p
 // The panel shows:
 // - Current shard count per target
 // - Breakdown by instance and URL
-func PrometheusRemoteStorageCurrentShards(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
+func PrometheusRemoteStorageCurrentShards(datasourceName string, labelMatchers ...*labels.Matcher) panelgroup.Option {
 	return panelgroup.AddPanel("Current Shards",
 		panel.Description("Shows current number of shards in remote storage"),
 		timeSeriesPanel.Chart(
@@ -505,10 +546,10 @@ func PrometheusRemoteStorageCurrentShards(datasourceName string, labelMatchers .
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchers(
-					"prometheus_remote_storage_shards{instance=~'$instance', url='$url'}",
+				promql.SetLabelMatchersV2(
+					PrometheusCommonPanelQueries["PrometheusRemoteStorageCurrentShards"],
 					labelMatchers,
-				),
+				).Pretty(0),
 				dashboards.AddQueryDataSource(datasourceName),
 				query.SeriesNameFormat("{{instance}} - {{remote_name}} - {{url}} - Metrics"),
 			),
@@ -525,7 +566,7 @@ func PrometheusRemoteStorageCurrentShards(datasourceName string, labelMatchers .
 // The panel shows:
 // - Target shard count per remote storage
 // - Configuration vs actual shards
-func PrometheusRemoteStorageDesiredShards(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
+func PrometheusRemoteStorageDesiredShards(datasourceName string, labelMatchers ...*labels.Matcher) panelgroup.Option {
 	return panelgroup.AddPanel("Desired Shards",
 		panel.Description("Shows desired number of shards in remote storage"),
 		timeSeriesPanel.Chart(
@@ -536,10 +577,10 @@ func PrometheusRemoteStorageDesiredShards(datasourceName string, labelMatchers .
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchers(
-					"prometheus_remote_storage_shards_desired{instance=~'$instance', url='$url'}",
+				promql.SetLabelMatchersV2(
+					PrometheusCommonPanelQueries["PrometheusRemoteStorageDesiredShards"],
 					labelMatchers,
-				),
+				).Pretty(0),
 				dashboards.AddQueryDataSource(datasourceName),
 				query.SeriesNameFormat("{{instance}} - {{remote_name}} - {{url}} - Metrics"),
 			),
@@ -556,7 +597,7 @@ func PrometheusRemoteStorageDesiredShards(datasourceName string, labelMatchers .
 // The panel shows:
 // - Maximum shard limit per target
 // - Upper bounds for scaling
-func PrometheusRemoteStorageMaxShards(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
+func PrometheusRemoteStorageMaxShards(datasourceName string, labelMatchers ...*labels.Matcher) panelgroup.Option {
 	return panelgroup.AddPanel("Max Shards",
 		panel.Description("Shows maximum number of shards in remote storage"),
 		timeSeriesPanel.Chart(
@@ -567,10 +608,10 @@ func PrometheusRemoteStorageMaxShards(datasourceName string, labelMatchers ...pr
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchers(
-					"prometheus_remote_storage_shards_max{instance=~'$instance', url='$url'}",
+				promql.SetLabelMatchersV2(
+					PrometheusCommonPanelQueries["PrometheusRemoteStorageMaxShards"],
 					labelMatchers,
-				),
+				).Pretty(0),
 				dashboards.AddQueryDataSource(datasourceName),
 				query.SeriesNameFormat("{{instance}} - {{remote_name}} - {{url}} - Metrics"),
 			),
@@ -587,7 +628,7 @@ func PrometheusRemoteStorageMaxShards(datasourceName string, labelMatchers ...pr
 // The panel shows:
 // - Minimum shard requirement per target
 // - Lower bounds for scaling
-func PrometheusRemoteStorageMinShards(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
+func PrometheusRemoteStorageMinShards(datasourceName string, labelMatchers ...*labels.Matcher) panelgroup.Option {
 	return panelgroup.AddPanel("Min Shards",
 		panel.Description("Shows minimum number of shards in remote storage"),
 		timeSeriesPanel.Chart(
@@ -598,10 +639,10 @@ func PrometheusRemoteStorageMinShards(datasourceName string, labelMatchers ...pr
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchers(
-					"prometheus_remote_storage_shards_min{instance=~'$instance', url='$url'}",
+				promql.SetLabelMatchersV2(
+					PrometheusCommonPanelQueries["PrometheusRemoteStorageMinShards"],
 					labelMatchers,
-				),
+				).Pretty(0),
 				dashboards.AddQueryDataSource(datasourceName),
 				query.SeriesNameFormat("{{instance}} - {{remote_name}} - {{url}} - Metrics"),
 			),
@@ -618,7 +659,7 @@ func PrometheusRemoteStorageMinShards(datasourceName string, labelMatchers ...pr
 // The panel shows:
 // - Shard capacity per remote storage target
 // - Breakdown by instance and URL
-func PrometheusRemoteStorageShardCapacity(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
+func PrometheusRemoteStorageShardCapacity(datasourceName string, labelMatchers ...*labels.Matcher) panelgroup.Option {
 	return panelgroup.AddPanel("Shard Capacity",
 		panel.Description("Shows shard capacity in remote storage"),
 		timeSeriesPanel.Chart(
@@ -629,10 +670,10 @@ func PrometheusRemoteStorageShardCapacity(datasourceName string, labelMatchers .
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchers(
-					"prometheus_remote_storage_shard_capacity{instance=~'$instance', url='$url'}",
+				promql.SetLabelMatchersV2(
+					PrometheusCommonPanelQueries["PrometheusRemoteStorageShardCapacity"],
 					labelMatchers,
-				),
+				).Pretty(0),
 				dashboards.AddQueryDataSource(datasourceName),
 				query.SeriesNameFormat("{{instance}} - {{remote_name}} - {{url}} - Metrics"),
 			),
@@ -650,7 +691,7 @@ func PrometheusRemoteStorageShardCapacity(datasourceName string, labelMatchers .
 // The panel shows:
 // - Number of samples waiting to be sent
 // - Breakdown by remote storage target
-func PrometheusRemoteStoragePendingSamples(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
+func PrometheusRemoteStoragePendingSamples(datasourceName string, labelMatchers ...*labels.Matcher) panelgroup.Option {
 	return panelgroup.AddPanel("Pending Samples",
 		panel.Description("Shows number of pending samples in remote storage"),
 		timeSeriesPanel.Chart(
@@ -661,10 +702,10 @@ func PrometheusRemoteStoragePendingSamples(datasourceName string, labelMatchers 
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchers(
-					"prometheus_remote_storage_pending_samples{instance=~'$instance', url='$url'} or prometheus_remote_storage_samples_pending{instance=~'$instance', url='$url'}",
+				promql.SetLabelMatchersV2(
+					PrometheusCommonPanelQueries["PrometheusRemoteStoragePendingSamples"],
 					labelMatchers,
-				),
+				).Pretty(0),
 				dashboards.AddQueryDataSource(datasourceName),
 				query.SeriesNameFormat("{{instance}} - {{remote_name}} - {{url}} - Metrics"),
 			),
@@ -681,7 +722,7 @@ func PrometheusRemoteStoragePendingSamples(datasourceName string, labelMatchers 
 // The panel shows:
 // - Current WAL segment number
 // - Segment progression over time
-func PrometheusTSDBCurrentSegment(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
+func PrometheusTSDBCurrentSegment(datasourceName string, labelMatchers ...*labels.Matcher) panelgroup.Option {
 	return panelgroup.AddPanel("TSDB Current Segment",
 		panel.Description("Shows current TSDB WAL segment"),
 		timeSeriesPanel.Chart(
@@ -692,10 +733,10 @@ func PrometheusTSDBCurrentSegment(datasourceName string, labelMatchers ...promql
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchers(
-					"prometheus_tsdb_wal_segment_current{instance=~'$instance'}",
+				promql.SetLabelMatchersV2(
+					PrometheusCommonPanelQueries["PrometheusTSDBCurrentSegment"],
 					labelMatchers,
-				),
+				).Pretty(0),
 				dashboards.AddQueryDataSource(datasourceName),
 				query.SeriesNameFormat("{{instance}} - Segment - Metrics"),
 			),
@@ -712,7 +753,7 @@ func PrometheusTSDBCurrentSegment(datasourceName string, labelMatchers ...promql
 // The panel shows:
 // - Current remote write WAL segment
 // - Segment progression over time
-func PrometheusRemoteWriteCurrentSegment(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
+func PrometheusRemoteWriteCurrentSegment(datasourceName string, labelMatchers ...*labels.Matcher) panelgroup.Option {
 	return panelgroup.AddPanel("Remote Write Current Segment",
 		panel.Description("Shows current remote write WAL segment"),
 		timeSeriesPanel.Chart(
@@ -723,10 +764,10 @@ func PrometheusRemoteWriteCurrentSegment(datasourceName string, labelMatchers ..
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchers(
-					"prometheus_wal_watcher_current_segment{instance=~'$instance'}",
+				promql.SetLabelMatchersV2(
+					PrometheusCommonPanelQueries["PrometheusRemoteWriteCurrentSegment"],
 					labelMatchers,
-				),
+				).Pretty(0),
 				dashboards.AddQueryDataSource(datasourceName),
 				query.SeriesNameFormat("{{instance}} - Segment - Metrics"),
 			),
@@ -744,7 +785,7 @@ func PrometheusRemoteWriteCurrentSegment(datasourceName string, labelMatchers ..
 // The panel shows:
 // - Rate of sample drops per target
 // - Drop patterns over time
-func PrometheusRemoteStorageDroppedSamplesRate(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
+func PrometheusRemoteStorageDroppedSamplesRate(datasourceName string, labelMatchers ...*labels.Matcher) panelgroup.Option {
 	return panelgroup.AddPanel("Dropped Samples Rate",
 		panel.Description("Shows rate of dropped samples in remote storage"),
 		timeSeriesPanel.Chart(
@@ -755,10 +796,10 @@ func PrometheusRemoteStorageDroppedSamplesRate(datasourceName string, labelMatch
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchers(
-					"rate(prometheus_remote_storage_dropped_samples_total{instance=~'$instance', url='$url'}[$__rate_interval]) or rate(prometheus_remote_storage_samples_dropped_total{instance=~'$instance', url='$url'}[$__rate_interval])",
+				promql.SetLabelMatchersV2(
+					PrometheusCommonPanelQueries["PrometheusRemoteStorageDroppedSamplesRate"],
 					labelMatchers,
-				),
+				).Pretty(0),
 				dashboards.AddQueryDataSource(datasourceName),
 				query.SeriesNameFormat("{{instance}} - {{remote_name}} - {{url}} - Metrics"),
 			),
@@ -776,7 +817,7 @@ func PrometheusRemoteStorageDroppedSamplesRate(datasourceName string, labelMatch
 // The panel shows:
 // - Rate of sample failures per target
 // - Failure patterns over time
-func PrometheusRemoteStorageFailedSamplesRate(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
+func PrometheusRemoteStorageFailedSamplesRate(datasourceName string, labelMatchers ...*labels.Matcher) panelgroup.Option {
 	return panelgroup.AddPanel("Failed Samples",
 		panel.Description("Shows rate of failed samples in remote storage"),
 		timeSeriesPanel.Chart(
@@ -787,10 +828,10 @@ func PrometheusRemoteStorageFailedSamplesRate(datasourceName string, labelMatche
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchers(
-					"rate(prometheus_remote_storage_failed_samples_total{instance=~'$instance', url='$url'}[$__rate_interval]) or rate(prometheus_remote_storage_samples_failed_total{instance=~'$instance', url='$url'}[$__rate_interval])",
+				promql.SetLabelMatchersV2(
+					PrometheusCommonPanelQueries["PrometheusRemoteStorageFailedSamplesRate"],
 					labelMatchers,
-				),
+				).Pretty(0),
 				dashboards.AddQueryDataSource(datasourceName),
 				query.SeriesNameFormat("{{instance}} - {{remote_name}} - {{url}} - Metrics"),
 			),
@@ -808,7 +849,7 @@ func PrometheusRemoteStorageFailedSamplesRate(datasourceName string, labelMatche
 // The panel shows:
 // - Rate of sample retries per target
 // - Retry patterns over time
-func PrometheusRemoteStorageRetriedSamplesRate(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
+func PrometheusRemoteStorageRetriedSamplesRate(datasourceName string, labelMatchers ...*labels.Matcher) panelgroup.Option {
 	return panelgroup.AddPanel("Retried Samples",
 		panel.Description("Shows rate of retried samples in remote storage"),
 		timeSeriesPanel.Chart(
@@ -819,10 +860,10 @@ func PrometheusRemoteStorageRetriedSamplesRate(datasourceName string, labelMatch
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchers(
-					"rate(prometheus_remote_storage_retried_samples_total{instance=~'$instance', url=~'$url'}[$__rate_interval]) or rate(prometheus_remote_storage_samples_retried_total{instance=~'$instance', url=~'$url'}[$__rate_interval])",
+				promql.SetLabelMatchersV2(
+					PrometheusCommonPanelQueries["PrometheusRemoteStorageRetriedSamplesRate"],
 					labelMatchers,
-				),
+				).Pretty(0),
 				dashboards.AddQueryDataSource(datasourceName),
 				query.SeriesNameFormat("{{instance}} - {{remote_name}} - {{url}} - Metrics"),
 			),
@@ -839,7 +880,7 @@ func PrometheusRemoteStorageRetriedSamplesRate(datasourceName string, labelMatch
 // The panel shows:
 // - Rate of enqueue retries per target
 // - Retry patterns over time
-func PrometheusRemoteStorageEnqueueRetriesRate(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
+func PrometheusRemoteStorageEnqueueRetriesRate(datasourceName string, labelMatchers ...*labels.Matcher) panelgroup.Option {
 	return panelgroup.AddPanel("Enqueue Retries",
 		panel.Description("Shows rate of enqueue retries in remote storage"),
 		timeSeriesPanel.Chart(
@@ -850,10 +891,10 @@ func PrometheusRemoteStorageEnqueueRetriesRate(datasourceName string, labelMatch
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchers(
-					"rate(prometheus_remote_storage_enqueue_retries_total{instance=~'$instance', url=~'$url'}[$__rate_interval])",
+				promql.SetLabelMatchersV2(
+					PrometheusCommonPanelQueries["PrometheusRemoteStorageEnqueueRetriesRate"],
 					labelMatchers,
-				),
+				).Pretty(0),
 				dashboards.AddQueryDataSource(datasourceName),
 				query.SeriesNameFormat("{{instance}} - {{remote_name}} - {{url}} - Metrics"),
 			),
