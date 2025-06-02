@@ -8,7 +8,7 @@ require (
 	github.com/perses/perses v0.51.0-rc.0
 	github.com/perses/perses-operator v0.1.12
 	github.com/perses/plugins/gaugechart v0.7.1
-	github.com/perses/plugins/markdown v0.7.0
+	github.com/perses/plugins/markdown v0.7.1
 	github.com/perses/plugins/prometheus v0.6.0
 	github.com/perses/plugins/statchart v0.7.1
 	github.com/perses/plugins/table v0.6.0
