@@ -8,9 +8,11 @@ import (
 	panelgroup "github.com/perses/perses/go-sdk/panel-group"
 	listVar "github.com/perses/perses/go-sdk/variable/list-variable"
 	labelValuesVar "github.com/perses/plugins/prometheus/sdk/go/variable/label-values"
+	"github.com/perses/promql-builder/vector"
+	"github.com/prometheus/prometheus/model/labels"
 )
 
-func withAlertsGroup(datasource string, labelMatcher promql.LabelMatcher) dashboard.Option {
+func withAlertsGroup(datasource string, labelMatcher *labels.Matcher) dashboard.Option {
 	return dashboard.AddPanelGroup("Alerts",
 		panelgroup.PanelsPerLine(2),
 		panelgroup.PanelHeight(8),
@@ -19,7 +21,7 @@ func withAlertsGroup(datasource string, labelMatcher promql.LabelMatcher) dashbo
 	)
 }
 
-func withNotificationsGroup(datasource string, labelMatcher promql.LabelMatcher) dashboard.Option {
+func withNotificationsGroup(datasource string, labelMatcher *labels.Matcher) dashboard.Option {
 	return dashboard.AddPanelGroup("Notifications",
 		panelgroup.PanelsPerLine(2),
 		panelgroup.PanelHeight(8),
@@ -29,7 +31,7 @@ func withNotificationsGroup(datasource string, labelMatcher promql.LabelMatcher)
 }
 
 func BuildAlertManagerOverview(project string, datasource string, clusterLabelName string) dashboards.DashboardResult {
-	clusterLabelMatcher := dashboards.GetClusterLabelMatcher(clusterLabelName)
+	clusterLabelMatcher := dashboards.GetClusterLabelMatcherV2(clusterLabelName)
 	return dashboards.NewDashboardResult(
 		dashboard.New("alertmanager-overview",
 			dashboard.ProjectName(project),
@@ -48,10 +50,10 @@ func BuildAlertManagerOverview(project string, datasource string, clusterLabelNa
 				listVar.List(
 					labelValuesVar.PrometheusLabelValues("integration",
 						labelValuesVar.Matchers(
-							promql.SetLabelMatchers(
-								"alertmanager_notifications_total",
-								[]promql.LabelMatcher{clusterLabelMatcher, {Name: "job", Type: "=", Value: "$job"}},
-							),
+							promql.SetLabelMatchersV2(
+								vector.New(vector.WithMetricName("alertmanager_notifications_total")),
+								[]*labels.Matcher{clusterLabelMatcher, {Name: "job", Type: labels.MatchEqual, Value: "$job"}},
+							).Pretty(0),
 						),
 						dashboards.AddVariableDatasource(datasource),
 					),

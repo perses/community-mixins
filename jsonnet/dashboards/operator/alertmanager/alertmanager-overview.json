@@ -235,7 +235,7 @@
                       "kind": "PrometheusDatasource",
                       "name": "prometheus-datasource"
                     },
-                    "query": "sum by (integration, instance) (\n  rate(alertmanager_notifications_failed_total{integration=~\"$integration\",job=~\"$job\"}[$__rate_interval])\n)",
+                    "query": "sum by (integration, instance) (\n  rate(\n    alertmanager_notifications_failed_total{integration=~\"$integration\",job=~\"$job\"}[$__rate_interval]\n  )\n)",
                     "seriesNameFormat": "{{instance}} - {{integration}} - Failed"
                   }
                 }

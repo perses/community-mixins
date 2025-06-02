@@ -167,7 +167,9 @@ spec:
                   name: prometheus-datasource
                 query: |-
                   sum by (integration, instance) (
-                    rate(alertmanager_notifications_failed_total{integration=~"$integration",job=~"$job"}[$__rate_interval])
+                    rate(
+                      alertmanager_notifications_failed_total{integration=~"$integration",job=~"$job"}[$__rate_interval]
+                    )
                   )
                 seriesNameFormat: '{{instance}} - {{integration}} - Failed'
     "1_1":
