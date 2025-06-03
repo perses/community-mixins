@@ -44,6 +44,20 @@ var OpentelemetryCommonPanelQueries = map[string]parser.Expr{
 		label.New("job").EqualRegexp("$job"),
 		label.New("receiver").EqualRegexp("$receiver"),
 	),
+	"SpanProcessorRate_incoming_items": promql.SumByRate(
+		"otelcol_processor_incoming_items_total",
+		[]string{"job", "processor", "signal"},
+		label.New("job").EqualRegexp("$job"),
+		label.New("processor").EqualRegexp("$processor"),
+		label.New("signal").EqualRegexp("traces"),
+	),
+	"SpanProcessorRate_outgoing_items": promql.SumByRate(
+		"otelcol_processor_outgoing_items_total",
+		[]string{"job", "processor", "signal"},
+		label.New("job").EqualRegexp("$job"),
+		label.New("processor").EqualRegexp("$processor"),
+		label.New("signal").EqualRegexp("traces"),
+	),
 }
 
 // OverrideOpentelemetryPanelQueries overrides the OpentelemetryCommonPanelQueries global.

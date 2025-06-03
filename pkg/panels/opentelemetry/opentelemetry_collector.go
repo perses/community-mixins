@@ -127,3 +127,36 @@ func LogRecordsRate(datasource string, labelMatchers ...*labels.Matcher) panelgr
 		),
 	)
 }
+
+func SpanProcessorRate(datasource string, labelMatchers ...*labels.Matcher) panelgroup.Option {
+	return panelgroup.AddPanel("Span Rate",
+		panel.Description("Rate of span processors"),
+		timeSeriesPanel.Chart(
+			timeSeriesPanel.WithYAxis(timeSeriesPanel.YAxis{
+				Format: &commonSdk.Format{
+					Unit: string(commonSdk.DecimalUnit),
+				},
+			}),
+		),
+		panel.AddQuery(
+			query.PromQL(
+				promql.SetLabelMatchersV2(
+					OpentelemetryCommonPanelQueries["SpanProcessorRate_incoming_items"],
+					labelMatchers,
+				).Pretty(0),
+				dashboards.AddQueryDataSource(datasource),
+				query.SeriesNameFormat("Incoming: {{processor}}"),
+			),
+		),
+		panel.AddQuery(
+			query.PromQL(
+				promql.SetLabelMatchersV2(
+					OpentelemetryCommonPanelQueries["SpanProcessorRate_outgoing_items"],
+					labelMatchers,
+				).Pretty(0),
+				dashboards.AddQueryDataSource(datasource),
+				query.SeriesNameFormat("Outgoing: {{processor}}"),
+			),
+		),
+	)
+}

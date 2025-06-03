@@ -20,6 +20,14 @@ func withReceiversGroup(datasource string, clusterLabelMatcher *labels.Matcher) 
 	)
 }
 
+func withProcessorsGroup(datasource string, clusterLabelMatcher *labels.Matcher) dashboard.Option {
+	return dashboard.AddPanelGroup("Processors",
+		panelgroup.PanelsPerLine(3),
+		panelgroup.PanelHeight(8),
+		opentelemetry.SpanProcessorRate(datasource, clusterLabelMatcher),
+	)
+}
+
 func BuildOpenTelemetryCollector(project string, datasource string, clusterLabelName string) dashboards.DashboardResult {
 	clusterLabelMatcher := dashboards.GetClusterLabelMatcherV2(clusterLabelName)
 	return dashboards.NewDashboardResult(
@@ -55,6 +63,7 @@ func BuildOpenTelemetryCollector(project string, datasource string, clusterLabel
 						promqlVar.Datasource(datasource),
 						promqlVar.LabelName("processor"),
 					),
+					listVar.AllowAllValue(true),
 				),
 			),
 			dashboard.AddVariable(
@@ -68,6 +77,7 @@ func BuildOpenTelemetryCollector(project string, datasource string, clusterLabel
 				),
 			),
 			withReceiversGroup(datasource, clusterLabelMatcher),
+			withProcessorsGroup(datasource, clusterLabelMatcher),
 		),
 	).Component("opentelemetry-collector")
 }
