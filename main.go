@@ -16,6 +16,7 @@ import (
 	proxy "github.com/perses/community-dashboards/pkg/dashboards/kubernetes/proxy"
 	scheduler "github.com/perses/community-dashboards/pkg/dashboards/kubernetes/scheduler"
 	nodeexporter "github.com/perses/community-dashboards/pkg/dashboards/node_exporter"
+	"github.com/perses/community-dashboards/pkg/dashboards/opentelemetry"
 	"github.com/perses/community-dashboards/pkg/dashboards/perses"
 	"github.com/perses/community-dashboards/pkg/dashboards/prometheus"
 	"github.com/perses/community-dashboards/pkg/dashboards/tempo"
@@ -70,6 +71,7 @@ func main() {
 	dashboardWriter.Add(apiserver.BuildAPIServerOverview(project, datasource, clusterLabelName))
 	dashboardWriter.Add(tempo.BuildTempoWritesOverview(project, datasource, clusterLabelName))
 	dashboardWriter.Add(tempo.BuildTempoTenantOverview(project, datasource, clusterLabelName))
+	dashboardWriter.Add(opentelemetry.BuildOpenTelemetryCollector(project, datasource, clusterLabelName))
 
 	dashboardWriter.Write()
 }
