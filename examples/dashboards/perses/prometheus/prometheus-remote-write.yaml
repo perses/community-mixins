@@ -455,13 +455,13 @@ spec:
                 - x: 0
                   "y": 0
                   width: 12
-                  height: 6
+                  height: 8
                   content:
                     $ref: '#/spec/panels/0_0'
                 - x: 12
                   "y": 0
                   width: 12
-                  height: 6
+                  height: 8
                   content:
                     $ref: '#/spec/panels/0_1'
         - kind: Grid
@@ -472,7 +472,7 @@ spec:
                 - x: 0
                   "y": 0
                   width: 24
-                  height: 6
+                  height: 8
                   content:
                     $ref: '#/spec/panels/1_0'
         - kind: Grid
@@ -483,25 +483,25 @@ spec:
                 - x: 0
                   "y": 0
                   width: 12
-                  height: 6
+                  height: 8
                   content:
                     $ref: '#/spec/panels/2_0'
                 - x: 12
                   "y": 0
                   width: 12
-                  height: 6
+                  height: 8
                   content:
                     $ref: '#/spec/panels/2_1'
                 - x: 0
-                  "y": 6
+                  "y": 8
                   width: 12
-                  height: 6
+                  height: 8
                   content:
                     $ref: '#/spec/panels/2_2'
                 - x: 12
-                  "y": 6
+                  "y": 8
                   width: 12
-                  height: 6
+                  height: 8
                   content:
                     $ref: '#/spec/panels/2_3'
         - kind: Grid
@@ -512,13 +512,13 @@ spec:
                 - x: 0
                   "y": 0
                   width: 12
-                  height: 6
+                  height: 8
                   content:
                     $ref: '#/spec/panels/3_0'
                 - x: 12
                   "y": 0
                   width: 12
-                  height: 6
+                  height: 8
                   content:
                     $ref: '#/spec/panels/3_1'
         - kind: Grid
@@ -529,13 +529,13 @@ spec:
                 - x: 0
                   "y": 0
                   width: 12
-                  height: 6
+                  height: 8
                   content:
                     $ref: '#/spec/panels/4_0'
                 - x: 12
                   "y": 0
                   width: 12
-                  height: 6
+                  height: 8
                   content:
                     $ref: '#/spec/panels/4_1'
         - kind: Grid
@@ -546,25 +546,25 @@ spec:
                 - x: 0
                   "y": 0
                   width: 6
-                  height: 6
+                  height: 8
                   content:
                     $ref: '#/spec/panels/5_0'
                 - x: 6
                   "y": 0
                   width: 6
-                  height: 6
+                  height: 8
                   content:
                     $ref: '#/spec/panels/5_1'
                 - x: 12
                   "y": 0
                   width: 6
-                  height: 6
+                  height: 8
                   content:
                     $ref: '#/spec/panels/5_2'
                 - x: 18
                   "y": 0
                   width: 6
-                  height: 6
+                  height: 8
                   content:
                     $ref: '#/spec/panels/5_3'
     duration: 1h

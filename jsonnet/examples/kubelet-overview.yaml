@@ -21,37 +21,37 @@ spec:
       items:
       - content:
           $ref: '#/spec/panels/0_0'
-        height: 6
+        height: 8
         width: 4
         x: 0
         "y": 0
       - content:
           $ref: '#/spec/panels/0_1'
-        height: 6
+        height: 8
         width: 4
         x: 4
         "y": 0
       - content:
           $ref: '#/spec/panels/0_2'
-        height: 6
+        height: 8
         width: 4
         x: 8
         "y": 0
       - content:
           $ref: '#/spec/panels/0_3'
-        height: 6
+        height: 8
         width: 4
         x: 12
         "y": 0
       - content:
           $ref: '#/spec/panels/0_4'
-        height: 6
+        height: 8
         width: 4
         x: 16
         "y": 0
       - content:
           $ref: '#/spec/panels/0_5'
-        height: 6
+        height: 8
         width: 4
         x: 20
         "y": 0
@@ -62,13 +62,13 @@ spec:
       items:
       - content:
           $ref: '#/spec/panels/1_0'
-        height: 6
+        height: 8
         width: 12
         x: 0
         "y": 0
       - content:
           $ref: '#/spec/panels/1_1'
-        height: 6
+        height: 8
         width: 12
         x: 12
         "y": 0
@@ -79,7 +79,7 @@ spec:
       items:
       - content:
           $ref: '#/spec/panels/2_0'
-        height: 6
+        height: 8
         width: 24
         x: 0
         "y": 0
@@ -90,13 +90,13 @@ spec:
       items:
       - content:
           $ref: '#/spec/panels/3_0'
-        height: 6
+        height: 8
         width: 12
         x: 0
         "y": 0
       - content:
           $ref: '#/spec/panels/3_1'
-        height: 6
+        height: 8
         width: 12
         x: 12
         "y": 0
@@ -107,13 +107,13 @@ spec:
       items:
       - content:
           $ref: '#/spec/panels/4_0'
-        height: 6
+        height: 8
         width: 12
         x: 0
         "y": 0
       - content:
           $ref: '#/spec/panels/4_1'
-        height: 6
+        height: 8
         width: 12
         x: 12
         "y": 0
@@ -124,7 +124,7 @@ spec:
       items:
       - content:
           $ref: '#/spec/panels/5_0'
-        height: 6
+        height: 8
         width: 24
         x: 0
         "y": 0
@@ -135,13 +135,13 @@ spec:
       items:
       - content:
           $ref: '#/spec/panels/6_0'
-        height: 6
+        height: 8
         width: 12
         x: 0
         "y": 0
       - content:
           $ref: '#/spec/panels/6_1'
-        height: 6
+        height: 8
         width: 12
         x: 12
         "y": 0
@@ -152,13 +152,13 @@ spec:
       items:
       - content:
           $ref: '#/spec/panels/7_0'
-        height: 6
+        height: 8
         width: 12
         x: 0
         "y": 0
       - content:
           $ref: '#/spec/panels/7_1'
-        height: 6
+        height: 8
         width: 12
         x: 12
         "y": 0
@@ -169,7 +169,7 @@ spec:
       items:
       - content:
           $ref: '#/spec/panels/8_0'
-        height: 6
+        height: 8
         width: 24
         x: 0
         "y": 0
@@ -180,7 +180,7 @@ spec:
       items:
       - content:
           $ref: '#/spec/panels/9_0'
-        height: 6
+        height: 8
         width: 24
         x: 0
         "y": 0
@@ -191,7 +191,7 @@ spec:
       items:
       - content:
           $ref: '#/spec/panels/10_0'
-        height: 6
+        height: 8
         width: 24
         x: 0
         "y": 0

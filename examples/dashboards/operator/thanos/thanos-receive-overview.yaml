@@ -222,7 +222,7 @@ spec:
       items:
       - content:
           $ref: '#/spec/panels/9_0'
-        height: 6
+        height: 8
         width: 24
         x: 0
         "y": 0
