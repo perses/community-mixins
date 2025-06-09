@@ -139,8 +139,8 @@ github.com/perses/plugins/statchart v0.7.1 h1:B+CsMtZvPM8hkeSmeBb1ya/Yuf4g59oWlq
 github.com/perses/plugins/statchart v0.7.1/go.mod h1:yW49CcPJz/q+rJiSkIxZimiNJqQPSzkgzdOtI+FLEVE=
 github.com/perses/plugins/table v0.7.0 h1:pccRNKzxUW/asBwntBZNaJH9t6VlIfeFF+eXJ4Uh4p0=
 github.com/perses/plugins/table v0.7.0/go.mod h1:gmmyiOzCxX+ixPOtsy0S2Ufb+F7f7cK49dmaI5UxOzc=
-github.com/perses/plugins/timeserieschart v0.8.0 h1:BiHA2VVvFunpP/+9K8wQ92+lcEkvec7fNpkRaLXsQ+g=
-github.com/perses/plugins/timeserieschart v0.8.0/go.mod h1:6ZmA47mrEIEeAC/gqYujzHjoEyFPBYTphcDB5gypYRc=
+github.com/perses/plugins/timeserieschart v0.9.1 h1:ojfRdfdKvmJINcKn0At/LZh0h8WQpE7fo9Ge4kocTuQ=
+github.com/perses/plugins/timeserieschart v0.9.1/go.mod h1:6ZmA47mrEIEeAC/gqYujzHjoEyFPBYTphcDB5gypYRc=
 github.com/perses/promql-builder v0.1.1-0.20250526090840-9fca3708c008 h1:ziyvZolB0VLNgscEbcDtMPy12YwHLvoXsgB7btgh32A=
 github.com/perses/promql-builder v0.1.1-0.20250526090840-9fca3708c008/go.mod h1:jIIdR4K7bnKa3HQfIhhnia4JpyabxNyjACnEqdQbGkg=
 github.com/pkg/browser v0.0.0-20240102092130-5ac0b6a4141c h1:+mdjkGKdHQG3305AYmdv1U2eRNDiU2ErMBj1gwrq8eQ=
