@@ -25,6 +25,8 @@ func withProcessorsGroup(datasource string, clusterLabelMatcher *labels.Matcher)
 		panelgroup.PanelsPerLine(3),
 		panelgroup.PanelHeight(8),
 		opentelemetry.SpanProcessorRate(datasource, clusterLabelMatcher),
+		opentelemetry.MetricProcessorRate(datasource, clusterLabelMatcher),
+		opentelemetry.LogProcessorRate(datasource, clusterLabelMatcher),
 	)
 }
 

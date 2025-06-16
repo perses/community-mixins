@@ -11,6 +11,14 @@ import (
 	"github.com/prometheus/prometheus/model/labels"
 )
 
+// SpanRate creates a panel that displays the rate of spans being processed by the OpenTelemetry collector.
+// It shows both accepted spans (successfully pushed into the pipeline) and refused spans (failed to push).
+//
+// Parameters:
+//   - datasource: The name of the Prometheus datasource to query
+//   - labelMatchers: Optional label matchers to filter the metrics
+//
+// Returns a panelgroup.Option that can be used to add this panel to a dashboard.
 func SpanRate(datasource string, labelMatchers ...*labels.Matcher) panelgroup.Option {
 	return panelgroup.AddPanel("Span Rate",
 		panel.Description(`Accepted: rate of spans successfully pushed into the pipeline.
@@ -50,6 +58,14 @@ func SpanRate(datasource string, labelMatchers ...*labels.Matcher) panelgroup.Op
 	)
 }
 
+// MeticPointsRate creates a panel that displays the rate of metric points being processed by the OpenTelemetry collector.
+// It shows both accepted metric points (successfully pushed into the pipeline) and refused metric points (failed to push).
+//
+// Parameters:
+//   - datasource: The name of the Prometheus datasource to query
+//   - labelMatchers: Optional label matchers to filter the metrics
+//
+// Returns a panelgroup.Option that can be used to add this panel to a dashboard.
 func MeticPointsRate(datasource string, labelMatchers ...*labels.Matcher) panelgroup.Option {
 	return panelgroup.AddPanel("Metic Points Rate",
 		panel.Description(`Accepted: rate of metric points successfully pushed into the pipeline.
@@ -89,6 +105,14 @@ func MeticPointsRate(datasource string, labelMatchers ...*labels.Matcher) panelg
 	)
 }
 
+// LogRecordsRate creates a panel that displays the rate of log records being processed by the OpenTelemetry collector.
+// It shows both accepted log records (successfully pushed into the pipeline) and refused log records (failed to push).
+//
+// Parameters:
+//   - datasource: The name of the Prometheus datasource to query
+//   - labelMatchers: Optional label matchers to filter the metrics
+//
+// Returns a panelgroup.Option that can be used to add this panel to a dashboard.
 func LogRecordsRate(datasource string, labelMatchers ...*labels.Matcher) panelgroup.Option {
 	return panelgroup.AddPanel("Log Records Rate",
 		panel.Description(`Accepted: rate of log records successfully pushed into the pipeline.
@@ -128,6 +152,14 @@ func LogRecordsRate(datasource string, labelMatchers ...*labels.Matcher) panelgr
 	)
 }
 
+// SpanProcessorRate creates a panel that displays the rate of spans being processed by individual processors
+// in the OpenTelemetry collector pipeline. It shows both incoming and outgoing spans for each processor.
+//
+// Parameters:
+//   - datasource: The name of the Prometheus datasource to query
+//   - labelMatchers: Optional label matchers to filter the metrics
+//
+// Returns a panelgroup.Option that can be used to add this panel to a dashboard.
 func SpanProcessorRate(datasource string, labelMatchers ...*labels.Matcher) panelgroup.Option {
 	return panelgroup.AddPanel("Span Rate",
 		panel.Description("Rate of span processors"),
@@ -152,6 +184,88 @@ func SpanProcessorRate(datasource string, labelMatchers ...*labels.Matcher) pane
 			query.PromQL(
 				promql.SetLabelMatchersV2(
 					OpentelemetryCommonPanelQueries["SpanProcessorRate_outgoing_items"],
+					labelMatchers,
+				).Pretty(0),
+				dashboards.AddQueryDataSource(datasource),
+				query.SeriesNameFormat("Outgoing: {{processor}}"),
+			),
+		),
+	)
+}
+
+// MetricProcessorRate creates a panel that displays the rate of metrics being processed by individual processors
+// in the OpenTelemetry collector pipeline. It shows both incoming and outgoing metrics for each processor.
+//
+// Parameters:
+//   - datasource: The name of the Prometheus datasource to query
+//   - labelMatchers: Optional label matchers to filter the metrics
+//
+// Returns a panelgroup.Option that can be used to add this panel to a dashboard.
+func MetricProcessorRate(datasource string, labelMatchers ...*labels.Matcher) panelgroup.Option {
+	return panelgroup.AddPanel("Metric Rate",
+		panel.Description("Rate of metric processors"),
+		timeSeriesPanel.Chart(
+			timeSeriesPanel.WithYAxis(timeSeriesPanel.YAxis{
+				Format: &commonSdk.Format{
+					Unit: string(commonSdk.DecimalUnit),
+				},
+			}),
+		),
+		panel.AddQuery(
+			query.PromQL(
+				promql.SetLabelMatchersV2(
+					OpentelemetryCommonPanelQueries["MetricProcessorRate_incoming_items"],
+					labelMatchers,
+				).Pretty(0),
+				dashboards.AddQueryDataSource(datasource),
+				query.SeriesNameFormat("Incoming: {{processor}}"),
+			),
+		),
+		panel.AddQuery(
+			query.PromQL(
+				promql.SetLabelMatchersV2(
+					OpentelemetryCommonPanelQueries["MetricProcessorRate_outgoing_items"],
+					labelMatchers,
+				).Pretty(0),
+				dashboards.AddQueryDataSource(datasource),
+				query.SeriesNameFormat("Outgoing: {{processor}}"),
+			),
+		),
+	)
+}
+
+// LogProcessorRate creates a panel that displays the rate of logs being processed by individual processors
+// in the OpenTelemetry collector pipeline. It shows both incoming and outgoing logs for each processor.
+//
+// Parameters:
+//   - datasource: The name of the Prometheus datasource to query
+//   - labelMatchers: Optional label matchers to filter the metrics
+//
+// Returns a panelgroup.Option that can be used to add this panel to a dashboard.
+func LogProcessorRate(datasource string, labelMatchers ...*labels.Matcher) panelgroup.Option {
+	return panelgroup.AddPanel("Log Rate",
+		panel.Description("Rate of log processors"),
+		timeSeriesPanel.Chart(
+			timeSeriesPanel.WithYAxis(timeSeriesPanel.YAxis{
+				Format: &commonSdk.Format{
+					Unit: string(commonSdk.DecimalUnit),
+				},
+			}),
+		),
+		panel.AddQuery(
+			query.PromQL(
+				promql.SetLabelMatchersV2(
+					OpentelemetryCommonPanelQueries["LogProcessorRate_incoming_items"],
+					labelMatchers,
+				).Pretty(0),
+				dashboards.AddQueryDataSource(datasource),
+				query.SeriesNameFormat("Incoming: {{processor}}"),
+			),
+		),
+		panel.AddQuery(
+			query.PromQL(
+				promql.SetLabelMatchersV2(
+					OpentelemetryCommonPanelQueries["LogProcessorRate_outgoing_items"],
 					labelMatchers,
 				).Pretty(0),
 				dashboards.AddQueryDataSource(datasource),
