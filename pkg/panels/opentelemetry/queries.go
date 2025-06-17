@@ -86,6 +86,24 @@ var OpentelemetryCommonPanelQueries = map[string]parser.Expr{
 		label.New("processor").EqualRegexp("$processor"),
 		label.New("otel_signal").EqualRegexp("logs"),
 	),
+	"BatchProcessorRate_batch_send_size": promql.SumByIncrease(
+		"otelcol_processor_batch_batch_send_size_bucket",
+		[]string{"job", "processor", "le"},
+		label.New("job").EqualRegexp("$job"),
+		label.New("processor").EqualRegexp("$processor"),
+	),
+	"BatchProcessorRate_batch_send_size_count": promql.SumBy(
+		"otelcol_processor_batch_batch_send_size_count",
+		[]string{"processor"},
+		label.New("job").EqualRegexp("$job"),
+		label.New("processor").EqualRegexp("$processor"),
+	),
+	"BatchProcessorRate_batch_send_size_sum": promql.SumBy(
+		"otelcol_processor_batch_batch_send_size_sum",
+		[]string{"processor"},
+		label.New("job").EqualRegexp("$job"),
+		label.New("processor").EqualRegexp("$processor"),
+	),
 }
 
 // OverrideOpentelemetryPanelQueries overrides the OpentelemetryCommonPanelQueries global.

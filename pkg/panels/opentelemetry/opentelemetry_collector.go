@@ -169,6 +169,11 @@ func SpanProcessorRate(datasource string, labelMatchers ...*labels.Matcher) pane
 					Unit: string(commonSdk.DecimalUnit),
 				},
 			}),
+			timeSeriesPanel.WithLegend(timeSeriesPanel.Legend{
+				Position: timeSeriesPanel.BottomPosition,
+				Mode:     timeSeriesPanel.TableMode,
+				Values:   []commonSdk.Calculation{commonSdk.LastCalculation},
+			}),
 		),
 		panel.AddQuery(
 			query.PromQL(
@@ -209,6 +214,11 @@ func MetricProcessorRate(datasource string, labelMatchers ...*labels.Matcher) pa
 				Format: &commonSdk.Format{
 					Unit: string(commonSdk.DecimalUnit),
 				},
+			}),
+			timeSeriesPanel.WithLegend(timeSeriesPanel.Legend{
+				Position: timeSeriesPanel.BottomPosition,
+				Mode:     timeSeriesPanel.TableMode,
+				Values:   []commonSdk.Calculation{commonSdk.LastCalculation},
 			}),
 		),
 		panel.AddQuery(
@@ -251,6 +261,11 @@ func LogProcessorRate(datasource string, labelMatchers ...*labels.Matcher) panel
 					Unit: string(commonSdk.DecimalUnit),
 				},
 			}),
+			timeSeriesPanel.WithLegend(timeSeriesPanel.Legend{
+				Position: timeSeriesPanel.BottomPosition,
+				Mode:     timeSeriesPanel.TableMode,
+				Values:   []commonSdk.Calculation{commonSdk.LastCalculation},
+			}),
 		),
 		panel.AddQuery(
 			query.PromQL(
@@ -270,6 +285,85 @@ func LogProcessorRate(datasource string, labelMatchers ...*labels.Matcher) panel
 				).Pretty(0),
 				dashboards.AddQueryDataSource(datasource),
 				query.SeriesNameFormat("Outgoing: {{processor}}"),
+			),
+		),
+	)
+}
+
+// BatchProcessorBatchSendSize creates a panel that displays the size of batches being sent by the OpenTelemetry collector's batch processor.
+// This metric helps monitor the efficiency of batch processing by showing the number of items (spans, metrics, or logs) in each batch.
+//
+// Parameters:
+//   - datasource: The name of the Prometheus datasource to query
+//   - labelMatchers: Optional label matchers to filter the metrics
+//
+// Returns a panelgroup.Option that can be used to add this panel to a dashboard.
+func BatchProcessorBatchSendSize(datasource string, labelMatchers ...*labels.Matcher) panelgroup.Option {
+	return panelgroup.AddPanel("Batch Send Size",
+		panel.Description("Number of items in each batch being processed"),
+		timeSeriesPanel.Chart(
+			timeSeriesPanel.WithYAxis(timeSeriesPanel.YAxis{
+				Format: &commonSdk.Format{
+					Unit: string(commonSdk.DecimalUnit),
+				},
+			}),
+			timeSeriesPanel.WithLegend(timeSeriesPanel.Legend{
+				Position: timeSeriesPanel.BottomPosition,
+				Mode:     timeSeriesPanel.TableMode,
+				Values:   []commonSdk.Calculation{commonSdk.LastCalculation},
+			}),
+		),
+		panel.AddQuery(
+			query.PromQL(
+				promql.SetLabelMatchersV2(
+					OpentelemetryCommonPanelQueries["BatchProcessorRate_batch_send_size"],
+					labelMatchers,
+				).Pretty(0),
+				dashboards.AddQueryDataSource(datasource),
+				query.SeriesNameFormat("{{le}}"),
+			),
+		),
+	)
+}
+
+// BatchProcessorBatchSendSizeCount creates a panel that displays the number of batches being processed by the OpenTelemetry collector's batch processor.
+// This metric helps monitor the efficiency of batch processing by showing the number of batches being processed.
+//
+// Parameters:
+//   - datasource: The name of the Prometheus datasource to query
+//   - labelMatchers: Optional label matchers to filter the metrics
+func BatchProcessorBatchSendSizeCount(datasource string, labelMatchers ...*labels.Matcher) panelgroup.Option {
+	return panelgroup.AddPanel("Batch Send Size Count",
+		timeSeriesPanel.Chart(
+			timeSeriesPanel.WithYAxis(timeSeriesPanel.YAxis{
+				Format: &commonSdk.Format{
+					Unit: string(commonSdk.DecimalUnit),
+				},
+			}),
+			timeSeriesPanel.WithLegend(timeSeriesPanel.Legend{
+				Position: timeSeriesPanel.BottomPosition,
+				Mode:     timeSeriesPanel.TableMode,
+				Values:   []commonSdk.Calculation{commonSdk.LastCalculation},
+			}),
+		),
+		panel.AddQuery(
+			query.PromQL(
+				promql.SetLabelMatchersV2(
+					OpentelemetryCommonPanelQueries["BatchProcessorRate_batch_send_size_count"],
+					labelMatchers,
+				).Pretty(0),
+				dashboards.AddQueryDataSource(datasource),
+				query.SeriesNameFormat("Batch send size count: {{processor}}"),
+			),
+		),
+		panel.AddQuery(
+			query.PromQL(
+				promql.SetLabelMatchersV2(
+					OpentelemetryCommonPanelQueries["BatchProcessorRate_batch_send_size_sum"],
+					labelMatchers,
+				).Pretty(0),
+				dashboards.AddQueryDataSource(datasource),
+				query.SeriesNameFormat("Batch send size sum: {{processor}}"),
 			),
 		),
 	)
