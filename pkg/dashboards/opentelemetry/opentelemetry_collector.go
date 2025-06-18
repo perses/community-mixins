@@ -33,6 +33,19 @@ func withProcessorsGroup(datasource string, clusterLabelMatcher *labels.Matcher)
 	)
 }
 
+func withExportersGroup(datasource string, clusterLabelMatcher *labels.Matcher) dashboard.Option {
+	return dashboard.AddPanelGroup("Exporters",
+		panelgroup.PanelsPerLine(3),
+		panelgroup.PanelHeight(8),
+		opentelemetry.SpanExporterRate(datasource, clusterLabelMatcher),
+		opentelemetry.MetricExporterRate(datasource, clusterLabelMatcher),
+		opentelemetry.LogExporterRate(datasource, clusterLabelMatcher),
+		opentelemetry.QueueSizeExporterRate(datasource, clusterLabelMatcher),
+		opentelemetry.QueueCapacityExporterRate(datasource, clusterLabelMatcher),
+		opentelemetry.QueueUtilizationExporterRate(datasource, clusterLabelMatcher),
+	)
+}
+
 func BuildOpenTelemetryCollector(project string, datasource string, clusterLabelName string) dashboards.DashboardResult {
 	clusterLabelMatcher := dashboards.GetClusterLabelMatcherV2(clusterLabelName)
 	return dashboards.NewDashboardResult(
@@ -79,10 +92,12 @@ func BuildOpenTelemetryCollector(project string, datasource string, clusterLabel
 						promqlVar.Datasource(datasource),
 						promqlVar.LabelName("exporter"),
 					),
+					listVar.AllowAllValue(true),
 				),
 			),
 			withReceiversGroup(datasource, clusterLabelMatcher),
 			withProcessorsGroup(datasource, clusterLabelMatcher),
+			withExportersGroup(datasource, clusterLabelMatcher),
 		),
 	).Component("opentelemetry-collector")
 }

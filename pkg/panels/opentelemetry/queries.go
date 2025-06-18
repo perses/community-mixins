@@ -2,6 +2,7 @@ package opentelemetry
 
 import (
 	"github.com/perses/community-dashboards/pkg/promql"
+	promqlbuilder "github.com/perses/promql-builder"
 	"github.com/perses/promql-builder/label"
 	"github.com/prometheus/prometheus/promql/parser"
 	"golang.org/x/exp/maps"
@@ -115,6 +116,89 @@ var OpentelemetryCommonPanelQueries = map[string]parser.Expr{
 		[]string{"processor"},
 		label.New("job").EqualRegexp("$job"),
 		label.New("processor").EqualRegexp("$processor"),
+	),
+	"ExporterRate_sent_spans": promql.SumByRate(
+		"otelcol_exporter_sent_spans_total",
+		[]string{"exporter"},
+		label.New("job").EqualRegexp("$job"),
+		label.New("exporter").EqualRegexp("$exporter"),
+	),
+	"ExporterRate_enqueue_failed_spans": promql.SumByRate(
+		"otelcol_exporter_enqueue_failed_spans_total",
+		[]string{"exporter"},
+		label.New("job").EqualRegexp("$job"),
+		label.New("exporter").EqualRegexp("$exporter"),
+	),
+	"ExporterRate_send_failed_spans": promql.SumByRate(
+		"otelcol_exporter_send_failed_spans_total",
+		[]string{"exporter"},
+		label.New("job").EqualRegexp("$job"),
+		label.New("exporter").EqualRegexp("$exporter"),
+	),
+	"ExporterRate_sent_metrics": promql.SumByRate(
+		"otelcol_exporter_sent_metric_points_total",
+		[]string{"exporter"},
+		label.New("job").EqualRegexp("$job"),
+		label.New("exporter").EqualRegexp("$exporter"),
+	),
+	"ExporterRate_enqueue_failed_metrics": promql.SumByRate(
+		"otelcol_exporter_enqueue_failed_metric_points_total",
+		[]string{"exporter"},
+		label.New("job").EqualRegexp("$job"),
+		label.New("exporter").EqualRegexp("$exporter"),
+	),
+	"ExporterRate_send_failed_metrics": promql.SumByRate(
+		"otelcol_exporter_send_failed_metric_points_total",
+		[]string{"exporter"},
+		label.New("job").EqualRegexp("$job"),
+		label.New("exporter").EqualRegexp("$exporter"),
+	),
+	"ExporterRate_sent_logs": promql.SumByRate(
+		"otelcol_exporter_sent_log_records_total",
+		[]string{"exporter"},
+		label.New("job").EqualRegexp("$job"),
+		label.New("exporter").EqualRegexp("$exporter"),
+	),
+	"ExporterRate_enqueue_failed_logs": promql.SumByRate(
+		"otelcol_exporter_enqueue_failed_log_records_total",
+		[]string{"exporter"},
+		label.New("job").EqualRegexp("$job"),
+		label.New("exporter").EqualRegexp("$exporter"),
+	),
+	"ExporterRate_send_failed_logs": promql.SumByRate(
+		"otelcol_exporter_send_failed_log_records_total",
+		[]string{"exporter"},
+		label.New("job").EqualRegexp("$job"),
+		label.New("exporter").EqualRegexp("$exporter"),
+	),
+	"ExporterRate_queue_size": promql.MaxBy(
+		"otelcol_exporter_queue_size",
+		[]string{"exporter"},
+		label.New("job").EqualRegexp("$job"),
+		label.New("exporter").EqualRegexp("$exporter"),
+	),
+	"ExporterRate_queue_capacity": promql.MinBy(
+		"otelcol_exporter_queue_capacity",
+		[]string{"exporter"},
+		label.New("job").EqualRegexp("$job"),
+		label.New("exporter").EqualRegexp("$exporter"),
+	),
+	"ExporterRate_queue_utilization": promqlbuilder.Mul(
+		&parser.NumberLiteral{Val: 100},
+		promqlbuilder.Div(
+			promql.MaxBy(
+				"otelcol_exporter_queue_size",
+				[]string{"exporter"},
+				label.New("job").EqualRegexp("$job"),
+				label.New("exporter").EqualRegexp("$exporter"),
+			),
+			promql.MaxBy(
+				"otelcol_exporter_queue_capacity",
+				[]string{"exporter"},
+				label.New("job").EqualRegexp("$job"),
+				label.New("exporter").EqualRegexp("$exporter"),
+			),
+		),
 	),
 }
 

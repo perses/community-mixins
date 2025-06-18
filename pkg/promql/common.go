@@ -44,6 +44,22 @@ func SumBy(metricName string, byLabels []string, labelMatchers ...*labels.Matche
 	).By(byLabels...)
 }
 
+func MaxBy(metricName string, byLabels []string, labelMatchers ...*labels.Matcher) parser.Expr {
+	return promqlbuilder.Max(
+		matrix.New(
+			vector.New(vector.WithMetricName(metricName), vector.WithLabelMatchers(labelMatchers...)),
+		),
+	).By(byLabels...)
+}
+
+func MinBy(metricName string, byLabels []string, labelMatchers ...*labels.Matcher) parser.Expr {
+	return promqlbuilder.Min(
+		matrix.New(
+			vector.New(vector.WithMetricName(metricName), vector.WithLabelMatchers(labelMatchers...)),
+		),
+	).By(byLabels...)
+}
+
 func ErrorCaseRatio(
 	numeratorMetricName string,
 	numeratorByLabels []string,

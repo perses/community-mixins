@@ -407,3 +407,234 @@ func BatchProcessorBatchSizeTriggerSend(datasource string, labelMatchers ...*lab
 		),
 	)
 }
+
+// SpanExporterRate creates a panel that displays the rate of spans being sent by the OpenTelemetry collector's span exporter.
+// It shows both sent spans and failed spans (enqueued or sent).
+//
+// Parameters:
+//   - datasource: The name of the Prometheus datasource to query
+//   - labelMatchers: Optional label matchers to filter the metrics
+func SpanExporterRate(datasource string, labelMatchers ...*labels.Matcher) panelgroup.Option {
+	return panelgroup.AddPanel("Span Rate",
+		panel.Description("Rate of spans being sent by the OpenTelemetry collector's span exporter"),
+		timeSeriesPanel.Chart(
+			timeSeriesPanel.WithYAxis(timeSeriesPanel.YAxis{
+				Format: &commonSdk.Format{
+					Unit: string(commonSdk.DecimalUnit),
+				},
+			}),
+		),
+		panel.AddQuery(
+			query.PromQL(
+				promql.SetLabelMatchersV2(
+					OpentelemetryCommonPanelQueries["ExporterRate_sent_spans"],
+					labelMatchers,
+				).Pretty(0),
+				dashboards.AddQueryDataSource(datasource),
+				query.SeriesNameFormat("Sent: {{exporter}}"),
+			),
+		),
+		panel.AddQuery(
+			query.PromQL(
+				promql.SetLabelMatchersV2(
+					OpentelemetryCommonPanelQueries["ExporterRate_enqueue_failed_spans"],
+					labelMatchers,
+				).Pretty(0),
+				dashboards.AddQueryDataSource(datasource),
+				query.SeriesNameFormat("Enqueue failed: {{exporter}}"),
+			),
+		),
+		panel.AddQuery(
+			query.PromQL(
+				promql.SetLabelMatchersV2(
+					OpentelemetryCommonPanelQueries["ExporterRate_send_failed_spans"],
+					labelMatchers,
+				).Pretty(0),
+				dashboards.AddQueryDataSource(datasource),
+				query.SeriesNameFormat("Send failed: {{exporter}}"),
+			),
+		),
+	)
+}
+
+// MetricExporterRate creates a panel that displays the rate of metrics being sent by the OpenTelemetry collector's metric exporter.
+// It shows both sent metrics and failed metrics (enqueued or sent).
+//
+// Parameters:
+//   - datasource: The name of the Prometheus datasource to query
+//   - labelMatchers: Optional label matchers to filter the metrics
+func MetricExporterRate(datasource string, labelMatchers ...*labels.Matcher) panelgroup.Option {
+	return panelgroup.AddPanel("Metric Rate",
+		panel.Description("Rate of metrics being sent by the OpenTelemetry collector's metric exporter"),
+		timeSeriesPanel.Chart(
+			timeSeriesPanel.WithYAxis(timeSeriesPanel.YAxis{
+				Format: &commonSdk.Format{
+					Unit: string(commonSdk.DecimalUnit),
+				},
+			}),
+		),
+		panel.AddQuery(
+			query.PromQL(
+				promql.SetLabelMatchersV2(
+					OpentelemetryCommonPanelQueries["ExporterRate_sent_metrics"],
+					labelMatchers,
+				).Pretty(0),
+				dashboards.AddQueryDataSource(datasource),
+				query.SeriesNameFormat("Sent: {{exporter}}"),
+			),
+		),
+		panel.AddQuery(
+			query.PromQL(
+				promql.SetLabelMatchersV2(
+					OpentelemetryCommonPanelQueries["ExporterRate_enqueue_failed_metrics"],
+					labelMatchers,
+				).Pretty(0),
+				dashboards.AddQueryDataSource(datasource),
+				query.SeriesNameFormat("Enqueue failed: {{exporter}}"),
+			),
+		),
+		panel.AddQuery(
+			query.PromQL(
+				promql.SetLabelMatchersV2(
+					OpentelemetryCommonPanelQueries["ExporterRate_send_failed_metrics"],
+					labelMatchers,
+				).Pretty(0),
+				dashboards.AddQueryDataSource(datasource),
+				query.SeriesNameFormat("Send failed: {{exporter}}"),
+			),
+		),
+	)
+}
+
+// LogExporterRate creates a panel that displays the rate of logs being sent by the OpenTelemetry collector's log exporter.
+// It shows both sent logs and failed logs (enqueued or sent).
+//
+// Parameters:
+//   - datasource: The name of the Prometheus datasource to query
+//   - labelMatchers: Optional label matchers to filter the metrics
+func LogExporterRate(datasource string, labelMatchers ...*labels.Matcher) panelgroup.Option {
+	return panelgroup.AddPanel("Log Rate",
+		panel.Description("Rate of logs being sent by the OpenTelemetry collector's log exporter"),
+		timeSeriesPanel.Chart(
+			timeSeriesPanel.WithYAxis(timeSeriesPanel.YAxis{
+				Format: &commonSdk.Format{
+					Unit: string(commonSdk.DecimalUnit),
+				},
+			}),
+		),
+		panel.AddQuery(
+			query.PromQL(
+				promql.SetLabelMatchersV2(
+					OpentelemetryCommonPanelQueries["ExporterRate_sent_logs"],
+					labelMatchers,
+				).Pretty(0),
+				dashboards.AddQueryDataSource(datasource),
+				query.SeriesNameFormat("Sent: {{exporter}}"),
+			),
+		),
+		panel.AddQuery(
+			query.PromQL(
+				promql.SetLabelMatchersV2(
+					OpentelemetryCommonPanelQueries["ExporterRate_enqueue_failed_logs"],
+					labelMatchers,
+				).Pretty(0),
+				dashboards.AddQueryDataSource(datasource),
+				query.SeriesNameFormat("Enqueue failed: {{exporter}}"),
+			),
+		),
+		panel.AddQuery(
+			query.PromQL(
+				promql.SetLabelMatchersV2(
+					OpentelemetryCommonPanelQueries["ExporterRate_send_failed_logs"],
+					labelMatchers,
+				).Pretty(0),
+				dashboards.AddQueryDataSource(datasource),
+				query.SeriesNameFormat("Send failed: {{exporter}}"),
+			),
+		),
+	)
+}
+
+// QueueSizeExporterRate creates a panel that displays the size of the queue for each exporter.
+//
+// Parameters:
+//   - datasource: The name of the Prometheus datasource to query
+//   - labelMatchers: Optional label matchers to filter the metrics
+func QueueSizeExporterRate(datasource string, labelMatchers ...*labels.Matcher) panelgroup.Option {
+	return panelgroup.AddPanel("Exporter Queue Size",
+		panel.Description("Current size of the retry queue (in batches)"),
+		timeSeriesPanel.Chart(
+			timeSeriesPanel.WithYAxis(timeSeriesPanel.YAxis{
+				Format: &commonSdk.Format{
+					Unit: string(commonSdk.DecimalUnit),
+				},
+			}),
+		),
+		panel.AddQuery(
+			query.PromQL(
+				promql.SetLabelMatchersV2(
+					OpentelemetryCommonPanelQueries["ExporterRate_queue_size"],
+					labelMatchers,
+				).Pretty(0),
+				dashboards.AddQueryDataSource(datasource),
+				query.SeriesNameFormat("Queue size: {{exporter}}"),
+			),
+		),
+	)
+}
+
+// QueueCapacityExporterRate creates a panel that displays the capacity of the queue for each exporter.
+//
+// Parameters:
+//   - datasource: The name of the Prometheus datasource to query
+//   - labelMatchers: Optional label matchers to filter the metrics
+func QueueCapacityExporterRate(datasource string, labelMatchers ...*labels.Matcher) panelgroup.Option {
+	return panelgroup.AddPanel("Exporter Queue Capacity",
+		panel.Description("Fixed capacity of the retry queue (in batches)"),
+		timeSeriesPanel.Chart(
+			timeSeriesPanel.WithYAxis(timeSeriesPanel.YAxis{
+				Format: &commonSdk.Format{
+					Unit: string(commonSdk.DecimalUnit),
+				},
+			}),
+		),
+		panel.AddQuery(
+			query.PromQL(
+				promql.SetLabelMatchersV2(
+					OpentelemetryCommonPanelQueries["ExporterRate_queue_capacity"],
+					labelMatchers,
+				).Pretty(0),
+				dashboards.AddQueryDataSource(datasource),
+				query.SeriesNameFormat("Queue capacity: {{exporter}}"),
+			),
+		),
+	)
+}
+
+// QueueUtilizationExporterRate creates a panel that displays the utilization of the queue for each exporter.
+//
+// Parameters:
+//   - datasource: The name of the Prometheus datasource to query
+//   - labelMatchers: Optional label matchers to filter the metrics
+func QueueUtilizationExporterRate(datasource string, labelMatchers ...*labels.Matcher) panelgroup.Option {
+	return panelgroup.AddPanel("Exporter Queue Utilization",
+		panel.Description("Utilization of the retry queue (in batches)"),
+		timeSeriesPanel.Chart(
+			timeSeriesPanel.WithYAxis(timeSeriesPanel.YAxis{
+				Format: &commonSdk.Format{
+					Unit: string(commonSdk.PercentMode),
+				},
+			}),
+		),
+		panel.AddQuery(
+			query.PromQL(
+				promql.SetLabelMatchersV2(
+					OpentelemetryCommonPanelQueries["ExporterRate_queue_utilization"],
+					labelMatchers,
+				).Pretty(0),
+				dashboards.AddQueryDataSource(datasource),
+				query.SeriesNameFormat("Queue utilization: {{exporter}}"),
+			),
+		),
+	)
+}
