@@ -368,3 +368,42 @@ func BatchProcessorBatchSendSizeCount(datasource string, labelMatchers ...*label
 		),
 	)
 }
+
+// BatchProcessorBatchSizeTriggerSend creates a panel that displays the number of batches being processed by the OpenTelemetry collector's batch processor due to a size trigger.
+// This metric helps monitor the efficiency of batch processing by showing the number of batches being processed due to a size trigger.
+//
+// Parameters:
+//   - datasource: The name of the Prometheus datasource to query
+//   - labelMatchers: Optional label matchers to filter the metrics
+func BatchProcessorBatchSizeTriggerSend(datasource string, labelMatchers ...*labels.Matcher) panelgroup.Option {
+	return panelgroup.AddPanel("Batch Size Trigger Send",
+		panel.Description("Number of batches being processed by the OpenTelemetry collector's batch processor"),
+		timeSeriesPanel.Chart(
+			timeSeriesPanel.WithYAxis(timeSeriesPanel.YAxis{
+				Format: &commonSdk.Format{
+					Unit: string(commonSdk.DecimalUnit),
+				},
+			}),
+		),
+		panel.AddQuery(
+			query.PromQL(
+				promql.SetLabelMatchersV2(
+					OpentelemetryCommonPanelQueries["BatchProcessorRate_batch_size_trigger_send"],
+					labelMatchers,
+				).Pretty(0),
+				dashboards.AddQueryDataSource(datasource),
+				query.SeriesNameFormat("Batch sent due to a timeout trigger: {{processor}}"),
+			),
+		),
+		panel.AddQuery(
+			query.PromQL(
+				promql.SetLabelMatchersV2(
+					OpentelemetryCommonPanelQueries["BatchProcessorRate_batch_timeout_trigger_send"],
+					labelMatchers,
+				).Pretty(0),
+				dashboards.AddQueryDataSource(datasource),
+				query.SeriesNameFormat("Batch sent due to a timeout trigger: {{processor}}"),
+			),
+		),
+	)
+}

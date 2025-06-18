@@ -29,6 +29,7 @@ func withProcessorsGroup(datasource string, clusterLabelMatcher *labels.Matcher)
 		opentelemetry.LogProcessorRate(datasource, clusterLabelMatcher),
 		opentelemetry.BatchProcessorBatchSendSize(datasource, clusterLabelMatcher),
 		opentelemetry.BatchProcessorBatchSendSizeCount(datasource, clusterLabelMatcher),
+		opentelemetry.BatchProcessorBatchSizeTriggerSend(datasource, clusterLabelMatcher),
 	)
 }
 

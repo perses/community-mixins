@@ -92,14 +92,26 @@ var OpentelemetryCommonPanelQueries = map[string]parser.Expr{
 		label.New("job").EqualRegexp("$job"),
 		label.New("processor").EqualRegexp("$processor"),
 	),
-	"BatchProcessorRate_batch_send_size_count": promql.SumBy(
+	"BatchProcessorRate_batch_send_size_count": promql.SumByRate(
 		"otelcol_processor_batch_batch_send_size_count",
 		[]string{"processor"},
 		label.New("job").EqualRegexp("$job"),
 		label.New("processor").EqualRegexp("$processor"),
 	),
-	"BatchProcessorRate_batch_send_size_sum": promql.SumBy(
+	"BatchProcessorRate_batch_send_size_sum": promql.SumByRate(
 		"otelcol_processor_batch_batch_send_size_sum",
+		[]string{"processor"},
+		label.New("job").EqualRegexp("$job"),
+		label.New("processor").EqualRegexp("$processor"),
+	),
+	"BatchProcessorRate_batch_size_trigger_send": promql.SumByRate(
+		"otelcol_processor_batch_batch_size_trigger_send_total",
+		[]string{"processor"},
+		label.New("job").EqualRegexp("$job"),
+		label.New("processor").EqualRegexp("$processor"),
+	),
+	"BatchProcessorRate_batch_timeout_trigger_send": promql.SumByRate(
+		"otelcol_processor_batch_timeout_trigger_send_total",
 		[]string{"processor"},
 		label.New("job").EqualRegexp("$job"),
 		label.New("processor").EqualRegexp("$processor"),
