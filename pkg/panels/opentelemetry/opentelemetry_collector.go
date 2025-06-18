@@ -622,7 +622,7 @@ func QueueUtilizationExporterRate(datasource string, labelMatchers ...*labels.Ma
 		timeSeriesPanel.Chart(
 			timeSeriesPanel.WithYAxis(timeSeriesPanel.YAxis{
 				Format: &commonSdk.Format{
-					Unit: string(commonSdk.PercentMode),
+					Unit: string(commonSdk.PercentUnit),
 				},
 			}),
 		),
