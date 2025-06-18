@@ -1933,22 +1933,37 @@
               "columnSettings": [
                 {
                   "name": "job",
-                  "header": "Job"
+                  "header": "Job",
+                  "format": {
+                    "unit": ""
+                  }
                 },
                 {
                   "name": "bucket",
-                  "header": "Bucket"
+                  "header": "Bucket",
+                  "format": {
+                    "unit": ""
+                  }
                 },
                 {
                   "name": "namespace",
-                  "header": "Namespace"
+                  "header": "Namespace",
+                  "format": {
+                    "unit": ""
+                  }
                 },
                 {
                   "name": "value",
-                  "header": "Uploaded Ago"
+                  "header": "Uploaded Ago",
+                  "format": {
+                    "unit": "seconds"
+                  }
                 },
                 {
                   "name": "timestamp",
+                  "format": {
+                    "unit": ""
+                  },
                   "hide": true
                 }
               ]
@@ -2310,7 +2325,7 @@
               "x": 0,
               "y": 0,
               "width": 24,
-              "height": 6,
+              "height": 8,
               "content": {
                 "$ref": "#/spec/panels/9_0"
               }

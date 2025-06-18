@@ -5,14 +5,14 @@ go 1.24.0
 toolchain go1.24.2
 
 require (
-	github.com/perses/perses v0.51.0-rc.0
-	github.com/perses/perses-operator v0.1.12
-	github.com/perses/plugins/gaugechart v0.7.1
-	github.com/perses/plugins/markdown v0.7.1
+	github.com/perses/perses v0.51.0
+	github.com/perses/perses-operator v0.2.0
+	github.com/perses/plugins/gaugechart v0.8.0
+	github.com/perses/plugins/markdown v0.8.0
 	github.com/perses/plugins/prometheus v0.6.0
-	github.com/perses/plugins/statchart v0.7.1
-	github.com/perses/plugins/table v0.6.0
-	github.com/perses/plugins/timeserieschart v0.8.0
+	github.com/perses/plugins/statchart v0.8.0
+	github.com/perses/plugins/table v0.7.0
+	github.com/perses/plugins/timeserieschart v0.9.1
 	github.com/perses/promql-builder v0.1.1-0.20250526090840-9fca3708c008
 	github.com/prometheus/prometheus v0.304.1
 	gopkg.in/yaml.v3 v3.0.1
@@ -38,7 +38,7 @@ require (
 	github.com/grafana/regexp v0.0.0-20240518133315-a468a5bfb3bc // indirect
 	github.com/jpillora/backoff v1.0.0 // indirect
 	github.com/json-iterator/go v1.1.12 // indirect
-	github.com/labstack/echo/v4 v4.13.3 // indirect
+	github.com/labstack/echo/v4 v4.13.4 // indirect
 	github.com/labstack/gommon v0.4.2 // indirect
 	github.com/mattn/go-colorable v0.1.14 // indirect
 	github.com/mattn/go-isatty v0.0.20 // indirect
@@ -52,7 +52,7 @@ require (
 	github.com/perses/plugins/histogramchart v0.8.0
 	github.com/prometheus/client_golang v1.22.0 // indirect
 	github.com/prometheus/client_model v0.6.2 // indirect
-	github.com/prometheus/common v0.63.0 // indirect
+	github.com/prometheus/common v0.64.0 // indirect
 	github.com/prometheus/procfs v0.15.1 // indirect
 	github.com/shopspring/decimal v1.4.0 // indirect
 	github.com/sirupsen/logrus v1.9.3 // indirect
@@ -65,7 +65,7 @@ require (
 	go.uber.org/atomic v1.11.0 // indirect
 	golang.org/x/crypto v0.38.0 // indirect
 	golang.org/x/exp v0.0.0-20250305212735-054e65f0b394 // indirect
-	golang.org/x/net v0.39.0 // indirect
+	golang.org/x/net v0.40.0 // indirect
 	golang.org/x/oauth2 v0.30.0 // indirect
 	golang.org/x/sys v0.33.0 // indirect
 	golang.org/x/text v0.25.0 // indirect

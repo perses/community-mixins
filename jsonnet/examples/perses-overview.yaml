@@ -21,7 +21,7 @@ spec:
       items:
       - content:
           $ref: '#/spec/panels/0_0'
-        height: 6
+        height: 8
         width: 24
         x: 0
         "y": 0
@@ -32,22 +32,22 @@ spec:
       items:
       - content:
           $ref: '#/spec/panels/1_0'
-        height: 6
+        height: 8
         width: 12
         x: 0
         "y": 0
       - content:
           $ref: '#/spec/panels/1_1'
-        height: 6
+        height: 8
         width: 12
         x: 12
         "y": 0
       - content:
           $ref: '#/spec/panels/1_2'
-        height: 6
+        height: 8
         width: 12
         x: 0
-        "y": 6
+        "y": 8
   - kind: Grid
     spec:
       display:
@@ -104,19 +104,33 @@ spec:
           kind: Table
           spec:
             columnSettings:
-            - header: Job
+            - format:
+                unit: ""
+              header: Job
               name: job
-            - header: Instance
+            - format:
+                unit: ""
+              header: Instance
               name: instance
-            - header: Version
+            - format:
+                unit: ""
+              header: Version
               name: version
-            - header: Namespace
+            - format:
+                unit: ""
+              header: Namespace
               name: namespace
-            - header: Pod
+            - format:
+                unit: ""
+              header: Pod
               name: pod
-            - hide: true
+            - format:
+                unit: ""
+              hide: true
               name: value
-            - hide: true
+            - format:
+                unit: ""
+              hide: true
               name: timestamp
         queries:
         - kind: TimeSeriesQuery

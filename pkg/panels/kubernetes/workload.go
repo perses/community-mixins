@@ -33,26 +33,46 @@ func WorkloadCPUUsageQuota(datasourceName string, labelMatchers ...promql.LabelM
 					Name:   "value #1",
 					Header: "CPU Usage",
 					Align:  tablePanel.RightAlign,
+					Format: commonSdk.Format{
+						Unit:          string(commonSdk.DecimalUnit),
+						DecimalPlaces: 4,
+					},
 				},
 				{
 					Name:   "value #2",
 					Header: "CPU Requests",
 					Align:  tablePanel.RightAlign,
+					Format: commonSdk.Format{
+						Unit:          string(commonSdk.DecimalUnit),
+						DecimalPlaces: 4,
+					},
 				},
 				{
 					Name:   "value #3",
 					Header: "CPU Requests %",
 					Align:  tablePanel.RightAlign,
+					Format: commonSdk.Format{
+						Unit:          string(commonSdk.PercentDecimalUnit),
+						DecimalPlaces: 4,
+					},
 				},
 				{
 					Name:   "value #4",
 					Header: "CPU Limits",
 					Align:  tablePanel.RightAlign,
+					Format: commonSdk.Format{
+						Unit:          string(commonSdk.DecimalUnit),
+						DecimalPlaces: 4,
+					},
 				},
 				{
 					Name:   "value #5",
 					Header: "CPU Limits %",
 					Align:  tablePanel.RightAlign,
+					Format: commonSdk.Format{
+						Unit:          string(commonSdk.PercentDecimalUnit),
+						DecimalPlaces: 4,
+					},
 				},
 				{
 					Name: "timestamp",
@@ -130,26 +150,46 @@ func WorkloadMemoryUsageQuota(datasourceName string, labelMatchers ...promql.Lab
 					Name:   "value #1",
 					Header: "Memory Usage",
 					Align:  tablePanel.RightAlign,
+					Format: commonSdk.Format{
+						Unit:          string(commonSdk.BytesUnit),
+						DecimalPlaces: 4,
+					},
 				},
 				{
 					Name:   "value #2",
 					Header: "Memory Requests",
 					Align:  tablePanel.RightAlign,
+					Format: commonSdk.Format{
+						Unit:          string(commonSdk.BytesUnit),
+						DecimalPlaces: 4,
+					},
 				},
 				{
 					Name:   "value #3",
 					Header: "Memory Requests %",
 					Align:  tablePanel.RightAlign,
+					Format: commonSdk.Format{
+						Unit:          string(commonSdk.PercentDecimalUnit),
+						DecimalPlaces: 4,
+					},
 				},
 				{
 					Name:   "value #4",
 					Header: "Memory Limits",
 					Align:  tablePanel.RightAlign,
+					Format: commonSdk.Format{
+						Unit:          string(commonSdk.BytesUnit),
+						DecimalPlaces: 4,
+					},
 				},
 				{
 					Name:   "value #5",
 					Header: "Memory Limits %",
 					Align:  tablePanel.RightAlign,
+					Format: commonSdk.Format{
+						Unit:          string(commonSdk.PercentDecimalUnit),
+						DecimalPlaces: 4,
+					},
 				},
 				{
 					Name: "timestamp",
@@ -227,31 +267,49 @@ func WorkloadCurrentNetworkUsage(datasourceName string, labelMatchers ...promql.
 					Name:   "value #1",
 					Header: "Current Receive Bandwidth",
 					Align:  tablePanel.RightAlign,
+					Format: commonSdk.Format{
+						Unit: string(commonSdk.BytesPerSecondsUnit),
+					},
 				},
 				{
 					Name:   "value #2",
 					Header: "Current Transmit Bandwidth",
 					Align:  tablePanel.RightAlign,
+					Format: commonSdk.Format{
+						Unit: string(commonSdk.BytesPerSecondsUnit),
+					},
 				},
 				{
 					Name:   "value #3",
 					Header: "Rate of Received Packets",
 					Align:  tablePanel.RightAlign,
+					Format: commonSdk.Format{
+						Unit: string(commonSdk.PacketsPerSecondsUnit),
+					},
 				},
 				{
 					Name:   "value #4",
 					Header: "Rate of Transmitted Packets",
 					Align:  tablePanel.RightAlign,
+					Format: commonSdk.Format{
+						Unit: string(commonSdk.PacketsPerSecondsUnit),
+					},
 				},
 				{
 					Name:   "value #5",
 					Header: "Rate of Received Packets Dropped",
 					Align:  tablePanel.RightAlign,
+					Format: commonSdk.Format{
+						Unit: string(commonSdk.PacketsPerSecondsUnit),
+					},
 				},
 				{
 					Name:   "value #6",
 					Header: "Rate of Transmitted Packets Dropped",
 					Align:  tablePanel.RightAlign,
+					Format: commonSdk.Format{
+						Unit: string(commonSdk.PacketsPerSecondsUnit),
+					},
 				},
 				{
 					Name: "timestamp",

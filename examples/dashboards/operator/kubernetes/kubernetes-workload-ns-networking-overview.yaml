@@ -214,36 +214,58 @@ spec:
           spec:
             columnSettings:
             - align: left
+              format:
+                unit: ""
               header: Workload
               name: workload
             - align: left
+              format:
+                unit: ""
               header: Type
               name: workload_type
             - align: right
+              format:
+                unit: bytes/sec
               header: Rx Bytes
               name: 'value #1'
             - align: right
+              format:
+                unit: bytes/sec
               header: Tx Bytes
               name: 'value #2'
             - align: right
+              format:
+                unit: bytes/sec
               header: Rx Bytes (Avg)
               name: 'value #3'
             - align: right
+              format:
+                unit: bytes/sec
               header: Tx Bytes (Avg)
               name: 'value #4'
             - align: right
+              format:
+                unit: packets/sec
               header: Rx Packets
               name: 'value #5'
             - align: right
+              format:
+                unit: packets/sec
               header: Tx Packets
               name: 'value #6'
             - align: right
+              format:
+                unit: packets/sec
               header: Rx Packets Dropped
               name: 'value #7'
             - align: right
+              format:
+                unit: packets/sec
               header: Tx Packets Dropped
               name: 'value #8'
-            - hide: true
+            - format:
+                unit: ""
+              hide: true
               name: timestamp
             transforms:
             - kind: MergeSeries

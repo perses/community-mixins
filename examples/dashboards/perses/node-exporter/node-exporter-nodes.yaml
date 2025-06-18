@@ -341,13 +341,13 @@ spec:
                 - x: 0
                   "y": 0
                   width: 12
-                  height: 6
+                  height: 8
                   content:
                     $ref: '#/spec/panels/0_0'
                 - x: 12
                   "y": 0
                   width: 12
-                  height: 6
+                  height: 8
                   content:
                     $ref: '#/spec/panels/0_1'
         - kind: Grid
@@ -358,13 +358,13 @@ spec:
                 - x: 0
                   "y": 0
                   width: 12
-                  height: 6
+                  height: 8
                   content:
                     $ref: '#/spec/panels/1_0'
                 - x: 12
                   "y": 0
                   width: 12
-                  height: 6
+                  height: 8
                   content:
                     $ref: '#/spec/panels/1_1'
         - kind: Grid
@@ -375,13 +375,13 @@ spec:
                 - x: 0
                   "y": 0
                   width: 12
-                  height: 6
+                  height: 8
                   content:
                     $ref: '#/spec/panels/2_0'
                 - x: 12
                   "y": 0
                   width: 12
-                  height: 6
+                  height: 8
                   content:
                     $ref: '#/spec/panels/2_1'
         - kind: Grid
@@ -392,13 +392,13 @@ spec:
                 - x: 0
                   "y": 0
                   width: 12
-                  height: 6
+                  height: 8
                   content:
                     $ref: '#/spec/panels/3_0'
                 - x: 12
                   "y": 0
                   width: 12
-                  height: 6
+                  height: 8
                   content:
                     $ref: '#/spec/panels/3_1'
     duration: 1h

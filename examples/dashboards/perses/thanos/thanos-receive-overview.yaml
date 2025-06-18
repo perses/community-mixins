@@ -1233,6 +1233,8 @@ spec:
                               header: Namespace
                             - name: value
                               header: Uploaded Ago
+                              format:
+                                unit: seconds
                             - name: timestamp
                               hide: true
                 queries:
@@ -1748,7 +1750,7 @@ spec:
                 - x: 0
                   "y": 0
                   width: 24
-                  height: 6
+                  height: 8
                   content:
                     $ref: '#/spec/panels/9_0'
         - kind: Grid

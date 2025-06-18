@@ -2,6 +2,8 @@
 
 Welcome to the **Perses Community Dashboards** repository! This project is designed to provide Prometheus mixins tailored for the Perses platform. Developed with the **Perses Go SDK**, these dashboards are modular, reusable, and simple to integrate into various observability setups.
 
+> **Note:** These dashboards are compatible with Perses version 0.51.0 and onwards.
+
 ## Overview of Available Dashboards
 
 ### Prometheus Dashboards
