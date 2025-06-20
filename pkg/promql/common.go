@@ -22,6 +22,44 @@ func SumByRate(metricName string, byLabels []string, labelMatchers ...*labels.Ma
 	).By(byLabels...)
 }
 
+func SumByIncrease(metricName string, byLabels []string, labelMatchers ...*labels.Matcher) parser.Expr {
+	return promqlbuilder.Sum(
+		promqlbuilder.Increase(
+			matrix.New(
+				vector.New(
+					vector.WithMetricName(metricName),
+					vector.WithLabelMatchers(labelMatchers...),
+				),
+				matrix.WithRangeAsVariable("$__rate_interval"),
+			),
+		),
+	).By(byLabels...)
+}
+
+func SumBy(metricName string, byLabels []string, labelMatchers ...*labels.Matcher) parser.Expr {
+	return promqlbuilder.Sum(
+		matrix.New(
+			vector.New(vector.WithMetricName(metricName), vector.WithLabelMatchers(labelMatchers...)),
+		),
+	).By(byLabels...)
+}
+
+func MaxBy(metricName string, byLabels []string, labelMatchers ...*labels.Matcher) parser.Expr {
+	return promqlbuilder.Max(
+		matrix.New(
+			vector.New(vector.WithMetricName(metricName), vector.WithLabelMatchers(labelMatchers...)),
+		),
+	).By(byLabels...)
+}
+
+func MinBy(metricName string, byLabels []string, labelMatchers ...*labels.Matcher) parser.Expr {
+	return promqlbuilder.Min(
+		matrix.New(
+			vector.New(vector.WithMetricName(metricName), vector.WithLabelMatchers(labelMatchers...)),
+		),
+	).By(byLabels...)
+}
+
 func ErrorCaseRatio(
 	numeratorMetricName string,
 	numeratorByLabels []string,
