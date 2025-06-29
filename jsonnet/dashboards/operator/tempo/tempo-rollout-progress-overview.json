@@ -542,20 +542,32 @@
                 {
                   "name": "container",
                   "header": "Container",
+                  "format": {
+                    "unit": ""
+                  },
                   "align": "left"
                 },
                 {
                   "name": "version",
                   "header": "Version",
+                  "format": {
+                    "unit": ""
+                  },
                   "align": "left"
                 },
                 {
                   "name": "value",
                   "header": "number of pods",
+                  "format": {
+                    "unit": ""
+                  },
                   "align": "right"
                 },
                 {
                   "name": "timestamp",
+                  "format": {
+                    "unit": ""
+                  },
                   "hide": true
                 }
               ],
