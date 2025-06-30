@@ -68,6 +68,14 @@ func AvgBy(metricName string, byLabels []string, labelMatchers ...*labels.Matche
 	).By(byLabels...)
 }
 
+func CreateEqualComparison(left parser.Expr, right parser.Expr) *parser.BinaryExpr {
+	return &parser.BinaryExpr{
+		Op:  parser.EQLC,
+		LHS: left,
+		RHS: right,
+	}
+}
+
 func ErrorCaseRatio(
 	numeratorMetricName string,
 	numeratorByLabels []string,

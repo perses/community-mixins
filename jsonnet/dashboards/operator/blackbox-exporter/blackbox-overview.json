@@ -211,7 +211,7 @@
                       "kind": "PrometheusDatasource",
                       "name": "prometheus-datasource"
                     },
-                    "query": "count(probe_success{job=~\"$job\"} = 1) or vector(0) / count(probe_success{job=~\"$job\"})"
+                    "query": "(count(probe_success{job=~\"$job\"} == 1) or vector(0)) / count(probe_success{job=~\"$job\"})"
                   }
                 }
               }

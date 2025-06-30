@@ -25,20 +25,22 @@ var BlackboxCommonPanelQueries = map[string]parser.Expr{
 		),
 	),
 	"BlackboxProbeSucessPercent": promqlbuilder.Div(
-		promqlbuilder.Or(
-			promqlbuilder.Count(
-				promqlbuilder.Eql(
-					vector.New(
-						vector.WithMetricName("probe_success"),
-						vector.WithLabelMatchers(
-							label.New("job").EqualRegexp("$job"),
+		&parser.ParenExpr{
+			Expr: promqlbuilder.Or(
+				promqlbuilder.Count(
+					promql.CreateEqualComparison(
+						vector.New(
+							vector.WithMetricName("probe_success"),
+							vector.WithLabelMatchers(
+								label.New("job").EqualRegexp("$job"),
+							),
 						),
+						&parser.NumberLiteral{Val: 1},
 					),
-					&parser.NumberLiteral{Val: 1},
 				),
+				promqlbuilder.Vector(0),
 			),
-			promqlbuilder.Vector(0),
-		),
+		},
 		promqlbuilder.Count(
 			vector.New(
 				vector.WithMetricName("probe_success"),
