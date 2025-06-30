@@ -449,7 +449,7 @@ spec:
                                 datasource:
                                     kind: PrometheusDatasource
                                     name: prometheus-datasource
-                                query: min by (instance) (probe_ssl_earliest_cert_expiry{instance=~"$instance",job=~"$job"}[0s])
+                                query: min by (instance) (probe_ssl_earliest_cert_expiry{instance=~"$instance",job=~"$job"}[0s]) - time()
         "4_3":
             kind: Panel
             spec:

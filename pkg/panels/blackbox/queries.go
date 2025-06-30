@@ -135,11 +135,14 @@ var BlackboxCommonPanelQueries = map[string]parser.Expr{
 		label.New("job").EqualRegexp("$job"),
 		label.New("instance").EqualRegexp("$instance"),
 	),
-	"BlackboxProbeSSLExpiry": promql.MinBy(
-		"probe_ssl_earliest_cert_expiry",
-		[]string{"instance"},
-		label.New("job").EqualRegexp("$job"),
-		label.New("instance").EqualRegexp("$instance"),
+	"BlackboxProbeSSLExpiry": promqlbuilder.Sub(
+		promql.MinBy(
+			"probe_ssl_earliest_cert_expiry",
+			[]string{"instance"},
+			label.New("job").EqualRegexp("$job"),
+			label.New("instance").EqualRegexp("$instance"),
+		),
+		promqlbuilder.Time(),
 	),
 	"BlackboxProbeRedirects": promql.MaxBy(
 		"probe_http_redirects",
