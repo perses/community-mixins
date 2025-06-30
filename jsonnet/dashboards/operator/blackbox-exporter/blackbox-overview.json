@@ -114,7 +114,7 @@
                       "kind": "PrometheusDatasource",
                       "name": "prometheus-datasource"
                     },
-                    "query": "max by (instance) (probe_success{job=~\"$job\"})",
+                    "query": "max by (instance) (probe_success{job=~\"$job\"}[0s])",
                     "seriesNameFormat": "{{instance}}"
                   }
                 }
@@ -211,7 +211,7 @@
                       "kind": "PrometheusDatasource",
                       "name": "prometheus-datasource"
                     },
-                    "query": "(count(probe_success{job=~\"$job\"} == 1) or vector(0)) / count(probe_success{job=~\"$job\"})"
+                    "query": "count(probe_success{job=~\"$job\"} = 1) or vector(0) / count(probe_success{job=~\"$job\"})"
                   }
                 }
               }
@@ -264,7 +264,7 @@
                       "kind": "PrometheusDatasource",
                       "name": "prometheus-datasource"
                     },
-                    "query": "count(probe_http_ssl{job=~\"$job\"} == 1) / count(probe_http_version{job=~\"$job\"})"
+                    "query": "count(probe_http_ssl{job=~\"$job\"} = 1) / count(probe_http_version{job=~\"$job\"})"
                   }
                 }
               }
@@ -360,7 +360,7 @@
                       "kind": "PrometheusDatasource",
                       "name": "prometheus-datasource"
                     },
-                    "query": "max by (instance) (probe_success{instance=~\"$instance\",job=~\"$job\"})",
+                    "query": "max by (instance) (probe_success{instance=~\"$instance\",job=~\"$job\"}[0s])",
                     "seriesNameFormat": "{{instance}}"
                   }
                 }
@@ -464,7 +464,7 @@
                       "kind": "PrometheusDatasource",
                       "name": "prometheus-datasource"
                     },
-                    "query": "sum by (instance) (\n  avg by (phase, instance) (probe_http_duration_seconds{instance=~\"$instance\",job=~\"$job\"})\n)",
+                    "query": "sum by (instance) (\n  avg by (phase, instance) (probe_http_duration_seconds{instance=~\"$instance\",job=~\"$job\"}[0s])\n)",
                     "seriesNameFormat": "HTTP duration"
                   }
                 }
@@ -480,7 +480,7 @@
                       "kind": "PrometheusDatasource",
                       "name": "prometheus-datasource"
                     },
-                    "query": "avg by (instance) (probe_duration_seconds{instance=~\"$instance\",job=~\"$job\"})",
+                    "query": "avg by (instance) (probe_duration_seconds{instance=~\"$instance\",job=~\"$job\"}[0s])",
                     "seriesNameFormat": "Total probe duration"
                   }
                 }
@@ -530,7 +530,7 @@
                       "kind": "PrometheusDatasource",
                       "name": "prometheus-datasource"
                     },
-                    "query": "avg by (phase) (probe_http_duration_seconds{instance=~\"$instance\",job=~\"$job\"})",
+                    "query": "avg by (phase) (probe_http_duration_seconds{instance=~\"$instance\",job=~\"$job\"}[0s])",
                     "seriesNameFormat": "{{phase}}"
                   }
                 }
@@ -546,7 +546,7 @@
                       "kind": "PrometheusDatasource",
                       "name": "prometheus-datasource"
                     },
-                    "query": "avg by (phase) (probe_icmp_duration_seconds{instance=~\"$instance\",job=~\"$job\"})",
+                    "query": "avg by (phase) (probe_icmp_duration_seconds{instance=~\"$instance\",job=~\"$job\"}[0s])",
                     "seriesNameFormat": "{{phase}}"
                   }
                 }
@@ -604,7 +604,7 @@
                       "kind": "PrometheusDatasource",
                       "name": "prometheus-datasource"
                     },
-                    "query": "max by (instance) (probe_http_status_code{instance=~\"$instance\",job=~\"$job\"})",
+                    "query": "max by (instance) (probe_http_status_code{instance=~\"$instance\",job=~\"$job\"}[0s])",
                     "seriesNameFormat": "{{instance}}"
                   }
                 }
@@ -648,7 +648,7 @@
                       "kind": "PrometheusDatasource",
                       "name": "prometheus-datasource"
                     },
-                    "query": "max by (instance, version) (probe_tls_version_info{instance=~\"$instance\",job=~\"$job\"})",
+                    "query": "max by (instance, version) (probe_tls_version_info{instance=~\"$instance\",job=~\"$job\"}[0s])",
                     "seriesNameFormat": "{{version}}"
                   }
                 }
@@ -692,7 +692,7 @@
                       "kind": "PrometheusDatasource",
                       "name": "prometheus-datasource"
                     },
-                    "query": "min by (instance) (probe_ssl_earliest_cert_expiry{instance=~\"$instance\",job=~\"$job\"}) - time()"
+                    "query": "min by (instance) (probe_ssl_earliest_cert_expiry{instance=~\"$instance\",job=~\"$job\"}[0s])"
                   }
                 }
               }
@@ -747,7 +747,7 @@
                       "kind": "PrometheusDatasource",
                       "name": "prometheus-datasource"
                     },
-                    "query": "max by (instance) (probe_http_redirects{instance=~\"$instance\",job=~\"$job\"})"
+                    "query": "max by (instance) (probe_http_redirects{instance=~\"$instance\",job=~\"$job\"}[0s])"
                   }
                 }
               }
@@ -790,7 +790,7 @@
                       "kind": "PrometheusDatasource",
                       "name": "prometheus-datasource"
                     },
-                    "query": "max by (instance) (probe_http_version{instance=~\"$instance\",job=~\"$job\"})",
+                    "query": "max by (instance) (probe_http_version{instance=~\"$instance\",job=~\"$job\"}[0s])",
                     "seriesNameFormat": "{{version}}"
                   }
                 }
@@ -834,7 +834,7 @@
                       "kind": "PrometheusDatasource",
                       "name": "prometheus-datasource"
                     },
-                    "query": "avg by (instance) (probe_duration_seconds{instance=~\"$instance\",job=~\"$job\"})"
+                    "query": "avg by (instance) (probe_duration_seconds{instance=~\"$instance\",job=~\"$job\"}[0s])"
                   }
                 }
               }
@@ -877,7 +877,7 @@
                       "kind": "PrometheusDatasource",
                       "name": "prometheus-datasource"
                     },
-                    "query": "avg by (instance) (probe_dns_lookup_time_seconds{instance=~\"$instance\",job=~\"$job\"})"
+                    "query": "avg by (instance) (probe_dns_lookup_time_seconds{instance=~\"$instance\",job=~\"$job\"}[0s])"
                   }
                 }
               }

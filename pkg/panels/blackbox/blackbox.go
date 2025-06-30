@@ -9,6 +9,7 @@ import (
 	"github.com/perses/plugins/prometheus/sdk/go/query"
 	stat "github.com/perses/plugins/statchart/sdk/go"
 	timeSeriesPanel "github.com/perses/plugins/timeserieschart/sdk/go"
+	"github.com/prometheus/prometheus/model/labels"
 )
 
 // ProbeStatusMap creates a panel option for displaying Blackbox Probe Success for all instances
@@ -26,7 +27,7 @@ import (
 // Returns:
 //   - panelgroup.Option: A panel option that can be added to a panel group.
 
-func ProbeStatusMap(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
+func ProbeStatusMap(datasourceName string, labelMatchers ...*labels.Matcher) panelgroup.Option {
 	return panelgroup.AddPanel("Status Map",
 		panel.Description("Shows Probe success, either 1 if up, or 0 if down"),
 		stat.Chart(
@@ -56,10 +57,10 @@ func ProbeStatusMap(datasourceName string, labelMatchers ...promql.LabelMatcher)
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchers(
-					"max by (instance) (probe_success{job=~'$job'})",
+				promql.SetLabelMatchersV2(
+					BlackboxCommonPanelQueries["BlackboxProbeSucess"],
 					labelMatchers,
-				),
+				).Pretty(0),
 				dashboards.AddQueryDataSource(datasourceName),
 				query.SeriesNameFormat("{{instance}}"),
 			),
@@ -81,7 +82,7 @@ func ProbeStatusMap(datasourceName string, labelMatchers ...promql.LabelMatcher)
 //
 // Returns:
 //   - panelgroup.Option: A panel option that can be added to a panel group.
-func ProbeSuccessCount(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
+func ProbeSuccessCount(datasourceName string, labelMatchers ...*labels.Matcher) panelgroup.Option {
 	return panelgroup.AddPanel("Probes",
 		panel.Description("Counts Probes Success"),
 		stat.Chart(
@@ -101,10 +102,10 @@ func ProbeSuccessCount(datasourceName string, labelMatchers ...promql.LabelMatch
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchers(
-					"count(probe_success{job=~'$job'})",
+				promql.SetLabelMatchersV2(
+					BlackboxCommonPanelQueries["BlackboxProbeSucessCount"],
 					labelMatchers,
-				),
+				).Pretty(0),
 				dashboards.AddQueryDataSource(datasourceName),
 			),
 		),
@@ -125,7 +126,7 @@ func ProbeSuccessCount(datasourceName string, labelMatchers ...promql.LabelMatch
 //
 // Returns:
 //   - panelgroup.Option: A panel option that can be added to a panel group.
-func ProbeSuccessPercent(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
+func ProbeSuccessPercent(datasourceName string, labelMatchers ...*labels.Matcher) panelgroup.Option {
 	return panelgroup.AddPanel("Probes Success",
 		panel.Description("Percentage of Probes Success"),
 		stat.Chart(
@@ -154,10 +155,10 @@ func ProbeSuccessPercent(datasourceName string, labelMatchers ...promql.LabelMat
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchers(
-					"(count(probe_success{job=~'$job'} == 1) OR vector(0)) / count(probe_success{job=~'$job'})",
+				promql.SetLabelMatchersV2(
+					BlackboxCommonPanelQueries["BlackboxProbeSucessPercent"],
 					labelMatchers,
-				),
+				).Pretty(0),
 				dashboards.AddQueryDataSource(datasourceName),
 			),
 		),
@@ -179,7 +180,7 @@ func ProbeSuccessPercent(datasourceName string, labelMatchers ...promql.LabelMat
 //
 // Returns:
 //   - panelgroup.Option: A panel option that can be added to a panel group.
-func ProbeHTTPSSL(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
+func ProbeHTTPSSL(datasourceName string, labelMatchers ...*labels.Matcher) panelgroup.Option {
 	return panelgroup.AddPanel("Probes SSL",
 		panel.Description("Proportion of HTTP probes that successfully used SSL"),
 		stat.Chart(
@@ -208,10 +209,10 @@ func ProbeHTTPSSL(datasourceName string, labelMatchers ...promql.LabelMatcher) p
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchers(
-					"count(probe_http_ssl{job=~'$job'} == 1) / count(probe_http_version{job=~'$job'})",
+				promql.SetLabelMatchersV2(
+					BlackboxCommonPanelQueries["BlackboxProbeHTTPSSL"],
 					labelMatchers,
-				),
+				).Pretty(0),
 				dashboards.AddQueryDataSource(datasourceName),
 			),
 		),
@@ -232,7 +233,7 @@ func ProbeHTTPSSL(datasourceName string, labelMatchers ...promql.LabelMatcher) p
 //
 // Returns:
 //   - panelgroup.Option: A panel option that can be added to a panel group.
-func ProbeAverageDuration(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
+func ProbeAverageDuration(datasourceName string, labelMatchers ...*labels.Matcher) panelgroup.Option {
 	return panelgroup.AddPanel("Probe Average Duration",
 		panel.Description("Duration in Seconds"),
 		stat.Chart(
@@ -251,10 +252,10 @@ func ProbeAverageDuration(datasourceName string, labelMatchers ...promql.LabelMa
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchers(
-					"avg(probe_duration_seconds{job=~'$job'})",
+				promql.SetLabelMatchersV2(
+					BlackboxCommonPanelQueries["BlackboxAvgProbeDuration"],
 					labelMatchers,
-				),
+				).Pretty(0),
 				dashboards.AddQueryDataSource(datasourceName),
 			),
 		),
@@ -275,7 +276,7 @@ func ProbeAverageDuration(datasourceName string, labelMatchers ...promql.LabelMa
 //
 // Returns:
 //   - panelgroup.Option: A panel option that can be added to a panel group.
-func ProbeUptimeSuccess(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
+func ProbeUptimeSuccess(datasourceName string, labelMatchers ...*labels.Matcher) panelgroup.Option {
 	return panelgroup.AddPanel("Uptime",
 		panel.Description("Max uptime by instance"),
 		stat.Chart(
@@ -305,10 +306,10 @@ func ProbeUptimeSuccess(datasourceName string, labelMatchers ...promql.LabelMatc
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchers(
-					"max by (instance) (probe_success{job=~'$job',instance=~'$instance'})",
+				promql.SetLabelMatchersV2(
+					BlackboxCommonPanelQueries["BlackboxProbeUptime"],
 					labelMatchers,
-				),
+				).Pretty(0),
 				dashboards.AddQueryDataSource(datasourceName),
 				query.SeriesNameFormat("{{instance}}"),
 			),
@@ -330,7 +331,7 @@ func ProbeUptimeSuccess(datasourceName string, labelMatchers ...promql.LabelMatc
 //
 // Returns:
 //   - panelgroup.Option: A panel option that can be added to a panel group.
-func ProbeUptimeMonthly(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
+func ProbeUptimeMonthly(datasourceName string, labelMatchers ...*labels.Matcher) panelgroup.Option {
 	return panelgroup.AddPanel("Uptime 30d",
 		panel.Description("30 days uptime"),
 		stat.Chart(
@@ -359,10 +360,10 @@ func ProbeUptimeMonthly(datasourceName string, labelMatchers ...promql.LabelMatc
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchers(
-					"avg_over_time(probe_success{job=~'$job',instance=~'$instance'}[30d])",
+				promql.SetLabelMatchersV2(
+					BlackboxCommonPanelQueries["BlackboxProbeUptimeMonthly"],
 					labelMatchers,
-				),
+				).Pretty(0),
 				dashboards.AddQueryDataSource(datasourceName),
 				query.SeriesNameFormat("{{instance}}"),
 			),
@@ -386,7 +387,7 @@ func ProbeUptimeMonthly(datasourceName string, labelMatchers ...promql.LabelMatc
 //
 // Returns:
 //   - panelgroup.Option: A panel option that can be added to a panel group.
-func ProbeDurationSeconds(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
+func ProbeDurationSeconds(datasourceName string, labelMatchers ...*labels.Matcher) panelgroup.Option {
 	return panelgroup.AddPanel("Probe Duration",
 		panel.Description("Shows Probe duration in seconds"),
 		timeSeriesPanel.Chart(
@@ -410,20 +411,20 @@ func ProbeDurationSeconds(datasourceName string, labelMatchers ...promql.LabelMa
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchers(
-					"sum by (instance) (avg by (phase,instance) (probe_http_duration_seconds{job=~'$job',instance=~'$instance'}))",
+				promql.SetLabelMatchersV2(
+					BlackboxCommonPanelQueries["BlackboxProbeHttpDuration"],
 					labelMatchers,
-				),
+				).Pretty(0),
 				dashboards.AddQueryDataSource(datasourceName),
 				query.SeriesNameFormat("HTTP duration"),
 			),
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchers(
-					"avg by (instance) (probe_duration_seconds{job=~'$job',instance=~'$instance'})",
+				promql.SetLabelMatchersV2(
+					BlackboxCommonPanelQueries["BlackboxAvgProbeDurationSeconds"],
 					labelMatchers,
-				),
+				).Pretty(0),
 				dashboards.AddQueryDataSource(datasourceName),
 				query.SeriesNameFormat("Total probe duration"),
 			),
@@ -446,7 +447,7 @@ func ProbeDurationSeconds(datasourceName string, labelMatchers ...promql.LabelMa
 //
 // Returns:
 //   - panelgroup.Option: A panel option that can be added to a panel group.
-func ProbePhases(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
+func ProbePhases(datasourceName string, labelMatchers ...*labels.Matcher) panelgroup.Option {
 	return panelgroup.AddPanel("Probe Phases",
 		panel.Description("Shows Probe duration in seconds"),
 		timeSeriesPanel.Chart(
@@ -470,20 +471,20 @@ func ProbePhases(datasourceName string, labelMatchers ...promql.LabelMatcher) pa
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchers(
-					"avg by (phase) (probe_http_duration_seconds{job=~'$job',instance=~'$instance'})",
+				promql.SetLabelMatchersV2(
+					BlackboxCommonPanelQueries["BlackboxProbeHttpPhases"],
 					labelMatchers,
-				),
+				).Pretty(0),
 				dashboards.AddQueryDataSource(datasourceName),
 				query.SeriesNameFormat("{{phase}}"),
 			),
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchers(
-					"avg by (phase) (probe_icmp_duration_seconds{job=~'$job',instance=~'$instance'})",
+				promql.SetLabelMatchersV2(
+					BlackboxCommonPanelQueries["BlackboxProbeIcmpPhases"],
 					labelMatchers,
-				),
+				).Pretty(0),
 				dashboards.AddQueryDataSource(datasourceName),
 				query.SeriesNameFormat("{{phase}}"),
 			),
@@ -505,7 +506,7 @@ func ProbePhases(datasourceName string, labelMatchers ...promql.LabelMatcher) pa
 //
 // Returns:
 //   - panelgroup.Option: A panel option that can be added to a panel group.
-func ProbeStatusCode(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
+func ProbeStatusCode(datasourceName string, labelMatchers ...*labels.Matcher) panelgroup.Option {
 	return panelgroup.AddPanel("Latest Response Code",
 		panel.Description("Shows Probe Last Status Code"),
 		stat.Chart(
@@ -539,10 +540,10 @@ func ProbeStatusCode(datasourceName string, labelMatchers ...promql.LabelMatcher
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchers(
-					"max by (instance) (probe_http_status_code{job=~'$job',instance=~'$instance'})",
+				promql.SetLabelMatchersV2(
+					BlackboxCommonPanelQueries["BlackboxProbeStatusCode"],
 					labelMatchers,
-				),
+				).Pretty(0),
 				dashboards.AddQueryDataSource(datasourceName),
 				query.SeriesNameFormat("{{instance}}"),
 			),
@@ -564,7 +565,7 @@ func ProbeStatusCode(datasourceName string, labelMatchers ...promql.LabelMatcher
 //
 // Returns:
 //   - panelgroup.Option: A panel option that can be added to a panel group.
-func ProbeTLSVersion(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
+func ProbeTLSVersion(datasourceName string, labelMatchers ...*labels.Matcher) panelgroup.Option {
 	return panelgroup.AddPanel("SSL Version",
 		panel.Description("Shows Probe TLS Version"),
 		stat.Chart(
@@ -583,10 +584,10 @@ func ProbeTLSVersion(datasourceName string, labelMatchers ...promql.LabelMatcher
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchers(
-					"max by (instance, version) (probe_tls_version_info{job=~'$job',instance=~'$instance'})",
+				promql.SetLabelMatchersV2(
+					BlackboxCommonPanelQueries["BlackboxProbeTLSVersion"],
 					labelMatchers,
-				),
+				).Pretty(0),
 				dashboards.AddQueryDataSource(datasourceName),
 				query.SeriesNameFormat("{{version}}"),
 			),
@@ -608,7 +609,7 @@ func ProbeTLSVersion(datasourceName string, labelMatchers ...promql.LabelMatcher
 //
 // Returns:
 //   - panelgroup.Option: A panel option that can be added to a panel group.
-func ProbeSSLExpiry(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
+func ProbeSSLExpiry(datasourceName string, labelMatchers ...*labels.Matcher) panelgroup.Option {
 	return panelgroup.AddPanel("SSL Certificate Expiry",
 		panel.Description("Shows When SSL Cert Will Expire"),
 		stat.Chart(
@@ -627,10 +628,10 @@ func ProbeSSLExpiry(datasourceName string, labelMatchers ...promql.LabelMatcher)
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchers(
-					"min by (instance) (probe_ssl_earliest_cert_expiry{job=~'$job',instance=~'$instance'}) - time()",
+				promql.SetLabelMatchersV2(
+					BlackboxCommonPanelQueries["BlackboxProbeSSLExpiry"],
 					labelMatchers,
-				),
+				).Pretty(0),
 				dashboards.AddQueryDataSource(datasourceName),
 			),
 		),
@@ -651,7 +652,7 @@ func ProbeSSLExpiry(datasourceName string, labelMatchers ...promql.LabelMatcher)
 //
 // Returns:
 //   - panelgroup.Option: A panel option that can be added to a panel group.
-func ProbeRedirects(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
+func ProbeRedirects(datasourceName string, labelMatchers ...*labels.Matcher) panelgroup.Option {
 	return panelgroup.AddPanel("Redirects",
 		panel.Description("Shows Probes HTTP Redirects"),
 		stat.Chart(
@@ -683,10 +684,10 @@ func ProbeRedirects(datasourceName string, labelMatchers ...promql.LabelMatcher)
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchers(
-					"max by (instance) (probe_http_redirects{job=~'$job',instance=~'$instance'})",
+				promql.SetLabelMatchersV2(
+					BlackboxCommonPanelQueries["BlackboxProbeRedirects"],
 					labelMatchers,
-				),
+				).Pretty(0),
 				dashboards.AddQueryDataSource(datasourceName),
 			),
 		),
@@ -707,7 +708,7 @@ func ProbeRedirects(datasourceName string, labelMatchers ...promql.LabelMatcher)
 //
 // Returns:
 //   - panelgroup.Option: A panel option that can be added to a panel group.
-func ProbeHTTPVersion(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
+func ProbeHTTPVersion(datasourceName string, labelMatchers ...*labels.Matcher) panelgroup.Option {
 	return panelgroup.AddPanel("HTTP Version",
 		panel.Description("Shows Probes HTTP Version"),
 		stat.Chart(
@@ -726,10 +727,10 @@ func ProbeHTTPVersion(datasourceName string, labelMatchers ...promql.LabelMatche
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchers(
-					"max by (instance) (probe_http_version{job=~'$job',instance=~'$instance'})",
+				promql.SetLabelMatchersV2(
+					BlackboxCommonPanelQueries["BlackboxProbeHTTPVersion"],
 					labelMatchers,
-				),
+				).Pretty(0),
 				dashboards.AddQueryDataSource(datasourceName),
 				query.SeriesNameFormat("{{version}}"),
 			),
@@ -751,7 +752,7 @@ func ProbeHTTPVersion(datasourceName string, labelMatchers ...promql.LabelMatche
 //
 // Returns:
 //   - panelgroup.Option: A panel option that can be added to a panel group.
-func ProbeAverageDurationInstance(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
+func ProbeAverageDurationInstance(datasourceName string, labelMatchers ...*labels.Matcher) panelgroup.Option {
 	return panelgroup.AddPanel("Average Latency",
 		panel.Description("Average Duration in Seconds by Instance"),
 		stat.Chart(
@@ -770,10 +771,10 @@ func ProbeAverageDurationInstance(datasourceName string, labelMatchers ...promql
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchers(
-					"avg by (instance)(probe_duration_seconds{job=~'$job',instance=~'$instance'})",
+				promql.SetLabelMatchersV2(
+					BlackboxCommonPanelQueries["BlackboxProbeAverageDuration"],
 					labelMatchers,
-				),
+				).Pretty(0),
 				dashboards.AddQueryDataSource(datasourceName),
 			),
 		),
@@ -794,7 +795,7 @@ func ProbeAverageDurationInstance(datasourceName string, labelMatchers ...promql
 //
 // Returns:
 //   - panelgroup.Option: A panel option that can be added to a panel group.
-func ProbeAverageDNSLookupPerInstance(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
+func ProbeAverageDNSLookupPerInstance(datasourceName string, labelMatchers ...*labels.Matcher) panelgroup.Option {
 	return panelgroup.AddPanel("Average DNS Lookup Time",
 		panel.Description("Average DNS lookup Time per instance"),
 		stat.Chart(
@@ -813,10 +814,10 @@ func ProbeAverageDNSLookupPerInstance(datasourceName string, labelMatchers ...pr
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchers(
-					"avg by (instance)(probe_dns_lookup_time_seconds{job=~'$job',instance=~'$instance'})",
+				promql.SetLabelMatchersV2(
+					BlackboxCommonPanelQueries["BlackboxProbeAverageDNSLookupPerInstance"],
 					labelMatchers,
-				),
+				).Pretty(0),
 				dashboards.AddQueryDataSource(datasourceName),
 			),
 		),

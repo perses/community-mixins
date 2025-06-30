@@ -76,7 +76,7 @@ spec:
                                 datasource:
                                     kind: PrometheusDatasource
                                     name: prometheus-datasource
-                                query: max by (instance) (probe_success{job=~"$job"})
+                                query: max by (instance) (probe_success{job=~"$job"}[0s])
                                 seriesNameFormat: '{{instance}}'
         "1_0":
             kind: Panel
@@ -138,7 +138,7 @@ spec:
                                 datasource:
                                     kind: PrometheusDatasource
                                     name: prometheus-datasource
-                                query: (count(probe_success{job=~"$job"} == 1) or vector(0)) / count(probe_success{job=~"$job"})
+                                query: count(probe_success{job=~"$job"} = 1) or vector(0) / count(probe_success{job=~"$job"})
         "1_2":
             kind: Panel
             spec:
@@ -171,7 +171,7 @@ spec:
                                 datasource:
                                     kind: PrometheusDatasource
                                     name: prometheus-datasource
-                                query: count(probe_http_ssl{job=~"$job"} == 1) / count(probe_http_version{job=~"$job"})
+                                query: count(probe_http_ssl{job=~"$job"} = 1) / count(probe_http_version{job=~"$job"})
         "1_3":
             kind: Panel
             spec:
@@ -232,7 +232,7 @@ spec:
                                 datasource:
                                     kind: PrometheusDatasource
                                     name: prometheus-datasource
-                                query: max by (instance) (probe_success{instance=~"$instance",job=~"$job"})
+                                query: max by (instance) (probe_success{instance=~"$instance",job=~"$job"}[0s])
                                 seriesNameFormat: '{{instance}}'
         "2_1":
             kind: Panel
@@ -301,7 +301,7 @@ spec:
                                     name: prometheus-datasource
                                 query: |-
                                     sum by (instance) (
-                                      avg by (phase, instance) (probe_http_duration_seconds{instance=~"$instance",job=~"$job"})
+                                      avg by (phase, instance) (probe_http_duration_seconds{instance=~"$instance",job=~"$job"}[0s])
                                     )
                                 seriesNameFormat: HTTP duration
                     - kind: TimeSeriesQuery
@@ -312,7 +312,7 @@ spec:
                                 datasource:
                                     kind: PrometheusDatasource
                                     name: prometheus-datasource
-                                query: avg by (instance) (probe_duration_seconds{instance=~"$instance",job=~"$job"})
+                                query: avg by (instance) (probe_duration_seconds{instance=~"$instance",job=~"$job"}[0s])
                                 seriesNameFormat: Total probe duration
         "3_1":
             kind: Panel
@@ -345,7 +345,7 @@ spec:
                                 datasource:
                                     kind: PrometheusDatasource
                                     name: prometheus-datasource
-                                query: avg by (phase) (probe_http_duration_seconds{instance=~"$instance",job=~"$job"})
+                                query: avg by (phase) (probe_http_duration_seconds{instance=~"$instance",job=~"$job"}[0s])
                                 seriesNameFormat: '{{phase}}'
                     - kind: TimeSeriesQuery
                       spec:
@@ -355,7 +355,7 @@ spec:
                                 datasource:
                                     kind: PrometheusDatasource
                                     name: prometheus-datasource
-                                query: avg by (phase) (probe_icmp_duration_seconds{instance=~"$instance",job=~"$job"})
+                                query: avg by (phase) (probe_icmp_duration_seconds{instance=~"$instance",job=~"$job"}[0s])
                                 seriesNameFormat: '{{phase}}'
         "4_0":
             kind: Panel
@@ -391,7 +391,7 @@ spec:
                                 datasource:
                                     kind: PrometheusDatasource
                                     name: prometheus-datasource
-                                query: max by (instance) (probe_http_status_code{instance=~"$instance",job=~"$job"})
+                                query: max by (instance) (probe_http_status_code{instance=~"$instance",job=~"$job"}[0s])
                                 seriesNameFormat: '{{instance}}'
         "4_1":
             kind: Panel
@@ -420,7 +420,7 @@ spec:
                                 datasource:
                                     kind: PrometheusDatasource
                                     name: prometheus-datasource
-                                query: max by (instance, version) (probe_tls_version_info{instance=~"$instance",job=~"$job"})
+                                query: max by (instance, version) (probe_tls_version_info{instance=~"$instance",job=~"$job"}[0s])
                                 seriesNameFormat: '{{version}}'
         "4_2":
             kind: Panel
@@ -449,7 +449,7 @@ spec:
                                 datasource:
                                     kind: PrometheusDatasource
                                     name: prometheus-datasource
-                                query: min by (instance) (probe_ssl_earliest_cert_expiry{instance=~"$instance",job=~"$job"}) - time()
+                                query: min by (instance) (probe_ssl_earliest_cert_expiry{instance=~"$instance",job=~"$job"}[0s])
         "4_3":
             kind: Panel
             spec:
@@ -484,7 +484,7 @@ spec:
                                 datasource:
                                     kind: PrometheusDatasource
                                     name: prometheus-datasource
-                                query: max by (instance) (probe_http_redirects{instance=~"$instance",job=~"$job"})
+                                query: max by (instance) (probe_http_redirects{instance=~"$instance",job=~"$job"}[0s])
         "4_4":
             kind: Panel
             spec:
@@ -512,7 +512,7 @@ spec:
                                 datasource:
                                     kind: PrometheusDatasource
                                     name: prometheus-datasource
-                                query: max by (instance) (probe_http_version{instance=~"$instance",job=~"$job"})
+                                query: max by (instance) (probe_http_version{instance=~"$instance",job=~"$job"}[0s])
                                 seriesNameFormat: '{{version}}'
         "5_0":
             kind: Panel
@@ -541,7 +541,7 @@ spec:
                                 datasource:
                                     kind: PrometheusDatasource
                                     name: prometheus-datasource
-                                query: avg by (instance) (probe_duration_seconds{instance=~"$instance",job=~"$job"})
+                                query: avg by (instance) (probe_duration_seconds{instance=~"$instance",job=~"$job"}[0s])
         "5_1":
             kind: Panel
             spec:
@@ -569,7 +569,7 @@ spec:
                                 datasource:
                                     kind: PrometheusDatasource
                                     name: prometheus-datasource
-                                query: avg by (instance) (probe_dns_lookup_time_seconds{instance=~"$instance",job=~"$job"})
+                                query: avg by (instance) (probe_dns_lookup_time_seconds{instance=~"$instance",job=~"$job"}[0s])
     layouts:
         - kind: Grid
           spec:

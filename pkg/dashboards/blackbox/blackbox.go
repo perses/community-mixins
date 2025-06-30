@@ -6,12 +6,13 @@ import (
 	"github.com/perses/community-dashboards/pkg/promql"
 	"github.com/perses/perses/go-sdk/dashboard"
 	panelgroup "github.com/perses/perses/go-sdk/panel-group"
-
 	listVar "github.com/perses/perses/go-sdk/variable/list-variable"
 	labelValuesVar "github.com/perses/plugins/prometheus/sdk/go/variable/label-values"
+	"github.com/perses/promql-builder/vector"
+	"github.com/prometheus/prometheus/model/labels"
 )
 
-func withBlackboxSummary(datasource string, labelMatcher promql.LabelMatcher) dashboard.Option {
+func withBlackboxSummary(datasource string, labelMatcher *labels.Matcher) dashboard.Option {
 	return dashboard.AddPanelGroup("Summary",
 		panelgroup.PanelsPerLine(1),
 		panelgroup.PanelHeight(8),
@@ -19,7 +20,7 @@ func withBlackboxSummary(datasource string, labelMatcher promql.LabelMatcher) da
 	)
 }
 
-func withBlackboxProbesStats(datasource string, labelMatcher promql.LabelMatcher) dashboard.Option {
+func withBlackboxProbesStats(datasource string, labelMatcher *labels.Matcher) dashboard.Option {
 	return dashboard.AddPanelGroup("Probes Stats",
 		panelgroup.PanelsPerLine(4),
 		panelgroup.PanelHeight(8),
@@ -30,7 +31,7 @@ func withBlackboxProbesStats(datasource string, labelMatcher promql.LabelMatcher
 	)
 }
 
-func withBlackboxProbesUptime(datasource string, labelMatcher promql.LabelMatcher) dashboard.Option {
+func withBlackboxProbesUptime(datasource string, labelMatcher *labels.Matcher) dashboard.Option {
 	return dashboard.AddPanelGroup("Probes Uptimes Stats",
 		panelgroup.PanelsPerLine(2),
 		panelgroup.PanelHeight(8),
@@ -39,7 +40,7 @@ func withBlackboxProbesUptime(datasource string, labelMatcher promql.LabelMatche
 	)
 }
 
-func withBlackboxProbes(datasource string, labelMatcher promql.LabelMatcher) dashboard.Option {
+func withBlackboxProbes(datasource string, labelMatcher *labels.Matcher) dashboard.Option {
 	return dashboard.AddPanelGroup("Probes",
 		panelgroup.PanelsPerLine(2),
 		panelgroup.PanelHeight(10),
@@ -48,7 +49,7 @@ func withBlackboxProbes(datasource string, labelMatcher promql.LabelMatcher) das
 	)
 }
 
-func withBlackboxProbesAdditionalStats(datasource string, labelMatcher promql.LabelMatcher) dashboard.Option {
+func withBlackboxProbesAdditionalStats(datasource string, labelMatcher *labels.Matcher) dashboard.Option {
 	return dashboard.AddPanelGroup("Probes Additional Stats",
 		panelgroup.PanelsPerLine(5),
 		panelgroup.PanelHeight(8),
@@ -60,7 +61,7 @@ func withBlackboxProbesAdditionalStats(datasource string, labelMatcher promql.La
 	)
 }
 
-func withBlackboxProbesAvgTime(datasource string, labelMatcher promql.LabelMatcher) dashboard.Option {
+func withBlackboxProbesAvgTime(datasource string, labelMatcher *labels.Matcher) dashboard.Option {
 	return dashboard.AddPanelGroup("Probes Avg Duration Stats",
 		panelgroup.PanelsPerLine(2),
 		panelgroup.PanelHeight(8),
@@ -70,7 +71,7 @@ func withBlackboxProbesAvgTime(datasource string, labelMatcher promql.LabelMatch
 }
 
 func BuildBlackboxExporter(project string, datasource string, clusterLabelName string) dashboards.DashboardResult {
-	clusterLabelMatcher := dashboards.GetClusterLabelMatcher(clusterLabelName)
+	clusterLabelMatcher := dashboards.GetClusterLabelMatcherV2(clusterLabelName)
 	return dashboards.NewDashboardResult(
 		dashboard.New("blackbox-overview",
 			dashboard.ProjectName(project),
@@ -89,10 +90,10 @@ func BuildBlackboxExporter(project string, datasource string, clusterLabelName s
 				listVar.List(
 					labelValuesVar.PrometheusLabelValues("instance",
 						labelValuesVar.Matchers(
-							promql.SetLabelMatchers(
-								"probe_success",
-								[]promql.LabelMatcher{clusterLabelMatcher, {Name: "job", Type: "=", Value: "$job"}},
-							),
+							promql.SetLabelMatchersV2(
+								vector.New(vector.WithMetricName("probe_success")),
+								[]*labels.Matcher{clusterLabelMatcher, {Name: "job", Type: labels.MatchEqual, Value: "$job"}},
+							).Pretty(0),
 						),
 						dashboards.AddVariableDatasource(datasource),
 					),
