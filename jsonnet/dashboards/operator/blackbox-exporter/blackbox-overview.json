@@ -264,7 +264,7 @@
                       "kind": "PrometheusDatasource",
                       "name": "prometheus-datasource"
                     },
-                    "query": "count(probe_http_ssl{job=~\"$job\"} = 1) / count(probe_http_version{job=~\"$job\"})"
+                    "query": "count(probe_http_ssl{job=~\"$job\"} == 1) / count(probe_http_version{job=~\"$job\"})"
                   }
                 }
               }
