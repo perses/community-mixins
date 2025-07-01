@@ -28,7 +28,7 @@ var BlackboxCommonPanelQueries = map[string]parser.Expr{
 		&parser.ParenExpr{
 			Expr: promqlbuilder.Or(
 				promqlbuilder.Count(
-					promql.CreateEqualComparison(
+					promqlbuilder.Eqlc(
 						vector.New(
 							vector.WithMetricName("probe_success"),
 							vector.WithLabelMatchers(
@@ -52,7 +52,7 @@ var BlackboxCommonPanelQueries = map[string]parser.Expr{
 	),
 	"BlackboxProbeHTTPSSL": promqlbuilder.Div(
 		promqlbuilder.Count(
-			promql.CreateEqualComparison(
+			promqlbuilder.Eqlc(
 				vector.New(
 					vector.WithMetricName("probe_http_ssl"),
 					vector.WithLabelMatchers(
