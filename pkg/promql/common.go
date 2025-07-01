@@ -57,14 +57,6 @@ func MinBy(metricName string, byLabels []string, labelMatchers ...*labels.Matche
 	).By(byLabels...)
 }
 
-// func AvgBy(metricName string, byLabels []string, labelMatchers ...*labels.Matcher) parser.Expr {
-// 	return promqlbuilder.Avg(
-// 		matrix.New(
-// 			vector.New(vector.WithMetricName(metricName), vector.WithLabelMatchers(labelMatchers...)),
-// 		),
-// 	).By(byLabels...)
-// }
-
 func AvgBy(metricName string, byLabels []string, labelMatchers ...*labels.Matcher) parser.Expr {
 	return promqlbuilder.Avg(
 		vector.New(
