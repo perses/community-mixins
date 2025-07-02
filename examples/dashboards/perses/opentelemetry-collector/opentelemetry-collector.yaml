@@ -662,7 +662,7 @@ spec:
                                 datasource:
                                     kind: PrometheusDatasource
                                     name: prometheus-datasource
-                                query: max by (exporter) (otelcol_exporter_queue_size{exporter=~"$exporter",job=~"$job"}[0s])
+                                query: max by (exporter) (otelcol_exporter_queue_size{exporter=~"$exporter",job=~"$job"})
                                 seriesNameFormat: 'Queue size: {{exporter}}'
         "2_4":
             kind: Panel
@@ -685,7 +685,7 @@ spec:
                                 datasource:
                                     kind: PrometheusDatasource
                                     name: prometheus-datasource
-                                query: min by (exporter) (otelcol_exporter_queue_capacity{exporter=~"$exporter",job=~"$job"}[0s])
+                                query: min by (exporter) (otelcol_exporter_queue_capacity{exporter=~"$exporter",job=~"$job"})
                                 seriesNameFormat: 'Queue capacity: {{exporter}}'
         "2_5":
             kind: Panel
@@ -711,9 +711,9 @@ spec:
                                 query: |4-
                                       100
                                     *
-                                        max by (exporter) (otelcol_exporter_queue_size{exporter=~"$exporter",job=~"$job"}[0s])
+                                        max by (exporter) (otelcol_exporter_queue_size{exporter=~"$exporter",job=~"$job"})
                                       /
-                                        max by (exporter) (otelcol_exporter_queue_capacity{exporter=~"$exporter",job=~"$job"}[0s])
+                                        max by (exporter) (otelcol_exporter_queue_capacity{exporter=~"$exporter",job=~"$job"})
                                 seriesNameFormat: 'Queue utilization: {{exporter}}'
     layouts:
         - kind: Grid

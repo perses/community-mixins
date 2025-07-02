@@ -846,7 +846,7 @@
                       "kind": "PrometheusDatasource",
                       "name": "prometheus-datasource"
                     },
-                    "query": "max by (exporter) (otelcol_exporter_queue_size{exporter=~\"$exporter\",job=~\"$job\"}[0s])",
+                    "query": "max by (exporter) (otelcol_exporter_queue_size{exporter=~\"$exporter\",job=~\"$job\"})",
                     "seriesNameFormat": "Queue size: {{exporter}}"
                   }
                 }
@@ -883,7 +883,7 @@
                       "kind": "PrometheusDatasource",
                       "name": "prometheus-datasource"
                     },
-                    "query": "min by (exporter) (otelcol_exporter_queue_capacity{exporter=~\"$exporter\",job=~\"$job\"}[0s])",
+                    "query": "min by (exporter) (otelcol_exporter_queue_capacity{exporter=~\"$exporter\",job=~\"$job\"})",
                     "seriesNameFormat": "Queue capacity: {{exporter}}"
                   }
                 }
@@ -920,7 +920,7 @@
                       "kind": "PrometheusDatasource",
                       "name": "prometheus-datasource"
                     },
-                    "query": "  100\n*\n    max by (exporter) (otelcol_exporter_queue_size{exporter=~\"$exporter\",job=~\"$job\"}[0s])\n  /\n    max by (exporter) (otelcol_exporter_queue_capacity{exporter=~\"$exporter\",job=~\"$job\"}[0s])",
+                    "query": "  100\n*\n    max by (exporter) (otelcol_exporter_queue_size{exporter=~\"$exporter\",job=~\"$job\"})\n  /\n    max by (exporter) (otelcol_exporter_queue_capacity{exporter=~\"$exporter\",job=~\"$job\"})",
                     "seriesNameFormat": "Queue utilization: {{exporter}}"
                   }
                 }
