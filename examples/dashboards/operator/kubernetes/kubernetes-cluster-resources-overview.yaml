@@ -416,8 +416,6 @@ spec:
           spec:
             columnSettings:
             - align: left
-              format:
-                unit: ""
               header: Namespace
               name: namespace
             - align: right
@@ -460,9 +458,7 @@ spec:
                 unit: percent-decimal
               header: CPU Limits %
               name: 'value #7'
-            - format:
-                unit: ""
-              hide: true
+            - hide: true
               name: timestamp
             transforms:
             - kind: MergeSeries
@@ -592,8 +588,6 @@ spec:
           spec:
             columnSettings:
             - align: left
-              format:
-                unit: ""
               header: Namespace
               name: namespace
             - align: right
@@ -633,9 +627,7 @@ spec:
                 unit: percent-decimal
               header: Memory Limits %
               name: 'value #7'
-            - format:
-                unit: ""
-              hide: true
+            - hide: true
               name: timestamp
             transforms:
             - kind: MergeSeries
@@ -724,8 +716,6 @@ spec:
           spec:
             columnSettings:
             - align: left
-              format:
-                unit: ""
               header: Namespace
               name: namespace
             - align: right
@@ -758,9 +748,7 @@ spec:
                 unit: packets/sec
               header: Rate of Transmitted Packets Dropped
               name: 'value #6'
-            - format:
-                unit: ""
-              hide: true
+            - hide: true
               name: timestamp
             transforms:
             - kind: MergeSeries
@@ -1254,8 +1242,6 @@ spec:
           spec:
             columnSettings:
             - align: left
-              format:
-                unit: ""
               header: Namespace
               name: namespace
             - align: right
@@ -1288,9 +1274,7 @@ spec:
                 unit: bytes/sec
               header: Throughput(Reads + Writes)
               name: 'value #6'
-            - format:
-                unit: ""
-              hide: true
+            - hide: true
               name: timestamp
             transforms:
             - kind: MergeSeries

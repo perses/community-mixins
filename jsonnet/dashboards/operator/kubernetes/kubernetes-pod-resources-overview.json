@@ -190,9 +190,6 @@
                 {
                   "name": "container",
                   "header": "Container",
-                  "format": {
-                    "unit": ""
-                  },
                   "align": "left"
                 },
                 {
@@ -245,9 +242,6 @@
                 },
                 {
                   "name": "timestamp",
-                  "format": {
-                    "unit": ""
-                  },
                   "hide": true
                 }
               ],
@@ -417,9 +411,6 @@
                 {
                   "name": "container",
                   "header": "Container",
-                  "format": {
-                    "unit": ""
-                  },
                   "align": "left"
                 },
                 {
@@ -469,9 +460,6 @@
                 },
                 {
                   "name": "timestamp",
-                  "format": {
-                    "unit": ""
-                  },
                   "hide": true
                 }
               ],
@@ -658,9 +646,6 @@
                 {
                   "name": "container",
                   "header": "Container",
-                  "format": {
-                    "unit": ""
-                  },
                   "align": "left"
                 },
                 {
@@ -731,9 +716,6 @@
                 },
                 {
                   "name": "timestamp",
-                  "format": {
-                    "unit": ""
-                  },
                   "hide": true
                 }
               ],

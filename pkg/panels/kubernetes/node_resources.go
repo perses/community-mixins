@@ -33,8 +33,8 @@ func CPUUsageQuota(datasourceName string, labelMatchers ...promql.LabelMatcher) 
 					Name:   "value #1",
 					Header: "CPU Usage",
 					Align:  tablePanel.RightAlign,
-					Format: commonSdk.Format{
-						Unit:          string(commonSdk.DecimalUnit),
+					Format: &commonSdk.Format{
+						Unit:          commonSdk.DecimalUnit,
 						DecimalPlaces: 4,
 					},
 				},
@@ -42,8 +42,8 @@ func CPUUsageQuota(datasourceName string, labelMatchers ...promql.LabelMatcher) 
 					Name:   "value #2",
 					Header: "CPU Requests",
 					Align:  tablePanel.RightAlign,
-					Format: commonSdk.Format{
-						Unit:          string(commonSdk.DecimalUnit),
+					Format: &commonSdk.Format{
+						Unit:          commonSdk.DecimalUnit,
 						DecimalPlaces: 4,
 					},
 				},
@@ -51,7 +51,7 @@ func CPUUsageQuota(datasourceName string, labelMatchers ...promql.LabelMatcher) 
 					Name:   "value #3",
 					Header: "CPU Requests %",
 					Align:  tablePanel.RightAlign,
-					Format: commonSdk.Format{
+					Format: &commonSdk.Format{
 						Unit:          string(commonSdk.PercentDecimalUnit),
 						DecimalPlaces: 4,
 					},
@@ -60,8 +60,8 @@ func CPUUsageQuota(datasourceName string, labelMatchers ...promql.LabelMatcher) 
 					Name:   "value #4",
 					Header: "CPU Limits",
 					Align:  tablePanel.RightAlign,
-					Format: commonSdk.Format{
-						Unit:          string(commonSdk.DecimalUnit),
+					Format: &commonSdk.Format{
+						Unit:          commonSdk.DecimalUnit,
 						DecimalPlaces: 4,
 					},
 				},
@@ -69,7 +69,7 @@ func CPUUsageQuota(datasourceName string, labelMatchers ...promql.LabelMatcher) 
 					Name:   "value #5",
 					Header: "CPU Limits %",
 					Align:  tablePanel.RightAlign,
-					Format: commonSdk.Format{
+					Format: &commonSdk.Format{
 						Unit:          string(commonSdk.PercentDecimalUnit),
 						DecimalPlaces: 4,
 					},
@@ -150,23 +150,23 @@ func MemoryQuota(datasourceName string, labelMatchers ...promql.LabelMatcher) pa
 					Name:   "value #1",
 					Header: "Memory Usage",
 					Align:  tablePanel.RightAlign,
-					Format: commonSdk.Format{
-						Unit: string(commonSdk.BytesUnit),
+					Format: &commonSdk.Format{
+						Unit: commonSdk.BytesUnit,
 					},
 				},
 				{
 					Name:   "value #2",
 					Header: "Memory Requests",
 					Align:  tablePanel.RightAlign,
-					Format: commonSdk.Format{
-						Unit: string(commonSdk.BytesUnit),
+					Format: &commonSdk.Format{
+						Unit: commonSdk.BytesUnit,
 					},
 				},
 				{
 					Name:   "value #3",
 					Header: "Memory Requests %",
 					Align:  tablePanel.RightAlign,
-					Format: commonSdk.Format{
+					Format: &commonSdk.Format{
 						Unit:          string(commonSdk.PercentDecimalUnit),
 						DecimalPlaces: 4,
 					},
@@ -175,15 +175,15 @@ func MemoryQuota(datasourceName string, labelMatchers ...promql.LabelMatcher) pa
 					Name:   "value #4",
 					Header: "Memory Limits",
 					Align:  tablePanel.RightAlign,
-					Format: commonSdk.Format{
-						Unit: string(commonSdk.BytesUnit),
+					Format: &commonSdk.Format{
+						Unit: commonSdk.BytesUnit,
 					},
 				},
 				{
 					Name:   "value #5",
 					Header: "Memory Limits %",
 					Align:  tablePanel.RightAlign,
-					Format: commonSdk.Format{
+					Format: &commonSdk.Format{
 						Unit:          string(commonSdk.PercentDecimalUnit),
 						DecimalPlaces: 4,
 					},
@@ -192,24 +192,24 @@ func MemoryQuota(datasourceName string, labelMatchers ...promql.LabelMatcher) pa
 					Name:   "value #6",
 					Header: "Memory Usage (RSS)",
 					Align:  tablePanel.RightAlign,
-					Format: commonSdk.Format{
-						Unit: string(commonSdk.BytesUnit),
+					Format: &commonSdk.Format{
+						Unit: commonSdk.BytesUnit,
 					},
 				},
 				{
 					Name:   "value #7",
 					Header: "Memory Usage (Cache)",
 					Align:  tablePanel.RightAlign,
-					Format: commonSdk.Format{
-						Unit: string(commonSdk.BytesUnit),
+					Format: &commonSdk.Format{
+						Unit: commonSdk.BytesUnit,
 					},
 				},
 				{
 					Name:   "value #8",
 					Header: "Memory Usage (Swap)",
 					Align:  tablePanel.RightAlign,
-					Format: commonSdk.Format{
-						Unit: string(commonSdk.BytesUnit),
+					Format: &commonSdk.Format{
+						Unit: commonSdk.BytesUnit,
 					},
 				},
 				{

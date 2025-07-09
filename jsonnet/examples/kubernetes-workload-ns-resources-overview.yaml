@@ -215,18 +215,12 @@ spec:
           spec:
             columnSettings:
             - align: left
-              format:
-                unit: ""
               header: Workload
               name: workload
             - align: left
-              format:
-                unit: ""
               header: Type
               name: workload_type
             - align: right
-              format:
-                unit: ""
               header: Running Pods
               name: 'value #1'
             - align: right
@@ -259,9 +253,7 @@ spec:
                 unit: percent-decimal
               header: CPU Limits %
               name: 'value #6'
-            - format:
-                unit: ""
-              hide: true
+            - hide: true
               name: timestamp
             transforms:
             - kind: MergeSeries
@@ -440,18 +432,12 @@ spec:
           spec:
             columnSettings:
             - align: left
-              format:
-                unit: ""
               header: Workload
               name: workload
             - align: left
-              format:
-                unit: ""
               header: Type
               name: workload_type
             - align: right
-              format:
-                unit: ""
               header: Running Pods
               name: 'value #1'
             - align: right
@@ -481,9 +467,7 @@ spec:
                 unit: percent-decimal
               header: Memory Limits %
               name: 'value #6'
-            - format:
-                unit: ""
-              hide: true
+            - hide: true
               name: timestamp
             transforms:
             - kind: MergeSeries
@@ -594,8 +578,6 @@ spec:
           spec:
             columnSettings:
             - align: left
-              format:
-                unit: ""
               header: Workload
               name: workload
             - align: right
@@ -628,9 +610,7 @@ spec:
                 unit: packets/sec
               header: Rate of Transmitted Packets Dropped
               name: 'value #6'
-            - format:
-                unit: ""
-              hide: true
+            - hide: true
               name: timestamp
             transforms:
             - kind: MergeSeries

@@ -1933,24 +1933,15 @@
               "columnSettings": [
                 {
                   "name": "job",
-                  "header": "Job",
-                  "format": {
-                    "unit": ""
-                  }
+                  "header": "Job"
                 },
                 {
                   "name": "bucket",
-                  "header": "Bucket",
-                  "format": {
-                    "unit": ""
-                  }
+                  "header": "Bucket"
                 },
                 {
                   "name": "namespace",
-                  "header": "Namespace",
-                  "format": {
-                    "unit": ""
-                  }
+                  "header": "Namespace"
                 },
                 {
                   "name": "value",
@@ -1961,9 +1952,6 @@
                 },
                 {
                   "name": "timestamp",
-                  "format": {
-                    "unit": ""
-                  },
                   "hide": true
                 }
               ]

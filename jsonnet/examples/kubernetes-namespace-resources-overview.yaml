@@ -377,8 +377,6 @@ spec:
           spec:
             columnSettings:
             - align: left
-              format:
-                unit: ""
               header: Pod
               name: pod
             - align: right
@@ -411,9 +409,7 @@ spec:
                 unit: percent-decimal
               header: CPU Limits %
               name: 'value #5'
-            - format:
-                unit: ""
-              hide: true
+            - hide: true
               name: timestamp
             transforms:
             - kind: MergeSeries
@@ -564,8 +560,6 @@ spec:
           spec:
             columnSettings:
             - align: left
-              format:
-                unit: ""
               header: Pod
               name: pod
             - align: right
@@ -610,9 +604,7 @@ spec:
                 unit: bytes
               header: Memory Usage (Swap)
               name: 'value #8'
-            - format:
-                unit: ""
-              hide: true
+            - hide: true
               name: timestamp
             transforms:
             - kind: MergeSeries
@@ -733,8 +725,6 @@ spec:
           spec:
             columnSettings:
             - align: left
-              format:
-                unit: ""
               header: Pod
               name: pod
             - align: right
@@ -767,9 +757,7 @@ spec:
                 unit: packets/sec
               header: Rate of Transmitted Packets Dropped
               name: 'value #6'
-            - format:
-                unit: ""
-              hide: true
+            - hide: true
               name: timestamp
             transforms:
             - kind: MergeSeries
@@ -1178,8 +1166,6 @@ spec:
           spec:
             columnSettings:
             - align: left
-              format:
-                unit: ""
               header: Pod
               name: pod
             - align: right
@@ -1212,9 +1198,7 @@ spec:
                 unit: bytes/sec
               header: Throughput(Reads + Writes)
               name: 'value #6'
-            - format:
-                unit: ""
-              hide: true
+            - hide: true
               name: timestamp
             transforms:
             - kind: MergeSeries

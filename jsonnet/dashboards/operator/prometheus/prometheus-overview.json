@@ -81,37 +81,22 @@
               "columnSettings": [
                 {
                   "name": "job",
-                  "header": "Job",
-                  "format": {
-                    "unit": ""
-                  }
+                  "header": "Job"
                 },
                 {
                   "name": "instance",
-                  "header": "Instance",
-                  "format": {
-                    "unit": ""
-                  }
+                  "header": "Instance"
                 },
                 {
                   "name": "version",
-                  "header": "Version",
-                  "format": {
-                    "unit": ""
-                  }
+                  "header": "Version"
                 },
                 {
                   "name": "value",
-                  "format": {
-                    "unit": ""
-                  },
                   "hide": true
                 },
                 {
                   "name": "timestamp",
-                  "format": {
-                    "unit": ""
-                  },
                   "hide": true
                 }
               ]
