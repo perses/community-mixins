@@ -104,33 +104,19 @@ spec:
           kind: Table
           spec:
             columnSettings:
-            - format:
-                unit: ""
-              header: Job
+            - header: Job
               name: job
-            - format:
-                unit: ""
-              header: Instance
+            - header: Instance
               name: instance
-            - format:
-                unit: ""
-              header: Version
+            - header: Version
               name: version
-            - format:
-                unit: ""
-              header: Namespace
+            - header: Namespace
               name: namespace
-            - format:
-                unit: ""
-              header: Pod
+            - header: Pod
               name: pod
-            - format:
-                unit: ""
-              hide: true
+            - hide: true
               name: value
-            - format:
-                unit: ""
-              hide: true
+            - hide: true
               name: timestamp
         queries:
         - kind: TimeSeriesQuery

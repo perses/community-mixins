@@ -283,8 +283,6 @@ spec:
           spec:
             columnSettings:
             - align: left
-              format:
-                unit: ""
               header: Container
               name: container
             - align: right
@@ -317,9 +315,7 @@ spec:
                 unit: percent-decimal
               header: CPU Limits %
               name: 'value #5'
-            - format:
-                unit: ""
-              hide: true
+            - hide: true
               name: timestamp
             transforms:
             - kind: MergeSeries
@@ -466,8 +462,6 @@ spec:
           spec:
             columnSettings:
             - align: left
-              format:
-                unit: ""
               header: Container
               name: container
             - align: right
@@ -512,9 +506,7 @@ spec:
                 unit: bytes
               header: Memory Usage (Swap)
               name: 'value #8'
-            - format:
-                unit: ""
-              hide: true
+            - hide: true
               name: timestamp
             transforms:
             - kind: MergeSeries
@@ -1059,8 +1051,6 @@ spec:
           spec:
             columnSettings:
             - align: left
-              format:
-                unit: ""
               header: Container
               name: container
             - align: right
@@ -1093,9 +1083,7 @@ spec:
                 unit: bytes/sec
               header: Throughput(Reads + Writes)
               name: 'value #6'
-            - format:
-                unit: ""
-              hide: true
+            - hide: true
               name: timestamp
             transforms:
             - kind: MergeSeries

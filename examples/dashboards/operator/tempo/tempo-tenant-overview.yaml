@@ -110,9 +110,7 @@ spec:
           kind: Table
           spec:
             columnSettings:
-            - format:
-                unit: ""
-              header: limit name
+            - header: limit name
               name: limit_name
         queries:
         - kind: TimeSeriesQuery

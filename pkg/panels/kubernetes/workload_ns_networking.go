@@ -38,7 +38,7 @@ func WorkloadNamespaceCurrentNetworkStatus(datasourceName string, labelMatchers 
 					Name:   "value #1",
 					Header: "Rx Bytes",
 					Align:  tablePanel.RightAlign,
-					Format: commonSdk.Format{
+					Format: &commonSdk.Format{
 						Unit: string(commonSdk.BytesPerSecondsUnit),
 					},
 				},
@@ -46,7 +46,7 @@ func WorkloadNamespaceCurrentNetworkStatus(datasourceName string, labelMatchers 
 					Name:   "value #2",
 					Header: "Tx Bytes",
 					Align:  tablePanel.RightAlign,
-					Format: commonSdk.Format{
+					Format: &commonSdk.Format{
 						Unit: string(commonSdk.BytesPerSecondsUnit),
 					},
 				},
@@ -54,7 +54,7 @@ func WorkloadNamespaceCurrentNetworkStatus(datasourceName string, labelMatchers 
 					Name:   "value #3",
 					Header: "Rx Bytes (Avg)",
 					Align:  tablePanel.RightAlign,
-					Format: commonSdk.Format{
+					Format: &commonSdk.Format{
 						Unit: string(commonSdk.BytesPerSecondsUnit),
 					},
 				},
@@ -62,7 +62,7 @@ func WorkloadNamespaceCurrentNetworkStatus(datasourceName string, labelMatchers 
 					Name:   "value #4",
 					Header: "Tx Bytes (Avg)",
 					Align:  tablePanel.RightAlign,
-					Format: commonSdk.Format{
+					Format: &commonSdk.Format{
 						Unit: string(commonSdk.BytesPerSecondsUnit),
 					},
 				},
@@ -70,7 +70,7 @@ func WorkloadNamespaceCurrentNetworkStatus(datasourceName string, labelMatchers 
 					Name:   "value #5",
 					Header: "Rx Packets",
 					Align:  tablePanel.RightAlign,
-					Format: commonSdk.Format{
+					Format: &commonSdk.Format{
 						Unit: string(commonSdk.PacketsPerSecondsUnit),
 					},
 				},
@@ -78,7 +78,7 @@ func WorkloadNamespaceCurrentNetworkStatus(datasourceName string, labelMatchers 
 					Name:   "value #6",
 					Header: "Tx Packets",
 					Align:  tablePanel.RightAlign,
-					Format: commonSdk.Format{
+					Format: &commonSdk.Format{
 						Unit: string(commonSdk.PacketsPerSecondsUnit),
 					},
 				},
@@ -86,7 +86,7 @@ func WorkloadNamespaceCurrentNetworkStatus(datasourceName string, labelMatchers 
 					Name:   "value #7",
 					Header: "Rx Packets Dropped",
 					Align:  tablePanel.RightAlign,
-					Format: commonSdk.Format{
+					Format: &commonSdk.Format{
 						Unit: string(commonSdk.PacketsPerSecondsUnit),
 					},
 				},
@@ -94,7 +94,7 @@ func WorkloadNamespaceCurrentNetworkStatus(datasourceName string, labelMatchers 
 					Name:   "value #8",
 					Header: "Tx Packets Dropped",
 					Align:  tablePanel.RightAlign,
-					Format: commonSdk.Format{
+					Format: &commonSdk.Format{
 						Unit: string(commonSdk.PacketsPerSecondsUnit),
 					},
 				},

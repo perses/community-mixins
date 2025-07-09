@@ -380,9 +380,6 @@
                 {
                   "name": "namespace",
                   "header": "Namespace",
-                  "format": {
-                    "unit": ""
-                  },
                   "align": "left"
                 },
                 {
@@ -435,9 +432,6 @@
                 },
                 {
                   "name": "timestamp",
-                  "format": {
-                    "unit": ""
-                  },
                   "hide": true
                 }
               ],
@@ -607,9 +601,6 @@
                 {
                   "name": "namespace",
                   "header": "Namespace",
-                  "format": {
-                    "unit": ""
-                  },
                   "align": "left"
                 },
                 {
@@ -675,9 +666,6 @@
                 },
                 {
                   "name": "timestamp",
-                  "format": {
-                    "unit": ""
-                  },
                   "hide": true
                 }
               ],
@@ -862,9 +850,6 @@
                 {
                   "name": "namespace",
                   "header": "Namespace",
-                  "format": {
-                    "unit": ""
-                  },
                   "align": "left"
                 },
                 {
@@ -927,9 +912,6 @@
                 },
                 {
                   "name": "timestamp",
-                  "format": {
-                    "unit": ""
-                  },
                   "hide": true
                 }
               ],
@@ -1064,9 +1046,6 @@
                 {
                   "name": "namespace",
                   "header": "Namespace",
-                  "format": {
-                    "unit": ""
-                  },
                   "align": "left"
                 },
                 {
@@ -1119,9 +1098,6 @@
                 },
                 {
                   "name": "timestamp",
-                  "format": {
-                    "unit": ""
-                  },
                   "hide": true
                 }
               ],

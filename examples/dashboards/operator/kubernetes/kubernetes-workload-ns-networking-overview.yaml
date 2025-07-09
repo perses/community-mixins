@@ -214,13 +214,9 @@ spec:
           spec:
             columnSettings:
             - align: left
-              format:
-                unit: ""
               header: Workload
               name: workload
             - align: left
-              format:
-                unit: ""
               header: Type
               name: workload_type
             - align: right
@@ -263,9 +259,7 @@ spec:
                 unit: packets/sec
               header: Tx Packets Dropped
               name: 'value #8'
-            - format:
-                unit: ""
-              hide: true
+            - hide: true
               name: timestamp
             transforms:
             - kind: MergeSeries

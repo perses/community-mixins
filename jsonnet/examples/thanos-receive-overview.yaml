@@ -1443,25 +1443,17 @@ spec:
           kind: Table
           spec:
             columnSettings:
-            - format:
-                unit: ""
-              header: Job
+            - header: Job
               name: job
-            - format:
-                unit: ""
-              header: Bucket
+            - header: Bucket
               name: bucket
-            - format:
-                unit: ""
-              header: Namespace
+            - header: Namespace
               name: namespace
             - format:
                 unit: seconds
               header: Uploaded Ago
               name: value
-            - format:
-                unit: ""
-              hide: true
+            - hide: true
               name: timestamp
         queries:
         - kind: TimeSeriesQuery

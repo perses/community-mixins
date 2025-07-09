@@ -190,25 +190,16 @@
                 {
                   "name": "workload",
                   "header": "Workload",
-                  "format": {
-                    "unit": ""
-                  },
                   "align": "left"
                 },
                 {
                   "name": "workload_type",
                   "header": "Type",
-                  "format": {
-                    "unit": ""
-                  },
                   "align": "left"
                 },
                 {
                   "name": "value #1",
                   "header": "Running Pods",
-                  "format": {
-                    "unit": ""
-                  },
                   "align": "right"
                 },
                 {
@@ -258,9 +249,6 @@
                 },
                 {
                   "name": "timestamp",
-                  "format": {
-                    "unit": ""
-                  },
                   "hide": true
                 }
               ],
@@ -462,25 +450,16 @@
                 {
                   "name": "workload",
                   "header": "Workload",
-                  "format": {
-                    "unit": ""
-                  },
                   "align": "left"
                 },
                 {
                   "name": "workload_type",
                   "header": "Type",
-                  "format": {
-                    "unit": ""
-                  },
                   "align": "left"
                 },
                 {
                   "name": "value #1",
                   "header": "Running Pods",
-                  "format": {
-                    "unit": ""
-                  },
                   "align": "right"
                 },
                 {
@@ -527,9 +506,6 @@
                 },
                 {
                   "name": "timestamp",
-                  "format": {
-                    "unit": ""
-                  },
                   "hide": true
                 }
               ],
@@ -649,9 +625,6 @@
                 {
                   "name": "workload",
                   "header": "Workload",
-                  "format": {
-                    "unit": ""
-                  },
                   "align": "left"
                 },
                 {
@@ -704,9 +677,6 @@
                 },
                 {
                   "name": "timestamp",
-                  "format": {
-                    "unit": ""
-                  },
                   "hide": true
                 }
               ],

@@ -183,9 +183,6 @@
                 {
                   "name": "pod",
                   "header": "Pod",
-                  "format": {
-                    "unit": ""
-                  },
                   "align": "left"
                 },
                 {
@@ -238,9 +235,6 @@
                 },
                 {
                   "name": "timestamp",
-                  "format": {
-                    "unit": ""
-                  },
                   "hide": true
                 }
               ],

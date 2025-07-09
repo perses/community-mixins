@@ -69,8 +69,8 @@ func PodCPUUsageQuota(datasourceName string, labelMatchers ...promql.LabelMatche
 					Name:   "value #1",
 					Header: "CPU Usage",
 					Align:  tablePanel.RightAlign,
-					Format: commonSdk.Format{
-						Unit:          string(commonSdk.DecimalUnit),
+					Format: &commonSdk.Format{
+						Unit:          commonSdk.DecimalUnit,
 						DecimalPlaces: 4,
 					},
 				},
@@ -78,8 +78,8 @@ func PodCPUUsageQuota(datasourceName string, labelMatchers ...promql.LabelMatche
 					Name:   "value #2",
 					Header: "CPU Requests",
 					Align:  tablePanel.RightAlign,
-					Format: commonSdk.Format{
-						Unit:          string(commonSdk.DecimalUnit),
+					Format: &commonSdk.Format{
+						Unit:          commonSdk.DecimalUnit,
 						DecimalPlaces: 4,
 					},
 				},
@@ -87,7 +87,7 @@ func PodCPUUsageQuota(datasourceName string, labelMatchers ...promql.LabelMatche
 					Name:   "value #3",
 					Header: "CPU Requests %",
 					Align:  tablePanel.RightAlign,
-					Format: commonSdk.Format{
+					Format: &commonSdk.Format{
 						Unit:          string(commonSdk.PercentDecimalUnit),
 						DecimalPlaces: 4,
 					},
@@ -96,8 +96,8 @@ func PodCPUUsageQuota(datasourceName string, labelMatchers ...promql.LabelMatche
 					Name:   "value #4",
 					Header: "CPU Limits",
 					Align:  tablePanel.RightAlign,
-					Format: commonSdk.Format{
-						Unit:          string(commonSdk.DecimalUnit),
+					Format: &commonSdk.Format{
+						Unit:          commonSdk.DecimalUnit,
 						DecimalPlaces: 4,
 					},
 				},
@@ -105,7 +105,7 @@ func PodCPUUsageQuota(datasourceName string, labelMatchers ...promql.LabelMatche
 					Name:   "value #5",
 					Header: "CPU Limits %",
 					Align:  tablePanel.RightAlign,
-					Format: commonSdk.Format{
+					Format: &commonSdk.Format{
 						Unit:          string(commonSdk.PercentDecimalUnit),
 						DecimalPlaces: 4,
 					},
@@ -186,23 +186,23 @@ func PodMemoryUsageQuota(datasourceName string, labelMatchers ...promql.LabelMat
 					Name:   "value #1",
 					Header: "Memory Usage",
 					Align:  tablePanel.RightAlign,
-					Format: commonSdk.Format{
-						Unit: string(commonSdk.BytesUnit),
+					Format: &commonSdk.Format{
+						Unit: commonSdk.BytesUnit,
 					},
 				},
 				{
 					Name:   "value #2",
 					Header: "Memory Requests",
 					Align:  tablePanel.RightAlign,
-					Format: commonSdk.Format{
-						Unit: string(commonSdk.BytesUnit),
+					Format: &commonSdk.Format{
+						Unit: commonSdk.BytesUnit,
 					},
 				},
 				{
 					Name:   "value #3",
 					Header: "Memory Requests %",
 					Align:  tablePanel.RightAlign,
-					Format: commonSdk.Format{
+					Format: &commonSdk.Format{
 						Unit:          string(commonSdk.PercentDecimalUnit),
 						DecimalPlaces: 4,
 					},
@@ -211,15 +211,15 @@ func PodMemoryUsageQuota(datasourceName string, labelMatchers ...promql.LabelMat
 					Name:   "value #4",
 					Header: "Memory Limits",
 					Align:  tablePanel.RightAlign,
-					Format: commonSdk.Format{
-						Unit: string(commonSdk.BytesUnit),
+					Format: &commonSdk.Format{
+						Unit: commonSdk.BytesUnit,
 					},
 				},
 				{
 					Name:   "value #5",
 					Header: "Memory Limits %",
 					Align:  tablePanel.RightAlign,
-					Format: commonSdk.Format{
+					Format: &commonSdk.Format{
 						Unit:          string(commonSdk.PercentDecimalUnit),
 						DecimalPlaces: 4,
 					},
@@ -228,24 +228,24 @@ func PodMemoryUsageQuota(datasourceName string, labelMatchers ...promql.LabelMat
 					Name:   "value #6",
 					Header: "Memory Usage (RSS)",
 					Align:  tablePanel.RightAlign,
-					Format: commonSdk.Format{
-						Unit: string(commonSdk.BytesUnit),
+					Format: &commonSdk.Format{
+						Unit: commonSdk.BytesUnit,
 					},
 				},
 				{
 					Name:   "value #7",
 					Header: "Memory Usage (Cache)",
 					Align:  tablePanel.RightAlign,
-					Format: commonSdk.Format{
-						Unit: string(commonSdk.BytesUnit),
+					Format: &commonSdk.Format{
+						Unit: commonSdk.BytesUnit,
 					},
 				},
 				{
 					Name:   "value #8",
 					Header: "Memory Usage (Swap)",
 					Align:  tablePanel.RightAlign,
-					Format: commonSdk.Format{
-						Unit: string(commonSdk.BytesUnit),
+					Format: &commonSdk.Format{
+						Unit: commonSdk.BytesUnit,
 					},
 				},
 				{
@@ -351,7 +351,7 @@ func PodCurrentStorageIO(datasourceName string, labelMatchers ...promql.LabelMat
 					Name:   "value #1",
 					Header: "IOPS(Reads)",
 					Align:  tablePanel.RightAlign,
-					Format: commonSdk.Format{
+					Format: &commonSdk.Format{
 						Unit: string(commonSdk.OpsPerSecondsUnit),
 					},
 				},
@@ -359,7 +359,7 @@ func PodCurrentStorageIO(datasourceName string, labelMatchers ...promql.LabelMat
 					Name:   "value #2",
 					Header: "IOPS(Writes)",
 					Align:  tablePanel.RightAlign,
-					Format: commonSdk.Format{
+					Format: &commonSdk.Format{
 						Unit: string(commonSdk.OpsPerSecondsUnit),
 					},
 				},
@@ -367,7 +367,7 @@ func PodCurrentStorageIO(datasourceName string, labelMatchers ...promql.LabelMat
 					Name:   "value #3",
 					Header: "IOPS(Reads + Writes)",
 					Align:  tablePanel.RightAlign,
-					Format: commonSdk.Format{
+					Format: &commonSdk.Format{
 						Unit: string(commonSdk.OpsPerSecondsUnit),
 					},
 				},
@@ -375,7 +375,7 @@ func PodCurrentStorageIO(datasourceName string, labelMatchers ...promql.LabelMat
 					Name:   "value #4",
 					Header: "Throughput(Reads)",
 					Align:  tablePanel.RightAlign,
-					Format: commonSdk.Format{
+					Format: &commonSdk.Format{
 						Unit: string(commonSdk.BytesPerSecondsUnit),
 					},
 				},
@@ -383,7 +383,7 @@ func PodCurrentStorageIO(datasourceName string, labelMatchers ...promql.LabelMat
 					Name:   "value #5",
 					Header: "Throughput(Writes)",
 					Align:  tablePanel.RightAlign,
-					Format: commonSdk.Format{
+					Format: &commonSdk.Format{
 						Unit: string(commonSdk.BytesPerSecondsUnit),
 					},
 				},
@@ -391,7 +391,7 @@ func PodCurrentStorageIO(datasourceName string, labelMatchers ...promql.LabelMat
 					Name:   "value #6",
 					Header: "Throughput(Reads + Writes)",
 					Align:  tablePanel.RightAlign,
-					Format: commonSdk.Format{
+					Format: &commonSdk.Format{
 						Unit: string(commonSdk.BytesPerSecondsUnit),
 					},
 				},

@@ -300,8 +300,6 @@ spec:
           spec:
             columnSettings:
             - align: left
-              format:
-                unit: ""
               header: Cluster
               name: cluster
             - align: right
@@ -334,9 +332,7 @@ spec:
                 unit: percent-decimal
               header: CPU Limits %
               name: 'value #5'
-            - format:
-                unit: ""
-              hide: true
+            - hide: true
               name: timestamp
             transforms:
             - kind: MergeSeries
@@ -437,8 +433,6 @@ spec:
           spec:
             columnSettings:
             - align: left
-              format:
-                unit: ""
               header: Cluster
               name: cluster
             - align: right
@@ -468,9 +462,7 @@ spec:
                 unit: percent-decimal
               header: Memory Limits %
               name: 'value #5'
-            - format:
-                unit: ""
-              hide: true
+            - hide: true
               name: timestamp
             transforms:
             - kind: MergeSeries

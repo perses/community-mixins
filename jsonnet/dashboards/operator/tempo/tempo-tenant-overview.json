@@ -107,10 +107,7 @@
               "columnSettings": [
                 {
                   "name": "limit_name",
-                  "header": "limit name",
-                  "format": {
-                    "unit": ""
-                  }
+                  "header": "limit name"
                 }
               ]
             }

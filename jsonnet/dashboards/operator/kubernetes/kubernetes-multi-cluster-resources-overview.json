@@ -303,9 +303,6 @@
                 {
                   "name": "cluster",
                   "header": "Cluster",
-                  "format": {
-                    "unit": ""
-                  },
                   "align": "left"
                 },
                 {
@@ -355,9 +352,6 @@
                 },
                 {
                   "name": "timestamp",
-                  "format": {
-                    "unit": ""
-                  },
                   "hide": true
                 }
               ],
@@ -512,9 +506,6 @@
                 {
                   "name": "cluster",
                   "header": "Cluster",
-                  "format": {
-                    "unit": ""
-                  },
                   "align": "left"
                 },
                 {
@@ -561,9 +552,6 @@
                 },
                 {
                   "name": "timestamp",
-                  "format": {
-                    "unit": ""
-                  },
                   "hide": true
                 }
               ],

@@ -824,7 +824,7 @@ func BucketUploadTable(datasourceName string, labelMatchers ...*labels.Matcher) 
 				{
 					Name:   "value",
 					Header: "Uploaded Ago",
-					Format: commonSdk.Format{
+					Format: &commonSdk.Format{
 						Unit: string(commonSdk.SecondsUnit),
 					},
 				},
