@@ -16,7 +16,7 @@ require (
 	github.com/perses/promql-builder v0.1.1-0.20250701065948-b9977cb8da59
 	github.com/prometheus/prometheus v0.304.2
 	gopkg.in/yaml.v3 v3.0.1
-	k8s.io/apimachinery v0.33.2
+	k8s.io/apimachinery v0.33.3
 	sigs.k8s.io/yaml v1.5.0
 )
 
