@@ -47,7 +47,7 @@ func withPodRateOfPacketsDroppedGroup(datasource string, labelMatcher promql.Lab
 	)
 }
 
-func BuildKubernetesPodOverview(project string, datasource string, clusterLabelName string, variableOverrides []dashboard.Option) dashboards.DashboardResult {
+func BuildKubernetesPodOverview(project string, datasource string, clusterLabelName string, variableOverrides ...dashboard.Option) dashboards.DashboardResult {
 	defaultVars := []dashboard.Option{
 		dashboard.AddVariable("cluster",
 			listVar.List(

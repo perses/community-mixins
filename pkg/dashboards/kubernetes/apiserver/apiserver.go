@@ -84,7 +84,7 @@ func withAPIServerResources(datasource string, clusterLabelMatcher *labels.Match
 	)
 }
 
-func BuildAPIServerOverview(project string, datasource string, clusterLabelName string, variableOverrides []dashboard.Option) dashboards.DashboardResult {
+func BuildAPIServerOverview(project string, datasource string, clusterLabelName string, variableOverrides ...dashboard.Option) dashboards.DashboardResult {
 	defaultVars := []dashboard.Option{
 		dashboard.AddVariable("cluster",
 			listVar.List(

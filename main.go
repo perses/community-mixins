@@ -20,7 +20,6 @@ import (
 	"github.com/perses/community-dashboards/pkg/dashboards/prometheus"
 	"github.com/perses/community-dashboards/pkg/dashboards/tempo"
 	"github.com/perses/community-dashboards/pkg/dashboards/thanos"
-	"github.com/perses/perses/go-sdk/dashboard"
 )
 
 var (
@@ -37,8 +36,6 @@ func main() {
 
 	dashboardWriter := dashboards.NewDashboardWriter()
 
-	customVars := []dashboard.Option{}
-
 	dashboardWriter.Add(perses.BuildPersesOverview(project, datasource, clusterLabelName))
 	dashboardWriter.Add(prometheus.BuildPrometheusOverview(project, datasource, clusterLabelName))
 	dashboardWriter.Add(prometheus.BuildPrometheusRemoteWrite(project, datasource, clusterLabelName))
@@ -52,25 +49,25 @@ func main() {
 	dashboardWriter.Add(thanos.BuildThanosQueryFrontendOverview(project, datasource, clusterLabelName))
 	dashboardWriter.Add(thanos.BuildThanosCompactOverview(project, datasource, clusterLabelName))
 	dashboardWriter.Add(blackbox.BuildBlackboxExporter(project, datasource, clusterLabelName))
-	dashboardWriter.Add(k8sComputeResources.BuildKubernetesNodeResourcesOverview(project, datasource, clusterLabelName, customVars))
-	dashboardWriter.Add(k8sComputeResources.BuildKubernetesClusterOverview(project, datasource, clusterLabelName, customVars))
-	dashboardWriter.Add(k8sComputeResources.BuildKubernetesNamespaceOverview(project, datasource, clusterLabelName, customVars))
-	dashboardWriter.Add(k8sComputeResources.BuildKubernetesPodOverview(project, datasource, clusterLabelName, customVars))
-	dashboardWriter.Add(k8sComputeResources.BuildKubernetesWorkloadOverview(project, datasource, clusterLabelName, customVars))
-	dashboardWriter.Add(k8sComputeResources.BuildKubernetesWorkloadNamespaceOverview(project, datasource, clusterLabelName, customVars))
+	dashboardWriter.Add(k8sComputeResources.BuildKubernetesNodeResourcesOverview(project, datasource, clusterLabelName))
+	dashboardWriter.Add(k8sComputeResources.BuildKubernetesClusterOverview(project, datasource, clusterLabelName))
+	dashboardWriter.Add(k8sComputeResources.BuildKubernetesNamespaceOverview(project, datasource, clusterLabelName))
+	dashboardWriter.Add(k8sComputeResources.BuildKubernetesPodOverview(project, datasource, clusterLabelName))
+	dashboardWriter.Add(k8sComputeResources.BuildKubernetesWorkloadOverview(project, datasource, clusterLabelName))
+	dashboardWriter.Add(k8sComputeResources.BuildKubernetesWorkloadNamespaceOverview(project, datasource, clusterLabelName))
 	dashboardWriter.Add(k8sComputeResources.BuildKubernetesMultiClusterOverview(project, datasource, clusterLabelName))
-	dashboardWriter.Add(kubelet.BuildKubeletOverview(project, datasource, clusterLabelName, customVars))
-	dashboardWriter.Add(controller_manager.BuildControllerManagerOverview(project, datasource, clusterLabelName, customVars))
-	dashboardWriter.Add(proxy.BuildProxyOverview(project, datasource, clusterLabelName, customVars))
-	dashboardWriter.Add(scheduler.BuildSchedulerOverview(project, datasource, clusterLabelName, customVars))
-	dashboardWriter.Add(k8sNetworking.BuildKubernetesClusterOverview(project, datasource, clusterLabelName, customVars))
-	dashboardWriter.Add(k8sNetworking.BuildKubernetesNamespaceByPodOverview(project, datasource, clusterLabelName, customVars))
-	dashboardWriter.Add(k8sNetworking.BuildKubernetesNamespaceByWorkloadOverview(project, datasource, clusterLabelName, customVars))
-	dashboardWriter.Add(k8sNetworking.BuildKubernetesPodOverview(project, datasource, clusterLabelName, customVars))
-	dashboardWriter.Add(k8sNetworking.BuildKubernetesWorkloadOverview(project, datasource, clusterLabelName, customVars))
-	dashboardWriter.Add(k8sPersistentVolume.BuildKubernetesPersistentVolumeOverview(project, datasource, clusterLabelName, customVars))
+	dashboardWriter.Add(kubelet.BuildKubeletOverview(project, datasource, clusterLabelName))
+	dashboardWriter.Add(controller_manager.BuildControllerManagerOverview(project, datasource, clusterLabelName))
+	dashboardWriter.Add(proxy.BuildProxyOverview(project, datasource, clusterLabelName))
+	dashboardWriter.Add(scheduler.BuildSchedulerOverview(project, datasource, clusterLabelName))
+	dashboardWriter.Add(k8sNetworking.BuildKubernetesClusterOverview(project, datasource, clusterLabelName))
+	dashboardWriter.Add(k8sNetworking.BuildKubernetesNamespaceByPodOverview(project, datasource, clusterLabelName))
+	dashboardWriter.Add(k8sNetworking.BuildKubernetesNamespaceByWorkloadOverview(project, datasource, clusterLabelName))
+	dashboardWriter.Add(k8sNetworking.BuildKubernetesPodOverview(project, datasource, clusterLabelName))
+	dashboardWriter.Add(k8sNetworking.BuildKubernetesWorkloadOverview(project, datasource, clusterLabelName))
+	dashboardWriter.Add(k8sPersistentVolume.BuildKubernetesPersistentVolumeOverview(project, datasource, clusterLabelName))
 	dashboardWriter.Add(etcd.BuildETCDOverview(project, datasource, clusterLabelName))
-	dashboardWriter.Add(apiserver.BuildAPIServerOverview(project, datasource, clusterLabelName, customVars))
+	dashboardWriter.Add(apiserver.BuildAPIServerOverview(project, datasource, clusterLabelName))
 	dashboardWriter.Add(tempo.BuildTempoWritesOverview(project, datasource, clusterLabelName))
 	dashboardWriter.Add(tempo.BuildTempoTenantOverview(project, datasource, clusterLabelName))
 	dashboardWriter.Add(opentelemetry.BuildOpenTelemetryCollector(project, datasource, clusterLabelName))

@@ -64,7 +64,7 @@ func withWorkloadNamespaceRateOfPacketsDroppedGroup(datasource string, labelMatc
 	)
 }
 
-func BuildKubernetesNamespaceByWorkloadOverview(project string, datasource string, clusterLabelName string, variableOverrides []dashboard.Option) dashboards.DashboardResult {
+func BuildKubernetesNamespaceByWorkloadOverview(project string, datasource string, clusterLabelName string, variableOverrides ...dashboard.Option) dashboards.DashboardResult {
 	defaultVars := []dashboard.Option{
 		dashboard.AddVariable("cluster",
 			listVar.List(

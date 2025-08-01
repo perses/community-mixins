@@ -109,7 +109,7 @@ func withNamespaceCurrentStorageIOGroup(datasource string, labelMatcher promql.L
 func BuildKubernetesNamespaceOverview(project string,
 	datasource string,
 	clusterLabelName string,
-	variableOverrides []dashboard.Option,
+	variableOverrides ...dashboard.Option,
 ) dashboards.DashboardResult {
 	defaultVars := []dashboard.Option{
 		dashboard.AddVariable("cluster",

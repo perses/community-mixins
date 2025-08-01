@@ -75,7 +75,7 @@ func withSchedulerResources(datasource string, clusterLabelMatcher *labels.Match
 	)
 }
 
-func BuildSchedulerOverview(project string, datasource string, clusterLabelName string, variableOverrides []dashboard.Option) dashboards.DashboardResult {
+func BuildSchedulerOverview(project string, datasource string, clusterLabelName string, variableOverrides ...dashboard.Option) dashboards.DashboardResult {
 	defaultVars := []dashboard.Option{
 		dashboard.AddVariable("cluster",
 			listVar.List(

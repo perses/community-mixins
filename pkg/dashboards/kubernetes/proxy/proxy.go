@@ -85,7 +85,7 @@ func withProxyResources(datasource string, clusterLabelMatcher *labels.Matcher) 
 	)
 }
 
-func BuildProxyOverview(project string, datasource string, clusterLabelName string, variableOverrides []dashboard.Option) dashboards.DashboardResult {
+func BuildProxyOverview(project string, datasource string, clusterLabelName string, variableOverrides ...dashboard.Option) dashboards.DashboardResult {
 	defaultVars := []dashboard.Option{
 		dashboard.AddVariable("cluster",
 			listVar.List(

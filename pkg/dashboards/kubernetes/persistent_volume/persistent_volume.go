@@ -29,7 +29,7 @@ func withPVInodesUsageGroup(datasource string, labelMatcher promql.LabelMatcher)
 	)
 }
 
-func BuildKubernetesPersistentVolumeOverview(project string, datasource string, clusterLabelName string, variableOverrides []dashboard.Option) dashboards.DashboardResult {
+func BuildKubernetesPersistentVolumeOverview(project string, datasource string, clusterLabelName string, variableOverrides ...dashboard.Option) dashboards.DashboardResult {
 	defaultVars := []dashboard.Option{
 		dashboard.AddVariable("cluster",
 			listVar.List(

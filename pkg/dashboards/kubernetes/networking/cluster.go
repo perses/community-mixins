@@ -73,7 +73,7 @@ func withClusterTCPRetransmitRateGroup(datasource string, labelMatcher promql.La
 	)
 }
 
-func BuildKubernetesClusterOverview(project string, datasource string, clusterLabelName string, variableOverrides []dashboard.Option) dashboards.DashboardResult {
+func BuildKubernetesClusterOverview(project string, datasource string, clusterLabelName string, variableOverrides ...dashboard.Option) dashboards.DashboardResult {
 	defaultVars := []dashboard.Option{
 		dashboard.AddVariable("cluster",
 			listVar.List(

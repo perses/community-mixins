@@ -104,7 +104,7 @@ func withPodCurrentStorageIOGroup(datasource string, labelMatcher promql.LabelMa
 	)
 }
 
-func BuildKubernetesPodOverview(project string, datasource string, clusterLabelName string, variableOverrides []dashboard.Option) dashboards.DashboardResult {
+func BuildKubernetesPodOverview(project string, datasource string, clusterLabelName string, variableOverrides ...dashboard.Option) dashboards.DashboardResult {
 	defaultVars := []dashboard.Option{
 		dashboard.AddVariable("cluster",
 			listVar.List(

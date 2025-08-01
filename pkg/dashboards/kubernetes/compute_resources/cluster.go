@@ -117,7 +117,7 @@ func withClusterCurrentStorageIOGroup(datasource string, labelMatcher promql.Lab
 	)
 }
 
-func BuildKubernetesClusterOverview(project string, datasource string, clusterLabelName string, variableOverrides []dashboard.Option) dashboards.DashboardResult {
+func BuildKubernetesClusterOverview(project string, datasource string, clusterLabelName string, variableOverrides ...dashboard.Option) dashboards.DashboardResult {
 	defaultVars := []dashboard.Option{
 		dashboard.AddVariable("cluster",
 			listVar.List(

@@ -56,7 +56,7 @@ func withWorkloadRateOfPacketsDroppedGroup(datasource string, labelMatcher promq
 	)
 }
 
-func BuildKubernetesWorkloadOverview(project string, datasource string, clusterLabelName string, variableOverrides []dashboard.Option) dashboards.DashboardResult {
+func BuildKubernetesWorkloadOverview(project string, datasource string, clusterLabelName string, variableOverrides ...dashboard.Option) dashboards.DashboardResult {
 	defaultVars := []dashboard.Option{
 		dashboard.AddVariable("cluster",
 			listVar.List(

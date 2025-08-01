@@ -51,7 +51,7 @@ func withNodeMemoryQuotaGroup(datasource string, labelMatcher promql.LabelMatche
 	)
 }
 
-func BuildKubernetesNodeResourcesOverview(project string, datasource string, clusterLabelName string, variableOverrides []dashboard.Option) dashboards.DashboardResult {
+func BuildKubernetesNodeResourcesOverview(project string, datasource string, clusterLabelName string, variableOverrides ...dashboard.Option) dashboards.DashboardResult {
 	defaultVars := []dashboard.Option{
 		dashboard.AddVariable("cluster",
 			listVar.List(

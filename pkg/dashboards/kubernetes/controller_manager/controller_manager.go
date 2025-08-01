@@ -76,7 +76,7 @@ func withCMResources(datasource string, clusterLabelMatcher *labels.Matcher) das
 	)
 }
 
-func BuildControllerManagerOverview(project string, datasource string, clusterLabelName string, variableOverrides []dashboard.Option) dashboards.DashboardResult {
+func BuildControllerManagerOverview(project string, datasource string, clusterLabelName string, variableOverrides ...dashboard.Option) dashboards.DashboardResult {
 	defaultVars := []dashboard.Option{
 		dashboard.AddVariable("cluster",
 			listVar.List(

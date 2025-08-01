@@ -55,7 +55,7 @@ func withNamespaceRateOfPacketsDroppedGroup(datasource string, labelMatcher prom
 	)
 }
 
-func BuildKubernetesNamespaceByPodOverview(project string, datasource string, clusterLabelName string, variableOverrides []dashboard.Option) dashboards.DashboardResult {
+func BuildKubernetesNamespaceByPodOverview(project string, datasource string, clusterLabelName string, variableOverrides ...dashboard.Option) dashboards.DashboardResult {
 	defaultVars := []dashboard.Option{
 		dashboard.AddVariable("cluster",
 			listVar.List(
