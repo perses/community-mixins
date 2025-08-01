@@ -2,10 +2,12 @@ package main
 
 import (
 	"flag"
+	"github.com/perses/community-dashboards/pkg/dashboards"
 	"github.com/perses/community-dashboards/pkg/dashboards/alertmanager"
 	"github.com/perses/community-dashboards/pkg/dashboards/blackbox"
 	"github.com/perses/community-dashboards/pkg/dashboards/etcd"
 	"github.com/perses/community-dashboards/pkg/dashboards/kubernetes/apiserver"
+	k8sComputeResources "github.com/perses/community-dashboards/pkg/dashboards/kubernetes/compute_resources"
 	"github.com/perses/community-dashboards/pkg/dashboards/kubernetes/controller_manager"
 	"github.com/perses/community-dashboards/pkg/dashboards/kubernetes/kubelet"
 	k8sNetworking "github.com/perses/community-dashboards/pkg/dashboards/kubernetes/networking"
@@ -18,9 +20,6 @@ import (
 	"github.com/perses/community-dashboards/pkg/dashboards/prometheus"
 	"github.com/perses/community-dashboards/pkg/dashboards/tempo"
 	"github.com/perses/community-dashboards/pkg/dashboards/thanos"
-
-	"github.com/perses/community-dashboards/pkg/dashboards"
-	k8sComputeResources "github.com/perses/community-dashboards/pkg/dashboards/kubernetes/compute_resources"
 	"github.com/perses/perses/go-sdk/dashboard"
 )
 
