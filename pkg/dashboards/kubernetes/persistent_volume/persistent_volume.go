@@ -29,54 +29,64 @@ func withPVInodesUsageGroup(datasource string, labelMatcher promql.LabelMatcher)
 	)
 }
 
-func BuildKubernetesPersistentVolumeOverview(project string, datasource string, clusterLabelName string) dashboards.DashboardResult {
-	clusterLabelMatcher := dashboards.GetClusterLabelMatcher(clusterLabelName)
-	return dashboards.NewDashboardResult(
-		dashboard.New("kubernetes-persistent-volume-overview",
-			dashboard.ProjectName(project),
-			dashboard.Name("Kubernetes / Persistent Volume"),
-			dashboard.AddVariable("cluster",
-				listVar.List(
-					labelValuesVar.PrometheusLabelValues("cluster",
-						labelValuesVar.Matchers("kubelet_volume_stats_capacity_bytes{"+panels.GetKubeletMatcher()+"}"),
-						dashboards.AddVariableDatasource(datasource),
-					),
-					listVar.DisplayName("cluster"),
+func BuildKubernetesPersistentVolumeOverview(project string, datasource string, clusterLabelName string, variableOverrides ...dashboard.Option) dashboards.DashboardResult {
+	defaultVars := []dashboard.Option{
+		dashboard.AddVariable("cluster",
+			listVar.List(
+				labelValuesVar.PrometheusLabelValues("cluster",
+					labelValuesVar.Matchers("kubelet_volume_stats_capacity_bytes{"+panels.GetKubeletMatcher()+"}"),
+					dashboards.AddVariableDatasource(datasource),
 				),
+				listVar.DisplayName("cluster"),
 			),
-			dashboard.AddVariable("namespace",
-				listVar.List(
-					labelValuesVar.PrometheusLabelValues("namespace",
-						labelValuesVar.Matchers(
-							promql.SetLabelMatchers(
-								"kubelet_volume_stats_capacity_bytes{"+panels.GetKubeletMatcher()+"}",
-								[]promql.LabelMatcher{{Name: "cluster", Type: "=", Value: "$cluster"}},
-							),
-						),
-						dashboards.AddVariableDatasource(datasource),
-					),
-					listVar.DisplayName("namespace"),
-				),
-			),
-			dashboard.AddVariable("volume",
-				listVar.List(
-					labelValuesVar.PrometheusLabelValues("persistentvolumeclaim",
-						labelValuesVar.Matchers(
-							promql.SetLabelMatchers(
-								"kubelet_volume_stats_capacity_bytes{"+panels.GetKubeletMatcher()+"}",
-								[]promql.LabelMatcher{
-									{Name: "cluster", Type: "=", Value: "$cluster"},
-									{Name: "namespace", Type: "=", Value: "$namespace"},
-								},
-							),
-						),
-						dashboards.AddVariableDatasource(datasource),
-					),
-					listVar.DisplayName("PersistentVolume"),
-				),
-			),
-			withPVVolumeUsageGroup(datasource, clusterLabelMatcher),
-			withPVInodesUsageGroup(datasource, clusterLabelMatcher),
 		),
+		dashboard.AddVariable("namespace",
+			listVar.List(
+				labelValuesVar.PrometheusLabelValues("namespace",
+					labelValuesVar.Matchers(
+						promql.SetLabelMatchers(
+							"kubelet_volume_stats_capacity_bytes{"+panels.GetKubeletMatcher()+"}",
+							[]promql.LabelMatcher{{Name: "cluster", Type: "=", Value: "$cluster"}},
+						),
+					),
+					dashboards.AddVariableDatasource(datasource),
+				),
+				listVar.DisplayName("namespace"),
+			),
+		),
+		dashboard.AddVariable("volume",
+			listVar.List(
+				labelValuesVar.PrometheusLabelValues("persistentvolumeclaim",
+					labelValuesVar.Matchers(
+						promql.SetLabelMatchers(
+							"kubelet_volume_stats_capacity_bytes{"+panels.GetKubeletMatcher()+"}",
+							[]promql.LabelMatcher{
+								{Name: "cluster", Type: "=", Value: "$cluster"},
+								{Name: "namespace", Type: "=", Value: "$namespace"},
+							},
+						),
+					),
+					dashboards.AddVariableDatasource(datasource),
+				),
+				listVar.DisplayName("PersistentVolume"),
+			),
+		),
+	}
+
+	clusterLabelMatcher := dashboards.GetClusterLabelMatcher(clusterLabelName)
+	vars := defaultVars
+	if len(variableOverrides) > 0 {
+		vars = variableOverrides
+	}
+	options := append([]dashboard.Option{
+		dashboard.ProjectName(project),
+		dashboard.Name("Kubernetes / Persistent Volume"),
+	}, vars...)
+	options = append(options,
+		withPVVolumeUsageGroup(datasource, clusterLabelMatcher),
+		withPVInodesUsageGroup(datasource, clusterLabelMatcher),
+	)
+	return dashboards.NewDashboardResult(
+		dashboard.New("kubernetes-persistent-volume-overview", options...),
 	).Component("kubernetes")
 }

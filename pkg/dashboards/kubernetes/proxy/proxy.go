@@ -85,41 +85,52 @@ func withProxyResources(datasource string, clusterLabelMatcher *labels.Matcher) 
 	)
 }
 
-func BuildProxyOverview(project string, datasource string, clusterLabelName string) dashboards.DashboardResult {
+func BuildProxyOverview(project string, datasource string, clusterLabelName string, variableOverrides ...dashboard.Option) dashboards.DashboardResult {
+	defaultVars := []dashboard.Option{
+		dashboard.AddVariable("cluster",
+			listVar.List(
+				labelValuesVar.PrometheusLabelValues("cluster",
+					labelValuesVar.Matchers("up{"+panels.GetKubeProxyMatcher()+"}"),
+					dashboards.AddVariableDatasource(datasource),
+				),
+				listVar.DisplayName("cluster"),
+			),
+		),
+		dashboard.AddVariable("instance",
+			listVar.List(
+				labelValuesVar.PrometheusLabelValues("instance",
+					labelValuesVar.Matchers(
+						promql.SetLabelMatchers(
+							"up{"+panels.GetKubeProxyMatcher()+"}",
+							[]promql.LabelMatcher{{Name: "cluster", Type: "=", Value: "$cluster"}},
+						),
+					),
+					dashboards.AddVariableDatasource(datasource),
+				),
+				listVar.DisplayName("instance"),
+			),
+		),
+	}
+
 	clusterLabelMatcher := dashboards.GetClusterLabelMatcher(clusterLabelName)
 	clusterLabelMatcherV2 := dashboards.GetClusterLabelMatcherV2(clusterLabelName)
+
+	vars := defaultVars
+	if len(variableOverrides) > 0 {
+		vars = variableOverrides
+	}
+	options := append([]dashboard.Option{
+		dashboard.ProjectName(project),
+		dashboard.Name("Kubernetes / Proxy"),
+	}, vars...)
+	options = append(options,
+		withProxyStatsGroup(datasource, clusterLabelMatcher),
+		withProxyRulesSyncRateGroup(datasource, clusterLabelMatcher),
+		withProxyNetworkProgrammingRateGroup(datasource, clusterLabelMatcher),
+		withProxyKubeAPIRequestsGroup(datasource, clusterLabelMatcher),
+		withProxyResources(datasource, clusterLabelMatcherV2),
+	)
 	return dashboards.NewDashboardResult(
-		dashboard.New("proxy-overview",
-			dashboard.ProjectName(project),
-			dashboard.Name("Kubernetes / Proxy"),
-			dashboard.AddVariable("cluster",
-				listVar.List(
-					labelValuesVar.PrometheusLabelValues("cluster",
-						labelValuesVar.Matchers("up{"+panels.GetKubeProxyMatcher()+"}"),
-						dashboards.AddVariableDatasource(datasource),
-					),
-					listVar.DisplayName("cluster"),
-				),
-			),
-			dashboard.AddVariable("instance",
-				listVar.List(
-					labelValuesVar.PrometheusLabelValues("instance",
-						labelValuesVar.Matchers(
-							promql.SetLabelMatchers(
-								"up{"+panels.GetKubeProxyMatcher()+"}",
-								[]promql.LabelMatcher{{Name: "cluster", Type: "=", Value: "$cluster"}},
-							),
-						),
-						dashboards.AddVariableDatasource(datasource),
-					),
-					listVar.DisplayName("instance"),
-				),
-			),
-			withProxyStatsGroup(datasource, clusterLabelMatcher),
-			withProxyRulesSyncRateGroup(datasource, clusterLabelMatcher),
-			withProxyNetworkProgrammingRateGroup(datasource, clusterLabelMatcher),
-			withProxyKubeAPIRequestsGroup(datasource, clusterLabelMatcher),
-			withProxyResources(datasource, clusterLabelMatcherV2),
-		),
+		dashboard.New("proxy-overview", options...),
 	).Component("kubernetes")
 }

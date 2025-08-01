@@ -64,58 +64,69 @@ func withWorkloadNamespaceRateOfPacketsDroppedGroup(datasource string, labelMatc
 	)
 }
 
-func BuildKubernetesNamespaceByWorkloadOverview(project string, datasource string, clusterLabelName string) dashboards.DashboardResult {
-	clusterLabelMatcher := dashboards.GetClusterLabelMatcher(clusterLabelName)
-	return dashboards.NewDashboardResult(
-		dashboard.New("kubernetes-workload-ns-networking-overview",
-			dashboard.ProjectName(project),
-			dashboard.Name("Kubernetes / Networking / Namespace (Workloads)"),
-			dashboard.AddVariable("cluster",
-				listVar.List(
-					labelValuesVar.PrometheusLabelValues("cluster",
-						labelValuesVar.Matchers("up{"+panels.GetKubeletMatcher()+", metrics_path=\"/metrics/cadvisor\"}"),
-						dashboards.AddVariableDatasource(datasource),
-					),
-					listVar.DisplayName("cluster"),
+func BuildKubernetesNamespaceByWorkloadOverview(project string, datasource string, clusterLabelName string, variableOverrides ...dashboard.Option) dashboards.DashboardResult {
+	defaultVars := []dashboard.Option{
+		dashboard.AddVariable("cluster",
+			listVar.List(
+				labelValuesVar.PrometheusLabelValues("cluster",
+					labelValuesVar.Matchers("up{"+panels.GetKubeletMatcher()+", metrics_path=\"/metrics/cadvisor\"}"),
+					dashboards.AddVariableDatasource(datasource),
 				),
+				listVar.DisplayName("cluster"),
 			),
-			dashboard.AddVariable("namespace",
-				listVar.List(
-					labelValuesVar.PrometheusLabelValues("namespace",
-						labelValuesVar.Matchers(
-							promql.SetLabelMatchers(
-								"container_network_receive_packets_total",
-								[]promql.LabelMatcher{{Name: "cluster", Type: "=", Value: "$cluster"}},
-							),
-						),
-						dashboards.AddVariableDatasource(datasource),
-					),
-					listVar.DisplayName("namespace"),
-				),
-			),
-			dashboard.AddVariable("type",
-				listVar.List(
-					labelValuesVar.PrometheusLabelValues("workload_type",
-						labelValuesVar.Matchers(
-							promql.SetLabelMatchers(
-								"namespace_workload_pod:kube_pod_owner:relabel{workload=~\".+\"}",
-								[]promql.LabelMatcher{
-									{Name: "cluster", Type: "=", Value: "$cluster"},
-									{Name: "namespace", Type: "=", Value: "$namespace"},
-								},
-							),
-						),
-						dashboards.AddVariableDatasource(datasource),
-					),
-					listVar.DisplayName("workload_type"),
-				),
-			),
-			withWorkloadNamespaceCurrentRateBytesGroup(datasource, clusterLabelMatcher),
-			withWorkloadNamespaceNetworkStatusGroup(datasource, clusterLabelMatcher),
-			withWorkloadNamespaceBandwidthGroup(datasource, clusterLabelMatcher),
-			withWorkloadNamespaceAvgContainerBandwidthGroup(datasource, clusterLabelMatcher),
-			withWorkloadNamespaceRateOfPacketsGroup(datasource, clusterLabelMatcher),
-			withWorkloadNamespaceRateOfPacketsDroppedGroup(datasource, clusterLabelMatcher),
 		),
+		dashboard.AddVariable("namespace",
+			listVar.List(
+				labelValuesVar.PrometheusLabelValues("namespace",
+					labelValuesVar.Matchers(
+						promql.SetLabelMatchers(
+							"container_network_receive_packets_total",
+							[]promql.LabelMatcher{{Name: "cluster", Type: "=", Value: "$cluster"}},
+						),
+					),
+					dashboards.AddVariableDatasource(datasource),
+				),
+				listVar.DisplayName("namespace"),
+			),
+		),
+		dashboard.AddVariable("type",
+			listVar.List(
+				labelValuesVar.PrometheusLabelValues("workload_type",
+					labelValuesVar.Matchers(
+						promql.SetLabelMatchers(
+							"namespace_workload_pod:kube_pod_owner:relabel{workload=~\".+\"}",
+							[]promql.LabelMatcher{
+								{Name: "cluster", Type: "=", Value: "$cluster"},
+								{Name: "namespace", Type: "=", Value: "$namespace"},
+							},
+						),
+					),
+					dashboards.AddVariableDatasource(datasource),
+				),
+				listVar.DisplayName("workload_type"),
+			),
+		),
+	}
+
+	clusterLabelMatcher := dashboards.GetClusterLabelMatcher(clusterLabelName)
+
+	vars := defaultVars
+	if len(variableOverrides) > 0 {
+		vars = variableOverrides
+	}
+	options := append([]dashboard.Option{
+		dashboard.ProjectName(project),
+		dashboard.Name("Kubernetes / Networking / Namespace (Workloads)"),
+	}, vars...)
+	options = append(options,
+		withWorkloadNamespaceCurrentRateBytesGroup(datasource, clusterLabelMatcher),
+		withWorkloadNamespaceNetworkStatusGroup(datasource, clusterLabelMatcher),
+		withWorkloadNamespaceBandwidthGroup(datasource, clusterLabelMatcher),
+		withWorkloadNamespaceAvgContainerBandwidthGroup(datasource, clusterLabelMatcher),
+		withWorkloadNamespaceRateOfPacketsGroup(datasource, clusterLabelMatcher),
+		withWorkloadNamespaceRateOfPacketsDroppedGroup(datasource, clusterLabelMatcher),
+	)
+	return dashboards.NewDashboardResult(
+		dashboard.New("kubernetes-workload-ns-networking-overview", options...),
 	).Component("kubernetes")
 }

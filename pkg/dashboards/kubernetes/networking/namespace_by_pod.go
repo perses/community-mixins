@@ -55,40 +55,51 @@ func withNamespaceRateOfPacketsDroppedGroup(datasource string, labelMatcher prom
 	)
 }
 
-func BuildKubernetesNamespaceByPodOverview(project string, datasource string, clusterLabelName string) dashboards.DashboardResult {
-	clusterLabelMatcher := dashboards.GetClusterLabelMatcher(clusterLabelName)
-	return dashboards.NewDashboardResult(
-		dashboard.New("kubernetes-namespace-networking-overview",
-			dashboard.ProjectName(project),
-			dashboard.Name("Kubernetes / Networking / Namespace (Pods)"),
-			dashboard.AddVariable("cluster",
-				listVar.List(
-					labelValuesVar.PrometheusLabelValues("cluster",
-						labelValuesVar.Matchers("up{"+panels.GetKubeletMatcher()+", metrics_path=\"/metrics/cadvisor\"}"),
-						dashboards.AddVariableDatasource(datasource),
-					),
-					listVar.DisplayName("cluster"),
+func BuildKubernetesNamespaceByPodOverview(project string, datasource string, clusterLabelName string, variableOverrides ...dashboard.Option) dashboards.DashboardResult {
+	defaultVars := []dashboard.Option{
+		dashboard.AddVariable("cluster",
+			listVar.List(
+				labelValuesVar.PrometheusLabelValues("cluster",
+					labelValuesVar.Matchers("up{"+panels.GetKubeletMatcher()+", metrics_path=\"/metrics/cadvisor\"}"),
+					dashboards.AddVariableDatasource(datasource),
 				),
+				listVar.DisplayName("cluster"),
 			),
-			dashboard.AddVariable("namespace",
-				listVar.List(
-					labelValuesVar.PrometheusLabelValues("namespace",
-						labelValuesVar.Matchers(
-							promql.SetLabelMatchers(
-								"container_network_receive_packets_total",
-								[]promql.LabelMatcher{{Name: "cluster", Type: "=", Value: "$cluster"}},
-							),
-						),
-						dashboards.AddVariableDatasource(datasource),
-					),
-					listVar.DisplayName("namespace"),
-				),
-			),
-			withNamespaceCurrentRateBytesGroup(datasource, clusterLabelMatcher),
-			withNamespaceNetworkUsageGroup(datasource, clusterLabelMatcher),
-			withNamespaceBandwidthGroup(datasource, clusterLabelMatcher),
-			withNamespaceRateOfPacketsGroup(datasource, clusterLabelMatcher),
-			withNamespaceRateOfPacketsDroppedGroup(datasource, clusterLabelMatcher),
 		),
+		dashboard.AddVariable("namespace",
+			listVar.List(
+				labelValuesVar.PrometheusLabelValues("namespace",
+					labelValuesVar.Matchers(
+						promql.SetLabelMatchers(
+							"container_network_receive_packets_total",
+							[]promql.LabelMatcher{{Name: "cluster", Type: "=", Value: "$cluster"}},
+						),
+					),
+					dashboards.AddVariableDatasource(datasource),
+				),
+				listVar.DisplayName("namespace"),
+			),
+		),
+	}
+
+	clusterLabelMatcher := dashboards.GetClusterLabelMatcher(clusterLabelName)
+
+	vars := defaultVars
+	if len(variableOverrides) > 0 {
+		vars = variableOverrides
+	}
+	options := append([]dashboard.Option{
+		dashboard.ProjectName(project),
+		dashboard.Name("Kubernetes / Networking / Namespace (Pods)"),
+	}, vars...)
+	options = append(options,
+		withNamespaceCurrentRateBytesGroup(datasource, clusterLabelMatcher),
+		withNamespaceNetworkUsageGroup(datasource, clusterLabelMatcher),
+		withNamespaceBandwidthGroup(datasource, clusterLabelMatcher),
+		withNamespaceRateOfPacketsGroup(datasource, clusterLabelMatcher),
+		withNamespaceRateOfPacketsDroppedGroup(datasource, clusterLabelMatcher),
+	)
+	return dashboards.NewDashboardResult(
+		dashboard.New("kubernetes-namespace-networking-overview", options...),
 	).Component("kubernetes")
 }

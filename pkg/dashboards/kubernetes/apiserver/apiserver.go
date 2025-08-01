@@ -84,42 +84,53 @@ func withAPIServerResources(datasource string, clusterLabelMatcher *labels.Match
 	)
 }
 
-func BuildAPIServerOverview(project string, datasource string, clusterLabelName string) dashboards.DashboardResult {
+func BuildAPIServerOverview(project string, datasource string, clusterLabelName string, variableOverrides ...dashboard.Option) dashboards.DashboardResult {
+	defaultVars := []dashboard.Option{
+		dashboard.AddVariable("cluster",
+			listVar.List(
+				labelValuesVar.PrometheusLabelValues("cluster",
+					labelValuesVar.Matchers("up{"+panels.GetAPIServerMatcher()+"}"),
+					dashboards.AddVariableDatasource(datasource),
+				),
+				listVar.DisplayName("cluster"),
+			),
+		),
+		dashboard.AddVariable("instance",
+			listVar.List(
+				labelValuesVar.PrometheusLabelValues("instance",
+					labelValuesVar.Matchers(
+						promql.SetLabelMatchers(
+							"up{"+panels.GetAPIServerMatcher()+"}",
+							[]promql.LabelMatcher{{Name: "cluster", Type: "=", Value: "$cluster"}},
+						),
+					),
+					dashboards.AddVariableDatasource(datasource),
+				),
+				listVar.DisplayName("instance"),
+			),
+		),
+	}
+
 	clusterLabelMatcher := dashboards.GetClusterLabelMatcher(clusterLabelName)
 	clusterLabelMatcherV2 := dashboards.GetClusterLabelMatcherV2(clusterLabelName)
+
+	vars := defaultVars
+	if len(variableOverrides) > 0 {
+		vars = variableOverrides
+	}
+	options := append([]dashboard.Option{
+		dashboard.ProjectName(project),
+		dashboard.Name("Kubernetes / API server"),
+	}, vars...)
+	options = append(options,
+		withMarkdown(datasource, clusterLabelMatcher),
+		withAllAvailabilityAndErrorBudget(datasource, clusterLabelMatcher),
+		withReadStats(datasource, clusterLabelMatcher),
+		withWriteStats(datasource, clusterLabelMatcher),
+		withWorkQueueGroup(datasource, clusterLabelMatcher),
+		withAPIServerResources(datasource, clusterLabelMatcherV2),
+	)
 	return dashboards.NewDashboardResult(
-		dashboard.New("api-server-overview",
-			dashboard.ProjectName(project),
-			dashboard.Name("Kubernetes / API server"),
-			dashboard.AddVariable("cluster",
-				listVar.List(
-					labelValuesVar.PrometheusLabelValues("cluster",
-						labelValuesVar.Matchers("up{"+panels.GetAPIServerMatcher()+"}"),
-						dashboards.AddVariableDatasource(datasource),
-					),
-					listVar.DisplayName("cluster"),
-				),
-			),
-			dashboard.AddVariable("instance",
-				listVar.List(
-					labelValuesVar.PrometheusLabelValues("instance",
-						labelValuesVar.Matchers(
-							promql.SetLabelMatchers(
-								"up{"+panels.GetAPIServerMatcher()+"}",
-								[]promql.LabelMatcher{{Name: "cluster", Type: "=", Value: "$cluster"}},
-							),
-						),
-						dashboards.AddVariableDatasource(datasource),
-					),
-					listVar.DisplayName("instance"),
-				),
-			),
-			withMarkdown(datasource, clusterLabelMatcher),
-			withAllAvailabilityAndErrorBudget(datasource, clusterLabelMatcher),
-			withReadStats(datasource, clusterLabelMatcher),
-			withWriteStats(datasource, clusterLabelMatcher),
-			withWorkQueueGroup(datasource, clusterLabelMatcher),
-			withAPIServerResources(datasource, clusterLabelMatcherV2),
-		),
+		dashboard.New("api-server-overview", options...),
 	).Component("kubernetes")
 }

@@ -117,33 +117,42 @@ func withClusterCurrentStorageIOGroup(datasource string, labelMatcher promql.Lab
 	)
 }
 
-func BuildKubernetesClusterOverview(project string, datasource string, clusterLabelName string) dashboards.DashboardResult {
-	clusterLabelMatcher := dashboards.GetClusterLabelMatcher(clusterLabelName)
-	return dashboards.NewDashboardResult(
-		dashboard.New("kubernetes-cluster-resources-overview",
-			dashboard.ProjectName(project),
-			dashboard.Name("Kubernetes / Compute Resources / Cluster"),
-			dashboard.AddVariable("cluster",
-				listVar.List(
-					labelValuesVar.PrometheusLabelValues("cluster",
-						labelValuesVar.Matchers("up{"+panels.GetKubeletMatcher()+", metrics_path=\"/metrics/cadvisor\"}"),
-						dashboards.AddVariableDatasource(datasource),
-					),
-					listVar.DisplayName("cluster"),
+func BuildKubernetesClusterOverview(project string, datasource string, clusterLabelName string, variableOverrides ...dashboard.Option) dashboards.DashboardResult {
+	defaultVars := []dashboard.Option{
+		dashboard.AddVariable("cluster",
+			listVar.List(
+				labelValuesVar.PrometheusLabelValues("cluster",
+					labelValuesVar.Matchers("up{"+panels.GetKubeletMatcher()+", metrics_path=\"/metrics/cadvisor\"}"),
+					dashboards.AddVariableDatasource(datasource),
 				),
+				listVar.DisplayName("cluster"),
 			),
-			withClusterStatsGroup(datasource, clusterLabelMatcher),
-			withClusterCPUUsageGroup(datasource, clusterLabelMatcher),
-			withClusterCPUUsageQuotaGroup(datasource, clusterLabelMatcher),
-			withClusterMemoryUsageGroup(datasource, clusterLabelMatcher),
-			withClusterMemoryUsageQuotaGroup(datasource, clusterLabelMatcher),
-			withClusterNetworkUsageGroup(datasource, clusterLabelMatcher),
-			withClusterBandwidthGroup(datasource, clusterLabelMatcher),
-			withClusterAvgBandwidthGroup(datasource, clusterLabelMatcher),
-			withClusterRateOfPacketsGroup(datasource, clusterLabelMatcher),
-			withClusterRateOfPacketsDroppedGroup(datasource, clusterLabelMatcher),
-			withClusterStorageIOGroup(datasource, clusterLabelMatcher),
-			withClusterCurrentStorageIOGroup(datasource, clusterLabelMatcher),
 		),
+	}
+	clusterLabelMatcher := dashboards.GetClusterLabelMatcher(clusterLabelName)
+	vars := defaultVars
+	if len(variableOverrides) > 0 {
+		vars = variableOverrides
+	}
+	options := append([]dashboard.Option{
+		dashboard.ProjectName(project),
+		dashboard.Name("Kubernetes / Compute Resources / Cluster"),
+	}, vars...)
+	options = append(options,
+		withClusterStatsGroup(datasource, clusterLabelMatcher),
+		withClusterCPUUsageGroup(datasource, clusterLabelMatcher),
+		withClusterCPUUsageQuotaGroup(datasource, clusterLabelMatcher),
+		withClusterMemoryUsageGroup(datasource, clusterLabelMatcher),
+		withClusterMemoryUsageQuotaGroup(datasource, clusterLabelMatcher),
+		withClusterNetworkUsageGroup(datasource, clusterLabelMatcher),
+		withClusterBandwidthGroup(datasource, clusterLabelMatcher),
+		withClusterAvgBandwidthGroup(datasource, clusterLabelMatcher),
+		withClusterRateOfPacketsGroup(datasource, clusterLabelMatcher),
+		withClusterRateOfPacketsDroppedGroup(datasource, clusterLabelMatcher),
+		withClusterStorageIOGroup(datasource, clusterLabelMatcher),
+		withClusterCurrentStorageIOGroup(datasource, clusterLabelMatcher),
+	)
+	return dashboards.NewDashboardResult(
+		dashboard.New("kubernetes-cluster-resources-overview", options...),
 	).Component("kubernetes")
 }

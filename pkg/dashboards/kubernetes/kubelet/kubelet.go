@@ -123,48 +123,59 @@ func withKubeletResources(datasource string, clusterLabelMatcher *labels.Matcher
 	)
 }
 
-func BuildKubeletOverview(project string, datasource string, clusterLabelName string) dashboards.DashboardResult {
+func BuildKubeletOverview(project string, datasource string, clusterLabelName string, variableOverrides ...dashboard.Option) dashboards.DashboardResult {
+	defaultVars := []dashboard.Option{
+		dashboard.AddVariable("cluster",
+			listVar.List(
+				labelValuesVar.PrometheusLabelValues("cluster",
+					labelValuesVar.Matchers("up{"+panels.GetKubeletMatcher()+"}"),
+					dashboards.AddVariableDatasource(datasource),
+				),
+				listVar.DisplayName("cluster"),
+			),
+		),
+		dashboard.AddVariable("instance",
+			listVar.List(
+				labelValuesVar.PrometheusLabelValues("instance",
+					labelValuesVar.Matchers(
+						promql.SetLabelMatchers(
+							"up{"+panels.GetKubeletMatcher()+"}",
+							[]promql.LabelMatcher{{Name: "cluster", Type: "=", Value: "$cluster"}},
+						),
+					),
+					dashboards.AddVariableDatasource(datasource),
+				),
+				listVar.DisplayName("instance"),
+			),
+		),
+	}
+
 	clusterLabelMatcher := dashboards.GetClusterLabelMatcher(clusterLabelName)
 	clusterLabelMatcherV2 := dashboards.GetClusterLabelMatcherV2(clusterLabelName)
+
+	vars := defaultVars
+	if len(variableOverrides) > 0 {
+		vars = variableOverrides
+	}
+	options := append([]dashboard.Option{
+		dashboard.ProjectName(project),
+		dashboard.Name("Kubernetes / Kubelet"),
+	}, vars...)
+	options = append(options,
+		withKubeletStats(datasource, clusterLabelMatcher),
+		withKubeletOperations(datasource, clusterLabelMatcher),
+		withKubeletOperationsQuantile(datasource, clusterLabelMatcher),
+		withPodStartRateAndDuration(datasource, clusterLabelMatcher),
+		withStorageOperationsAndErrors(datasource, clusterLabelMatcher),
+		withStorageOperationsQuantile(datasource, clusterLabelMatcher),
+		withCgroupManager(datasource, clusterLabelMatcher),
+		withPLEGRelist(datasource, clusterLabelMatcher),
+		withPLEGRelistDuration(datasource, clusterLabelMatcher),
+		withRPCRate(datasource, clusterLabelMatcher),
+		withRequestDurationQuantile(datasource, clusterLabelMatcher),
+		withKubeletResources(datasource, clusterLabelMatcherV2),
+	)
 	return dashboards.NewDashboardResult(
-		dashboard.New("kubelet-overview",
-			dashboard.ProjectName(project),
-			dashboard.Name("Kubernetes / Kubelet"),
-			dashboard.AddVariable("cluster",
-				listVar.List(
-					labelValuesVar.PrometheusLabelValues("cluster",
-						labelValuesVar.Matchers("up{"+panels.GetKubeletMatcher()+"}"),
-						dashboards.AddVariableDatasource(datasource),
-					),
-					listVar.DisplayName("cluster"),
-				),
-			),
-			dashboard.AddVariable("instance",
-				listVar.List(
-					labelValuesVar.PrometheusLabelValues("instance",
-						labelValuesVar.Matchers(
-							promql.SetLabelMatchers(
-								"up{"+panels.GetKubeletMatcher()+"}",
-								[]promql.LabelMatcher{{Name: "cluster", Type: "=", Value: "$cluster"}},
-							),
-						),
-						dashboards.AddVariableDatasource(datasource),
-					),
-					listVar.DisplayName("instance"),
-				),
-			),
-			withKubeletStats(datasource, clusterLabelMatcher),
-			withKubeletOperations(datasource, clusterLabelMatcher),
-			withKubeletOperationsQuantile(datasource, clusterLabelMatcher),
-			withPodStartRateAndDuration(datasource, clusterLabelMatcher),
-			withStorageOperationsAndErrors(datasource, clusterLabelMatcher),
-			withStorageOperationsQuantile(datasource, clusterLabelMatcher),
-			withCgroupManager(datasource, clusterLabelMatcher),
-			withPLEGRelist(datasource, clusterLabelMatcher),
-			withPLEGRelistDuration(datasource, clusterLabelMatcher),
-			withRPCRate(datasource, clusterLabelMatcher),
-			withRequestDurationQuantile(datasource, clusterLabelMatcher),
-			withKubeletResources(datasource, clusterLabelMatcherV2),
-		),
+		dashboard.New("kubelet-overview", options...),
 	).Component("kubernetes")
 }

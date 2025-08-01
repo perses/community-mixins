@@ -73,28 +73,38 @@ func withClusterTCPRetransmitRateGroup(datasource string, labelMatcher promql.La
 	)
 }
 
-func BuildKubernetesClusterOverview(project string, datasource string, clusterLabelName string) dashboards.DashboardResult {
-	clusterLabelMatcher := dashboards.GetClusterLabelMatcher(clusterLabelName)
-	return dashboards.NewDashboardResult(
-		dashboard.New("kubernetes-cluster-networking-overview",
-			dashboard.ProjectName(project),
-			dashboard.Name("Kubernetes / Networking / Cluster"),
-			dashboard.AddVariable("cluster",
-				listVar.List(
-					labelValuesVar.PrometheusLabelValues("cluster",
-						labelValuesVar.Matchers("up{"+panels.GetKubeletMatcher()+", metrics_path=\"/metrics/cadvisor\"}"),
-						dashboards.AddVariableDatasource(datasource),
-					),
-					listVar.DisplayName("cluster"),
+func BuildKubernetesClusterOverview(project string, datasource string, clusterLabelName string, variableOverrides ...dashboard.Option) dashboards.DashboardResult {
+	defaultVars := []dashboard.Option{
+		dashboard.AddVariable("cluster",
+			listVar.List(
+				labelValuesVar.PrometheusLabelValues("cluster",
+					labelValuesVar.Matchers("up{"+panels.GetKubeletMatcher()+", metrics_path=\"/metrics/cadvisor\"}"),
+					dashboards.AddVariableDatasource(datasource),
 				),
+				listVar.DisplayName("cluster"),
 			),
-			withClusterCurrentRateBytesGroup(datasource, clusterLabelMatcher),
-			withClusterNetworkingCurrentStatusGroup(datasource, clusterLabelMatcher),
-			withClusterAvgRateOfBytesGroup(datasource, clusterLabelMatcher),
-			withClusterBandwidthGroup(datasource, clusterLabelMatcher),
-			withClusterRateOfPacketsGroup(datasource, clusterLabelMatcher),
-			withClusterRateOfPacketsDroppedGroup(datasource, clusterLabelMatcher),
-			withClusterTCPRetransmitRateGroup(datasource, clusterLabelMatcher),
 		),
+	}
+	clusterLabelMatcher := dashboards.GetClusterLabelMatcher(clusterLabelName)
+
+	vars := defaultVars
+	if len(variableOverrides) > 0 {
+		vars = variableOverrides
+	}
+	options := append([]dashboard.Option{
+		dashboard.ProjectName(project),
+		dashboard.Name("Kubernetes / Networking / Cluster"),
+	}, vars...)
+	options = append(options,
+		withClusterCurrentRateBytesGroup(datasource, clusterLabelMatcher),
+		withClusterNetworkingCurrentStatusGroup(datasource, clusterLabelMatcher),
+		withClusterAvgRateOfBytesGroup(datasource, clusterLabelMatcher),
+		withClusterBandwidthGroup(datasource, clusterLabelMatcher),
+		withClusterRateOfPacketsGroup(datasource, clusterLabelMatcher),
+		withClusterRateOfPacketsDroppedGroup(datasource, clusterLabelMatcher),
+		withClusterTCPRetransmitRateGroup(datasource, clusterLabelMatcher),
+	)
+	return dashboards.NewDashboardResult(
+		dashboard.New("kubernetes-cluster-networking-overview", options...),
 	).Component("kubernetes")
 }
