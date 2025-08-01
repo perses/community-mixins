@@ -127,6 +127,6 @@ func BuildKubernetesNamespaceByWorkloadOverview(project string, datasource strin
 		withWorkloadNamespaceRateOfPacketsDroppedGroup(datasource, clusterLabelMatcher),
 	)
 	return dashboards.NewDashboardResult(
-		dashboard.New("kubernetes-namespace-workload-networking-overview", options...),
+		dashboard.New("kubernetes-workload-ns-networking-overview", options...),
 	).Component("kubernetes")
 }

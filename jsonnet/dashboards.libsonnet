@@ -157,7 +157,7 @@ function(params) {
   ) else {},
 
   local workloadNSNetworkingOverview = if std.member(cd.config.components, 'kubernetes') then overrides.overrideDashboard(
-    import 'dashboards/operator/kubernetes/kubernetes-namespace-workload-networking-overview.json',
+    import 'dashboards/operator/kubernetes/kubernetes-workload-ns-networking-overview.json',
     cd.config.namespace,
     cd.config.commonLabels,
     cd.config.datasource
