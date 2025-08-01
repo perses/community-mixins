@@ -76,40 +76,51 @@ func withCMResources(datasource string, clusterLabelMatcher *labels.Matcher) das
 	)
 }
 
-func BuildControllerManagerOverview(project string, datasource string, clusterLabelName string) dashboards.DashboardResult {
+func BuildControllerManagerOverview(project string, datasource string, clusterLabelName string, variableOverrides []dashboard.Option) dashboards.DashboardResult {
+	defaultVars := []dashboard.Option{
+		dashboard.AddVariable("cluster",
+			listVar.List(
+				labelValuesVar.PrometheusLabelValues("cluster",
+					labelValuesVar.Matchers("up{"+panels.GetControllerManagerMatcher()+"}"),
+					dashboards.AddVariableDatasource(datasource),
+				),
+				listVar.DisplayName("cluster"),
+			),
+		),
+		dashboard.AddVariable("instance",
+			listVar.List(
+				labelValuesVar.PrometheusLabelValues("instance",
+					labelValuesVar.Matchers(
+						promql.SetLabelMatchers(
+							"up{"+panels.GetControllerManagerMatcher()+"}",
+							[]promql.LabelMatcher{{Name: "cluster", Type: "=", Value: "$cluster"}},
+						),
+					),
+					dashboards.AddVariableDatasource(datasource),
+				),
+				listVar.DisplayName("instance"),
+			),
+		),
+	}
+
 	clusterLabelMatcher := dashboards.GetClusterLabelMatcher(clusterLabelName)
 	clusterLabelMatcherV2 := dashboards.GetClusterLabelMatcherV2(clusterLabelName)
+
+	vars := defaultVars
+	if len(variableOverrides) > 0 {
+		vars = variableOverrides
+	}
+	options := append([]dashboard.Option{
+		dashboard.ProjectName(project),
+		dashboard.Name("Kubernetes / Controller Manager"),
+	}, vars...)
+	options = append(options,
+		withCMStatsGroup(datasource, clusterLabelMatcher),
+		withCMWorkQueueGroup(datasource, clusterLabelMatcher),
+		withCMKubeAPIRequestsGroup(datasource, clusterLabelMatcher),
+		withCMResources(datasource, clusterLabelMatcherV2),
+	)
 	return dashboards.NewDashboardResult(
-		dashboard.New("controller-manager-overview",
-			dashboard.ProjectName(project),
-			dashboard.Name("Kubernetes / Controller Manager"),
-			dashboard.AddVariable("cluster",
-				listVar.List(
-					labelValuesVar.PrometheusLabelValues("cluster",
-						labelValuesVar.Matchers("up{"+panels.GetControllerManagerMatcher()+"}"),
-						dashboards.AddVariableDatasource(datasource),
-					),
-					listVar.DisplayName("cluster"),
-				),
-			),
-			dashboard.AddVariable("instance",
-				listVar.List(
-					labelValuesVar.PrometheusLabelValues("instance",
-						labelValuesVar.Matchers(
-							promql.SetLabelMatchers(
-								"up{"+panels.GetControllerManagerMatcher()+"}",
-								[]promql.LabelMatcher{{Name: "cluster", Type: "=", Value: "$cluster"}},
-							),
-						),
-						dashboards.AddVariableDatasource(datasource),
-					),
-					listVar.DisplayName("instance"),
-				),
-			),
-			withCMStatsGroup(datasource, clusterLabelMatcher),
-			withCMWorkQueueGroup(datasource, clusterLabelMatcher),
-			withCMKubeAPIRequestsGroup(datasource, clusterLabelMatcher),
-			withCMResources(datasource, clusterLabelMatcherV2),
-		),
+		dashboard.New("controller-manager-overview", options...),
 	).Component("kubernetes")
 }

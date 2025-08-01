@@ -2,12 +2,12 @@
   "kind": "PersesDashboard",
   "apiVersion": "perses.dev/v1alpha1",
   "metadata": {
-    "name": "kubernetes-workload-ns-networking-overview",
+    "name": "kubernetes-namespace-workload-networking-overview",
     "namespace": "perses-dev",
     "creationTimestamp": null,
     "labels": {
       "app.kubernetes.io/component": "dashboard",
-      "app.kubernetes.io/instance": "kubernetes-workload-ns-networking-overview",
+      "app.kubernetes.io/instance": "kubernetes-namespace-workload-networking-overview",
       "app.kubernetes.io/name": "perses-dashboard",
       "app.kubernetes.io/part-of": "perses-operator"
     }

@@ -75,40 +75,51 @@ func withSchedulerResources(datasource string, clusterLabelMatcher *labels.Match
 	)
 }
 
-func BuildSchedulerOverview(project string, datasource string, clusterLabelName string) dashboards.DashboardResult {
+func BuildSchedulerOverview(project string, datasource string, clusterLabelName string, variableOverrides []dashboard.Option) dashboards.DashboardResult {
+	defaultVars := []dashboard.Option{
+		dashboard.AddVariable("cluster",
+			listVar.List(
+				labelValuesVar.PrometheusLabelValues("cluster",
+					labelValuesVar.Matchers("up{"+panels.GetSchedulerMatcher()+"}"),
+					dashboards.AddVariableDatasource(datasource),
+				),
+				listVar.DisplayName("cluster"),
+			),
+		),
+		dashboard.AddVariable("instance",
+			listVar.List(
+				labelValuesVar.PrometheusLabelValues("instance",
+					labelValuesVar.Matchers(
+						promql.SetLabelMatchers(
+							"up{"+panels.GetSchedulerMatcher()+"}",
+							[]promql.LabelMatcher{{Name: "cluster", Type: "=", Value: "$cluster"}},
+						),
+					),
+					dashboards.AddVariableDatasource(datasource),
+				),
+				listVar.DisplayName("instance"),
+			),
+		),
+	}
+
 	clusterLabelMatcher := dashboards.GetClusterLabelMatcher(clusterLabelName)
 	clusterLabelMatcherV2 := dashboards.GetClusterLabelMatcherV2(clusterLabelName)
+
+	vars := defaultVars
+	if len(variableOverrides) > 0 {
+		vars = variableOverrides
+	}
+	options := append([]dashboard.Option{
+		dashboard.ProjectName(project),
+		dashboard.Name("Kubernetes / Scheduler"),
+	}, vars...)
+	options = append(options,
+		withSchedulerStatsGroup(datasource, clusterLabelMatcher),
+		withSchedulingRateGroup(datasource, clusterLabelMatcher),
+		withSchedulerKubeAPIRequestsGroup(datasource, clusterLabelMatcher),
+		withSchedulerResources(datasource, clusterLabelMatcherV2),
+	)
 	return dashboards.NewDashboardResult(
-		dashboard.New("scheduler-overview",
-			dashboard.ProjectName(project),
-			dashboard.Name("Kubernetes / Scheduler"),
-			dashboard.AddVariable("cluster",
-				listVar.List(
-					labelValuesVar.PrometheusLabelValues("cluster",
-						labelValuesVar.Matchers("up{"+panels.GetSchedulerMatcher()+"}"),
-						dashboards.AddVariableDatasource(datasource),
-					),
-					listVar.DisplayName("cluster"),
-				),
-			),
-			dashboard.AddVariable("instance",
-				listVar.List(
-					labelValuesVar.PrometheusLabelValues("instance",
-						labelValuesVar.Matchers(
-							promql.SetLabelMatchers(
-								"up{"+panels.GetSchedulerMatcher()+"}",
-								[]promql.LabelMatcher{{Name: "cluster", Type: "=", Value: "$cluster"}},
-							),
-						),
-						dashboards.AddVariableDatasource(datasource),
-					),
-					listVar.DisplayName("instance"),
-				),
-			),
-			withSchedulerStatsGroup(datasource, clusterLabelMatcher),
-			withSchedulingRateGroup(datasource, clusterLabelMatcher),
-			withSchedulerKubeAPIRequestsGroup(datasource, clusterLabelMatcher),
-			withSchedulerResources(datasource, clusterLabelMatcherV2),
-		),
+		dashboard.New("scheduler-overview", options...),
 	).Component("kubernetes")
 }

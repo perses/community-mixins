@@ -4,10 +4,10 @@ metadata:
   creationTimestamp: null
   labels:
     app.kubernetes.io/component: dashboard
-    app.kubernetes.io/instance: kubernetes-workload-ns-networking-overview
+    app.kubernetes.io/instance: kubernetes-namespace-workload-networking-overview
     app.kubernetes.io/name: perses-dashboard
     app.kubernetes.io/part-of: perses-operator
-  name: kubernetes-workload-ns-networking-overview
+  name: kubernetes-namespace-workload-networking-overview
   namespace: perses-dev
 spec:
   display:
@@ -115,7 +115,8 @@ spec:
       kind: Panel
       spec:
         display:
-          description: Shows the rate of bytes received by top workload in a namespace in a cluster.
+          description: Shows the rate of bytes received by top workload in a namespace
+            in a cluster.
           name: Current Rate of Bytes Received
         plugin:
           kind: TimeSeriesChart
@@ -141,7 +142,7 @@ spec:
               spec:
                 datasource:
                   kind: PrometheusDatasource
-                  name: custom-datasource
+                  name: prometheus-datasource
                 query: |-
                   sort_desc(
                     sum by (workload) (
@@ -160,7 +161,8 @@ spec:
       kind: Panel
       spec:
         display:
-          description: Shows the rate of bytes transmitted by top workload in a namespace in a cluster.
+          description: Shows the rate of bytes transmitted by top workload in a namespace
+            in a cluster.
           name: Current Rate of Bytes Transmitted
         plugin:
           kind: TimeSeriesChart
@@ -186,7 +188,7 @@ spec:
               spec:
                 datasource:
                   kind: PrometheusDatasource
-                  name: custom-datasource
+                  name: prometheus-datasource
                 query: |-
                   sort_desc(
                     sum by (workload) (
@@ -270,7 +272,7 @@ spec:
               spec:
                 datasource:
                   kind: PrometheusDatasource
-                  name: custom-datasource
+                  name: prometheus-datasource
                 query: |-
                   sort_desc(
                     sum by (workload, workload_type) (
@@ -288,7 +290,7 @@ spec:
               spec:
                 datasource:
                   kind: PrometheusDatasource
-                  name: custom-datasource
+                  name: prometheus-datasource
                 query: |-
                   sort_desc(
                     sum by (workload, workload_type) (
@@ -306,7 +308,7 @@ spec:
               spec:
                 datasource:
                   kind: PrometheusDatasource
-                  name: custom-datasource
+                  name: prometheus-datasource
                 query: |-
                   sort_desc(
                     avg by (workload, workload_type) (
@@ -324,7 +326,7 @@ spec:
               spec:
                 datasource:
                   kind: PrometheusDatasource
-                  name: custom-datasource
+                  name: prometheus-datasource
                 query: |-
                   sort_desc(
                     avg by (workload, workload_type) (
@@ -342,7 +344,7 @@ spec:
               spec:
                 datasource:
                   kind: PrometheusDatasource
-                  name: custom-datasource
+                  name: prometheus-datasource
                 query: |-
                   sort_desc(
                     sum by (workload, workload_type) (
@@ -360,7 +362,7 @@ spec:
               spec:
                 datasource:
                   kind: PrometheusDatasource
-                  name: custom-datasource
+                  name: prometheus-datasource
                 query: |-
                   sort_desc(
                     sum by (workload, workload_type) (
@@ -378,7 +380,7 @@ spec:
               spec:
                 datasource:
                   kind: PrometheusDatasource
-                  name: custom-datasource
+                  name: prometheus-datasource
                 query: |-
                   sort_desc(
                     sum by (workload, workload_type) (
@@ -398,7 +400,7 @@ spec:
               spec:
                 datasource:
                   kind: PrometheusDatasource
-                  name: custom-datasource
+                  name: prometheus-datasource
                 query: |-
                   sort_desc(
                     sum by (workload, workload_type) (
@@ -415,7 +417,8 @@ spec:
       kind: Panel
       spec:
         display:
-          description: Shows the network receive bandwidth of the namespace by workload highlighting top pods.
+          description: Shows the network receive bandwidth of the namespace by workload
+            highlighting top pods.
           name: Receive Bandwidth
         plugin:
           kind: TimeSeriesChart
@@ -441,7 +444,7 @@ spec:
               spec:
                 datasource:
                   kind: PrometheusDatasource
-                  name: custom-datasource
+                  name: prometheus-datasource
                 query: |-
                   sort_desc(
                     sum by (workload) (
@@ -460,7 +463,8 @@ spec:
       kind: Panel
       spec:
         display:
-          description: Shows the network transmit bandwidth of the namespace by workload highlighting top pods.
+          description: Shows the network transmit bandwidth of the namespace by workload
+            highlighting top pods.
           name: Transmit Bandwidth
         plugin:
           kind: TimeSeriesChart
@@ -486,7 +490,7 @@ spec:
               spec:
                 datasource:
                   kind: PrometheusDatasource
-                  name: custom-datasource
+                  name: prometheus-datasource
                 query: |-
                   sort_desc(
                     sum by (workload) (
@@ -505,7 +509,8 @@ spec:
       kind: Panel
       spec:
         display:
-          description: Shows the average network bandwidth received in container by workload highlighting top pods.
+          description: Shows the average network bandwidth received in container by
+            workload highlighting top pods.
           name: 'Average Container Bandwidth by Workload: Received'
         plugin:
           kind: TimeSeriesChart
@@ -531,7 +536,7 @@ spec:
               spec:
                 datasource:
                   kind: PrometheusDatasource
-                  name: custom-datasource
+                  name: prometheus-datasource
                 query: |-
                   sort_desc(
                     avg by (workload) (
@@ -550,7 +555,8 @@ spec:
       kind: Panel
       spec:
         display:
-          description: Shows the average network bandwidth transmitted in container by workload highlighting top pods.
+          description: Shows the average network bandwidth transmitted in container
+            by workload highlighting top pods.
           name: 'Average Container Bandwidth by Workload: Transmitted'
         plugin:
           kind: TimeSeriesChart
@@ -576,7 +582,7 @@ spec:
               spec:
                 datasource:
                   kind: PrometheusDatasource
-                  name: custom-datasource
+                  name: prometheus-datasource
                 query: |-
                   sort_desc(
                     avg by (workload) (
@@ -595,7 +601,8 @@ spec:
       kind: Panel
       spec:
         display:
-          description: Shows the rate of received packets by top pods in a workload in a namespace in a cluster.
+          description: Shows the rate of received packets by top pods in a workload
+            in a namespace in a cluster.
           name: Rate of Received Packets
         plugin:
           kind: TimeSeriesChart
@@ -621,7 +628,7 @@ spec:
               spec:
                 datasource:
                   kind: PrometheusDatasource
-                  name: custom-datasource
+                  name: prometheus-datasource
                 query: |-
                   sort_desc(
                     sum by (workload) (
@@ -640,7 +647,8 @@ spec:
       kind: Panel
       spec:
         display:
-          description: Shows the rate of transmitted packets by top pods in a workload in a namespace in a cluster.
+          description: Shows the rate of transmitted packets by top pods in a workload
+            in a namespace in a cluster.
           name: Rate of Transmitted Packets
         plugin:
           kind: TimeSeriesChart
@@ -666,7 +674,7 @@ spec:
               spec:
                 datasource:
                   kind: PrometheusDatasource
-                  name: custom-datasource
+                  name: prometheus-datasource
                 query: |-
                   sort_desc(
                     sum by (workload) (
@@ -685,7 +693,8 @@ spec:
       kind: Panel
       spec:
         display:
-          description: Shows the rate of received packets dropped by top pods in a workload in a namespace in a cluster.
+          description: Shows the rate of received packets dropped by top pods in a
+            workload in a namespace in a cluster.
           name: Rate of Received Packets Dropped
         plugin:
           kind: TimeSeriesChart
@@ -711,7 +720,7 @@ spec:
               spec:
                 datasource:
                   kind: PrometheusDatasource
-                  name: custom-datasource
+                  name: prometheus-datasource
                 query: |-
                   sort_desc(
                     sum by (workload) (
@@ -732,7 +741,8 @@ spec:
       kind: Panel
       spec:
         display:
-          description: Shows the rate of transmitted packets dropped by top pods in a workload in a namespace in a cluster.
+          description: Shows the rate of transmitted packets dropped by top pods in
+            a workload in a namespace in a cluster.
           name: Rate of Transmitted Packets Dropped
         plugin:
           kind: TimeSeriesChart
@@ -758,7 +768,7 @@ spec:
               spec:
                 datasource:
                   kind: PrometheusDatasource
-                  name: custom-datasource
+                  name: prometheus-datasource
                 query: |-
                   sort_desc(
                     sum by (workload) (
@@ -789,7 +799,7 @@ spec:
         spec:
           datasource:
             kind: PrometheusDatasource
-            name: custom-datasource
+            name: prometheus-datasource
           labelName: cluster
           matchers:
           - up{job="kubelet", metrics_path="/metrics/cadvisor"}
@@ -806,7 +816,7 @@ spec:
         spec:
           datasource:
             kind: PrometheusDatasource
-            name: custom-datasource
+            name: prometheus-datasource
           labelName: namespace
           matchers:
           - container_network_receive_packets_total{cluster="$cluster"}
@@ -823,7 +833,7 @@ spec:
         spec:
           datasource:
             kind: PrometheusDatasource
-            name: custom-datasource
+            name: prometheus-datasource
           labelName: workload_type
           matchers:
           - namespace_workload_pod:kube_pod_owner:relabel{cluster="$cluster",namespace="$namespace",workload=~".+"}

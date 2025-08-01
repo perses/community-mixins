@@ -51,40 +51,51 @@ func withNodeMemoryQuotaGroup(datasource string, labelMatcher promql.LabelMatche
 	)
 }
 
-func BuildKubernetesNodeResourcesOverview(project string, datasource string, clusterLabelName string) dashboards.DashboardResult {
-	clusterLabelMatcher := dashboards.GetClusterLabelMatcher(clusterLabelName)
-	return dashboards.NewDashboardResult(
-		dashboard.New("kubernetes-node-resources-overview",
-			dashboard.ProjectName(project),
-			dashboard.Name("Kubernetes / Compute Resources / Node (Pods)"),
-			dashboard.AddVariable("cluster",
-				listVar.List(
-					labelValuesVar.PrometheusLabelValues("cluster",
-						labelValuesVar.Matchers("up{"+panels.GetKubeletMatcher()+", metrics_path=\"/metrics/cadvisor\"}"),
-						dashboards.AddVariableDatasource(datasource),
-					),
-					listVar.DisplayName("cluster"),
+func BuildKubernetesNodeResourcesOverview(project string, datasource string, clusterLabelName string, variableOverrides []dashboard.Option) dashboards.DashboardResult {
+	defaultVars := []dashboard.Option{
+		dashboard.AddVariable("cluster",
+			listVar.List(
+				labelValuesVar.PrometheusLabelValues("cluster",
+					labelValuesVar.Matchers("up{"+panels.GetKubeletMatcher()+", metrics_path=\"/metrics/cadvisor\"}"),
+					dashboards.AddVariableDatasource(datasource),
 				),
+				listVar.DisplayName("cluster"),
 			),
-			dashboard.AddVariable("node",
-				listVar.List(
-					labelValuesVar.PrometheusLabelValues("node",
-						labelValuesVar.Matchers(
-							promql.SetLabelMatchers(
-								"kube_pod_info",
-								[]promql.LabelMatcher{{Name: "cluster", Type: "=", Value: "$cluster"}},
-							),
-						),
-						dashboards.AddVariableDatasource(datasource),
-					),
-					listVar.DisplayName("node"),
-				),
-			),
-			withNodeCPUUsageGroup(datasource, clusterLabelMatcher),
-			withNodeCPUQuotaGroup(datasource, clusterLabelMatcher),
-			withNodeMemoryUsageGroup(datasource, clusterLabelMatcher),
-			withNodeMemoryUsageWithoutCacheGroup(datasource, clusterLabelMatcher),
-			withNodeMemoryQuotaGroup(datasource, clusterLabelMatcher),
 		),
+		dashboard.AddVariable("node",
+			listVar.List(
+				labelValuesVar.PrometheusLabelValues("node",
+					labelValuesVar.Matchers(
+						promql.SetLabelMatchers(
+							"kube_pod_info",
+							[]promql.LabelMatcher{{Name: "cluster", Type: "=", Value: "$cluster"}},
+						),
+					),
+					dashboards.AddVariableDatasource(datasource),
+				),
+				listVar.DisplayName("node"),
+			),
+		),
+	}
+
+	clusterLabelMatcher := dashboards.GetClusterLabelMatcher(clusterLabelName)
+
+	vars := defaultVars
+	if len(variableOverrides) > 0 {
+		vars = variableOverrides
+	}
+	options := append([]dashboard.Option{
+		dashboard.ProjectName(project),
+		dashboard.Name("Kubernetes / Compute Resources / Node (Pods)"),
+	}, vars...)
+	options = append(options,
+		withNodeCPUUsageGroup(datasource, clusterLabelMatcher),
+		withNodeCPUQuotaGroup(datasource, clusterLabelMatcher),
+		withNodeMemoryUsageGroup(datasource, clusterLabelMatcher),
+		withNodeMemoryUsageWithoutCacheGroup(datasource, clusterLabelMatcher),
+		withNodeMemoryQuotaGroup(datasource, clusterLabelMatcher),
+	)
+	return dashboards.NewDashboardResult(
+		dashboard.New("kubernetes-node-resources-overview", options...),
 	).Component("kubernetes")
 }
