@@ -14,42 +14,156 @@
   },
   "spec": {
     "display": {
-      "name": "Istio / Performance"
+      "name": "Istio Performance Dashboard"
     },
-    "variables": [
-      {
-        "kind": "ListVariable",
-        "spec": {
-          "display": {
-            "name": "cluster",
-            "hidden": false
-          },
-          "allowAllValue": false,
-          "allowMultiple": true,
-          "plugin": {
-            "kind": "PrometheusLabelValuesVariable",
-            "spec": {
-              "datasource": {
-                "kind": "PrometheusDatasource",
-                "name": "prometheus-datasource"
-              },
-              "labelName": "cluster",
-              "matchers": [
-                "pilot_build_info{}"
-              ]
-            }
-          },
-          "name": "cluster"
-        }
-      }
-    ],
     "panels": {
       "0_0": {
         "kind": "Panel",
         "spec": {
           "display": {
-            "name": "Data Plane Memory",
-            "description": "Memory usage of Envoy proxies in the data plane"
+            "name": "Performance Dashboard README"
+          },
+          "plugin": {
+            "kind": "Markdown",
+            "spec": {
+              "text": "The charts on this dashboard are intended to show Istio main components cost in terms of resources utilization under steady load.\n\n- **vCPU / 1k rps:** shows vCPU utilization by the main Istio components normalized by 1000 requests/second. When idle or low traffic, this chart will be blank. The curve for istio-proxy refers to the services sidecars only.\n- **vCPU:** vCPU utilization by Istio components, not normalized.\n- **Memory:** memory footprint for the components. Telemetry and policy are normalized by 1k rps, and no data is shown  when there is no traffic. For ingress and istio-proxy, the data is per instance.\n- **Bytes transferred / sec:** shows the number of bytes flowing through each Istio component.\n\n\n"
+            }
+          }
+        }
+      },
+      "1_0": {
+        "kind": "Panel",
+        "spec": {
+          "display": {
+            "name": "vCPU / 1k rps"
+          },
+          "plugin": {
+            "kind": "TimeSeriesChart",
+            "spec": {
+              "legend": {
+                "position": "bottom",
+                "mode": "list"
+              },
+              "yAxis": {
+                "format": {
+                  "unit": "decimal"
+                }
+              },
+              "visual": {
+                "display": "line",
+                "lineWidth": 1,
+                "areaOpacity": 0.1,
+                "palette": {
+                  "mode": ""
+                }
+              }
+            }
+          },
+          "queries": [
+            {
+              "kind": "TimeSeriesQuery",
+              "spec": {
+                "plugin": {
+                  "kind": "PrometheusTimeSeriesQuery",
+                  "spec": {
+                    "datasource": {
+                      "kind": "PrometheusDatasource",
+                      "name": "prometheus-datasource"
+                    },
+                    "query": "(\n    sum(\n      irate(\n        container_cpu_usage_seconds_total{container=\"istio-proxy\",pod=~\"istio-ingressgateway-.*\"}[$__rate_interval]\n      )\n    )\n  /\n    (\n        round(\n          sum(\n            irate(istio_requests_total{reporter=\"source\",source_workload=\"istio-ingressgateway\"}[$__rate_interval])\n          ),\n          0.001\n        )\n      /\n        1000\n    )\n)",
+                    "seriesNameFormat": "istio-ingressgateway"
+                  }
+                }
+              }
+            },
+            {
+              "kind": "TimeSeriesQuery",
+              "spec": {
+                "plugin": {
+                  "kind": "PrometheusTimeSeriesQuery",
+                  "spec": {
+                    "datasource": {
+                      "kind": "PrometheusDatasource",
+                      "name": "prometheus-datasource"
+                    },
+                    "query": "  (\n      sum(\n        irate(\n          container_cpu_usage_seconds_total{container=\"istio-proxy\",namespace!=\"istio-system\"}[$__rate_interval]\n        )\n      )\n    /\n      (round(sum(irate(istio_requests_total[$__rate_interval])), 0.001) / 1000)\n  )\n/\n  (sum(irate(istio_requests_total{source_workload=\"istio-ingressgateway\"}[$__rate_interval])) \u003e bool 10)",
+                    "seriesNameFormat": "istio-proxy"
+                  }
+                }
+              }
+            }
+          ]
+        }
+      },
+      "1_1": {
+        "kind": "Panel",
+        "spec": {
+          "display": {
+            "name": "vCPU"
+          },
+          "plugin": {
+            "kind": "TimeSeriesChart",
+            "spec": {
+              "legend": {
+                "position": "bottom",
+                "mode": "list"
+              },
+              "yAxis": {
+                "format": {
+                  "unit": "decimal"
+                }
+              },
+              "visual": {
+                "display": "line",
+                "lineWidth": 1,
+                "areaOpacity": 0.1,
+                "palette": {
+                  "mode": ""
+                }
+              }
+            }
+          },
+          "queries": [
+            {
+              "kind": "TimeSeriesQuery",
+              "spec": {
+                "plugin": {
+                  "kind": "PrometheusTimeSeriesQuery",
+                  "spec": {
+                    "datasource": {
+                      "kind": "PrometheusDatasource",
+                      "name": "prometheus-datasource"
+                    },
+                    "query": "sum(\n  rate(\n    container_cpu_usage_seconds_total{container=\"istio-proxy\",pod=~\"istio-ingressgateway-.*\"}[$__rate_interval]\n  )\n)",
+                    "seriesNameFormat": "istio-ingressgateway"
+                  }
+                }
+              }
+            },
+            {
+              "kind": "TimeSeriesQuery",
+              "spec": {
+                "plugin": {
+                  "kind": "PrometheusTimeSeriesQuery",
+                  "spec": {
+                    "datasource": {
+                      "kind": "PrometheusDatasource",
+                      "name": "prometheus-datasource"
+                    },
+                    "query": "sum(\n  rate(\n    container_cpu_usage_seconds_total{container=\"istio-proxy\",namespace!=\"istio-system\"}[$__rate_interval]\n  )\n)",
+                    "seriesNameFormat": "istio-proxy"
+                  }
+                }
+              }
+            }
+          ]
+        }
+      },
+      "2_0": {
+        "kind": "Panel",
+        "spec": {
+          "display": {
+            "name": "Memory Usage"
           },
           "plugin": {
             "kind": "TimeSeriesChart",
@@ -65,10 +179,10 @@
               },
               "visual": {
                 "display": "line",
-                "lineWidth": 0.25,
-                "areaOpacity": 0.5,
+                "lineWidth": 1,
+                "areaOpacity": 0.1,
                 "palette": {
-                  "mode": "auto"
+                  "mode": ""
                 }
               }
             }
@@ -84,106 +198,8 @@
                       "kind": "PrometheusDatasource",
                       "name": "prometheus-datasource"
                     },
-                    "query": "envoy_server_memory_allocated_bytes",
-                    "seriesNameFormat": "{{instance}}"
-                  }
-                }
-              }
-            }
-          ]
-        }
-      },
-      "0_1": {
-        "kind": "Panel",
-        "spec": {
-          "display": {
-            "name": "Data Plane CPU",
-            "description": "CPU usage of Envoy proxies in the data plane"
-          },
-          "plugin": {
-            "kind": "TimeSeriesChart",
-            "spec": {
-              "legend": {
-                "position": "bottom",
-                "mode": "list"
-              },
-              "yAxis": {
-                "format": {
-                  "unit": "percent"
-                }
-              },
-              "visual": {
-                "display": "line",
-                "lineWidth": 0.25,
-                "areaOpacity": 0.5,
-                "palette": {
-                  "mode": "auto"
-                }
-              }
-            }
-          },
-          "queries": [
-            {
-              "kind": "TimeSeriesQuery",
-              "spec": {
-                "plugin": {
-                  "kind": "PrometheusTimeSeriesQuery",
-                  "spec": {
-                    "datasource": {
-                      "kind": "PrometheusDatasource",
-                      "name": "prometheus-datasource"
-                    },
-                    "query": "rate(envoy_server_stats_recent_lookups[1m]) * 100",
-                    "seriesNameFormat": "{{instance}}"
-                  }
-                }
-              }
-            }
-          ]
-        }
-      },
-      "1_0": {
-        "kind": "Panel",
-        "spec": {
-          "display": {
-            "name": "Proxy Push Time",
-            "description": "Time taken to push configuration to Envoy proxies"
-          },
-          "plugin": {
-            "kind": "TimeSeriesChart",
-            "spec": {
-              "legend": {
-                "position": "bottom",
-                "mode": "list"
-              },
-              "yAxis": {
-                "format": {
-                  "unit": "milliseconds"
-                }
-              },
-              "visual": {
-                "display": "line",
-                "lineWidth": 0.25,
-                "areaOpacity": 0.5,
-                "palette": {
-                  "mode": "auto"
-                }
-              }
-            }
-          },
-          "queries": [
-            {
-              "kind": "TimeSeriesQuery",
-              "spec": {
-                "plugin": {
-                  "kind": "PrometheusTimeSeriesQuery",
-                  "spec": {
-                    "datasource": {
-                      "kind": "PrometheusDatasource",
-                      "name": "prometheus-datasource"
-                    },
-                    "query": "histogram_quantile(0.5, sum by (le) (rate(pilot_proxy_convergence_time_bucket[1m])))",
-                    "seriesNameFormat": "P50"
+                    "query": "  sum(container_memory_working_set_bytes{pod=~\"istio-ingressgateway-.*\"})\n/\n  count(container_memory_working_set_bytes{container!=\"POD\",pod=~\"istio-ingressgateway-.*\"})",
+                    "seriesNameFormat": "per istio-ingressgateway"
                   }
                 }
               }
@@ -198,139 +214,8 @@
                       "kind": "PrometheusDatasource",
                       "name": "prometheus-datasource"
                     },
-                    "query": "histogram_quantile(0.9, sum by (le) (rate(pilot_proxy_convergence_time_bucket[1m])))",
-                    "seriesNameFormat": "P90"
-                  }
-                }
-              }
-            },
-            {
-              "kind": "TimeSeriesQuery",
-              "spec": {
-                "plugin": {
-                  "kind": "PrometheusTimeSeriesQuery",
-                  "spec": {
-                    "datasource": {
-                      "kind": "PrometheusDatasource",
-                      "name": "prometheus-datasource"
-                    },
-                    "query": "histogram_quantile(0.99, sum by (le) (rate(pilot_proxy_convergence_time_bucket[1m])))",
-                    "seriesNameFormat": "P99"
-                  }
-                }
-              }
-            }
-          ]
-        }
-      },
-      "1_1": {
-        "kind": "Panel",
-        "spec": {
-          "display": {
-            "name": "Proxy Queue Size",
-            "description": "Size of proxy push queue"
-          },
-          "plugin": {
-            "kind": "TimeSeriesChart",
-            "spec": {
-              "legend": {
-                "position": "bottom",
-                "mode": "list"
-              },
-              "yAxis": {
-                "format": {
-                  "unit": "decimal"
-                }
-              },
-              "visual": {
-                "display": "line",
-                "lineWidth": 0.25,
-                "areaOpacity": 0.5,
-                "palette": {
-                  "mode": "auto"
-                }
-              }
-            }
-          },
-          "queries": [
-            {
-              "kind": "TimeSeriesQuery",
-              "spec": {
-                "plugin": {
-                  "kind": "PrometheusTimeSeriesQuery",
-                  "spec": {
-                    "datasource": {
-                      "kind": "PrometheusDatasource",
-                      "name": "prometheus-datasource"
-                    },
-                    "query": "pilot_proxy_queue_time",
-                    "seriesNameFormat": "{{instance}}"
-                  }
-                }
-              }
-            }
-          ]
-        }
-      },
-      "2_0": {
-        "kind": "Panel",
-        "spec": {
-          "display": {
-            "name": "Configuration Validation",
-            "description": "Rate of configuration validation operations"
-          },
-          "plugin": {
-            "kind": "TimeSeriesChart",
-            "spec": {
-              "legend": {
-                "position": "bottom",
-                "mode": "list"
-              },
-              "yAxis": {
-                "format": {
-                  "unit": "decimal"
-                }
-              },
-              "visual": {
-                "display": "line",
-                "lineWidth": 0.25,
-                "areaOpacity": 0.5,
-                "palette": {
-                  "mode": "auto"
-                },
-                "stack": "all"
-              }
-            }
-          },
-          "queries": [
-            {
-              "kind": "TimeSeriesQuery",
-              "spec": {
-                "plugin": {
-                  "kind": "PrometheusTimeSeriesQuery",
-                  "spec": {
-                    "datasource": {
-                      "kind": "PrometheusDatasource",
-                      "name": "prometheus-datasource"
-                    },
-                    "query": "sum(rate(galley_validation_passed[1m]))",
-                    "seriesNameFormat": "Passed"
-                  }
-                }
-              }
-            },
-            {
-              "kind": "TimeSeriesQuery",
-              "spec": {
-                "plugin": {
-                  "kind": "PrometheusTimeSeriesQuery",
-                  "spec": {
-                    "datasource": {
-                      "kind": "PrometheusDatasource",
-                      "name": "prometheus-datasource"
-                    },
-                    "query": "sum(rate(galley_validation_failed[1m]))",
-                    "seriesNameFormat": "Failed"
+                    "query": "  sum(container_memory_working_set_bytes{container=\"istio-proxy\",namespace!=\"istio-system\"})\n/\n  count(container_memory_working_set_bytes{container=\"istio-proxy\",namespace!=\"istio-system\"})",
+                    "seriesNameFormat": "per istio proxy"
                   }
                 }
               }
@@ -342,8 +227,71 @@
         "kind": "Panel",
         "spec": {
           "display": {
-            "name": "Sidecar Injection",
-            "description": "Rate of sidecar injection operations"
+            "name": "Bytes transferred / sec"
+          },
+          "plugin": {
+            "kind": "TimeSeriesChart",
+            "spec": {
+              "legend": {
+                "position": "bottom",
+                "mode": "list"
+              },
+              "yAxis": {
+                "format": {
+                  "unit": "bytes/sec"
+                }
+              },
+              "visual": {
+                "display": "line",
+                "lineWidth": 1,
+                "areaOpacity": 0.1,
+                "palette": {
+                  "mode": ""
+                }
+              }
+            }
+          },
+          "queries": [
+            {
+              "kind": "TimeSeriesQuery",
+              "spec": {
+                "plugin": {
+                  "kind": "PrometheusTimeSeriesQuery",
+                  "spec": {
+                    "datasource": {
+                      "kind": "PrometheusDatasource",
+                      "name": "prometheus-datasource"
+                    },
+                    "query": "sum(\n  irate(istio_response_bytes_sum{reporter=\"source\",source_workload=\"istio-ingressgateway\"}[$__rate_interval])\n)",
+                    "seriesNameFormat": "istio-ingressgateway"
+                  }
+                }
+              }
+            },
+            {
+              "kind": "TimeSeriesQuery",
+              "spec": {
+                "plugin": {
+                  "kind": "PrometheusTimeSeriesQuery",
+                  "spec": {
+                    "datasource": {
+                      "kind": "PrometheusDatasource",
+                      "name": "prometheus-datasource"
+                    },
+                    "query": "  sum(\n    irate(\n      istio_response_bytes_sum{reporter=\"source\",source_workload_namespace!=\"istio-system\"}[$__rate_interval]\n    )\n  )\n+\n  sum(\n    irate(\n      istio_request_bytes_sum{reporter=\"source\",source_workload_namespace!=\"istio-system\"}[$__rate_interval]\n    )\n  )",
+                    "seriesNameFormat": "istio-proxy"
+                  }
+                }
+              }
+            }
+          ]
+        }
+      },
+      "3_0": {
+        "kind": "Panel",
+        "spec": {
+          "display": {
+            "name": "Istio Components by Version"
           },
           "plugin": {
             "kind": "TimeSeriesChart",
@@ -359,12 +307,11 @@
               },
               "visual": {
                 "display": "line",
-                "lineWidth": 0.25,
-                "areaOpacity": 0.5,
+                "lineWidth": 1,
+                "areaOpacity": 0.1,
                 "palette": {
-                  "mode": "auto"
-                },
-                "stack": "all"
+                  "mode": ""
+                }
               }
             }
           },
@@ -379,8 +326,200 @@
                       "kind": "PrometheusDatasource",
                       "name": "prometheus-datasource"
                     },
-                    "query": "sum(rate(sidecar_injection_success_total[1m]))",
-                    "seriesNameFormat": "Success"
+                    "query": "sum by (component, tag) (istio_build)",
+                    "seriesNameFormat": "{{ component }}: {{ tag }}"
+                  }
+                }
+              }
+            }
+          ]
+        }
+      },
+      "4_0": {
+        "kind": "Panel",
+        "spec": {
+          "display": {
+            "name": "Memory"
+          },
+          "plugin": {
+            "kind": "TimeSeriesChart",
+            "spec": {
+              "legend": {
+                "position": "bottom",
+                "mode": "list"
+              },
+              "yAxis": {
+                "format": {
+                  "unit": "bytes"
+                }
+              },
+              "visual": {
+                "display": "line",
+                "lineWidth": 1,
+                "areaOpacity": 0.1,
+                "palette": {
+                  "mode": ""
+                }
+              }
+            }
+          },
+          "queries": [
+            {
+              "kind": "TimeSeriesQuery",
+              "spec": {
+                "plugin": {
+                  "kind": "PrometheusTimeSeriesQuery",
+                  "spec": {
+                    "datasource": {
+                      "kind": "PrometheusDatasource",
+                      "name": "prometheus-datasource"
+                    },
+                    "query": "sum(container_memory_working_set_bytes{container=\"istio-proxy\"})",
+                    "seriesNameFormat": "Total (k8s)"
+                  }
+                }
+              }
+            }
+          ]
+        }
+      },
+      "4_1": {
+        "kind": "Panel",
+        "spec": {
+          "display": {
+            "name": "vCPU"
+          },
+          "plugin": {
+            "kind": "TimeSeriesChart",
+            "spec": {
+              "legend": {
+                "position": "bottom",
+                "mode": "list"
+              },
+              "yAxis": {
+                "format": {
+                  "unit": "decimal"
+                }
+              },
+              "visual": {
+                "display": "line",
+                "lineWidth": 1,
+                "areaOpacity": 0.1,
+                "palette": {
+                  "mode": ""
+                }
+              }
+            }
+          },
+          "queries": [
+            {
+              "kind": "TimeSeriesQuery",
+              "spec": {
+                "plugin": {
+                  "kind": "PrometheusTimeSeriesQuery",
+                  "spec": {
+                    "datasource": {
+                      "kind": "PrometheusDatasource",
+                      "name": "prometheus-datasource"
+                    },
+                    "query": "sum(rate(container_cpu_usage_seconds_total{container=\"istio-proxy\"}[$__rate_interval]))",
+                    "seriesNameFormat": "Total (k8s)"
+                  }
+                }
+              }
+            }
+          ]
+        }
+      },
+      "4_2": {
+        "kind": "Panel",
+        "spec": {
+          "display": {
+            "name": "Disk"
+          },
+          "plugin": {
+            "kind": "TimeSeriesChart",
+            "spec": {
+              "legend": {
+                "position": "bottom",
+                "mode": "list"
+              },
+              "yAxis": {
+                "format": {
+                  "unit": "bytes"
+                }
+              },
+              "visual": {
+                "display": "line",
+                "lineWidth": 1,
+                "areaOpacity": 0.1,
+                "palette": {
+                  "mode": ""
+                }
+              }
+            }
+          },
+          "queries": [
+            {
+              "kind": "TimeSeriesQuery",
+              "spec": {
+                "plugin": {
+                  "kind": "PrometheusTimeSeriesQuery",
+                  "spec": {
+                    "datasource": {
+                      "kind": "PrometheusDatasource",
+                      "name": "prometheus-datasource"
+                    },
+                    "query": "sum(container_fs_usage_bytes{container=\"istio-proxy\"})",
+                    "seriesNameFormat": "Total (k8s)"
+                  }
+                }
+              }
+            }
+          ]
+        }
+      },
+      "5_0": {
+        "kind": "Panel",
+        "spec": {
+          "display": {
+            "name": "Memory"
+          },
+          "plugin": {
+            "kind": "TimeSeriesChart",
+            "spec": {
+              "legend": {
+                "position": "bottom",
+                "mode": "list"
+              },
+              "yAxis": {
+                "format": {
+                  "unit": "bytes"
+                }
+              },
+              "visual": {
+                "display": "line",
+                "lineWidth": 1,
+                "areaOpacity": 0.1,
+                "palette": {
+                  "mode": ""
+                }
+              }
+            }
+          },
+          "queries": [
+            {
+              "kind": "TimeSeriesQuery",
+              "spec": {
+                "plugin": {
+                  "kind": "PrometheusTimeSeriesQuery",
+                  "spec": {
+                    "datasource": {
+                      "kind": "PrometheusDatasource",
+                      "name": "prometheus-datasource"
+                    },
+                    "query": "process_virtual_memory_bytes{app=\"istiod\"}",
+                    "seriesNameFormat": "Virtual Memory"
                   }
                 }
               }
@@ -395,8 +534,308 @@
                       "kind": "PrometheusDatasource",
                       "name": "prometheus-datasource"
                     },
-                    "query": "sum(rate(sidecar_injection_failure_total[1m]))",
-                    "seriesNameFormat": "Failure"
+                    "query": "process_resident_memory_bytes{app=\"istiod\"}",
+                    "seriesNameFormat": "Resident Memory"
+                  }
+                }
+              }
+            },
+            {
+              "kind": "TimeSeriesQuery",
+              "spec": {
+                "plugin": {
+                  "kind": "PrometheusTimeSeriesQuery",
+                  "spec": {
+                    "datasource": {
+                      "kind": "PrometheusDatasource",
+                      "name": "prometheus-datasource"
+                    },
+                    "query": "go_memstats_heap_sys_bytes{app=\"istiod\"}",
+                    "seriesNameFormat": "heap sys"
+                  }
+                }
+              }
+            },
+            {
+              "kind": "TimeSeriesQuery",
+              "spec": {
+                "plugin": {
+                  "kind": "PrometheusTimeSeriesQuery",
+                  "spec": {
+                    "datasource": {
+                      "kind": "PrometheusDatasource",
+                      "name": "prometheus-datasource"
+                    },
+                    "query": "go_memstats_heap_alloc_bytes{app=\"istiod\"}",
+                    "seriesNameFormat": "heap alloc"
+                  }
+                }
+              }
+            },
+            {
+              "kind": "TimeSeriesQuery",
+              "spec": {
+                "plugin": {
+                  "kind": "PrometheusTimeSeriesQuery",
+                  "spec": {
+                    "datasource": {
+                      "kind": "PrometheusDatasource",
+                      "name": "prometheus-datasource"
+                    },
+                    "query": "go_memstats_alloc_bytes{app=\"istiod\"}",
+                    "seriesNameFormat": "Alloc"
+                  }
+                }
+              }
+            },
+            {
+              "kind": "TimeSeriesQuery",
+              "spec": {
+                "plugin": {
+                  "kind": "PrometheusTimeSeriesQuery",
+                  "spec": {
+                    "datasource": {
+                      "kind": "PrometheusDatasource",
+                      "name": "prometheus-datasource"
+                    },
+                    "query": "go_memstats_heap_inuse_bytes{app=\"istiod\"}",
+                    "seriesNameFormat": "Heap in-use"
+                  }
+                }
+              }
+            },
+            {
+              "kind": "TimeSeriesQuery",
+              "spec": {
+                "plugin": {
+                  "kind": "PrometheusTimeSeriesQuery",
+                  "spec": {
+                    "datasource": {
+                      "kind": "PrometheusDatasource",
+                      "name": "prometheus-datasource"
+                    },
+                    "query": "go_memstats_stack_inuse_bytes{app=\"istiod\"}",
+                    "seriesNameFormat": "Stack in-use"
+                  }
+                }
+              }
+            },
+            {
+              "kind": "TimeSeriesQuery",
+              "spec": {
+                "plugin": {
+                  "kind": "PrometheusTimeSeriesQuery",
+                  "spec": {
+                    "datasource": {
+                      "kind": "PrometheusDatasource",
+                      "name": "prometheus-datasource"
+                    },
+                    "query": "sum(container_memory_working_set_bytes{container=~\"discovery|istio-proxy\",pod=~\"istiod-.*\"})",
+                    "seriesNameFormat": "Total (k8s)"
+                  }
+                }
+              }
+            },
+            {
+              "kind": "TimeSeriesQuery",
+              "spec": {
+                "plugin": {
+                  "kind": "PrometheusTimeSeriesQuery",
+                  "spec": {
+                    "datasource": {
+                      "kind": "PrometheusDatasource",
+                      "name": "prometheus-datasource"
+                    },
+                    "query": "container_memory_working_set_bytes{container=~\"discovery|istio-proxy\",pod=~\"istiod-.*\"}",
+                    "seriesNameFormat": "{{ container }} (k8s)"
+                  }
+                }
+              }
+            }
+          ]
+        }
+      },
+      "5_1": {
+        "kind": "Panel",
+        "spec": {
+          "display": {
+            "name": "vCPU"
+          },
+          "plugin": {
+            "kind": "TimeSeriesChart",
+            "spec": {
+              "legend": {
+                "position": "bottom",
+                "mode": "list"
+              },
+              "yAxis": {
+                "format": {
+                  "unit": "decimal"
+                }
+              },
+              "visual": {
+                "display": "line",
+                "lineWidth": 1,
+                "areaOpacity": 0.1,
+                "palette": {
+                  "mode": ""
+                }
+              }
+            }
+          },
+          "queries": [
+            {
+              "kind": "TimeSeriesQuery",
+              "spec": {
+                "plugin": {
+                  "kind": "PrometheusTimeSeriesQuery",
+                  "spec": {
+                    "datasource": {
+                      "kind": "PrometheusDatasource",
+                      "name": "prometheus-datasource"
+                    },
+                    "query": "sum(\n  rate(\n    container_cpu_usage_seconds_total{container=~\"discovery|istio-proxy\",pod=~\"istiod-.*\"}[$__rate_interval]\n  )\n)",
+                    "seriesNameFormat": "Total (k8s)"
+                  }
+                }
+              }
+            },
+            {
+              "kind": "TimeSeriesQuery",
+              "spec": {
+                "plugin": {
+                  "kind": "PrometheusTimeSeriesQuery",
+                  "spec": {
+                    "datasource": {
+                      "kind": "PrometheusDatasource",
+                      "name": "prometheus-datasource"
+                    },
+                    "query": "sum by (container) (\n  rate(\n    container_cpu_usage_seconds_total{container=~\"discovery|istio-proxy\",pod=~\"istiod-.*\"}[$__rate_interval]\n  )\n)",
+                    "seriesNameFormat": "{{ container }} (k8s)"
+                  }
+                }
+              }
+            },
+            {
+              "kind": "TimeSeriesQuery",
+              "spec": {
+                "plugin": {
+                  "kind": "PrometheusTimeSeriesQuery",
+                  "spec": {
+                    "datasource": {
+                      "kind": "PrometheusDatasource",
+                      "name": "prometheus-datasource"
+                    },
+                    "query": "irate(process_cpu_seconds_total{app=\"istiod\"}[$__rate_interval])",
+                    "seriesNameFormat": "pilot (self-reported)"
+                  }
+                }
+              }
+            }
+          ]
+        }
+      },
+      "5_2": {
+        "kind": "Panel",
+        "spec": {
+          "display": {
+            "name": "Disk"
+          },
+          "plugin": {
+            "kind": "TimeSeriesChart",
+            "spec": {
+              "legend": {
+                "position": "bottom",
+                "mode": "list"
+              },
+              "yAxis": {
+                "format": {
+                  "unit": "bytes"
+                }
+              },
+              "visual": {
+                "display": "line",
+                "lineWidth": 1,
+                "areaOpacity": 0.1,
+                "palette": {
+                  "mode": ""
+                }
+              }
+            }
+          },
+          "queries": [
+            {
+              "kind": "TimeSeriesQuery",
+              "spec": {
+                "plugin": {
+                  "kind": "PrometheusTimeSeriesQuery",
+                  "spec": {
+                    "datasource": {
+                      "kind": "PrometheusDatasource",
+                      "name": "prometheus-datasource"
+                    },
+                    "query": "process_open_fds{app=\"istiod\"}",
+                    "seriesNameFormat": "Open FDs (pilot)"
+                  }
+                }
+              }
+            },
+            {
+              "kind": "TimeSeriesQuery",
+              "spec": {
+                "plugin": {
+                  "kind": "PrometheusTimeSeriesQuery",
+                  "spec": {
+                    "datasource": {
+                      "kind": "PrometheusDatasource",
+                      "name": "prometheus-datasource"
+                    },
+                    "query": "container_fs_usage_bytes{container=~\"discovery|istio-proxy\",pod=~\"istiod-.*\"}",
+                    "seriesNameFormat": "{{ container }}"
+                  }
+                }
+              }
+            }
+          ]
+        }
+      },
+      "5_3": {
+        "kind": "Panel",
+        "spec": {
+          "display": {
+            "name": "Goroutines"
+          },
+          "plugin": {
+            "kind": "TimeSeriesChart",
+            "spec": {
+              "yAxis": {
+                "format": {
+                  "unit": "decimal"
+                }
+              },
+              "visual": {
+                "display": "line",
+                "lineWidth": 1,
+                "areaOpacity": 0.1,
+                "palette": {
+                  "mode": ""
+                }
+              }
+            }
+          },
+          "queries": [
+            {
+              "kind": "TimeSeriesQuery",
+              "spec": {
+                "plugin": {
+                  "kind": "PrometheusTimeSeriesQuery",
+                  "spec": {
+                    "datasource": {
+                      "kind": "PrometheusDatasource",
+                      "name": "prometheus-datasource"
+                    },
+                    "query": "go_goroutines{app=\"istiod\"}",
+                    "seriesNameFormat": "Number of Goroutines"
                   }
                 }
               }
@@ -410,25 +849,16 @@
         "kind": "Grid",
         "spec": {
           "display": {
-            "title": "Data Plane Performance"
+            "title": "Performance Dashboard Notes"
           },
           "items": [
             {
               "x": 0,
               "y": 0,
-              "width": 12,
-              "height": 8,
+              "width": 24,
+              "height": 6,
               "content": {
                 "$ref": "#/spec/panels/0_0"
-              }
-            },
-            {
-              "x": 12,
-              "y": 0,
-              "width": 12,
-              "height": 8,
-              "content": {
-                "$ref": "#/spec/panels/0_1"
               }
             }
           ]
@@ -438,7 +868,7 @@
         "kind": "Grid",
         "spec": {
           "display": {
-            "title": "Control Plane Performance"
+            "title": "vCPU Usage"
           },
           "items": [
             {
@@ -466,7 +896,7 @@
         "kind": "Grid",
         "spec": {
           "display": {
-            "title": "Operations Performance"
+            "title": "Memory and Data Rates"
           },
           "items": [
             {
@@ -485,6 +915,108 @@
               "height": 8,
               "content": {
                 "$ref": "#/spec/panels/2_1"
+              }
+            }
+          ]
+        }
+      },
+      {
+        "kind": "Grid",
+        "spec": {
+          "display": {
+            "title": "Istio Component Versions"
+          },
+          "items": [
+            {
+              "x": 0,
+              "y": 0,
+              "width": 24,
+              "height": 8,
+              "content": {
+                "$ref": "#/spec/panels/3_0"
+              }
+            }
+          ]
+        }
+      },
+      {
+        "kind": "Grid",
+        "spec": {
+          "display": {
+            "title": "Proxy Resource Usage"
+          },
+          "items": [
+            {
+              "x": 0,
+              "y": 0,
+              "width": 8,
+              "height": 7,
+              "content": {
+                "$ref": "#/spec/panels/4_0"
+              }
+            },
+            {
+              "x": 8,
+              "y": 0,
+              "width": 8,
+              "height": 7,
+              "content": {
+                "$ref": "#/spec/panels/4_1"
+              }
+            },
+            {
+              "x": 16,
+              "y": 0,
+              "width": 8,
+              "height": 7,
+              "content": {
+                "$ref": "#/spec/panels/4_2"
+              }
+            }
+          ]
+        }
+      },
+      {
+        "kind": "Grid",
+        "spec": {
+          "display": {
+            "title": "Istiod Resource Usage"
+          },
+          "items": [
+            {
+              "x": 0,
+              "y": 0,
+              "width": 6,
+              "height": 7,
+              "content": {
+                "$ref": "#/spec/panels/5_0"
+              }
+            },
+            {
+              "x": 6,
+              "y": 0,
+              "width": 6,
+              "height": 7,
+              "content": {
+                "$ref": "#/spec/panels/5_1"
+              }
+            },
+            {
+              "x": 12,
+              "y": 0,
+              "width": 6,
+              "height": 7,
+              "content": {
+                "$ref": "#/spec/panels/5_2"
+              }
+            },
+            {
+              "x": 18,
+              "y": 0,
+              "width": 6,
+              "height": 7,
+              "content": {
+                "$ref": "#/spec/panels/5_3"
               }
             }
           ]

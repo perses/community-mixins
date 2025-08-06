@@ -6,57 +6,76 @@ import (
 	"github.com/perses/community-dashboards/pkg/promql"
 	"github.com/perses/perses/go-sdk/dashboard"
 	panelgroup "github.com/perses/perses/go-sdk/panel-group"
-	listVar "github.com/perses/perses/go-sdk/variable/list-variable"
-	labelValuesVar "github.com/perses/plugins/prometheus/sdk/go/variable/label-values"
 )
 
-func withPerformanceDataPlane(datasource string, labelMatcher promql.LabelMatcher) dashboard.Option {
-	return dashboard.AddPanelGroup("Data Plane Performance",
-		panelgroup.PanelsPerLine(2),
-		panelgroup.PanelHeight(8),
-		panels.DataPlaneMemory(datasource, labelMatcher),
-		panels.DataPlaneCPU(datasource, labelMatcher),
+func withPerformanceNotes(datasource string, labelMatcher promql.LabelMatcher) dashboard.Option {
+	return dashboard.AddPanelGroup("Performance Dashboard Notes",
+		panelgroup.PanelsPerLine(1),
+		panelgroup.PanelHeight(6),
+		panels.PerformanceDashboardReadme(datasource, labelMatcher),
 	)
 }
 
-func withPerformanceControlPlane(datasource string, labelMatcher promql.LabelMatcher) dashboard.Option {
-	return dashboard.AddPanelGroup("Control Plane Performance",
+func withVCPUUsage(datasource string, labelMatcher promql.LabelMatcher) dashboard.Option {
+	return dashboard.AddPanelGroup("vCPU Usage",
 		panelgroup.PanelsPerLine(2),
 		panelgroup.PanelHeight(8),
-		panels.ProxyPushTime(datasource, labelMatcher),
-		panels.ProxyQueueSize(datasource, labelMatcher),
+		panels.VCPUPer1kRPS(datasource, labelMatcher),
+		panels.VCPU(datasource, labelMatcher),
 	)
 }
 
-func withPerformanceOperations(datasource string, labelMatcher promql.LabelMatcher) dashboard.Option {
-	return dashboard.AddPanelGroup("Operations Performance",
+func withMemoryAndDataRates(datasource string, labelMatcher promql.LabelMatcher) dashboard.Option {
+	return dashboard.AddPanelGroup("Memory and Data Rates",
 		panelgroup.PanelsPerLine(2),
 		panelgroup.PanelHeight(8),
-		panels.ConfigurationValidation(datasource, labelMatcher),
-		panels.SidecarInjection(datasource, labelMatcher),
+		panels.PerformanceMemoryUsage(datasource, labelMatcher),
+		panels.BytesTransferred(datasource, labelMatcher),
+	)
+}
+
+func withIstioComponentVersionsPerf(datasource string, labelMatcher promql.LabelMatcher) dashboard.Option {
+	return dashboard.AddPanelGroup("Istio Component Versions",
+		panelgroup.PanelsPerLine(1),
+		panelgroup.PanelHeight(8),
+		panels.IstioComponentsByVersion(datasource, labelMatcher),
+	)
+}
+
+func withProxyResourceUsage(datasource string, labelMatcher promql.LabelMatcher) dashboard.Option {
+	return dashboard.AddPanelGroup("Proxy Resource Usage",
+		panelgroup.PanelsPerLine(3),
+		panelgroup.PanelHeight(7),
+		panels.ProxyMemory(datasource, labelMatcher),
+		panels.ProxyVCPU(datasource, labelMatcher),
+		panels.ProxyDisk(datasource, labelMatcher),
+	)
+}
+
+func withIstiodResourceUsage(datasource string, labelMatcher promql.LabelMatcher) dashboard.Option {
+	return dashboard.AddPanelGroup("Istiod Resource Usage",
+		panelgroup.PanelsPerLine(4),
+		panelgroup.PanelHeight(7),
+		panels.IstiodMemory(datasource, labelMatcher),
+		panels.IstiodVCPU(datasource, labelMatcher),
+		panels.IstiodDisk(datasource, labelMatcher),
+		panels.IstiodGoroutines(datasource, labelMatcher),
 	)
 }
 
 func BuildIstioPerformance(project string, datasource string, clusterLabelName string) dashboards.DashboardResult {
-	clusterLabelMatcher := dashboards.GetClusterLabelMatcher(clusterLabelName)
+	// Para coincidir con el original, no usamos variables ni label matchers
+	emptyLabelMatcher := promql.LabelMatcher{}
 	return dashboards.NewDashboardResult(
 		dashboard.New("istio-performance",
 			dashboard.ProjectName(project),
-			dashboard.Name("Istio / Performance"),
-			dashboard.AddVariable("cluster",
-				listVar.List(
-					labelValuesVar.PrometheusLabelValues("cluster",
-						labelValuesVar.Matchers("pilot_build_info"),
-						dashboards.AddVariableDatasource(datasource),
-					),
-					listVar.DisplayName("cluster"),
-					listVar.AllowMultiple(true),
-				),
-			),
-			dashboards.AddClusterVariable(datasource, clusterLabelName, "pilot_build_info"),
-			withPerformanceDataPlane(datasource, clusterLabelMatcher),
-			withPerformanceControlPlane(datasource, clusterLabelMatcher),
-			withPerformanceOperations(datasource, clusterLabelMatcher),
+			dashboard.Name("Istio Performance Dashboard"),
+			withPerformanceNotes(datasource, emptyLabelMatcher),
+			withVCPUUsage(datasource, emptyLabelMatcher),
+			withMemoryAndDataRates(datasource, emptyLabelMatcher),
+			withIstioComponentVersionsPerf(datasource, emptyLabelMatcher),
+			withProxyResourceUsage(datasource, emptyLabelMatcher),
+			withIstiodResourceUsage(datasource, emptyLabelMatcher),
 		),
 	).Component("istio")
 }
