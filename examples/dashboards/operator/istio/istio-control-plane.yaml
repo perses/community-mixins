@@ -412,7 +412,7 @@ spec:
       kind: Panel
       spec:
         display:
-          description: Number of connections to Istiod.
+          description: Total number of XDS connections.
           name: Connections
         plugin:
           kind: TimeSeriesChart
@@ -438,7 +438,18 @@ spec:
                 datasource:
                   kind: PrometheusDatasource
                   name: prometheus-datasource
-                query: sum by (tag) (istio_build{component="pilot"})
+                query: sum(envoy_cluster_upstream_cx_active{cluster_name="xds-grpc"})
+                seriesNameFormat: Connections (client reported)
+        - kind: TimeSeriesQuery
+          spec:
+            plugin:
+              kind: PrometheusTimeSeriesQuery
+              spec:
+                datasource:
+                  kind: PrometheusDatasource
+                  name: prometheus-datasource
+                query: sum(pilot_xds)
+                seriesNameFormat: Connections ( reported)
     "2_3":
       kind: Panel
       spec:

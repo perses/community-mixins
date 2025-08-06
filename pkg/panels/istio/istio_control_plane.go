@@ -80,7 +80,7 @@ func PushTime(datasourceName string, labelMatchers ...promql.LabelMatcher) panel
 
 func Connections(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
 	return panelgroup.AddPanel("Connections",
-		panel.Description("Number of connections to Istiod."),
+		panel.Description("Total number of XDS connections."),
 		timeSeriesPanel.Chart(
 			timeSeriesPanel.WithYAxis(timeSeriesPanel.YAxis{
 				Format: &commonSdk.Format{
@@ -103,10 +103,21 @@ func Connections(datasourceName string, labelMatchers ...promql.LabelMatcher) pa
 		panel.AddQuery(
 			query.PromQL(
 				promql.SetLabelMatchers(
-					"sum by (tag) (istio_build{component=\"pilot\"})",
+					"sum(envoy_cluster_upstream_cx_active{cluster_name=\"xds-grpc\"})",
 					labelMatchers,
 				),
 				dashboards.AddQueryDataSource(datasourceName),
+				query.SeriesNameFormat("Connections (client reported)"),
+			),
+		),
+		panel.AddQuery(
+			query.PromQL(
+				promql.SetLabelMatchers(
+					"sum (pilot_xds)",
+					labelMatchers,
+				),
+				dashboards.AddQueryDataSource(datasourceName),
+				query.SeriesNameFormat("Connections ( reported)"),
 			),
 		),
 	)
@@ -336,7 +347,7 @@ func MemoryUsage(datasourceName string, labelMatchers ...promql.LabelMatcher) pa
 
 func PilotVersions(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
 	return panelgroup.AddPanel("Pilot Versions",
-		panel.Description("Istio pilot versions running."),
+		panel.Description("Version number of each running instance."),
 		timeSeriesPanel.Chart(
 			timeSeriesPanel.WithYAxis(timeSeriesPanel.YAxis{
 				Format: &commonSdk.Format{
@@ -491,7 +502,7 @@ func Validation(datasourceName string, labelMatchers ...promql.LabelMatcher) pan
 					labelMatchers,
 				),
 				dashboards.AddQueryDataSource(datasourceName),
-				query.SeriesNameFormat("Passed"),
+				query.SeriesNameFormat("Success"),
 			),
 		),
 		panel.AddQuery(
@@ -501,7 +512,7 @@ func Validation(datasourceName string, labelMatchers ...promql.LabelMatcher) pan
 					labelMatchers,
 				),
 				dashboards.AddQueryDataSource(datasourceName),
-				query.SeriesNameFormat("Failed"),
+				query.SeriesNameFormat("Failure"),
 			),
 		),
 	)
