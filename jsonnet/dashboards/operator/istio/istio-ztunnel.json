@@ -1,43 +1,74 @@
 {
-  "apiVersion": "perses.dev/v1alpha1",
   "kind": "PersesDashboard",
+  "apiVersion": "perses.dev/v1alpha1",
   "metadata": {
+    "name": "istio-ztunnel",
+    "namespace": "perses-dev",
+    "creationTimestamp": null,
     "labels": {
+      "app.kubernetes.io/component": "dashboard",
+      "app.kubernetes.io/instance": "istio-ztunnel",
       "app.kubernetes.io/name": "perses-dashboard",
-      "app.kubernetes.io/instance": "istio-performance",
       "app.kubernetes.io/part-of": "perses-operator"
-    },
-    "name": "istio-performance",
-    "namespace": "istio"
+    }
   },
   "spec": {
     "display": {
-      "name": "Istio Performance Dashboard"
+      "name": "Istio / Ztunnel"
     },
+    "variables": [
+      {
+        "kind": "ListVariable",
+        "spec": {
+          "display": {
+            "name": "cluster",
+            "hidden": false
+          },
+          "allowAllValue": false,
+          "allowMultiple": true,
+          "plugin": {
+            "kind": "PrometheusLabelValuesVariable",
+            "spec": {
+              "datasource": {
+                "kind": "PrometheusDatasource",
+                "name": "prometheus-datasource"
+              },
+              "labelName": "cluster",
+              "matchers": [
+                "ztunnel_build_info{}"
+              ]
+            }
+          },
+          "name": "cluster"
+        }
+      }
+    ],
     "panels": {
-      "bytestransferred": {
+      "0_0": {
         "kind": "Panel",
         "spec": {
           "display": {
-            "name": "Bytes transferred / sec"
+            "name": "Bytes Transmitted",
+            "description": "Bytes transmitted through ztunnel"
           },
           "plugin": {
             "kind": "TimeSeriesChart",
             "spec": {
               "legend": {
-                "mode": "list",
                 "position": "bottom",
-                "values": []
-              },
-              "visual": {
-                "areaOpacity": 0.1,
-                "connectNulls": false,
-                "display": "line",
-                "lineWidth": 1
+                "mode": "list"
               },
               "yAxis": {
                 "format": {
                   "unit": "bytes/sec"
+                }
+              },
+              "visual": {
+                "display": "line",
+                "lineWidth": 0.25,
+                "areaOpacity": 0.5,
+                "palette": {
+                  "mode": "auto"
                 }
               }
             }
@@ -51,10 +82,10 @@
                   "spec": {
                     "datasource": {
                       "kind": "PrometheusDatasource",
-                      "name": "prometheus"
+                      "name": "prometheus-datasource"
                     },
-                    "query": "sum(irate(istio_response_bytes_sum{source_workload=\"istio-ingressgateway\", reporter=\"source\"}[$__rate_interval]))",
-                    "seriesNameFormat": "istio-ingressgateway"
+                    "query": "sum by (instance) (rate(istio_tcp_sent_bytes_total{source_app=\"ztunnel\"}[1m]))",
+                    "seriesNameFormat": "Sent {{instance}}"
                   }
                 }
               }
@@ -67,10 +98,10 @@
                   "spec": {
                     "datasource": {
                       "kind": "PrometheusDatasource",
-                      "name": "prometheus"
+                      "name": "prometheus-datasource"
                     },
-                    "query": "sum(irate(istio_request_bytes_sum{source_workload=\"istio-ingressgateway\", reporter=\"source\"}[$__rate_interval]))",
-                    "seriesNameFormat": "istio-ingressgateway"
+                    "query": "sum by (instance) (rate(istio_tcp_received_bytes_total{source_app=\"ztunnel\"}[1m]))",
+                    "seriesNameFormat": "Received {{instance}}"
                   }
                 }
               }
@@ -78,26 +109,32 @@
           ]
         }
       },
-      "istio_component_versions": {
+      "0_1": {
         "kind": "Panel",
         "spec": {
           "display": {
-            "name": "Istio Component Versions",
-            "description": "Version number of each running instance"
+            "name": "Connections",
+            "description": "Active connections through ztunnel"
           },
           "plugin": {
             "kind": "TimeSeriesChart",
             "spec": {
               "legend": {
-                "mode": "list",
                 "position": "bottom",
-                "values": []
+                "mode": "list"
+              },
+              "yAxis": {
+                "format": {
+                  "unit": "decimal"
+                }
               },
               "visual": {
-                "areaOpacity": 0.1,
-                "connectNulls": false,
                 "display": "line",
-                "lineWidth": 1
+                "lineWidth": 0.25,
+                "areaOpacity": 0.5,
+                "palette": {
+                  "mode": "auto"
+                }
               }
             }
           },
@@ -110,10 +147,26 @@
                   "spec": {
                     "datasource": {
                       "kind": "PrometheusDatasource",
-                      "name": "prometheus"
+                      "name": "prometheus-datasource"
                     },
-                    "query": "sum by (component,tag) (istio_build)",
-                    "seriesNameFormat": "{{component}} ({{tag}})"
+                    "query": "sum by (instance) (istio_tcp_connections_opened_total{source_app=\"ztunnel\"})",
+                    "seriesNameFormat": "Opened {{instance}}"
+                  }
+                }
+              }
+            },
+            {
+              "kind": "TimeSeriesQuery",
+              "spec": {
+                "plugin": {
+                  "kind": "PrometheusTimeSeriesQuery",
+                  "spec": {
+                    "datasource": {
+                      "kind": "PrometheusDatasource",
+                      "name": "prometheus-datasource"
+                    },
+                    "query": "sum by (instance) (istio_tcp_connections_closed_total{source_app=\"ztunnel\"})",
+                    "seriesNameFormat": "Closed {{instance}}"
                   }
                 }
               }
@@ -121,34 +174,81 @@
           ]
         }
       },
-      "istiod_disk": {
+      "1_0": {
         "kind": "Panel",
         "spec": {
           "display": {
-            "name": "Istiod disk",
-            "description": "The disk usage of Istiod"
+            "name": "CPU Usage",
+            "description": "CPU usage of ztunnel processes"
           },
           "plugin": {
             "kind": "TimeSeriesChart",
             "spec": {
               "legend": {
-                "mode": "table",
                 "position": "bottom",
-                "values": [
-                  "last",
-                  "max"
-                ]
+                "mode": "list"
+              },
+              "yAxis": {
+                "format": {
+                  "unit": "percent"
+                }
               },
               "visual": {
-                "areaOpacity": 0.1,
-                "connectNulls": false,
                 "display": "line",
-                "lineWidth": 1
+                "lineWidth": 0.25,
+                "areaOpacity": 0.5,
+                "palette": {
+                  "mode": "auto"
+                }
+              }
+            }
+          },
+          "queries": [
+            {
+              "kind": "TimeSeriesQuery",
+              "spec": {
+                "plugin": {
+                  "kind": "PrometheusTimeSeriesQuery",
+                  "spec": {
+                    "datasource": {
+                      "kind": "PrometheusDatasource",
+                      "name": "prometheus-datasource"
+                    },
+                    "query": "rate(process_cpu_seconds_total{job=\"ztunnel\"}[1m]) * 100",
+                    "seriesNameFormat": "{{instance}}"
+                  }
+                }
+              }
+            }
+          ]
+        }
+      },
+      "1_1": {
+        "kind": "Panel",
+        "spec": {
+          "display": {
+            "name": "Memory Usage",
+            "description": "Memory usage of ztunnel processes"
+          },
+          "plugin": {
+            "kind": "TimeSeriesChart",
+            "spec": {
+              "legend": {
+                "position": "bottom",
+                "mode": "list"
               },
               "yAxis": {
                 "format": {
                   "unit": "bytes"
                 }
+              },
+              "visual": {
+                "display": "line",
+                "lineWidth": 0.25,
+                "areaOpacity": 0.5,
+                "palette": {
+                  "mode": "auto"
+                }
               }
             }
           },
@@ -161,10 +261,10 @@
                   "spec": {
                     "datasource": {
                       "kind": "PrometheusDatasource",
-                      "name": "prometheus"
+                      "name": "prometheus-datasource"
                     },
-                    "query": "container_fs_usage_bytes{container=\"discovery\", pod=~\"istiod-.*\"}",
-                    "seriesNameFormat": "{{pod}}"
+                    "query": "process_resident_memory_bytes{job=\"ztunnel\"}",
+                    "seriesNameFormat": "{{instance}}"
                   }
                 }
               }
@@ -172,79 +272,31 @@
           ]
         }
       },
-      "istiod_goroutines": {
+      "2_0": {
         "kind": "Panel",
         "spec": {
           "display": {
-            "name": "Istiod goroutines",
-            "description": "The number of goroutines in Istiod. A proxy that is sending a lot of requests to Istiod may cause this to be elevated."
+            "name": "DNS Request",
+            "description": "DNS requests handled by ztunnel"
           },
           "plugin": {
             "kind": "TimeSeriesChart",
             "spec": {
               "legend": {
-                "mode": "table",
                 "position": "bottom",
-                "values": [
-                  "last",
-                  "max"
-                ]
-              },
-              "visual": {
-                "areaOpacity": 0.1,
-                "connectNulls": false,
-                "display": "line",
-                "lineWidth": 1
-              }
-            }
-          },
-          "queries": [
-            {
-              "kind": "TimeSeriesQuery",
-              "spec": {
-                "plugin": {
-                  "kind": "PrometheusTimeSeriesQuery",
-                  "spec": {
-                    "datasource": {
-                      "kind": "PrometheusDatasource",
-                      "name": "prometheus"
-                    },
-                    "query": "go_goroutines{app=\"istiod\"}",
-                    "seriesNameFormat": "{{pod}}"
-                  }
-                }
-              }
-            }
-          ]
-        }
-      },
-      "istiod_memory": {
-        "kind": "Panel",
-        "spec": {
-          "display": {
-            "name": "Istiod memory",
-            "description": "The memory usage of Istiod"
-          },
-          "plugin": {
-            "kind": "TimeSeriesChart",
-            "spec": {
-              "legend": {
-                "mode": "table",
-                "position": "bottom",
-                "values": [
-                  "last",
-                  "max"
-                ]
-              },
-              "visual": {
-                "areaOpacity": 0.1,
-                "connectNulls": false,
-                "display": "line",
-                "lineWidth": 1
+                "mode": "list"
               },
               "yAxis": {
                 "format": {
-                  "unit": "bytes"
+                  "unit": "decimal"
+                }
+              },
+              "visual": {
+                "display": "line",
+                "lineWidth": 0.25,
+                "areaOpacity": 0.5,
+                "palette": {
+                  "mode": "auto"
                 }
               }
             }
@@ -258,10 +310,10 @@
                   "spec": {
                     "datasource": {
                       "kind": "PrometheusDatasource",
-                      "name": "prometheus"
+                      "name": "prometheus-datasource"
                     },
-                    "query": "container_memory_working_set_bytes{container=\"discovery\", pod=~\"istiod-.*\"}",
-                    "seriesNameFormat": "{{pod}}"
+                    "query": "sum by (instance) (rate(ztunnel_dns_queries_total[1m]))",
+                    "seriesNameFormat": "{{instance}}"
                   }
                 }
               }
@@ -269,95 +321,33 @@
           ]
         }
       },
-      "istiod_vcpu": {
+      "2_1": {
         "kind": "Panel",
         "spec": {
           "display": {
-            "name": "Istiod vCPU",
-            "description": "The CPU usage of Istiod"
+            "name": "Workload Manager",
+            "description": "Workload management operations in ztunnel"
           },
           "plugin": {
             "kind": "TimeSeriesChart",
             "spec": {
               "legend": {
-                "mode": "table",
                 "position": "bottom",
-                "values": [
-                  "last",
-                  "max"
-                ]
-              },
-              "visual": {
-                "areaOpacity": 0.1,
-                "connectNulls": false,
-                "display": "line",
-                "lineWidth": 1
-              }
-            }
-          },
-          "queries": [
-            {
-              "kind": "TimeSeriesQuery",
-              "spec": {
-                "plugin": {
-                  "kind": "PrometheusTimeSeriesQuery",
-                  "spec": {
-                    "datasource": {
-                      "kind": "PrometheusDatasource",
-                      "name": "prometheus"
-                    },
-                    "query": "irate(container_cpu_usage_seconds_total{container=\"discovery\", pod=~\"istiod-.*\"}[$__rate_interval])",
-                    "seriesNameFormat": "{{pod}}"
-                  }
-                }
-              }
-            }
-          ]
-        }
-      },
-      "performancedashboard": {
-        "kind": "Panel",
-        "spec": {
-          "display": {
-            "name": "Performance Dashboard"
-          },
-          "plugin": {
-            "kind": "Markdown",
-            "spec": {
-              "text": "## Performance Dashboard\n\nThis dashboard shows the resource usage of the Istio control plane.\n\n### Istiod resource usage\n\nIstiod's resource usage is primarily determined by the rate of change of the configuration. During stable state, it should consume minimal resources.\n\n### Proxy resource usage\n\nProxy resource usage is primarily determined by the amount of traffic flowing through the proxy and the number of connections it is handling.\n\nFor more information, see [Istio Performance and Scalability](https://istio.io/latest/docs/ops/deployment/performance-and-scalability/)."
-            }
-          },
-          "queries": []
-        }
-      },
-      "proxy_disk": {
-        "kind": "Panel",
-        "spec": {
-          "display": {
-            "name": "Proxy disk",
-            "description": "The disk usage of the proxy"
-          },
-          "plugin": {
-            "kind": "TimeSeriesChart",
-            "spec": {
-              "legend": {
-                "mode": "table",
-                "position": "bottom",
-                "values": [
-                  "last",
-                  "max"
-                ]
-              },
-              "visual": {
-                "areaOpacity": 0.1,
-                "connectNulls": false,
-                "display": "line",
-                "lineWidth": 1
+                "mode": "list"
               },
               "yAxis": {
                 "format": {
-                  "unit": "bytes"
+                  "unit": "decimal"
                 }
+              },
+              "visual": {
+                "display": "line",
+                "lineWidth": 0.25,
+                "areaOpacity": 0.5,
+                "palette": {
+                  "mode": "auto"
+                },
+                "stack": "all"
               }
             }
           },
@@ -370,10 +360,10 @@
                   "spec": {
                     "datasource": {
                       "kind": "PrometheusDatasource",
-                      "name": "prometheus"
+                      "name": "prometheus-datasource"
                     },
-                    "query": "container_fs_usage_bytes{container=\"istio-proxy\"}",
-                    "seriesNameFormat": "{{pod}}"
+                    "query": "sum by (operation) (rate(ztunnel_workload_manager_updates_total[1m]))",
+                    "seriesNameFormat": "{{operation}}"
                   }
                 }
               }
@@ -381,33 +371,31 @@
           ]
         }
       },
-      "proxy_memory": {
+      "3_0": {
         "kind": "Panel",
         "spec": {
           "display": {
-            "name": "Proxy memory",
-            "description": "The memory usage of the proxy"
+            "name": "XDS Connections",
+            "description": "XDS connections from ztunnel to control plane"
           },
           "plugin": {
             "kind": "TimeSeriesChart",
             "spec": {
               "legend": {
-                "mode": "table",
                 "position": "bottom",
-                "values": [
-                  "last",
-                  "max"
-                ]
-              },
-              "visual": {
-                "areaOpacity": 0.1,
-                "connectNulls": false,
-                "display": "line",
-                "lineWidth": 1
+                "mode": "list"
               },
               "yAxis": {
                 "format": {
-                  "unit": "bytes"
+                  "unit": "decimal"
+                }
+              },
+              "visual": {
+                "display": "line",
+                "lineWidth": 0.25,
+                "areaOpacity": 0.5,
+                "palette": {
+                  "mode": "auto"
                 }
               }
             }
@@ -421,10 +409,10 @@
                   "spec": {
                     "datasource": {
                       "kind": "PrometheusDatasource",
-                      "name": "prometheus"
+                      "name": "prometheus-datasource"
                     },
-                    "query": "container_memory_working_set_bytes{container=\"istio-proxy\"}",
-                    "seriesNameFormat": "{{pod}}"
+                    "query": "sum by (instance) (envoy_cluster_upstream_cx_active{source_app=\"ztunnel\"})",
+                    "seriesNameFormat": "{{instance}}"
                   }
                 }
               }
@@ -432,29 +420,33 @@
           ]
         }
       },
-      "proxy_vcpu": {
+      "3_1": {
         "kind": "Panel",
         "spec": {
           "display": {
-            "name": "Proxy vCPU",
-            "description": "The CPU usage of the proxy"
+            "name": "XDS Pushes",
+            "description": "XDS configuration pushes to ztunnel"
           },
           "plugin": {
             "kind": "TimeSeriesChart",
             "spec": {
               "legend": {
-                "mode": "table",
                 "position": "bottom",
-                "values": [
-                  "last",
-                  "max"
-                ]
+                "mode": "list"
+              },
+              "yAxis": {
+                "format": {
+                  "unit": "decimal"
+                }
               },
               "visual": {
-                "areaOpacity": 0.1,
-                "connectNulls": false,
                 "display": "line",
-                "lineWidth": 1
+                "lineWidth": 0.25,
+                "areaOpacity": 0.5,
+                "palette": {
+                  "mode": "auto"
+                },
+                "stack": "all"
               }
             }
           },
@@ -467,10 +459,59 @@
                   "spec": {
                     "datasource": {
                       "kind": "PrometheusDatasource",
-                      "name": "prometheus"
+                      "name": "prometheus-datasource"
                     },
-                    "query": "irate(container_cpu_usage_seconds_total{container=\"istio-proxy\"}[$__rate_interval])",
-                    "seriesNameFormat": "{{pod}}"
+                    "query": "sum by (type) (rate(pilot_xds_pushes{source_app=\"ztunnel\"}[1m]))",
+                    "seriesNameFormat": "{{type}}"
+                  }
+                }
+              }
+            }
+          ]
+        }
+      },
+      "4_0": {
+        "kind": "Panel",
+        "spec": {
+          "display": {
+            "name": "Ztunnel Versions",
+            "description": "Ztunnel versions running"
+          },
+          "plugin": {
+            "kind": "TimeSeriesChart",
+            "spec": {
+              "legend": {
+                "position": "bottom",
+                "mode": "list"
+              },
+              "yAxis": {
+                "format": {
+                  "unit": "decimal"
+                }
+              },
+              "visual": {
+                "display": "line",
+                "lineWidth": 0.25,
+                "areaOpacity": 0.5,
+                "palette": {
+                  "mode": "auto"
+                }
+              }
+            }
+          },
+          "queries": [
+            {
+              "kind": "TimeSeriesQuery",
+              "spec": {
+                "plugin": {
+                  "kind": "PrometheusTimeSeriesQuery",
+                  "spec": {
+                    "datasource": {
+                      "kind": "PrometheusDatasource",
+                      "name": "prometheus-datasource"
+                    },
+                    "query": "sum by (tag) (ztunnel_build_info)",
+                    "seriesNameFormat": "{{tag}}"
                   }
                 }
               }
@@ -484,32 +525,7 @@
         "kind": "Grid",
         "spec": {
           "display": {
-            "title": "Performance Dashboard Notes",
-            "collapse": {
-              "open": true
-            }
-          },
-          "items": [
-            {
-              "x": 0,
-              "y": 0,
-              "width": 24,
-              "height": 6,
-              "content": {
-                "$ref": "#/spec/panels/performancedashboard"
-              }
-            }
-          ]
-        }
-      },
-      {
-        "kind": "Grid",
-        "spec": {
-          "display": {
-            "title": "Data Plane",
-            "collapse": {
-              "open": true
-            }
+            "title": "Traffic"
           },
           "items": [
             {
@@ -518,7 +534,7 @@
               "width": 12,
               "height": 8,
               "content": {
-                "$ref": "#/spec/panels/bytestransferred"
+                "$ref": "#/spec/panels/0_0"
               }
             },
             {
@@ -527,7 +543,7 @@
               "width": 12,
               "height": 8,
               "content": {
-                "$ref": "#/spec/panels/istio_component_versions"
+                "$ref": "#/spec/panels/0_1"
               }
             }
           ]
@@ -537,46 +553,25 @@
         "kind": "Grid",
         "spec": {
           "display": {
-            "title": "Control Plane",
-            "collapse": {
-              "open": true
-            }
+            "title": "Resource Usage"
           },
           "items": [
             {
               "x": 0,
               "y": 0,
-              "width": 8,
+              "width": 12,
               "height": 8,
               "content": {
-                "$ref": "#/spec/panels/istiod_disk"
+                "$ref": "#/spec/panels/1_0"
               }
             },
             {
-              "x": 8,
+              "x": 12,
               "y": 0,
-              "width": 8,
+              "width": 12,
               "height": 8,
               "content": {
-                "$ref": "#/spec/panels/istiod_goroutines"
-              }
-            },
-            {
-              "x": 16,
-              "y": 0,
-              "width": 8,
-              "height": 8,
-              "content": {
-                "$ref": "#/spec/panels/istiod_memory"
-              }
-            },
-            {
-              "x": 0,
-              "y": 8,
-              "width": 8,
-              "height": 8,
-              "content": {
-                "$ref": "#/spec/panels/istiod_vcpu"
+                "$ref": "#/spec/panels/1_1"
               }
             }
           ]
@@ -586,45 +581,79 @@
         "kind": "Grid",
         "spec": {
           "display": {
-            "title": "Data Plane",
-            "collapse": {
-              "open": true
-            }
+            "title": "Operations"
           },
           "items": [
             {
               "x": 0,
               "y": 0,
-              "width": 8,
+              "width": 12,
               "height": 8,
               "content": {
-                "$ref": "#/spec/panels/proxy_disk"
+                "$ref": "#/spec/panels/2_0"
               }
             },
             {
-              "x": 8,
+              "x": 12,
               "y": 0,
-              "width": 8,
+              "width": 12,
               "height": 8,
               "content": {
-                "$ref": "#/spec/panels/proxy_memory"
+                "$ref": "#/spec/panels/2_1"
+              }
+            }
+          ]
+        }
+      },
+      {
+        "kind": "Grid",
+        "spec": {
+          "display": {
+            "title": "XDS"
+          },
+          "items": [
+            {
+              "x": 0,
+              "y": 0,
+              "width": 12,
+              "height": 8,
+              "content": {
+                "$ref": "#/spec/panels/3_0"
               }
             },
             {
-              "x": 16,
+              "x": 12,
               "y": 0,
-              "width": 8,
+              "width": 12,
               "height": 8,
               "content": {
-                "$ref": "#/spec/panels/proxy_vcpu"
+                "$ref": "#/spec/panels/3_1"
+              }
+            }
+          ]
+        }
+      },
+      {
+        "kind": "Grid",
+        "spec": {
+          "display": {
+            "title": "Status"
+          },
+          "items": [
+            {
+              "x": 0,
+              "y": 0,
+              "width": 24,
+              "height": 6,
+              "content": {
+                "$ref": "#/spec/panels/4_0"
               }
             }
           ]
         }
       }
     ],
-    "variables": [],
-    "duration": "1h",
-    "refreshInterval": "0s"
-  }
+    "duration": "1h"
+  },
+  "status": {}
 }

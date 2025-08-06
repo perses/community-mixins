@@ -1,0 +1,316 @@
+kind: Dashboard
+metadata:
+    name: istio-performance
+    createdAt: 0001-01-01T00:00:00Z
+    updatedAt: 0001-01-01T00:00:00Z
+    version: 0
+    project: perses-dev
+spec:
+    display:
+        name: Istio / Performance
+    variables:
+        - kind: ListVariable
+          spec:
+            display:
+                name: cluster
+                hidden: false
+            allowAllValue: false
+            allowMultiple: true
+            plugin:
+                kind: PrometheusLabelValuesVariable
+                spec:
+                    datasource:
+                        kind: PrometheusDatasource
+                        name: prometheus-datasource
+                    labelName: cluster
+                    matchers:
+                        - pilot_build_info{}
+            name: cluster
+    panels:
+        "0_0":
+            kind: Panel
+            spec:
+                display:
+                    name: Data Plane Memory
+                    description: Memory usage of Envoy proxies in the data plane
+                plugin:
+                    kind: TimeSeriesChart
+                    spec:
+                        legend:
+                            position: bottom
+                            mode: list
+                        yAxis:
+                            format:
+                                unit: bytes
+                        visual:
+                            display: line
+                            lineWidth: 0.25
+                            areaOpacity: 0.5
+                            palette:
+                                mode: auto
+                queries:
+                    - kind: TimeSeriesQuery
+                      spec:
+                        plugin:
+                            kind: PrometheusTimeSeriesQuery
+                            spec:
+                                datasource:
+                                    kind: PrometheusDatasource
+                                    name: prometheus-datasource
+                                query: envoy_server_memory_allocated_bytes
+                                seriesNameFormat: '{{instance}}'
+        "0_1":
+            kind: Panel
+            spec:
+                display:
+                    name: Data Plane CPU
+                    description: CPU usage of Envoy proxies in the data plane
+                plugin:
+                    kind: TimeSeriesChart
+                    spec:
+                        legend:
+                            position: bottom
+                            mode: list
+                        yAxis:
+                            format:
+                                unit: percent
+                        visual:
+                            display: line
+                            lineWidth: 0.25
+                            areaOpacity: 0.5
+                            palette:
+                                mode: auto
+                queries:
+                    - kind: TimeSeriesQuery
+                      spec:
+                        plugin:
+                            kind: PrometheusTimeSeriesQuery
+                            spec:
+                                datasource:
+                                    kind: PrometheusDatasource
+                                    name: prometheus-datasource
+                                query: rate(envoy_server_stats_recent_lookups[1m]) * 100
+                                seriesNameFormat: '{{instance}}'
+        "1_0":
+            kind: Panel
+            spec:
+                display:
+                    name: Proxy Push Time
+                    description: Time taken to push configuration to Envoy proxies
+                plugin:
+                    kind: TimeSeriesChart
+                    spec:
+                        legend:
+                            position: bottom
+                            mode: list
+                        yAxis:
+                            format:
+                                unit: milliseconds
+                        visual:
+                            display: line
+                            lineWidth: 0.25
+                            areaOpacity: 0.5
+                            palette:
+                                mode: auto
+                queries:
+                    - kind: TimeSeriesQuery
+                      spec:
+                        plugin:
+                            kind: PrometheusTimeSeriesQuery
+                            spec:
+                                datasource:
+                                    kind: PrometheusDatasource
+                                    name: prometheus-datasource
+                                query: histogram_quantile(0.5, sum by (le) (rate(pilot_proxy_convergence_time_bucket[1m])))
+                                seriesNameFormat: P50
+                    - kind: TimeSeriesQuery
+                      spec:
+                        plugin:
+                            kind: PrometheusTimeSeriesQuery
+                            spec:
+                                datasource:
+                                    kind: PrometheusDatasource
+                                    name: prometheus-datasource
+                                query: histogram_quantile(0.9, sum by (le) (rate(pilot_proxy_convergence_time_bucket[1m])))
+                                seriesNameFormat: P90
+                    - kind: TimeSeriesQuery
+                      spec:
+                        plugin:
+                            kind: PrometheusTimeSeriesQuery
+                            spec:
+                                datasource:
+                                    kind: PrometheusDatasource
+                                    name: prometheus-datasource
+                                query: histogram_quantile(0.99, sum by (le) (rate(pilot_proxy_convergence_time_bucket[1m])))
+                                seriesNameFormat: P99
+        "1_1":
+            kind: Panel
+            spec:
+                display:
+                    name: Proxy Queue Size
+                    description: Size of proxy push queue
+                plugin:
+                    kind: TimeSeriesChart
+                    spec:
+                        legend:
+                            position: bottom
+                            mode: list
+                        yAxis:
+                            format:
+                                unit: decimal
+                        visual:
+                            display: line
+                            lineWidth: 0.25
+                            areaOpacity: 0.5
+                            palette:
+                                mode: auto
+                queries:
+                    - kind: TimeSeriesQuery
+                      spec:
+                        plugin:
+                            kind: PrometheusTimeSeriesQuery
+                            spec:
+                                datasource:
+                                    kind: PrometheusDatasource
+                                    name: prometheus-datasource
+                                query: pilot_proxy_queue_time
+                                seriesNameFormat: '{{instance}}'
+        "2_0":
+            kind: Panel
+            spec:
+                display:
+                    name: Configuration Validation
+                    description: Rate of configuration validation operations
+                plugin:
+                    kind: TimeSeriesChart
+                    spec:
+                        legend:
+                            position: bottom
+                            mode: list
+                        yAxis:
+                            format:
+                                unit: decimal
+                        visual:
+                            display: line
+                            lineWidth: 0.25
+                            areaOpacity: 0.5
+                            palette:
+                                mode: auto
+                            stack: all
+                queries:
+                    - kind: TimeSeriesQuery
+                      spec:
+                        plugin:
+                            kind: PrometheusTimeSeriesQuery
+                            spec:
+                                datasource:
+                                    kind: PrometheusDatasource
+                                    name: prometheus-datasource
+                                query: sum(rate(galley_validation_passed[1m]))
+                                seriesNameFormat: Passed
+                    - kind: TimeSeriesQuery
+                      spec:
+                        plugin:
+                            kind: PrometheusTimeSeriesQuery
+                            spec:
+                                datasource:
+                                    kind: PrometheusDatasource
+                                    name: prometheus-datasource
+                                query: sum(rate(galley_validation_failed[1m]))
+                                seriesNameFormat: Failed
+        "2_1":
+            kind: Panel
+            spec:
+                display:
+                    name: Sidecar Injection
+                    description: Rate of sidecar injection operations
+                plugin:
+                    kind: TimeSeriesChart
+                    spec:
+                        legend:
+                            position: bottom
+                            mode: list
+                        yAxis:
+                            format:
+                                unit: decimal
+                        visual:
+                            display: line
+                            lineWidth: 0.25
+                            areaOpacity: 0.5
+                            palette:
+                                mode: auto
+                            stack: all
+                queries:
+                    - kind: TimeSeriesQuery
+                      spec:
+                        plugin:
+                            kind: PrometheusTimeSeriesQuery
+                            spec:
+                                datasource:
+                                    kind: PrometheusDatasource
+                                    name: prometheus-datasource
+                                query: sum(rate(sidecar_injection_success_total[1m]))
+                                seriesNameFormat: Success
+                    - kind: TimeSeriesQuery
+                      spec:
+                        plugin:
+                            kind: PrometheusTimeSeriesQuery
+                            spec:
+                                datasource:
+                                    kind: PrometheusDatasource
+                                    name: prometheus-datasource
+                                query: sum(rate(sidecar_injection_failure_total[1m]))
+                                seriesNameFormat: Failure
+    layouts:
+        - kind: Grid
+          spec:
+            display:
+                title: Data Plane Performance
+            items:
+                - x: 0
+                  "y": 0
+                  width: 12
+                  height: 8
+                  content:
+                    $ref: '#/spec/panels/0_0'
+                - x: 12
+                  "y": 0
+                  width: 12
+                  height: 8
+                  content:
+                    $ref: '#/spec/panels/0_1'
+        - kind: Grid
+          spec:
+            display:
+                title: Control Plane Performance
+            items:
+                - x: 0
+                  "y": 0
+                  width: 12
+                  height: 8
+                  content:
+                    $ref: '#/spec/panels/1_0'
+                - x: 12
+                  "y": 0
+                  width: 12
+                  height: 8
+                  content:
+                    $ref: '#/spec/panels/1_1'
+        - kind: Grid
+          spec:
+            display:
+                title: Operations Performance
+            items:
+                - x: 0
+                  "y": 0
+                  width: 12
+                  height: 8
+                  content:
+                    $ref: '#/spec/panels/2_0'
+                - x: 12
+                  "y": 0
+                  width: 12
+                  height: 8
+                  content:
+                    $ref: '#/spec/panels/2_1'
+    duration: 1h

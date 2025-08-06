@@ -6,6 +6,7 @@ import (
 	"github.com/perses/community-dashboards/pkg/dashboards/alertmanager"
 	"github.com/perses/community-dashboards/pkg/dashboards/blackbox"
 	"github.com/perses/community-dashboards/pkg/dashboards/etcd"
+	"github.com/perses/community-dashboards/pkg/dashboards/istio"
 	"github.com/perses/community-dashboards/pkg/dashboards/kubernetes/apiserver"
 	k8sComputeResources "github.com/perses/community-dashboards/pkg/dashboards/kubernetes/compute_resources"
 	"github.com/perses/community-dashboards/pkg/dashboards/kubernetes/controller_manager"
@@ -71,6 +72,12 @@ func main() {
 	dashboardWriter.Add(tempo.BuildTempoWritesOverview(project, datasource, clusterLabelName))
 	dashboardWriter.Add(tempo.BuildTempoTenantOverview(project, datasource, clusterLabelName))
 	dashboardWriter.Add(opentelemetry.BuildOpenTelemetryCollector(project, datasource, clusterLabelName))
+	dashboardWriter.Add(istio.BuildIstioControlPlane(project, datasource, clusterLabelName))
+	dashboardWriter.Add(istio.BuildIstioMesh(project, datasource, clusterLabelName))
+	dashboardWriter.Add(istio.BuildIstioWorkload(project, datasource, clusterLabelName))
+	dashboardWriter.Add(istio.BuildIstioService(project, datasource, clusterLabelName))
+	dashboardWriter.Add(istio.BuildIstioPerformance(project, datasource, clusterLabelName))
+	dashboardWriter.Add(istio.BuildIstioZtunnel(project, datasource, clusterLabelName))
 
 	dashboardWriter.Write()
 }

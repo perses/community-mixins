@@ -1,0 +1,628 @@
+apiVersion: perses.dev/v1alpha1
+kind: PersesDashboard
+metadata:
+  creationTimestamp: null
+  labels:
+    app.kubernetes.io/component: dashboard
+    app.kubernetes.io/instance: istio-control-plane
+    app.kubernetes.io/name: perses-dashboard
+    app.kubernetes.io/part-of: perses-operator
+  name: istio-control-plane
+  namespace: perses-dev
+spec:
+  display:
+    name: Istio / Control Plane
+  duration: 1h
+  layouts:
+  - kind: Grid
+    spec:
+      display:
+        title: Control Plane Metrics
+      items:
+      - content:
+          $ref: '#/spec/panels/0_0'
+        height: 8
+        width: 8
+        x: 0
+        "y": 0
+      - content:
+          $ref: '#/spec/panels/0_1'
+        height: 8
+        width: 8
+        x: 8
+        "y": 0
+      - content:
+          $ref: '#/spec/panels/0_2'
+        height: 8
+        width: 8
+        x: 16
+        "y": 0
+  - kind: Grid
+    spec:
+      display:
+        title: Resource Usage
+      items:
+      - content:
+          $ref: '#/spec/panels/1_0'
+        height: 8
+        width: 8
+        x: 0
+        "y": 0
+      - content:
+          $ref: '#/spec/panels/1_1'
+        height: 8
+        width: 8
+        x: 8
+        "y": 0
+      - content:
+          $ref: '#/spec/panels/1_2'
+        height: 8
+        width: 8
+        x: 16
+        "y": 0
+  - kind: Grid
+    spec:
+      display:
+        title: Events
+      items:
+      - content:
+          $ref: '#/spec/panels/2_0'
+        height: 8
+        width: 12
+        x: 0
+        "y": 0
+      - content:
+          $ref: '#/spec/panels/2_1'
+        height: 8
+        width: 12
+        x: 12
+        "y": 0
+  - kind: Grid
+    spec:
+      display:
+        title: Operations
+      items:
+      - content:
+          $ref: '#/spec/panels/3_0'
+        height: 8
+        width: 12
+        x: 0
+        "y": 0
+      - content:
+          $ref: '#/spec/panels/3_1'
+        height: 8
+        width: 12
+        x: 12
+        "y": 0
+  - kind: Grid
+    spec:
+      display:
+        title: Status
+      items:
+      - content:
+          $ref: '#/spec/panels/4_0'
+        height: 8
+        width: 8
+        x: 0
+        "y": 0
+      - content:
+          $ref: '#/spec/panels/4_1'
+        height: 8
+        width: 8
+        x: 8
+        "y": 0
+      - content:
+          $ref: '#/spec/panels/4_2'
+        height: 8
+        width: 8
+        x: 16
+        "y": 0
+  panels:
+    "0_0":
+      kind: Panel
+      spec:
+        display:
+          description: Size of each xDS push.
+          name: Push Size
+        plugin:
+          kind: TimeSeriesChart
+          spec:
+            legend:
+              mode: list
+              position: bottom
+            visual:
+              areaOpacity: 0.5
+              display: line
+              lineWidth: 0.25
+              palette:
+                mode: auto
+            yAxis:
+              format:
+                unit: bytes
+        queries:
+        - kind: TimeSeriesQuery
+          spec:
+            plugin:
+              kind: PrometheusTimeSeriesQuery
+              spec:
+                datasource:
+                  kind: PrometheusDatasource
+                  name: prometheus-datasource
+                query: sum by (le) (rate(pilot_xds_config_size_bytes_bucket[1m]))
+                seriesNameFormat: '{{le}}'
+    "0_1":
+      kind: Panel
+      spec:
+        display:
+          description: |-
+            Count of active and pending proxies managed by each instance.
+            Pending is expected to converge to zero.
+          name: Push Time
+        plugin:
+          kind: TimeSeriesChart
+          spec:
+            legend:
+              mode: list
+              position: bottom
+            visual:
+              areaOpacity: 0.5
+              display: line
+              lineWidth: 0.25
+              palette:
+                mode: auto
+            yAxis:
+              format:
+                unit: milliseconds
+        queries:
+        - kind: TimeSeriesQuery
+          spec:
+            plugin:
+              kind: PrometheusTimeSeriesQuery
+              spec:
+                datasource:
+                  kind: PrometheusDatasource
+                  name: prometheus-datasource
+                query: sum by (le) (rate(pilot_xds_push_time_bucket[1m]))
+                seriesNameFormat: '{{le}}'
+    "0_2":
+      kind: Panel
+      spec:
+        display:
+          description: Number of connections to Istiod.
+          name: Connections
+        plugin:
+          kind: TimeSeriesChart
+          spec:
+            legend:
+              mode: list
+              position: bottom
+            visual:
+              areaOpacity: 0.5
+              display: line
+              lineWidth: 0.25
+              palette:
+                mode: auto
+            yAxis:
+              format:
+                unit: decimal
+        queries:
+        - kind: TimeSeriesQuery
+          spec:
+            plugin:
+              kind: PrometheusTimeSeriesQuery
+              spec:
+                datasource:
+                  kind: PrometheusDatasource
+                  name: prometheus-datasource
+                query: sum(pilot_xds)
+    "1_0":
+      kind: Panel
+      spec:
+        display:
+          description: CPU usage for Istiod processes.
+          name: CPU Usage
+        plugin:
+          kind: TimeSeriesChart
+          spec:
+            legend:
+              mode: list
+              position: bottom
+            visual:
+              areaOpacity: 0.5
+              display: line
+              lineWidth: 0.25
+              palette:
+                mode: auto
+            yAxis:
+              format:
+                unit: percent
+        queries:
+        - kind: TimeSeriesQuery
+          spec:
+            plugin:
+              kind: PrometheusTimeSeriesQuery
+              spec:
+                datasource:
+                  kind: PrometheusDatasource
+                  name: prometheus-datasource
+                query: rate(process_cpu_seconds_total{job="istiod"}[1m]) * 100
+                seriesNameFormat: '{{instance}}'
+    "1_1":
+      kind: Panel
+      spec:
+        display:
+          description: Memory usage for Istiod processes.
+          name: Memory Usage
+        plugin:
+          kind: TimeSeriesChart
+          spec:
+            legend:
+              mode: list
+              position: bottom
+            visual:
+              areaOpacity: 0.5
+              display: line
+              lineWidth: 0.25
+              palette:
+                mode: auto
+            yAxis:
+              format:
+                unit: bytes
+        queries:
+        - kind: TimeSeriesQuery
+          spec:
+            plugin:
+              kind: PrometheusTimeSeriesQuery
+              spec:
+                datasource:
+                  kind: PrometheusDatasource
+                  name: prometheus-datasource
+                query: go_memstats_alloc_bytes{job="istiod"}
+                seriesNameFormat: '{{instance}}'
+    "1_2":
+      kind: Panel
+      spec:
+        display:
+          description: Memory allocation rate for Istiod processes.
+          name: Memory Allocations
+        plugin:
+          kind: TimeSeriesChart
+          spec:
+            legend:
+              mode: list
+              position: bottom
+            visual:
+              areaOpacity: 0.5
+              display: line
+              lineWidth: 0.25
+              palette:
+                mode: auto
+            yAxis:
+              format:
+                unit: bytes/sec
+        queries:
+        - kind: TimeSeriesQuery
+          spec:
+            plugin:
+              kind: PrometheusTimeSeriesQuery
+              spec:
+                datasource:
+                  kind: PrometheusDatasource
+                  name: prometheus-datasource
+                query: rate(go_memstats_alloc_bytes_total{job="istiod"}[1m])
+                seriesNameFormat: '{{instance}}'
+    "2_0":
+      kind: Panel
+      spec:
+        display:
+          description: Events from Kubernetes API server.
+          name: Events
+        plugin:
+          kind: TimeSeriesChart
+          spec:
+            legend:
+              mode: list
+              position: bottom
+            visual:
+              areaOpacity: 0.5
+              display: line
+              lineWidth: 0.25
+              palette:
+                mode: auto
+              stack: all
+            yAxis:
+              format:
+                unit: decimal
+        queries:
+        - kind: TimeSeriesQuery
+          spec:
+            plugin:
+              kind: PrometheusTimeSeriesQuery
+              spec:
+                datasource:
+                  kind: PrometheusDatasource
+                  name: prometheus-datasource
+                query: sum by (type, event) (rate(pilot_k8s_reg_events[$__rate_interval]))
+                seriesNameFormat: '{{type}} {{event}}'
+        - kind: TimeSeriesQuery
+          spec:
+            plugin:
+              kind: PrometheusTimeSeriesQuery
+              spec:
+                datasource:
+                  kind: PrometheusDatasource
+                  name: prometheus-datasource
+                query: sum by (type, event) (rate(pilot_k8s_cfg_events[$__rate_interval]))
+                seriesNameFormat: '{{type}} {{event}}'
+        - kind: TimeSeriesQuery
+          spec:
+            plugin:
+              kind: PrometheusTimeSeriesQuery
+              spec:
+                datasource:
+                  kind: PrometheusDatasource
+                  name: prometheus-datasource
+                query: sum by (type) (rate(pilot_push_triggers[$__rate_interval]))
+                seriesNameFormat: '{{type}}'
+    "2_1":
+      kind: Panel
+      spec:
+        display:
+          description: Number of goroutines in Istiod processes.
+          name: Goroutines
+        plugin:
+          kind: TimeSeriesChart
+          spec:
+            legend:
+              mode: list
+              position: bottom
+            visual:
+              areaOpacity: 0.5
+              display: line
+              lineWidth: 0.25
+              palette:
+                mode: auto
+            yAxis:
+              format:
+                unit: decimal
+        queries:
+        - kind: TimeSeriesQuery
+          spec:
+            plugin:
+              kind: PrometheusTimeSeriesQuery
+              spec:
+                datasource:
+                  kind: PrometheusDatasource
+                  name: prometheus-datasource
+                query: go_goroutines{job="istiod"}
+                seriesNameFormat: '{{instance}}'
+    "3_0":
+      kind: Panel
+      spec:
+        display:
+          description: Webhook injection success/failure rate.
+          name: Injection
+        plugin:
+          kind: TimeSeriesChart
+          spec:
+            legend:
+              mode: list
+              position: bottom
+            visual:
+              areaOpacity: 0.5
+              display: line
+              lineWidth: 0.25
+              palette:
+                mode: auto
+              stack: all
+            yAxis:
+              format:
+                unit: decimal
+        queries:
+        - kind: TimeSeriesQuery
+          spec:
+            plugin:
+              kind: PrometheusTimeSeriesQuery
+              spec:
+                datasource:
+                  kind: PrometheusDatasource
+                  name: prometheus-datasource
+                query: sum(rate(sidecar_injection_success_total[1m]))
+                seriesNameFormat: Success
+        - kind: TimeSeriesQuery
+          spec:
+            plugin:
+              kind: PrometheusTimeSeriesQuery
+              spec:
+                datasource:
+                  kind: PrometheusDatasource
+                  name: prometheus-datasource
+                query: sum(rate(sidecar_injection_failure_total[1m]))
+                seriesNameFormat: Failure
+    "3_1":
+      kind: Panel
+      spec:
+        display:
+          description: Webhook validation success/failure rate.
+          name: Validation
+        plugin:
+          kind: TimeSeriesChart
+          spec:
+            legend:
+              mode: list
+              position: bottom
+            visual:
+              areaOpacity: 0.5
+              display: line
+              lineWidth: 0.25
+              palette:
+                mode: auto
+              stack: all
+            yAxis:
+              format:
+                unit: decimal
+        queries:
+        - kind: TimeSeriesQuery
+          spec:
+            plugin:
+              kind: PrometheusTimeSeriesQuery
+              spec:
+                datasource:
+                  kind: PrometheusDatasource
+                  name: prometheus-datasource
+                query: sum(rate(galley_validation_passed[1m]))
+                seriesNameFormat: Passed
+        - kind: TimeSeriesQuery
+          spec:
+            plugin:
+              kind: PrometheusTimeSeriesQuery
+              spec:
+                datasource:
+                  kind: PrometheusDatasource
+                  name: prometheus-datasource
+                query: sum(rate(galley_validation_failed[1m]))
+                seriesNameFormat: Failed
+    "4_0":
+      kind: Panel
+      spec:
+        display:
+          description: Istio pilot versions running.
+          name: Pilot Versions
+        plugin:
+          kind: TimeSeriesChart
+          spec:
+            legend:
+              mode: list
+              position: bottom
+            visual:
+              areaOpacity: 0.5
+              display: line
+              lineWidth: 0.25
+              palette:
+                mode: auto
+            yAxis:
+              format:
+                unit: decimal
+        queries:
+        - kind: TimeSeriesQuery
+          spec:
+            plugin:
+              kind: PrometheusTimeSeriesQuery
+              spec:
+                datasource:
+                  kind: PrometheusDatasource
+                  name: prometheus-datasource
+                query: sum by (tag) (pilot_build_info)
+                seriesNameFormat: '{{tag}}'
+    "4_1":
+      kind: Panel
+      spec:
+        display:
+          description: Errors pushing to Envoy.
+          name: Push Errors
+        plugin:
+          kind: TimeSeriesChart
+          spec:
+            legend:
+              mode: list
+              position: bottom
+            visual:
+              areaOpacity: 0.5
+              display: line
+              lineWidth: 0.25
+              palette:
+                mode: auto
+              stack: all
+            yAxis:
+              format:
+                unit: decimal
+        queries:
+        - kind: TimeSeriesQuery
+          spec:
+            plugin:
+              kind: PrometheusTimeSeriesQuery
+              spec:
+                datasource:
+                  kind: PrometheusDatasource
+                  name: prometheus-datasource
+                query: sum by (type) (pilot_total_xds_rejects)
+                seriesNameFormat: 'Rejected: {{type}}'
+        - kind: TimeSeriesQuery
+          spec:
+            plugin:
+              kind: PrometheusTimeSeriesQuery
+              spec:
+                datasource:
+                  kind: PrometheusDatasource
+                  name: prometheus-datasource
+                query: pilot_total_xds_internal_errors
+                seriesNameFormat: Internal Error
+    "4_2":
+      kind: Panel
+      spec:
+        display:
+          description: Rate of XDS pushes by type.
+          name: XDS Pushes
+        plugin:
+          kind: TimeSeriesChart
+          spec:
+            legend:
+              mode: list
+              position: bottom
+            visual:
+              areaOpacity: 0.5
+              display: line
+              lineWidth: 0.25
+              palette:
+                mode: auto
+              stack: all
+            yAxis:
+              format:
+                unit: decimal
+        queries:
+        - kind: TimeSeriesQuery
+          spec:
+            plugin:
+              kind: PrometheusTimeSeriesQuery
+              spec:
+                datasource:
+                  kind: PrometheusDatasource
+                  name: prometheus-datasource
+                query: sum by (type) (irate(pilot_xds_pushes[$__rate_interval]))
+                seriesNameFormat: '{{type}}'
+  variables:
+  - kind: ListVariable
+    spec:
+      allowAllValue: false
+      allowMultiple: true
+      display:
+        hidden: false
+        name: cluster
+      name: cluster
+      plugin:
+        kind: PrometheusLabelValuesVariable
+        spec:
+          datasource:
+            kind: PrometheusDatasource
+            name: prometheus-datasource
+          labelName: cluster
+          matchers:
+          - pilot_build_info{}
+  - kind: ListVariable
+    spec:
+      allowAllValue: false
+      allowMultiple: false
+      display:
+        hidden: false
+        name: namespace
+      name: namespace
+      plugin:
+        kind: PrometheusLabelValuesVariable
+        spec:
+          datasource:
+            kind: PrometheusDatasource
+            name: prometheus-datasource
+          labelName: namespace
+          matchers:
+          - pilot_build_info{cluster="$cluster"}
+status: {}

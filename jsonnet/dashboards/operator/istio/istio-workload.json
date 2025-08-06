@@ -1,0 +1,740 @@
+{
+  "kind": "PersesDashboard",
+  "apiVersion": "perses.dev/v1alpha1",
+  "metadata": {
+    "name": "istio-workload",
+    "namespace": "perses-dev",
+    "creationTimestamp": null,
+    "labels": {
+      "app.kubernetes.io/component": "dashboard",
+      "app.kubernetes.io/instance": "istio-workload",
+      "app.kubernetes.io/name": "perses-dashboard",
+      "app.kubernetes.io/part-of": "perses-operator"
+    }
+  },
+  "spec": {
+    "display": {
+      "name": "Istio / Workload"
+    },
+    "variables": [
+      {
+        "kind": "ListVariable",
+        "spec": {
+          "display": {
+            "name": "cluster",
+            "hidden": false
+          },
+          "allowAllValue": false,
+          "allowMultiple": true,
+          "plugin": {
+            "kind": "PrometheusLabelValuesVariable",
+            "spec": {
+              "datasource": {
+                "kind": "PrometheusDatasource",
+                "name": "prometheus-datasource"
+              },
+              "labelName": "cluster",
+              "matchers": [
+                "istio_requests_total{}"
+              ]
+            }
+          },
+          "name": "cluster"
+        }
+      },
+      {
+        "kind": "ListVariable",
+        "spec": {
+          "display": {
+            "name": "Reporter",
+            "hidden": false
+          },
+          "defaultValue": "destination",
+          "allowAllValue": false,
+          "allowMultiple": false,
+          "plugin": {
+            "kind": "PrometheusLabelValuesVariable",
+            "spec": {
+              "datasource": {
+                "kind": "PrometheusDatasource",
+                "name": "prometheus-datasource"
+              },
+              "labelName": "reporter",
+              "matchers": [
+                "istio_requests_total{cluster=\"$cluster\"}"
+              ]
+            }
+          },
+          "name": "qrep"
+        }
+      },
+      {
+        "kind": "ListVariable",
+        "spec": {
+          "display": {
+            "name": "Namespace",
+            "hidden": false
+          },
+          "allowAllValue": false,
+          "allowMultiple": false,
+          "plugin": {
+            "kind": "PrometheusLabelValuesVariable",
+            "spec": {
+              "datasource": {
+                "kind": "PrometheusDatasource",
+                "name": "prometheus-datasource"
+              },
+              "labelName": "destination_workload_namespace",
+              "matchers": [
+                "istio_requests_total{cluster=\"$cluster\"}"
+              ]
+            }
+          },
+          "name": "namespace"
+        }
+      },
+      {
+        "kind": "ListVariable",
+        "spec": {
+          "display": {
+            "name": "Workload",
+            "hidden": false
+          },
+          "allowAllValue": false,
+          "allowMultiple": false,
+          "plugin": {
+            "kind": "PrometheusLabelValuesVariable",
+            "spec": {
+              "datasource": {
+                "kind": "PrometheusDatasource",
+                "name": "prometheus-datasource"
+              },
+              "labelName": "destination_workload",
+              "matchers": [
+                "istio_requests_total{cluster=\"$cluster\",destination_workload_namespace=\"$namespace\"}"
+              ]
+            }
+          },
+          "name": "workload"
+        }
+      },
+      {
+        "kind": "ListVariable",
+        "spec": {
+          "display": {
+            "name": "Source Workload Namespace",
+            "hidden": false
+          },
+          "allowAllValue": true,
+          "allowMultiple": false,
+          "plugin": {
+            "kind": "PrometheusLabelValuesVariable",
+            "spec": {
+              "datasource": {
+                "kind": "PrometheusDatasource",
+                "name": "prometheus-datasource"
+              },
+              "labelName": "source_workload_namespace",
+              "matchers": [
+                "istio_requests_total{cluster=\"$cluster\",destination_workload=\"$workload\",destination_workload_namespace=\"$namespace\"}"
+              ]
+            }
+          },
+          "name": "srcns"
+        }
+      },
+      {
+        "kind": "ListVariable",
+        "spec": {
+          "display": {
+            "name": "Source Workload",
+            "hidden": false
+          },
+          "allowAllValue": true,
+          "allowMultiple": false,
+          "plugin": {
+            "kind": "PrometheusLabelValuesVariable",
+            "spec": {
+              "datasource": {
+                "kind": "PrometheusDatasource",
+                "name": "prometheus-datasource"
+              },
+              "labelName": "source_workload",
+              "matchers": [
+                "istio_requests_total{cluster=\"$cluster\",destination_workload=\"$workload\",destination_workload_namespace=\"$namespace\",source_workload_namespace=~\"$srcns\"}"
+              ]
+            }
+          },
+          "name": "srcwl"
+        }
+      },
+      {
+        "kind": "ListVariable",
+        "spec": {
+          "display": {
+            "name": "Destination Service",
+            "hidden": false
+          },
+          "allowAllValue": true,
+          "allowMultiple": false,
+          "plugin": {
+            "kind": "PrometheusLabelValuesVariable",
+            "spec": {
+              "datasource": {
+                "kind": "PrometheusDatasource",
+                "name": "prometheus-datasource"
+              },
+              "labelName": "destination_service",
+              "matchers": [
+                "istio_requests_total{cluster=\"$cluster\",source_workload=\"$workload\",source_workload_namespace=\"$namespace\"}"
+              ]
+            }
+          },
+          "name": "dstsvc"
+        }
+      },
+      {
+        "kind": "ListVariable",
+        "spec": {
+          "display": {
+            "name": "Destination Workload Namespace",
+            "hidden": false
+          },
+          "allowAllValue": true,
+          "allowMultiple": false,
+          "plugin": {
+            "kind": "PrometheusLabelValuesVariable",
+            "spec": {
+              "datasource": {
+                "kind": "PrometheusDatasource",
+                "name": "prometheus-datasource"
+              },
+              "labelName": "destination_workload_namespace",
+              "matchers": [
+                "istio_requests_total{cluster=\"$cluster\",destination_service=~\"$dstsvc\",source_workload=\"$workload\",source_workload_namespace=\"$namespace\"}"
+              ]
+            }
+          },
+          "name": "dstns"
+        }
+      },
+      {
+        "kind": "ListVariable",
+        "spec": {
+          "display": {
+            "name": "Destination Workload",
+            "hidden": false
+          },
+          "allowAllValue": true,
+          "allowMultiple": false,
+          "plugin": {
+            "kind": "PrometheusLabelValuesVariable",
+            "spec": {
+              "datasource": {
+                "kind": "PrometheusDatasource",
+                "name": "prometheus-datasource"
+              },
+              "labelName": "destination_workload",
+              "matchers": [
+                "istio_requests_total{cluster=\"$cluster\",destination_service=~\"$dstsvc\",destination_workload_namespace=~\"$dstns\",source_workload=\"$workload\",source_workload_namespace=\"$namespace\"}"
+              ]
+            }
+          },
+          "name": "dstwl"
+        }
+      }
+    ],
+    "panels": {
+      "0_0": {
+        "kind": "Panel",
+        "spec": {
+          "display": {
+            "name": "Incoming Request Volume",
+            "description": "Request volume to workload by source"
+          },
+          "plugin": {
+            "kind": "TimeSeriesChart",
+            "spec": {
+              "legend": {
+                "position": "bottom",
+                "mode": "list"
+              },
+              "yAxis": {
+                "format": {
+                  "unit": "requests/sec"
+                }
+              },
+              "visual": {
+                "display": "line",
+                "lineWidth": 0.25,
+                "areaOpacity": 0.5,
+                "palette": {
+                  "mode": "auto"
+                }
+              }
+            }
+          },
+          "queries": [
+            {
+              "kind": "TimeSeriesQuery",
+              "spec": {
+                "plugin": {
+                  "kind": "PrometheusTimeSeriesQuery",
+                  "spec": {
+                    "datasource": {
+                      "kind": "PrometheusDatasource",
+                      "name": "prometheus-datasource"
+                    },
+                    "query": "round(\n  sum by (source_workload, source_workload_namespace) (\n    irate(\n      istio_requests_total{connection_security_policy=\"mutual_tls\",destination_workload=~\"$workload\",destination_workload_namespace=~\"$namespace\",reporter=~\"$qrep\",source_workload=~\"$srcwl\",source_workload_namespace=~\"$srcns\"}[$__rate_interval]\n    )\n  ),\n  0.001\n)",
+                    "seriesNameFormat": "🔒 {{ source_workload }}.{{ source_workload_namespace }}"
+                  }
+                }
+              }
+            },
+            {
+              "kind": "TimeSeriesQuery",
+              "spec": {
+                "plugin": {
+                  "kind": "PrometheusTimeSeriesQuery",
+                  "spec": {
+                    "datasource": {
+                      "kind": "PrometheusDatasource",
+                      "name": "prometheus-datasource"
+                    },
+                    "query": "round(\n  sum by (source_workload, source_workload_namespace) (\n    irate(\n      istio_requests_total{connection_security_policy!=\"mutual_tls\",destination_workload=~\"$workload\",destination_workload_namespace=~\"$namespace\",reporter=~\"$qrep\",source_workload=~\"$srcwl\",source_workload_namespace=~\"$srcns\"}[$__rate_interval]\n    )\n  ),\n  0.001\n)",
+                    "seriesNameFormat": "{{ source_workload }}.{{ source_workload_namespace }}"
+                  }
+                }
+              }
+            }
+          ]
+        }
+      },
+      "0_1": {
+        "kind": "Panel",
+        "spec": {
+          "display": {
+            "name": "Incoming Success Rate",
+            "description": "Success rate of requests to workload by source"
+          },
+          "plugin": {
+            "kind": "TimeSeriesChart",
+            "spec": {
+              "legend": {
+                "position": "bottom",
+                "mode": "list"
+              },
+              "yAxis": {
+                "format": {
+                  "unit": "percent"
+                },
+                "max": 1
+              },
+              "visual": {
+                "display": "line",
+                "lineWidth": 0.25,
+                "areaOpacity": 0.5,
+                "palette": {
+                  "mode": "auto"
+                }
+              }
+            }
+          },
+          "queries": [
+            {
+              "kind": "TimeSeriesQuery",
+              "spec": {
+                "plugin": {
+                  "kind": "PrometheusTimeSeriesQuery",
+                  "spec": {
+                    "datasource": {
+                      "kind": "PrometheusDatasource",
+                      "name": "prometheus-datasource"
+                    },
+                    "query": "  sum by (source_workload, source_workload_namespace) (\n    irate(\n      istio_requests_total{destination_workload=~\"$workload\",destination_workload_namespace=~\"$namespace\",reporter=~\"$qrep\",response_code!~\"5.*\",source_workload=~\"$srcwl\",source_workload_namespace=~\"$srcns\"}[$__rate_interval]\n    )\n  )\n/\n  sum by (source_workload, source_workload_namespace) (\n    irate(\n      istio_requests_total{destination_workload=~\"$workload\",destination_workload_namespace=~\"$namespace\",reporter=~\"$qrep\",source_workload=~\"$srcwl\",source_workload_namespace=~\"$srcns\"}[$__rate_interval]\n    )\n  )",
+                    "seriesNameFormat": "{{ source_workload }}.{{ source_workload_namespace }}"
+                  }
+                }
+              }
+            }
+          ]
+        }
+      },
+      "0_2": {
+        "kind": "Panel",
+        "spec": {
+          "display": {
+            "name": "Incoming Request Duration",
+            "description": "Request duration percentiles for workload"
+          },
+          "plugin": {
+            "kind": "TimeSeriesChart",
+            "spec": {
+              "legend": {
+                "position": "bottom",
+                "mode": "list"
+              },
+              "yAxis": {
+                "format": {
+                  "unit": "milliseconds"
+                }
+              },
+              "visual": {
+                "display": "line",
+                "lineWidth": 0.25,
+                "areaOpacity": 0.5,
+                "palette": {
+                  "mode": "auto"
+                }
+              }
+            }
+          },
+          "queries": [
+            {
+              "kind": "TimeSeriesQuery",
+              "spec": {
+                "plugin": {
+                  "kind": "PrometheusTimeSeriesQuery",
+                  "spec": {
+                    "datasource": {
+                      "kind": "PrometheusDatasource",
+                      "name": "prometheus-datasource"
+                    },
+                    "query": "histogram_quantile(\n  0.5,\n  sum by (source_workload, source_workload_namespace, le) (\n    irate(\n      istio_request_duration_milliseconds_bucket{destination_workload=~\"$workload\",destination_workload_namespace=~\"$namespace\",reporter=~\"$qrep\",source_workload=~\"$srcwl\",source_workload_namespace=~\"$srcns\"}[$__rate_interval]\n    )\n  )\n)",
+                    "seriesNameFormat": "P50 {{ source_workload }}.{{ source_workload_namespace }}"
+                  }
+                }
+              }
+            },
+            {
+              "kind": "TimeSeriesQuery",
+              "spec": {
+                "plugin": {
+                  "kind": "PrometheusTimeSeriesQuery",
+                  "spec": {
+                    "datasource": {
+                      "kind": "PrometheusDatasource",
+                      "name": "prometheus-datasource"
+                    },
+                    "query": "histogram_quantile(\n  0.9,\n  sum by (source_workload, source_workload_namespace, le) (\n    irate(\n      istio_request_duration_milliseconds_bucket{destination_workload=~\"$workload\",destination_workload_namespace=~\"$namespace\",reporter=~\"$qrep\",source_workload=~\"$srcwl\",source_workload_namespace=~\"$srcns\"}[$__rate_interval]\n    )\n  )\n)",
+                    "seriesNameFormat": "P90 {{ source_workload }}.{{ source_workload_namespace }}"
+                  }
+                }
+              }
+            },
+            {
+              "kind": "TimeSeriesQuery",
+              "spec": {
+                "plugin": {
+                  "kind": "PrometheusTimeSeriesQuery",
+                  "spec": {
+                    "datasource": {
+                      "kind": "PrometheusDatasource",
+                      "name": "prometheus-datasource"
+                    },
+                    "query": "histogram_quantile(\n  0.99,\n  sum by (source_workload, source_workload_namespace, le) (\n    irate(\n      istio_request_duration_milliseconds_bucket{destination_workload=~\"$workload\",destination_workload_namespace=~\"$namespace\",reporter=~\"$qrep\",source_workload=~\"$srcwl\",source_workload_namespace=~\"$srcns\"}[$__rate_interval]\n    )\n  )\n)",
+                    "seriesNameFormat": "P99 {{ source_workload }}.{{ source_workload_namespace }}"
+                  }
+                }
+              }
+            }
+          ]
+        }
+      },
+      "1_0": {
+        "kind": "Panel",
+        "spec": {
+          "display": {
+            "name": "Outgoing Request Volume",
+            "description": "Request volume from workload to destinations"
+          },
+          "plugin": {
+            "kind": "TimeSeriesChart",
+            "spec": {
+              "legend": {
+                "position": "bottom",
+                "mode": "list"
+              },
+              "yAxis": {
+                "format": {
+                  "unit": "requests/sec"
+                }
+              },
+              "visual": {
+                "display": "line",
+                "lineWidth": 0.25,
+                "areaOpacity": 0.5,
+                "palette": {
+                  "mode": "auto"
+                }
+              }
+            }
+          },
+          "queries": [
+            {
+              "kind": "TimeSeriesQuery",
+              "spec": {
+                "plugin": {
+                  "kind": "PrometheusTimeSeriesQuery",
+                  "spec": {
+                    "datasource": {
+                      "kind": "PrometheusDatasource",
+                      "name": "prometheus-datasource"
+                    },
+                    "query": "round(\n  sum by (destination_workload, destination_workload_namespace) (\n    irate(\n      istio_requests_total{destination_service=~\"$dstsvc\",destination_workload=~\"$dstwl\",destination_workload_namespace=~\"$dstns\",reporter=\"source\",source_workload=~\"$workload\",source_workload_namespace=~\"$namespace\"}[$__rate_interval]\n    )\n  ),\n  0.001\n)",
+                    "seriesNameFormat": "{{ destination_workload }}.{{ destination_workload_namespace }}"
+                  }
+                }
+              }
+            }
+          ]
+        }
+      },
+      "1_1": {
+        "kind": "Panel",
+        "spec": {
+          "display": {
+            "name": "Outgoing Success Rate",
+            "description": "Success rate of outgoing requests from workload"
+          },
+          "plugin": {
+            "kind": "TimeSeriesChart",
+            "spec": {
+              "legend": {
+                "position": "bottom",
+                "mode": "list"
+              },
+              "yAxis": {
+                "format": {
+                  "unit": "percent"
+                },
+                "max": 1
+              },
+              "visual": {
+                "display": "line",
+                "lineWidth": 0.25,
+                "areaOpacity": 0.5,
+                "palette": {
+                  "mode": "auto"
+                }
+              }
+            }
+          },
+          "queries": [
+            {
+              "kind": "TimeSeriesQuery",
+              "spec": {
+                "plugin": {
+                  "kind": "PrometheusTimeSeriesQuery",
+                  "spec": {
+                    "datasource": {
+                      "kind": "PrometheusDatasource",
+                      "name": "prometheus-datasource"
+                    },
+                    "query": "  sum by (destination_workload, destination_workload_namespace) (\n    irate(\n      istio_requests_total{destination_service=~\"$dstsvc\",destination_workload=~\"$dstwl\",destination_workload_namespace=~\"$dstns\",reporter=\"source\",response_code!~\"5.*\",source_workload=~\"$workload\",source_workload_namespace=~\"$namespace\"}[$__rate_interval]\n    )\n  )\n/\n  sum by (destination_workload, destination_workload_namespace) (\n    irate(\n      istio_requests_total{destination_service=~\"$dstsvc\",destination_workload=~\"$dstwl\",destination_workload_namespace=~\"$dstns\",reporter=\"source\",source_workload=~\"$workload\",source_workload_namespace=~\"$namespace\"}[$__rate_interval]\n    )\n  )",
+                    "seriesNameFormat": "{{ destination_workload }}.{{ destination_workload_namespace }}"
+                  }
+                }
+              }
+            }
+          ]
+        }
+      },
+      "2_0": {
+        "kind": "Panel",
+        "spec": {
+          "display": {
+            "name": "TCP Bytes Received",
+            "description": "TCP bytes received by workload"
+          },
+          "plugin": {
+            "kind": "TimeSeriesChart",
+            "spec": {
+              "legend": {
+                "position": "bottom",
+                "mode": "list"
+              },
+              "yAxis": {
+                "format": {
+                  "unit": "bytes/sec"
+                }
+              },
+              "visual": {
+                "display": "line",
+                "lineWidth": 0.25,
+                "areaOpacity": 0.5,
+                "palette": {
+                  "mode": "auto"
+                }
+              }
+            }
+          },
+          "queries": [
+            {
+              "kind": "TimeSeriesQuery",
+              "spec": {
+                "plugin": {
+                  "kind": "PrometheusTimeSeriesQuery",
+                  "spec": {
+                    "datasource": {
+                      "kind": "PrometheusDatasource",
+                      "name": "prometheus-datasource"
+                    },
+                    "query": "sum by (source_workload, source_workload_namespace) (\n  irate(\n    istio_tcp_received_bytes_total{destination_workload=~\"$workload\",destination_workload_namespace=~\"$namespace\",reporter=~\"$qrep\",source_workload=~\"$srcwl\",source_workload_namespace=~\"$srcns\"}[$__rate_interval]\n  )\n)",
+                    "seriesNameFormat": "{{ source_workload }}.{{ source_workload_namespace }}"
+                  }
+                }
+              }
+            }
+          ]
+        }
+      },
+      "2_1": {
+        "kind": "Panel",
+        "spec": {
+          "display": {
+            "name": "TCP Bytes Sent",
+            "description": "TCP bytes sent from workload"
+          },
+          "plugin": {
+            "kind": "TimeSeriesChart",
+            "spec": {
+              "legend": {
+                "position": "bottom",
+                "mode": "list"
+              },
+              "yAxis": {
+                "format": {
+                  "unit": "bytes/sec"
+                }
+              },
+              "visual": {
+                "display": "line",
+                "lineWidth": 0.25,
+                "areaOpacity": 0.5,
+                "palette": {
+                  "mode": "auto"
+                }
+              }
+            }
+          },
+          "queries": [
+            {
+              "kind": "TimeSeriesQuery",
+              "spec": {
+                "plugin": {
+                  "kind": "PrometheusTimeSeriesQuery",
+                  "spec": {
+                    "datasource": {
+                      "kind": "PrometheusDatasource",
+                      "name": "prometheus-datasource"
+                    },
+                    "query": "sum by (destination_workload, destination_workload_namespace) (\n  irate(\n    istio_tcp_sent_bytes_total{destination_service=~\"$dstsvc\",destination_workload=~\"$dstwl\",destination_workload_namespace=~\"$dstns\",reporter=\"source\",source_workload=~\"$workload\",source_workload_namespace=~\"$namespace\"}[$__rate_interval]\n  )\n)",
+                    "seriesNameFormat": "{{ destination_workload }}.{{ destination_workload_namespace }}"
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    "layouts": [
+      {
+        "kind": "Grid",
+        "spec": {
+          "display": {
+            "title": "Incoming Traffic"
+          },
+          "items": [
+            {
+              "x": 0,
+              "y": 0,
+              "width": 8,
+              "height": 8,
+              "content": {
+                "$ref": "#/spec/panels/0_0"
+              }
+            },
+            {
+              "x": 8,
+              "y": 0,
+              "width": 8,
+              "height": 8,
+              "content": {
+                "$ref": "#/spec/panels/0_1"
+              }
+            },
+            {
+              "x": 16,
+              "y": 0,
+              "width": 8,
+              "height": 8,
+              "content": {
+                "$ref": "#/spec/panels/0_2"
+              }
+            }
+          ]
+        }
+      },
+      {
+        "kind": "Grid",
+        "spec": {
+          "display": {
+            "title": "Outgoing Traffic"
+          },
+          "items": [
+            {
+              "x": 0,
+              "y": 0,
+              "width": 12,
+              "height": 8,
+              "content": {
+                "$ref": "#/spec/panels/1_0"
+              }
+            },
+            {
+              "x": 12,
+              "y": 0,
+              "width": 12,
+              "height": 8,
+              "content": {
+                "$ref": "#/spec/panels/1_1"
+              }
+            }
+          ]
+        }
+      },
+      {
+        "kind": "Grid",
+        "spec": {
+          "display": {
+            "title": "TCP Traffic"
+          },
+          "items": [
+            {
+              "x": 0,
+              "y": 0,
+              "width": 12,
+              "height": 8,
+              "content": {
+                "$ref": "#/spec/panels/2_0"
+              }
+            },
+            {
+              "x": 12,
+              "y": 0,
+              "width": 12,
+              "height": 8,
+              "content": {
+                "$ref": "#/spec/panels/2_1"
+              }
+            }
+          ]
+        }
+      }
+    ],
+    "duration": "1h"
+  },
+  "status": {}
+}
