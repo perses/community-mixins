@@ -34,17 +34,17 @@ func IncomingRequestVolume(datasourceName string, labelMatchers ...promql.LabelM
 		panel.AddQuery(
 			query.PromQL(
 				promql.SetLabelMatchers(
-					"round(sum(irate(istio_requests_total{reporter=~\"$qrep\", connection_security_policy=\"mutual_tls\", destination_workload=~\"$workload\", destination_workload_namespace=~\"$namespace\", source_workload=~\"$srcwl\", source_workload_namespace=~\"$srcns\"}[$__rate_interval])) by (source_workload, source_workload_namespace), 0.001)",
+					"round(sum(irate(istio_requests_total{reporter=~\"$qrep\", connection_security_policy=\"mutual_tls\", destination_workload=~\"$workload\", destination_workload_namespace=~\"$namespace\", source_workload=~\"$srcwl\", source_workload_namespace=~\"$srcns\"}[1m])) by (source_workload, source_workload_namespace), 0.001)",
 					labelMatchers,
 				),
 				dashboards.AddQueryDataSource(datasourceName),
-				query.SeriesNameFormat("🔒 {{ source_workload }}.{{ source_workload_namespace }}"),
+				query.SeriesNameFormat("{{ source_workload }}.{{ source_workload_namespace }} (🔐mTLS)"),
 			),
 		),
 		panel.AddQuery(
 			query.PromQL(
 				promql.SetLabelMatchers(
-					"round(sum(irate(istio_requests_total{reporter=~\"$qrep\", connection_security_policy!=\"mutual_tls\", destination_workload=~\"$workload\", destination_workload_namespace=~\"$namespace\", source_workload=~\"$srcwl\", source_workload_namespace=~\"$srcns\"}[$__rate_interval])) by (source_workload, source_workload_namespace), 0.001)",
+					"round(sum(irate(istio_requests_total{reporter=~\"$qrep\", connection_security_policy!=\"mutual_tls\", destination_workload=~\"$workload\", destination_workload_namespace=~\"$namespace\", source_workload=~\"$srcwl\", source_workload_namespace=~\"$srcns\"}[1m])) by (source_workload, source_workload_namespace), 0.001)",
 					labelMatchers,
 				),
 				dashboards.AddQueryDataSource(datasourceName),
@@ -80,7 +80,7 @@ func IncomingSuccessRate(datasourceName string, labelMatchers ...promql.LabelMat
 		panel.AddQuery(
 			query.PromQL(
 				promql.SetLabelMatchers(
-					"sum(irate(istio_requests_total{reporter=~\"$qrep\", destination_workload=~\"$workload\", destination_workload_namespace=~\"$namespace\", source_workload=~\"$srcwl\", source_workload_namespace=~\"$srcns\", response_code!~\"5.*\"}[$__rate_interval])) by (source_workload, source_workload_namespace) / sum(irate(istio_requests_total{reporter=~\"$qrep\", destination_workload=~\"$workload\", destination_workload_namespace=~\"$namespace\", source_workload=~\"$srcwl\", source_workload_namespace=~\"$srcns\"}[$__rate_interval])) by (source_workload, source_workload_namespace)",
+					"sum(irate(istio_requests_total{reporter=~\"$qrep\", destination_workload=~\"$workload\", destination_workload_namespace=~\"$namespace\", source_workload=~\"$srcwl\", source_workload_namespace=~\"$srcns\", response_code!~\"5.*\"}[1m])) by (source_workload, source_workload_namespace) / sum(irate(istio_requests_total{reporter=~\"$qrep\", destination_workload=~\"$workload\", destination_workload_namespace=~\"$namespace\", source_workload=~\"$srcwl\", source_workload_namespace=~\"$srcns\"}[1m])) by (source_workload, source_workload_namespace)",
 					labelMatchers,
 				),
 				dashboards.AddQueryDataSource(datasourceName),
@@ -114,44 +114,92 @@ func IncomingRequestDuration(datasourceName string, labelMatchers ...promql.Labe
 		panel.AddQuery(
 			query.PromQL(
 				promql.SetLabelMatchers(
-					"histogram_quantile(0.50, sum(irate(istio_request_duration_milliseconds_bucket{reporter=~\"$qrep\", destination_workload=~\"$workload\", destination_workload_namespace=~\"$namespace\", source_workload=~\"$srcwl\", source_workload_namespace=~\"$srcns\"}[$__rate_interval])) by (source_workload, source_workload_namespace, le))",
+					"(histogram_quantile(0.50, sum(irate(istio_request_duration_milliseconds_bucket{reporter=~\"$qrep\", connection_security_policy=\"mutual_tls\", destination_workload=~\"$workload\", destination_workload_namespace=~\"$namespace\", source_workload=~\"$srcwl\", source_workload_namespace=~\"$srcns\"}[1m])) by (source_workload, source_workload_namespace, le)) / 1000) or histogram_quantile(0.50, sum(irate(istio_request_duration_seconds_bucket{reporter=~\"$qrep\", connection_security_policy=\"mutual_tls\", destination_workload=~\"$workload\", destination_workload_namespace=~\"$namespace\", source_workload=~\"$srcwl\", source_workload_namespace=~\"$srcns\"}[1m])) by (source_workload, source_workload_namespace, le))",
 					labelMatchers,
 				),
 				dashboards.AddQueryDataSource(datasourceName),
-				query.SeriesNameFormat("P50 {{ source_workload }}.{{ source_workload_namespace }}"),
+				query.SeriesNameFormat("{{source_workload}}.{{source_workload_namespace}} P50 (🔐mTLS)"),
 			),
 		),
 		panel.AddQuery(
 			query.PromQL(
 				promql.SetLabelMatchers(
-					"histogram_quantile(0.90, sum(irate(istio_request_duration_milliseconds_bucket{reporter=~\"$qrep\", destination_workload=~\"$workload\", destination_workload_namespace=~\"$namespace\", source_workload=~\"$srcwl\", source_workload_namespace=~\"$srcns\"}[$__rate_interval])) by (source_workload, source_workload_namespace, le))",
+					"(histogram_quantile(0.90, sum(irate(istio_request_duration_milliseconds_bucket{reporter=~\"$qrep\", connection_security_policy=\"mutual_tls\", destination_workload=~\"$workload\", destination_workload_namespace=~\"$namespace\", source_workload=~\"$srcwl\", source_workload_namespace=~\"$srcns\"}[1m])) by (source_workload, source_workload_namespace, le)) / 1000) or histogram_quantile(0.90, sum(irate(istio_request_duration_seconds_bucket{reporter=~\"$qrep\", connection_security_policy=\"mutual_tls\", destination_workload=~\"$workload\", destination_workload_namespace=~\"$namespace\", source_workload=~\"$srcwl\", source_workload_namespace=~\"$srcns\"}[1m])) by (source_workload, source_workload_namespace, le))",
 					labelMatchers,
 				),
 				dashboards.AddQueryDataSource(datasourceName),
-				query.SeriesNameFormat("P90 {{ source_workload }}.{{ source_workload_namespace }}"),
+				query.SeriesNameFormat("{{source_workload}}.{{source_workload_namespace}} P90 (🔐mTLS)"),
 			),
 		),
 		panel.AddQuery(
 			query.PromQL(
 				promql.SetLabelMatchers(
-					"histogram_quantile(0.99, sum(irate(istio_request_duration_milliseconds_bucket{reporter=~\"$qrep\", destination_workload=~\"$workload\", destination_workload_namespace=~\"$namespace\", source_workload=~\"$srcwl\", source_workload_namespace=~\"$srcns\"}[$__rate_interval])) by (source_workload, source_workload_namespace, le))",
+					"(histogram_quantile(0.95, sum(irate(istio_request_duration_milliseconds_bucket{reporter=~\"$qrep\", connection_security_policy=\"mutual_tls\", destination_workload=~\"$workload\", destination_workload_namespace=~\"$namespace\", source_workload=~\"$srcwl\", source_workload_namespace=~\"$srcns\"}[1m])) by (source_workload, source_workload_namespace, le)) / 1000) or histogram_quantile(0.95, sum(irate(istio_request_duration_seconds_bucket{reporter=~\"$qrep\", connection_security_policy=\"mutual_tls\", destination_workload=~\"$workload\", destination_workload_namespace=~\"$namespace\", source_workload=~\"$srcwl\", source_workload_namespace=~\"$srcns\"}[1m])) by (source_workload, source_workload_namespace, le))",
 					labelMatchers,
 				),
 				dashboards.AddQueryDataSource(datasourceName),
-				query.SeriesNameFormat("P99 {{ source_workload }}.{{ source_workload_namespace }}"),
+				query.SeriesNameFormat("{{source_workload}}.{{source_workload_namespace}} P95 (🔐mTLS)"),
+			),
+		),
+		panel.AddQuery(
+			query.PromQL(
+				promql.SetLabelMatchers(
+					"(histogram_quantile(0.99, sum(irate(istio_request_duration_milliseconds_bucket{reporter=~\"$qrep\", connection_security_policy=\"mutual_tls\", destination_workload=~\"$workload\", destination_workload_namespace=~\"$namespace\", source_workload=~\"$srcwl\", source_workload_namespace=~\"$srcns\"}[1m])) by (source_workload, source_workload_namespace, le)) / 1000) or histogram_quantile(0.99, sum(irate(istio_request_duration_seconds_bucket{reporter=~\"$qrep\", connection_security_policy=\"mutual_tls\", destination_workload=~\"$workload\", destination_workload_namespace=~\"$namespace\", source_workload=~\"$srcwl\", source_workload_namespace=~\"$srcns\"}[1m])) by (source_workload, source_workload_namespace, le))",
+					labelMatchers,
+				),
+				dashboards.AddQueryDataSource(datasourceName),
+				query.SeriesNameFormat("{{source_workload}}.{{source_workload_namespace}} P99 (🔐mTLS)"),
+			),
+		),
+		panel.AddQuery(
+			query.PromQL(
+				promql.SetLabelMatchers(
+					"(histogram_quantile(0.50, sum(irate(istio_request_duration_milliseconds_bucket{reporter=~\"$qrep\", connection_security_policy!=\"mutual_tls\", destination_workload=~\"$workload\", destination_workload_namespace=~\"$namespace\", source_workload=~\"$srcwl\", source_workload_namespace=~\"$srcns\"}[1m])) by (source_workload, source_workload_namespace, le)) / 1000) or histogram_quantile(0.50, sum(irate(istio_request_duration_seconds_bucket{reporter=~\"$qrep\", connection_security_policy!=\"mutual_tls\", destination_workload=~\"$workload\", destination_workload_namespace=~\"$namespace\", source_workload=~\"$srcwl\", source_workload_namespace=~\"$srcns\"}[1m])) by (source_workload, source_workload_namespace, le))",
+					labelMatchers,
+				),
+				dashboards.AddQueryDataSource(datasourceName),
+				query.SeriesNameFormat("{{source_workload}}.{{source_workload_namespace}} P50"),
+			),
+		),
+		panel.AddQuery(
+			query.PromQL(
+				promql.SetLabelMatchers(
+					"(histogram_quantile(0.90, sum(irate(istio_request_duration_milliseconds_bucket{reporter=~\"$qrep\", connection_security_policy!=\"mutual_tls\", destination_workload=~\"$workload\", destination_workload_namespace=~\"$namespace\", source_workload=~\"$srcwl\", source_workload_namespace=~\"$srcns\"}[1m])) by (source_workload, source_workload_namespace, le)) / 1000) or histogram_quantile(0.90, sum(irate(istio_request_duration_seconds_bucket{reporter=~\"$qrep\", connection_security_policy!=\"mutual_tls\", destination_workload=~\"$workload\", destination_workload_namespace=~\"$namespace\", source_workload=~\"$srcwl\", source_workload_namespace=~\"$srcns\"}[1m])) by (source_workload, source_workload_namespace, le))",
+					labelMatchers,
+				),
+				dashboards.AddQueryDataSource(datasourceName),
+				query.SeriesNameFormat("{{source_workload}}.{{source_workload_namespace}} P90"),
+			),
+		),
+		panel.AddQuery(
+			query.PromQL(
+				promql.SetLabelMatchers(
+					"(histogram_quantile(0.95, sum(irate(istio_request_duration_milliseconds_bucket{reporter=~\"$qrep\", connection_security_policy!=\"mutual_tls\", destination_workload=~\"$workload\", destination_workload_namespace=~\"$namespace\", source_workload=~\"$srcwl\", source_workload_namespace=~\"$srcns\"}[1m])) by (source_workload, source_workload_namespace, le)) / 1000) or histogram_quantile(0.95, sum(irate(istio_request_duration_seconds_bucket{reporter=~\"$qrep\", connection_security_policy!=\"mutual_tls\", destination_workload=~\"$workload\", destination_workload_namespace=~\"$namespace\", source_workload=~\"$srcwl\", source_workload_namespace=~\"$srcns\"}[1m])) by (source_workload, source_workload_namespace, le))",
+					labelMatchers,
+				),
+				dashboards.AddQueryDataSource(datasourceName),
+				query.SeriesNameFormat("{{source_workload}}.{{source_workload_namespace}} P95"),
+			),
+		),
+		panel.AddQuery(
+			query.PromQL(
+				promql.SetLabelMatchers(
+					"(histogram_quantile(0.99, sum(irate(istio_request_duration_milliseconds_bucket{reporter=~\"$qrep\", connection_security_policy!=\"mutual_tls\", destination_workload=~\"$workload\", destination_workload_namespace=~\"$namespace\", source_workload=~\"$srcwl\", source_workload_namespace=~\"$srcns\"}[1m])) by (source_workload, source_workload_namespace, le)) / 1000) or histogram_quantile(0.99, sum(irate(istio_request_duration_seconds_bucket{reporter=~\"$qrep\", connection_security_policy!=\"mutual_tls\", destination_workload=~\"$workload\", destination_workload_namespace=~\"$namespace\", source_workload=~\"$srcwl\", source_workload_namespace=~\"$srcns\"}[1m])) by (source_workload, source_workload_namespace, le))",
+					labelMatchers,
+				),
+				dashboards.AddQueryDataSource(datasourceName),
+				query.SeriesNameFormat("{{source_workload}}.{{source_workload_namespace}} P99"),
 			),
 		),
 	)
 }
 
 func OutgoingRequestVolume(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
-	return panelgroup.AddPanel("Outgoing Request Volume",
+	return panelgroup.AddPanel("Outgoing Requests By Destination And Response Code",
 		panel.Description("Request volume from workload to destinations"),
 		timeSeriesPanel.Chart(
 			timeSeriesPanel.WithYAxis(timeSeriesPanel.YAxis{
-				Format: &commonSdk.Format{
-					Unit: string(commonSdk.RequestsPerSecondsUnit),
-				},
+				Min: 0,
 			}),
 			timeSeriesPanel.WithLegend(timeSeriesPanel.Legend{
 				Position: timeSeriesPanel.BottomPosition,
@@ -160,26 +208,36 @@ func OutgoingRequestVolume(datasourceName string, labelMatchers ...promql.LabelM
 			timeSeriesPanel.WithVisual(timeSeriesPanel.Visual{
 				Display:      timeSeriesPanel.LineDisplay,
 				ConnectNulls: false,
-				LineWidth:    0.25,
-				AreaOpacity:  0.5,
+				LineWidth:    1,
+				AreaOpacity:  0,
 				Palette:      timeSeriesPanel.Palette{Mode: timeSeriesPanel.AutoMode},
 			}),
 		),
 		panel.AddQuery(
 			query.PromQL(
 				promql.SetLabelMatchers(
-					"round(sum(irate(istio_requests_total{reporter=\"source\", source_workload=~\"$workload\", source_workload_namespace=~\"$namespace\", destination_service=~\"$dstsvc\", destination_workload=~\"$dstwl\", destination_workload_namespace=~\"$dstns\"}[$__rate_interval])) by (destination_workload, destination_workload_namespace), 0.001)",
+					"round(sum(irate(istio_requests_total{destination_principal=~\"spiffe.*\", source_workload_namespace=~\"$namespace\", source_workload=~\"$workload\", reporter=\"source\"}[5m])) by (destination_service, response_code), 0.001)",
 					labelMatchers,
 				),
 				dashboards.AddQueryDataSource(datasourceName),
-				query.SeriesNameFormat("{{ destination_workload }}.{{ destination_workload_namespace }}"),
+				query.SeriesNameFormat("{{ destination_service }} : {{ response_code }} (🔐mTLS)"),
+			),
+		),
+		panel.AddQuery(
+			query.PromQL(
+				promql.SetLabelMatchers(
+					"round(sum(irate(istio_requests_total{destination_principal!~\"spiffe.*\", source_workload_namespace=~\"$namespace\", source_workload=~\"$workload\", reporter=\"source\"}[5m])) by (destination_service, response_code), 0.001)",
+					labelMatchers,
+				),
+				dashboards.AddQueryDataSource(datasourceName),
+				query.SeriesNameFormat("{{ destination_service }} : {{ response_code }}"),
 			),
 		),
 	)
 }
 
 func OutgoingSuccessRate(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
-	return panelgroup.AddPanel("Outgoing Success Rate",
+	return panelgroup.AddPanel("Outgoing Success Rate (non-5xx responses) By Destination",
 		panel.Description("Success rate of outgoing requests from workload"),
 		timeSeriesPanel.Chart(
 			timeSeriesPanel.WithYAxis(timeSeriesPanel.YAxis{
@@ -196,19 +254,29 @@ func OutgoingSuccessRate(datasourceName string, labelMatchers ...promql.LabelMat
 			timeSeriesPanel.WithVisual(timeSeriesPanel.Visual{
 				Display:      timeSeriesPanel.LineDisplay,
 				ConnectNulls: false,
-				LineWidth:    0.25,
-				AreaOpacity:  0.5,
+				LineWidth:    1,
+				AreaOpacity:  0,
 				Palette:      timeSeriesPanel.Palette{Mode: timeSeriesPanel.AutoMode},
 			}),
 		),
 		panel.AddQuery(
 			query.PromQL(
 				promql.SetLabelMatchers(
-					"sum(irate(istio_requests_total{reporter=\"source\", source_workload=~\"$workload\", source_workload_namespace=~\"$namespace\", destination_service=~\"$dstsvc\", destination_workload=~\"$dstwl\", destination_workload_namespace=~\"$dstns\", response_code!~\"5.*\"}[$__rate_interval])) by (destination_workload, destination_workload_namespace) / sum(irate(istio_requests_total{reporter=\"source\", source_workload=~\"$workload\", source_workload_namespace=~\"$namespace\", destination_service=~\"$dstsvc\", destination_workload=~\"$dstwl\", destination_workload_namespace=~\"$dstns\"}[$__rate_interval])) by (destination_workload, destination_workload_namespace)",
+					"sum(irate(istio_requests_total{destination_principal=~\"spiffe.*\", source_workload_namespace=~\"$namespace\", source_workload=~\"$workload\", reporter=\"source\", response_code!~\"5.*\"}[5m])) by (destination_service) / sum(irate(istio_requests_total{destination_principal=~\"spiffe.*\", source_workload_namespace=~\"$namespace\", source_workload=~\"$workload\", reporter=\"source\"}[5m])) by (destination_service)",
 					labelMatchers,
 				),
 				dashboards.AddQueryDataSource(datasourceName),
-				query.SeriesNameFormat("{{ destination_workload }}.{{ destination_workload_namespace }}"),
+				query.SeriesNameFormat("{{ destination_service }} (🔐mTLS)"),
+			),
+		),
+		panel.AddQuery(
+			query.PromQL(
+				promql.SetLabelMatchers(
+					"sum(irate(istio_requests_total{destination_principal!~\"spiffe.*\", source_workload_namespace=~\"$namespace\", source_workload=~\"$workload\", reporter=\"source\", response_code!~\"5.*\"}[5m])) by (destination_service) / sum(irate(istio_requests_total{destination_principal!~\"spiffe.*\", source_workload_namespace=~\"$namespace\", source_workload=~\"$workload\", reporter=\"source\"}[5m])) by (destination_service)",
+					labelMatchers,
+				),
+				dashboards.AddQueryDataSource(datasourceName),
+				query.SeriesNameFormat("{{ destination_service }}"),
 			),
 		),
 	)
@@ -238,7 +306,7 @@ func TCPBytesReceived(datasourceName string, labelMatchers ...promql.LabelMatche
 		panel.AddQuery(
 			query.PromQL(
 				promql.SetLabelMatchers(
-					"sum(irate(istio_tcp_received_bytes_total{reporter=~\"$qrep\", destination_workload=~\"$workload\", destination_workload_namespace=~\"$namespace\", source_workload=~\"$srcwl\", source_workload_namespace=~\"$srcns\"}[$__rate_interval])) by (source_workload, source_workload_namespace)",
+					"sum(irate(istio_tcp_received_bytes_total{reporter=~\"$qrep\", destination_workload=~\"$workload\", destination_workload_namespace=~\"$namespace\", source_workload=~\"$srcwl\", source_workload_namespace=~\"$srcns\"}[1m])) by (source_workload, source_workload_namespace)",
 					labelMatchers,
 				),
 				dashboards.AddQueryDataSource(datasourceName),
@@ -272,11 +340,11 @@ func TCPBytesSent(datasourceName string, labelMatchers ...promql.LabelMatcher) p
 		panel.AddQuery(
 			query.PromQL(
 				promql.SetLabelMatchers(
-					"sum(irate(istio_tcp_sent_bytes_total{reporter=\"source\", source_workload=~\"$workload\", source_workload_namespace=~\"$namespace\", destination_service=~\"$dstsvc\", destination_workload=~\"$dstwl\", destination_workload_namespace=~\"$dstns\"}[$__rate_interval])) by (destination_workload, destination_workload_namespace)",
+					"sum(irate(istio_tcp_sent_bytes_total{reporter=\"source\", source_workload=~\"$workload\", source_workload_namespace=~\"$namespace\"}[1m])) by (destination_service)",
 					labelMatchers,
 				),
 				dashboards.AddQueryDataSource(datasourceName),
-				query.SeriesNameFormat("{{ destination_workload }}.{{ destination_workload_namespace }}"),
+				query.SeriesNameFormat("{{ destination_service }}"),
 			),
 		),
 	)
