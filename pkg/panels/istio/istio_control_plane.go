@@ -34,7 +34,7 @@ func PushSize(datasourceName string, labelMatchers ...promql.LabelMatcher) panel
 		panel.AddQuery(
 			query.PromQL(
 				promql.SetLabelMatchers(
-					"sum(rate(pilot_xds_config_size_bytes_bucket{}[1m])) by (le)",
+					"sum by (le) (rate(pilot_xds_config_size_bytes_bucket[1m]))",
 					labelMatchers,
 				),
 				dashboards.AddQueryDataSource(datasourceName),
@@ -68,7 +68,7 @@ func PushTime(datasourceName string, labelMatchers ...promql.LabelMatcher) panel
 		panel.AddQuery(
 			query.PromQL(
 				promql.SetLabelMatchers(
-					"sum(rate(pilot_xds_push_time_bucket{}[1m])) by (le)",
+					"sum by (le) (rate(pilot_xds_push_time_bucket[1m]))",
 					labelMatchers,
 				),
 				dashboards.AddQueryDataSource(datasourceName),
@@ -103,7 +103,7 @@ func Connections(datasourceName string, labelMatchers ...promql.LabelMatcher) pa
 		panel.AddQuery(
 			query.PromQL(
 				promql.SetLabelMatchers(
-					"sum (pilot_xds)",
+					"sum(pilot_xds)",
 					labelMatchers,
 				),
 				dashboards.AddQueryDataSource(datasourceName),
