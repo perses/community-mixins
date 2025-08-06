@@ -81,7 +81,7 @@
             "spec": {
               "calculation": "last",
               "format": {
-                "unit": "percent"
+                "unit": "percent-decimal"
               },
               "thresholds": {
                 "mode": "absolute",

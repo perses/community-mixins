@@ -202,7 +202,7 @@ func GlobalSuccessRate(datasourceName string, labelMatchers ...promql.LabelMatch
 		statPanel.Chart(
 			statPanel.Calculation(commonSdk.LastCalculation),
 			statPanel.Format(commonSdk.Format{
-				Unit: string(commonSdk.PercentUnit),
+				Unit: string(commonSdk.PercentDecimalUnit),
 			}),
 			statPanel.WithSparkline(statPanel.Sparkline{
 				Width: 1,

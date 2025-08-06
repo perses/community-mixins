@@ -116,7 +116,7 @@ spec:
           spec:
             calculation: last
             format:
-              unit: percent
+              unit: percent-decimal
             sparkline:
               width: 1
             thresholds:
