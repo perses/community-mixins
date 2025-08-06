@@ -14,7 +14,7 @@ spec:
             spec:
                 display:
                     name: Pilot Versions
-                    description: Istio pilot versions running.
+                    description: Version number of each running instance.
                 plugin:
                     kind: TimeSeriesChart
                     spec:
@@ -479,7 +479,7 @@ spec:
                                     kind: PrometheusDatasource
                                     name: prometheus-datasource
                                 query: sum(rate(galley_validation_passed[1m]))
-                                seriesNameFormat: Passed
+                                seriesNameFormat: Success
                     - kind: TimeSeriesQuery
                       spec:
                         plugin:
@@ -489,7 +489,7 @@ spec:
                                     kind: PrometheusDatasource
                                     name: prometheus-datasource
                                 query: sum(rate(galley_validation_failed[1m]))
-                                seriesNameFormat: Failed
+                                seriesNameFormat: Failure
         "3_1":
             kind: Panel
             spec:

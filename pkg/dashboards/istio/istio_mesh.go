@@ -6,12 +6,10 @@ import (
 	"github.com/perses/community-dashboards/pkg/promql"
 	"github.com/perses/perses/go-sdk/dashboard"
 	panelgroup "github.com/perses/perses/go-sdk/panel-group"
-	listVar "github.com/perses/perses/go-sdk/variable/list-variable"
-	labelValuesVar "github.com/perses/plugins/prometheus/sdk/go/variable/label-values"
 )
 
 func withMeshOverview(datasource string, labelMatcher promql.LabelMatcher) dashboard.Option {
-	return dashboard.AddPanelGroup("Mesh Overview",
+	return dashboard.AddPanelGroup("Global Traffic",
 		panelgroup.PanelsPerLine(4),
 		panelgroup.PanelHeight(6),
 		panels.GlobalRequestVolume(datasource, labelMatcher),
@@ -22,41 +20,32 @@ func withMeshOverview(datasource string, labelMatcher promql.LabelMatcher) dashb
 }
 
 func withMeshWorkloads(datasource string, labelMatcher promql.LabelMatcher) dashboard.Option {
-	return dashboard.AddPanelGroup("HTTP/gRPC Workloads",
+	return dashboard.AddPanelGroup("Global Traffic",
 		panelgroup.PanelsPerLine(1),
-		panelgroup.PanelHeight(12),
+		panelgroup.PanelHeight(16),
 		panels.HTTPGRPCWorkloads(datasource, labelMatcher),
-	)
-}
-
-func withMeshTCPServices(datasource string, labelMatcher promql.LabelMatcher) dashboard.Option {
-	return dashboard.AddPanelGroup("TCP Services",
-		panelgroup.PanelsPerLine(1),
-		panelgroup.PanelHeight(8),
 		panels.TCPServices(datasource, labelMatcher),
 	)
 }
 
+func withIstioComponentVersions(datasource string, labelMatcher promql.LabelMatcher) dashboard.Option {
+	return dashboard.AddPanelGroup("Istio Component Versions",
+		panelgroup.PanelsPerLine(1),
+		panelgroup.PanelHeight(8),
+		panels.IstioComponentVersions(datasource, labelMatcher),
+	)
+}
+
 func BuildIstioMesh(project string, datasource string, clusterLabelName string) dashboards.DashboardResult {
-	clusterLabelMatcher := dashboards.GetClusterLabelMatcher(clusterLabelName)
+	// Para coincidir con el original, no usamos variables ni label matchers
+	emptyLabelMatcher := promql.LabelMatcher{}
 	return dashboards.NewDashboardResult(
 		dashboard.New("istio-mesh",
 			dashboard.ProjectName(project),
-			dashboard.Name("Istio / Mesh"),
-			dashboard.AddVariable("cluster",
-				listVar.List(
-					labelValuesVar.PrometheusLabelValues("cluster",
-						labelValuesVar.Matchers("istio_requests_total"),
-						dashboards.AddVariableDatasource(datasource),
-					),
-					listVar.DisplayName("cluster"),
-					listVar.AllowMultiple(true),
-				),
-			),
-			dashboards.AddClusterVariable(datasource, clusterLabelName, "istio_requests_total"),
-			withMeshOverview(datasource, clusterLabelMatcher),
-			withMeshWorkloads(datasource, clusterLabelMatcher),
-			withMeshTCPServices(datasource, clusterLabelMatcher),
+			dashboard.Name("Istio Mesh Dashboard"),
+			withMeshOverview(datasource, emptyLabelMatcher),
+			withMeshWorkloads(datasource, emptyLabelMatcher),
+			withIstioComponentVersions(datasource, emptyLabelMatcher),
 		),
 	).Component("istio")
 }

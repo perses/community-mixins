@@ -22,7 +22,7 @@
         "spec": {
           "display": {
             "name": "Pilot Versions",
-            "description": "Istio pilot versions running."
+            "description": "Version number of each running instance."
           },
           "plugin": {
             "kind": "TimeSeriesChart",
@@ -735,7 +735,7 @@
                       "name": "prometheus-datasource"
                     },
                     "query": "sum(rate(galley_validation_passed[1m]))",
-                    "seriesNameFormat": "Passed"
+                    "seriesNameFormat": "Success"
                   }
                 }
               }
@@ -751,7 +751,7 @@
                       "name": "prometheus-datasource"
                     },
                     "query": "sum(rate(galley_validation_failed[1m]))",
-                    "seriesNameFormat": "Failed"
+                    "seriesNameFormat": "Failure"
                   }
                 }
               }
