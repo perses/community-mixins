@@ -17,36 +17,48 @@ spec:
   - kind: Grid
     spec:
       display:
-        title: Traffic
+        title: Process
       items:
       - content:
           $ref: '#/spec/panels/0_0'
         height: 8
-        width: 12
+        width: 8
         x: 0
         "y": 0
       - content:
           $ref: '#/spec/panels/0_1'
         height: 8
-        width: 12
-        x: 12
+        width: 8
+        x: 8
+        "y": 0
+      - content:
+          $ref: '#/spec/panels/0_2'
+        height: 8
+        width: 8
+        x: 16
         "y": 0
   - kind: Grid
     spec:
       display:
-        title: Resource Usage
+        title: Network
       items:
       - content:
           $ref: '#/spec/panels/1_0'
         height: 8
-        width: 12
+        width: 8
         x: 0
         "y": 0
       - content:
           $ref: '#/spec/panels/1_1'
         height: 8
-        width: 12
-        x: 12
+        width: 8
+        x: 8
+        "y": 0
+      - content:
+          $ref: '#/spec/panels/1_2'
+        height: 8
+        width: 8
+        x: 16
         "y": 0
   - kind: Grid
     spec:
@@ -56,65 +68,43 @@ spec:
       - content:
           $ref: '#/spec/panels/2_0'
         height: 8
-        width: 12
+        width: 8
         x: 0
         "y": 0
       - content:
           $ref: '#/spec/panels/2_1'
         height: 8
-        width: 12
-        x: 12
+        width: 8
+        x: 8
         "y": 0
-  - kind: Grid
-    spec:
-      display:
-        title: XDS
-      items:
       - content:
-          $ref: '#/spec/panels/3_0'
+          $ref: '#/spec/panels/2_2'
         height: 8
-        width: 12
-        x: 0
-        "y": 0
-      - content:
-          $ref: '#/spec/panels/3_1'
-        height: 8
-        width: 12
-        x: 12
-        "y": 0
-  - kind: Grid
-    spec:
-      display:
-        title: Status
-      items:
-      - content:
-          $ref: '#/spec/panels/4_0'
-        height: 6
-        width: 24
-        x: 0
+        width: 8
+        x: 16
         "y": 0
   panels:
     "0_0":
       kind: Panel
       spec:
         display:
-          description: Bytes transmitted through ztunnel
-          name: Bytes Transmitted
+          description: Version number of each running instance
+          name: Ztunnel Versions
         plugin:
           kind: TimeSeriesChart
           spec:
             legend:
-              mode: list
+              mode: table
               position: bottom
+              values:
+              - last
+              - max
             visual:
-              areaOpacity: 0.5
+              areaOpacity: 0.1
               display: line
-              lineWidth: 0.25
+              lineWidth: 1
               palette:
-                mode: auto
-            yAxis:
-              format:
-                unit: bytes/sec
+                mode: ""
         queries:
         - kind: TimeSeriesQuery
           spec:
@@ -124,110 +114,29 @@ spec:
                 datasource:
                   kind: PrometheusDatasource
                   name: prometheus-datasource
-                query: sum by (instance) (rate(istio_tcp_sent_bytes_total{source_app="ztunnel"}[1m]))
-                seriesNameFormat: Sent {{instance}}
-        - kind: TimeSeriesQuery
-          spec:
-            plugin:
-              kind: PrometheusTimeSeriesQuery
-              spec:
-                datasource:
-                  kind: PrometheusDatasource
-                  name: prometheus-datasource
-                query: sum by (instance) (rate(istio_tcp_received_bytes_total{source_app="ztunnel"}[1m]))
-                seriesNameFormat: Received {{instance}}
+                query: sum by (tag) (istio_build{component="ztunnel"})
+                seriesNameFormat: Version ({{tag}})
     "0_1":
       kind: Panel
       spec:
         display:
-          description: Active connections through ztunnel
-          name: Connections
-        plugin:
-          kind: TimeSeriesChart
-          spec:
-            legend:
-              mode: list
-              position: bottom
-            visual:
-              areaOpacity: 0.5
-              display: line
-              lineWidth: 0.25
-              palette:
-                mode: auto
-            yAxis:
-              format:
-                unit: decimal
-        queries:
-        - kind: TimeSeriesQuery
-          spec:
-            plugin:
-              kind: PrometheusTimeSeriesQuery
-              spec:
-                datasource:
-                  kind: PrometheusDatasource
-                  name: prometheus-datasource
-                query: sum by (instance) (istio_tcp_connections_opened_total{source_app="ztunnel"})
-                seriesNameFormat: Opened {{instance}}
-        - kind: TimeSeriesQuery
-          spec:
-            plugin:
-              kind: PrometheusTimeSeriesQuery
-              spec:
-                datasource:
-                  kind: PrometheusDatasource
-                  name: prometheus-datasource
-                query: sum by (instance) (istio_tcp_connections_closed_total{source_app="ztunnel"})
-                seriesNameFormat: Closed {{instance}}
-    "1_0":
-      kind: Panel
-      spec:
-        display:
-          description: CPU usage of ztunnel processes
-          name: CPU Usage
-        plugin:
-          kind: TimeSeriesChart
-          spec:
-            legend:
-              mode: list
-              position: bottom
-            visual:
-              areaOpacity: 0.5
-              display: line
-              lineWidth: 0.25
-              palette:
-                mode: auto
-            yAxis:
-              format:
-                unit: percent
-        queries:
-        - kind: TimeSeriesQuery
-          spec:
-            plugin:
-              kind: PrometheusTimeSeriesQuery
-              spec:
-                datasource:
-                  kind: PrometheusDatasource
-                  name: prometheus-datasource
-                query: rate(process_cpu_seconds_total{job="ztunnel"}[1m]) * 100
-                seriesNameFormat: '{{instance}}'
-    "1_1":
-      kind: Panel
-      spec:
-        display:
-          description: Memory usage of ztunnel processes
+          description: Memory usage of each running instance
           name: Memory Usage
         plugin:
           kind: TimeSeriesChart
           spec:
             legend:
-              mode: list
+              mode: table
               position: bottom
+              values:
+              - last
+              - max
             visual:
-              areaOpacity: 0.5
+              areaOpacity: 0.1
               display: line
-              lineWidth: 0.25
+              lineWidth: 1
               palette:
-                mode: auto
+                mode: ""
             yAxis:
               format:
                 unit: bytes
@@ -240,29 +149,154 @@ spec:
                 datasource:
                   kind: PrometheusDatasource
                   name: prometheus-datasource
-                query: process_resident_memory_bytes{job="ztunnel"}
-                seriesNameFormat: '{{instance}}'
-    "2_0":
+                query: sum by (pod) (container_memory_working_set_bytes{container="istio-proxy",pod=~"ztunnel-.*"})
+                seriesNameFormat: Container ({{pod}})
+    "0_2":
       kind: Panel
       spec:
         display:
-          description: DNS requests handled by ztunnel
+          description: CPU usage of each running instance
+          name: CPU Usage
+        plugin:
+          kind: TimeSeriesChart
+          spec:
+            legend:
+              mode: table
+              position: bottom
+              values:
+              - last
+              - max
+            visual:
+              areaOpacity: 0.1
+              display: line
+              lineWidth: 1
+              palette:
+                mode: ""
+        queries:
+        - kind: TimeSeriesQuery
+          spec:
+            plugin:
+              kind: PrometheusTimeSeriesQuery
+              spec:
+                datasource:
+                  kind: PrometheusDatasource
+                  name: prometheus-datasource
+                query: |-
+                  sum by (pod) (
+                    irate(container_cpu_usage_seconds_total{container="istio-proxy",pod=~"ztunnel-.*"}[$__rate_interval])
+                  )
+                seriesNameFormat: Container ({{pod}})
+    "1_0":
+      kind: Panel
+      spec:
+        display:
+          description: Connections opened and closed per instance
+          name: Connections
+        plugin:
+          kind: TimeSeriesChart
+          spec:
+            legend:
+              mode: table
+              position: bottom
+              values:
+              - last
+              - max
+            visual:
+              areaOpacity: 0.1
+              display: line
+              lineWidth: 1
+              palette:
+                mode: ""
+            yAxis:
+              format:
+                unit: counts/sec
+        queries:
+        - kind: TimeSeriesQuery
+          spec:
+            plugin:
+              kind: PrometheusTimeSeriesQuery
+              spec:
+                datasource:
+                  kind: PrometheusDatasource
+                  name: prometheus-datasource
+                query: sum by (pod) (rate(istio_tcp_connections_opened_total{pod=~"ztunnel-.*"}[$__rate_interval]))
+                seriesNameFormat: Opened ({{pod}})
+        - kind: TimeSeriesQuery
+          spec:
+            plugin:
+              kind: PrometheusTimeSeriesQuery
+              spec:
+                datasource:
+                  kind: PrometheusDatasource
+                  name: prometheus-datasource
+                query: -sum by (pod) (rate(istio_tcp_connections_closed_total{pod=~"ztunnel-.*"}[$__rate_interval]))
+                seriesNameFormat: Closed ({{pod}})
+    "1_1":
+      kind: Panel
+      spec:
+        display:
+          description: Bytes sent and received per instance
+          name: Bytes Transmitted
+        plugin:
+          kind: TimeSeriesChart
+          spec:
+            legend:
+              mode: table
+              position: bottom
+              values:
+              - last
+              - max
+            visual:
+              areaOpacity: 0.1
+              display: line
+              lineWidth: 1
+              palette:
+                mode: ""
+            yAxis:
+              format:
+                unit: bytes/sec
+        queries:
+        - kind: TimeSeriesQuery
+          spec:
+            plugin:
+              kind: PrometheusTimeSeriesQuery
+              spec:
+                datasource:
+                  kind: PrometheusDatasource
+                  name: prometheus-datasource
+                query: sum by (pod) (rate(istio_tcp_sent_bytes_total{pod=~"ztunnel-.*"}[$__rate_interval]))
+                seriesNameFormat: Sent ({{pod}})
+        - kind: TimeSeriesQuery
+          spec:
+            plugin:
+              kind: PrometheusTimeSeriesQuery
+              spec:
+                datasource:
+                  kind: PrometheusDatasource
+                  name: prometheus-datasource
+                query: sum by (pod) (rate(istio_tcp_received_bytes_total{pod=~"ztunnel-.*"}[$__rate_interval]))
+                seriesNameFormat: Received ({{pod}})
+    "1_2":
+      kind: Panel
+      spec:
+        display:
+          description: DNS queries received per instance
           name: DNS Request
         plugin:
           kind: TimeSeriesChart
           spec:
             legend:
-              mode: list
+              mode: table
               position: bottom
+              values:
+              - last
+              - max
             visual:
-              areaOpacity: 0.5
+              areaOpacity: 0.1
               display: line
-              lineWidth: 0.25
+              lineWidth: 1
               palette:
-                mode: auto
-            yAxis:
-              format:
-                unit: decimal
+                mode: ""
         queries:
         - kind: TimeSeriesQuery
           spec:
@@ -272,62 +306,31 @@ spec:
                 datasource:
                   kind: PrometheusDatasource
                   name: prometheus-datasource
-                query: sum by (instance) (rate(ztunnel_dns_queries_total[1m]))
-                seriesNameFormat: '{{instance}}'
-    "2_1":
+                query: sum by (pod) (rate(istio_dns_requests_total{pod=~"ztunnel-.*"}[$__rate_interval]))
+                seriesNameFormat: Request ({{pod}})
+    "2_0":
       kind: Panel
       spec:
         display:
-          description: Workload management operations in ztunnel
-          name: Workload Manager
-        plugin:
-          kind: TimeSeriesChart
-          spec:
-            legend:
-              mode: list
-              position: bottom
-            visual:
-              areaOpacity: 0.5
-              display: line
-              lineWidth: 0.25
-              palette:
-                mode: auto
-              stack: all
-            yAxis:
-              format:
-                unit: decimal
-        queries:
-        - kind: TimeSeriesQuery
-          spec:
-            plugin:
-              kind: PrometheusTimeSeriesQuery
-              spec:
-                datasource:
-                  kind: PrometheusDatasource
-                  name: prometheus-datasource
-                query: sum by (operation) (rate(ztunnel_workload_manager_updates_total[1m]))
-                seriesNameFormat: '{{operation}}'
-    "3_0":
-      kind: Panel
-      spec:
-        display:
-          description: XDS connections from ztunnel to control plane
+          description: |
+            Count of XDS connection terminations.
+            This will typically spike every 30min for each instance.
           name: XDS Connections
         plugin:
           kind: TimeSeriesChart
           spec:
             legend:
-              mode: list
+              mode: table
               position: bottom
+              values:
+              - last
+              - max
             visual:
-              areaOpacity: 0.5
+              areaOpacity: 0.1
               display: line
-              lineWidth: 0.25
+              lineWidth: 1
               palette:
-                mode: auto
-            yAxis:
-              format:
-                unit: decimal
+                mode: ""
         queries:
         - kind: TimeSeriesQuery
           spec:
@@ -337,13 +340,12 @@ spec:
                 datasource:
                   kind: PrometheusDatasource
                   name: prometheus-datasource
-                query: sum by (instance) (envoy_cluster_upstream_cx_active{source_app="ztunnel"})
-                seriesNameFormat: '{{instance}}'
-    "3_1":
+                query: sum by (pod) (rate(istio_xds_connection_terminations_total{pod=~"ztunnel-.*"}[$__rate_interval]))
+                seriesNameFormat: XDS Connection Terminations ({{pod}})
+    "2_1":
       kind: Panel
       spec:
         display:
-          description: XDS configuration pushes to ztunnel
           name: XDS Pushes
         plugin:
           kind: TimeSeriesChart
@@ -352,15 +354,12 @@ spec:
               mode: list
               position: bottom
             visual:
-              areaOpacity: 0.5
-              display: line
-              lineWidth: 0.25
+              areaOpacity: 1
+              display: bar
+              lineWidth: 1
               palette:
-                mode: auto
+                mode: ""
               stack: all
-            yAxis:
-              format:
-                unit: decimal
         queries:
         - kind: TimeSeriesQuery
           spec:
@@ -370,29 +369,31 @@ spec:
                 datasource:
                   kind: PrometheusDatasource
                   name: prometheus-datasource
-                query: sum by (type) (rate(pilot_xds_pushes{source_app="ztunnel"}[1m]))
-                seriesNameFormat: '{{type}}'
-    "4_0":
+                query: sum by (url) (irate(istio_xds_message_total{pod=~"ztunnel-.*"}[$__rate_interval]))
+                seriesNameFormat: '{{url}}'
+    "2_2":
       kind: Panel
       spec:
         display:
-          description: Ztunnel versions running
-          name: Ztunnel Versions
+          description: |
+            Count of active and pending proxies managed by each instance.
+            Pending is expected to converge to zero.
+          name: Workload Manager
         plugin:
           kind: TimeSeriesChart
           spec:
             legend:
-              mode: list
+              mode: table
               position: bottom
+              values:
+              - last
+              - max
             visual:
-              areaOpacity: 0.5
+              areaOpacity: 0.1
               display: line
-              lineWidth: 0.25
+              lineWidth: 1
               palette:
-                mode: auto
-            yAxis:
-              format:
-                unit: decimal
+                mode: ""
         queries:
         - kind: TimeSeriesQuery
           spec:
@@ -402,24 +403,16 @@ spec:
                 datasource:
                   kind: PrometheusDatasource
                   name: prometheus-datasource
-                query: sum by (tag) (ztunnel_build_info)
-                seriesNameFormat: '{{tag}}'
-  variables:
-  - kind: ListVariable
-    spec:
-      allowAllValue: false
-      allowMultiple: true
-      display:
-        hidden: false
-        name: cluster
-      name: cluster
-      plugin:
-        kind: PrometheusLabelValuesVariable
-        spec:
-          datasource:
-            kind: PrometheusDatasource
-            name: prometheus-datasource
-          labelName: cluster
-          matchers:
-          - ztunnel_build_info{}
+                query: sum by (pod) (workload_manager_active_proxy_count{pod=~"ztunnel-.*"})
+                seriesNameFormat: Active Proxies ({{pod}})
+        - kind: TimeSeriesQuery
+          spec:
+            plugin:
+              kind: PrometheusTimeSeriesQuery
+              spec:
+                datasource:
+                  kind: PrometheusDatasource
+                  name: prometheus-datasource
+                query: sum by (pod) (workload_manager_pending_proxy_count{pod=~"ztunnel-.*"})
+                seriesNameFormat: Pending Proxies ({{pod}})
 status: {}

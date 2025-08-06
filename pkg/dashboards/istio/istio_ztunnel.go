@@ -6,76 +6,48 @@ import (
 	"github.com/perses/community-dashboards/pkg/promql"
 	"github.com/perses/perses/go-sdk/dashboard"
 	panelgroup "github.com/perses/perses/go-sdk/panel-group"
-	listVar "github.com/perses/perses/go-sdk/variable/list-variable"
-	labelValuesVar "github.com/perses/plugins/prometheus/sdk/go/variable/label-values"
 )
 
-func withZtunnelTraffic(datasource string, labelMatcher promql.LabelMatcher) dashboard.Option {
-	return dashboard.AddPanelGroup("Traffic",
-		panelgroup.PanelsPerLine(2),
+func withProcessGroup(datasource string, labelMatcher promql.LabelMatcher) dashboard.Option {
+	return dashboard.AddPanelGroup("Process",
+		panelgroup.PanelsPerLine(3),
 		panelgroup.PanelHeight(8),
-		panels.ZtunnelBytesTransmitted(datasource, labelMatcher),
-		panels.ZtunnelConnections(datasource, labelMatcher),
-	)
-}
-
-func withZtunnelResources(datasource string, labelMatcher promql.LabelMatcher) dashboard.Option {
-	return dashboard.AddPanelGroup("Resource Usage",
-		panelgroup.PanelsPerLine(2),
-		panelgroup.PanelHeight(8),
-		panels.ZtunnelCPUUsage(datasource, labelMatcher),
+		panels.ZtunnelVersions(datasource, labelMatcher),
 		panels.ZtunnelMemoryUsage(datasource, labelMatcher),
+		panels.ZtunnelCPUUsage(datasource, labelMatcher),
 	)
 }
 
-func withZtunnelOperations(datasource string, labelMatcher promql.LabelMatcher) dashboard.Option {
-	return dashboard.AddPanelGroup("Operations",
-		panelgroup.PanelsPerLine(2),
+func withNetworkGroup(datasource string, labelMatcher promql.LabelMatcher) dashboard.Option {
+	return dashboard.AddPanelGroup("Network",
+		panelgroup.PanelsPerLine(3),
 		panelgroup.PanelHeight(8),
+		panels.ZtunnelConnections(datasource, labelMatcher),
+		panels.ZtunnelBytesTransmitted(datasource, labelMatcher),
 		panels.ZtunnelDNSRequest(datasource, labelMatcher),
+	)
+}
+
+func withOperationsGroup(datasource string, labelMatcher promql.LabelMatcher) dashboard.Option {
+	return dashboard.AddPanelGroup("Operations",
+		panelgroup.PanelsPerLine(3),
+		panelgroup.PanelHeight(8),
+		panels.ZtunnelXDSConnections(datasource, labelMatcher),
+		panels.ZtunnelXDSPushes(datasource, labelMatcher),
 		panels.ZtunnelWorkloadManager(datasource, labelMatcher),
 	)
 }
 
-func withZtunnelXDS(datasource string, labelMatcher promql.LabelMatcher) dashboard.Option {
-	return dashboard.AddPanelGroup("XDS",
-		panelgroup.PanelsPerLine(2),
-		panelgroup.PanelHeight(8),
-		panels.ZtunnelXDSConnections(datasource, labelMatcher),
-		panels.ZtunnelXDSPushes(datasource, labelMatcher),
-	)
-}
-
-func withZtunnelStatus(datasource string, labelMatcher promql.LabelMatcher) dashboard.Option {
-	return dashboard.AddPanelGroup("Status",
-		panelgroup.PanelsPerLine(1),
-		panelgroup.PanelHeight(6),
-		panels.ZtunnelVersions(datasource, labelMatcher),
-	)
-}
-
 func BuildIstioZtunnel(project string, datasource string, clusterLabelName string) dashboards.DashboardResult {
-	clusterLabelMatcher := dashboards.GetClusterLabelMatcher(clusterLabelName)
+	// Para coincidir con el original, no usamos variables ni label matchers
+	emptyLabelMatcher := promql.LabelMatcher{}
 	return dashboards.NewDashboardResult(
 		dashboard.New("istio-ztunnel-dashboard",
 			dashboard.ProjectName(project),
 			dashboard.Name("Istio Ztunnel Dashboard"),
-			dashboard.AddVariable("cluster",
-				listVar.List(
-					labelValuesVar.PrometheusLabelValues("cluster",
-						labelValuesVar.Matchers("ztunnel_build_info"),
-						dashboards.AddVariableDatasource(datasource),
-					),
-					listVar.DisplayName("cluster"),
-					listVar.AllowMultiple(true),
-				),
-			),
-			dashboards.AddClusterVariable(datasource, clusterLabelName, "ztunnel_build_info"),
-			withZtunnelTraffic(datasource, clusterLabelMatcher),
-			withZtunnelResources(datasource, clusterLabelMatcher),
-			withZtunnelOperations(datasource, clusterLabelMatcher),
-			withZtunnelXDS(datasource, clusterLabelMatcher),
-			withZtunnelStatus(datasource, clusterLabelMatcher),
+			withProcessGroup(datasource, emptyLabelMatcher),
+			withNetworkGroup(datasource, emptyLabelMatcher),
+			withOperationsGroup(datasource, emptyLabelMatcher),
 		),
 	).Component("istio")
 }

@@ -12,43 +12,43 @@ import (
 
 func ZtunnelBytesTransmitted(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
 	return panelgroup.AddPanel("Bytes Transmitted",
-		panel.Description("Bytes transmitted through ztunnel"),
+		panel.Description("Bytes sent and received per instance"),
 		timeSeriesPanel.Chart(
 			timeSeriesPanel.WithYAxis(timeSeriesPanel.YAxis{
 				Format: &commonSdk.Format{
-					Unit: string(commonSdk.BytesPerSecondsUnit),
+					Unit: "bytes/sec",
 				},
 			}),
 			timeSeriesPanel.WithLegend(timeSeriesPanel.Legend{
 				Position: timeSeriesPanel.BottomPosition,
-				Mode:     timeSeriesPanel.ListMode,
+				Mode:     timeSeriesPanel.TableMode,
+				Values:   []commonSdk.Calculation{commonSdk.LastCalculation, commonSdk.MaxCalculation},
 			}),
 			timeSeriesPanel.WithVisual(timeSeriesPanel.Visual{
 				Display:      timeSeriesPanel.LineDisplay,
 				ConnectNulls: false,
-				LineWidth:    0.25,
-				AreaOpacity:  0.5,
-				Palette:      timeSeriesPanel.Palette{Mode: timeSeriesPanel.AutoMode},
+				LineWidth:    1,
+				AreaOpacity:  0.1,
 			}),
 		),
 		panel.AddQuery(
 			query.PromQL(
 				promql.SetLabelMatchers(
-					"sum(rate(istio_tcp_sent_bytes_total{source_app=\"ztunnel\"}[1m])) by (instance)",
+					"sum by (pod) (rate(istio_tcp_sent_bytes_total{pod=~\"ztunnel-.*\"}[$__rate_interval]))",
 					labelMatchers,
 				),
 				dashboards.AddQueryDataSource(datasourceName),
-				query.SeriesNameFormat("Sent {{instance}}"),
+				query.SeriesNameFormat("Sent ({{pod}})"),
 			),
 		),
 		panel.AddQuery(
 			query.PromQL(
 				promql.SetLabelMatchers(
-					"sum(rate(istio_tcp_received_bytes_total{source_app=\"ztunnel\"}[1m])) by (instance)",
+					"sum by (pod) (rate(istio_tcp_received_bytes_total{pod=~\"ztunnel-.*\"}[$__rate_interval]))",
 					labelMatchers,
 				),
 				dashboards.AddQueryDataSource(datasourceName),
-				query.SeriesNameFormat("Received {{instance}}"),
+				query.SeriesNameFormat("Received ({{pod}})"),
 			),
 		),
 	)
@@ -56,44 +56,43 @@ func ZtunnelBytesTransmitted(datasourceName string, labelMatchers ...promql.Labe
 
 func ZtunnelConnections(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
 	return panelgroup.AddPanel("Connections",
-		panel.Description("Active connections through ztunnel"),
+		panel.Description("Connections opened and closed per instance"),
 		timeSeriesPanel.Chart(
 			timeSeriesPanel.WithYAxis(timeSeriesPanel.YAxis{
 				Format: &commonSdk.Format{
-					Unit:          string(commonSdk.DecimalUnit),
-					DecimalPlaces: 0,
+					Unit: "counts/sec",
 				},
 			}),
 			timeSeriesPanel.WithLegend(timeSeriesPanel.Legend{
 				Position: timeSeriesPanel.BottomPosition,
-				Mode:     timeSeriesPanel.ListMode,
+				Mode:     timeSeriesPanel.TableMode,
+				Values:   []commonSdk.Calculation{commonSdk.LastCalculation, commonSdk.MaxCalculation},
 			}),
 			timeSeriesPanel.WithVisual(timeSeriesPanel.Visual{
 				Display:      timeSeriesPanel.LineDisplay,
 				ConnectNulls: false,
-				LineWidth:    0.25,
-				AreaOpacity:  0.5,
-				Palette:      timeSeriesPanel.Palette{Mode: timeSeriesPanel.AutoMode},
+				LineWidth:    1,
+				AreaOpacity:  0.1,
 			}),
 		),
 		panel.AddQuery(
 			query.PromQL(
 				promql.SetLabelMatchers(
-					"sum(istio_tcp_connections_opened_total{source_app=\"ztunnel\"}) by (instance)",
+					"sum by (pod) (rate(istio_tcp_connections_opened_total{pod=~\"ztunnel-.*\"}[$__rate_interval]))",
 					labelMatchers,
 				),
 				dashboards.AddQueryDataSource(datasourceName),
-				query.SeriesNameFormat("Opened {{instance}}"),
+				query.SeriesNameFormat("Opened ({{pod}})"),
 			),
 		),
 		panel.AddQuery(
 			query.PromQL(
 				promql.SetLabelMatchers(
-					"sum(istio_tcp_connections_closed_total{source_app=\"ztunnel\"}) by (instance)",
+					"-sum by (pod) (rate(istio_tcp_connections_closed_total{pod=~\"ztunnel-.*\"}[$__rate_interval]))",
 					labelMatchers,
 				),
 				dashboards.AddQueryDataSource(datasourceName),
-				query.SeriesNameFormat("Closed {{instance}}"),
+				query.SeriesNameFormat("Closed ({{pod}})"),
 			),
 		),
 	)
@@ -101,33 +100,28 @@ func ZtunnelConnections(datasourceName string, labelMatchers ...promql.LabelMatc
 
 func ZtunnelCPUUsage(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
 	return panelgroup.AddPanel("CPU Usage",
-		panel.Description("CPU usage of ztunnel processes"),
+		panel.Description("CPU usage of each running instance"),
 		timeSeriesPanel.Chart(
-			timeSeriesPanel.WithYAxis(timeSeriesPanel.YAxis{
-				Format: &commonSdk.Format{
-					Unit: string(commonSdk.PercentUnit),
-				},
-			}),
 			timeSeriesPanel.WithLegend(timeSeriesPanel.Legend{
 				Position: timeSeriesPanel.BottomPosition,
-				Mode:     timeSeriesPanel.ListMode,
+				Mode:     timeSeriesPanel.TableMode,
+				Values:   []commonSdk.Calculation{commonSdk.LastCalculation, commonSdk.MaxCalculation},
 			}),
 			timeSeriesPanel.WithVisual(timeSeriesPanel.Visual{
 				Display:      timeSeriesPanel.LineDisplay,
 				ConnectNulls: false,
-				LineWidth:    0.25,
-				AreaOpacity:  0.5,
-				Palette:      timeSeriesPanel.Palette{Mode: timeSeriesPanel.AutoMode},
+				LineWidth:    1,
+				AreaOpacity:  0.1,
 			}),
 		),
 		panel.AddQuery(
 			query.PromQL(
 				promql.SetLabelMatchers(
-					"rate(process_cpu_seconds_total{job=\"ztunnel\"}[1m]) * 100",
+					"sum by (pod) (irate(container_cpu_usage_seconds_total{container=\"istio-proxy\",pod=~\"ztunnel-.*\"}[$__rate_interval]))",
 					labelMatchers,
 				),
 				dashboards.AddQueryDataSource(datasourceName),
-				query.SeriesNameFormat("{{instance}}"),
+				query.SeriesNameFormat("Container ({{pod}})"),
 			),
 		),
 	)
@@ -135,34 +129,28 @@ func ZtunnelCPUUsage(datasourceName string, labelMatchers ...promql.LabelMatcher
 
 func ZtunnelDNSRequest(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
 	return panelgroup.AddPanel("DNS Request",
-		panel.Description("DNS requests handled by ztunnel"),
+		panel.Description("DNS queries received per instance"),
 		timeSeriesPanel.Chart(
-			timeSeriesPanel.WithYAxis(timeSeriesPanel.YAxis{
-				Format: &commonSdk.Format{
-					Unit:          string(commonSdk.DecimalUnit),
-					DecimalPlaces: 0,
-				},
-			}),
 			timeSeriesPanel.WithLegend(timeSeriesPanel.Legend{
 				Position: timeSeriesPanel.BottomPosition,
-				Mode:     timeSeriesPanel.ListMode,
+				Mode:     timeSeriesPanel.TableMode,
+				Values:   []commonSdk.Calculation{commonSdk.LastCalculation, commonSdk.MaxCalculation},
 			}),
 			timeSeriesPanel.WithVisual(timeSeriesPanel.Visual{
 				Display:      timeSeriesPanel.LineDisplay,
 				ConnectNulls: false,
-				LineWidth:    0.25,
-				AreaOpacity:  0.5,
-				Palette:      timeSeriesPanel.Palette{Mode: timeSeriesPanel.AutoMode},
+				LineWidth:    1,
+				AreaOpacity:  0.1,
 			}),
 		),
 		panel.AddQuery(
 			query.PromQL(
 				promql.SetLabelMatchers(
-					"sum(rate(ztunnel_dns_queries_total[1m])) by (instance)",
+					"sum by (pod) (rate(istio_dns_requests_total{pod=~\"ztunnel-.*\"}[$__rate_interval]))",
 					labelMatchers,
 				),
 				dashboards.AddQueryDataSource(datasourceName),
-				query.SeriesNameFormat("{{instance}}"),
+				query.SeriesNameFormat("Request ({{pod}})"),
 			),
 		),
 	)
@@ -170,7 +158,7 @@ func ZtunnelDNSRequest(datasourceName string, labelMatchers ...promql.LabelMatch
 
 func ZtunnelMemoryUsage(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
 	return panelgroup.AddPanel("Memory Usage",
-		panel.Description("Memory usage of ztunnel processes"),
+		panel.Description("Memory usage of each running instance"),
 		timeSeriesPanel.Chart(
 			timeSeriesPanel.WithYAxis(timeSeriesPanel.YAxis{
 				Format: &commonSdk.Format{
@@ -179,24 +167,24 @@ func ZtunnelMemoryUsage(datasourceName string, labelMatchers ...promql.LabelMatc
 			}),
 			timeSeriesPanel.WithLegend(timeSeriesPanel.Legend{
 				Position: timeSeriesPanel.BottomPosition,
-				Mode:     timeSeriesPanel.ListMode,
+				Mode:     timeSeriesPanel.TableMode,
+				Values:   []commonSdk.Calculation{commonSdk.LastCalculation, commonSdk.MaxCalculation},
 			}),
 			timeSeriesPanel.WithVisual(timeSeriesPanel.Visual{
 				Display:      timeSeriesPanel.LineDisplay,
 				ConnectNulls: false,
-				LineWidth:    0.25,
-				AreaOpacity:  0.5,
-				Palette:      timeSeriesPanel.Palette{Mode: timeSeriesPanel.AutoMode},
+				LineWidth:    1,
+				AreaOpacity:  0.1,
 			}),
 		),
 		panel.AddQuery(
 			query.PromQL(
 				promql.SetLabelMatchers(
-					"process_resident_memory_bytes{job=\"ztunnel\"}",
+					"sum by (pod) (container_memory_working_set_bytes{container=\"istio-proxy\",pod=~\"ztunnel-.*\"})",
 					labelMatchers,
 				),
 				dashboards.AddQueryDataSource(datasourceName),
-				query.SeriesNameFormat("{{instance}}"),
+				query.SeriesNameFormat("Container ({{pod}})"),
 			),
 		),
 	)
@@ -204,35 +192,38 @@ func ZtunnelMemoryUsage(datasourceName string, labelMatchers ...promql.LabelMatc
 
 func ZtunnelWorkloadManager(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
 	return panelgroup.AddPanel("Workload Manager",
-		panel.Description("Workload management operations in ztunnel"),
+		panel.Description("Count of active and pending proxies managed by each instance.\nPending is expected to converge to zero.\n"),
 		timeSeriesPanel.Chart(
-			timeSeriesPanel.WithYAxis(timeSeriesPanel.YAxis{
-				Format: &commonSdk.Format{
-					Unit:          string(commonSdk.DecimalUnit),
-					DecimalPlaces: 0,
-				},
-			}),
 			timeSeriesPanel.WithLegend(timeSeriesPanel.Legend{
 				Position: timeSeriesPanel.BottomPosition,
-				Mode:     timeSeriesPanel.ListMode,
+				Mode:     timeSeriesPanel.TableMode,
+				Values:   []commonSdk.Calculation{commonSdk.LastCalculation, commonSdk.MaxCalculation},
 			}),
 			timeSeriesPanel.WithVisual(timeSeriesPanel.Visual{
 				Display:      timeSeriesPanel.LineDisplay,
 				ConnectNulls: false,
-				LineWidth:    0.25,
-				AreaOpacity:  0.5,
-				Stack:        timeSeriesPanel.AllStack,
-				Palette:      timeSeriesPanel.Palette{Mode: timeSeriesPanel.AutoMode},
+				LineWidth:    1,
+				AreaOpacity:  0.1,
 			}),
 		),
 		panel.AddQuery(
 			query.PromQL(
 				promql.SetLabelMatchers(
-					"sum(rate(ztunnel_workload_manager_updates_total[1m])) by (operation)",
+					"sum by (pod) (workload_manager_active_proxy_count{pod=~\"ztunnel-.*\"})",
 					labelMatchers,
 				),
 				dashboards.AddQueryDataSource(datasourceName),
-				query.SeriesNameFormat("{{operation}}"),
+				query.SeriesNameFormat("Active Proxies ({{pod}})"),
+			),
+		),
+		panel.AddQuery(
+			query.PromQL(
+				promql.SetLabelMatchers(
+					"sum by (pod) (workload_manager_pending_proxy_count{pod=~\"ztunnel-.*\"})",
+					labelMatchers,
+				),
+				dashboards.AddQueryDataSource(datasourceName),
+				query.SeriesNameFormat("Pending Proxies ({{pod}})"),
 			),
 		),
 	)
@@ -240,34 +231,28 @@ func ZtunnelWorkloadManager(datasourceName string, labelMatchers ...promql.Label
 
 func ZtunnelXDSConnections(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
 	return panelgroup.AddPanel("XDS Connections",
-		panel.Description("XDS connections from ztunnel to control plane"),
+		panel.Description("Count of XDS connection terminations.\nThis will typically spike every 30min for each instance.\n"),
 		timeSeriesPanel.Chart(
-			timeSeriesPanel.WithYAxis(timeSeriesPanel.YAxis{
-				Format: &commonSdk.Format{
-					Unit:          string(commonSdk.DecimalUnit),
-					DecimalPlaces: 0,
-				},
-			}),
 			timeSeriesPanel.WithLegend(timeSeriesPanel.Legend{
 				Position: timeSeriesPanel.BottomPosition,
-				Mode:     timeSeriesPanel.ListMode,
+				Mode:     timeSeriesPanel.TableMode,
+				Values:   []commonSdk.Calculation{commonSdk.LastCalculation, commonSdk.MaxCalculation},
 			}),
 			timeSeriesPanel.WithVisual(timeSeriesPanel.Visual{
 				Display:      timeSeriesPanel.LineDisplay,
 				ConnectNulls: false,
-				LineWidth:    0.25,
-				AreaOpacity:  0.5,
-				Palette:      timeSeriesPanel.Palette{Mode: timeSeriesPanel.AutoMode},
+				LineWidth:    1,
+				AreaOpacity:  0.1,
 			}),
 		),
 		panel.AddQuery(
 			query.PromQL(
 				promql.SetLabelMatchers(
-					"sum(envoy_cluster_upstream_cx_active{source_app=\"ztunnel\"}) by (instance)",
+					"sum by (pod) (rate(istio_xds_connection_terminations_total{pod=~\"ztunnel-.*\"}[$__rate_interval]))",
 					labelMatchers,
 				),
 				dashboards.AddQueryDataSource(datasourceName),
-				query.SeriesNameFormat("{{instance}}"),
+				query.SeriesNameFormat("XDS Connection Terminations ({{pod}})"),
 			),
 		),
 	)
@@ -275,35 +260,28 @@ func ZtunnelXDSConnections(datasourceName string, labelMatchers ...promql.LabelM
 
 func ZtunnelXDSPushes(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
 	return panelgroup.AddPanel("XDS Pushes",
-		panel.Description("XDS configuration pushes to ztunnel"),
 		timeSeriesPanel.Chart(
-			timeSeriesPanel.WithYAxis(timeSeriesPanel.YAxis{
-				Format: &commonSdk.Format{
-					Unit:          string(commonSdk.DecimalUnit),
-					DecimalPlaces: 0,
-				},
-			}),
 			timeSeriesPanel.WithLegend(timeSeriesPanel.Legend{
 				Position: timeSeriesPanel.BottomPosition,
 				Mode:     timeSeriesPanel.ListMode,
+				Values:   []commonSdk.Calculation{},
 			}),
 			timeSeriesPanel.WithVisual(timeSeriesPanel.Visual{
-				Display:      timeSeriesPanel.LineDisplay,
+				Display:      timeSeriesPanel.BarDisplay,
 				ConnectNulls: false,
-				LineWidth:    0.25,
-				AreaOpacity:  0.5,
+				LineWidth:    1,
+				AreaOpacity:  1,
 				Stack:        timeSeriesPanel.AllStack,
-				Palette:      timeSeriesPanel.Palette{Mode: timeSeriesPanel.AutoMode},
 			}),
 		),
 		panel.AddQuery(
 			query.PromQL(
 				promql.SetLabelMatchers(
-					"sum(rate(pilot_xds_pushes{source_app=\"ztunnel\"}[1m])) by (type)",
+					"sum by (url) (irate(istio_xds_message_total{pod=~\"ztunnel-.*\"}[$__rate_interval]))",
 					labelMatchers,
 				),
 				dashboards.AddQueryDataSource(datasourceName),
-				query.SeriesNameFormat("{{type}}"),
+				query.SeriesNameFormat("{{url}}"),
 			),
 		),
 	)
@@ -311,34 +289,28 @@ func ZtunnelXDSPushes(datasourceName string, labelMatchers ...promql.LabelMatche
 
 func ZtunnelVersions(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
 	return panelgroup.AddPanel("Ztunnel Versions",
-		panel.Description("Ztunnel versions running"),
+		panel.Description("Version number of each running instance"),
 		timeSeriesPanel.Chart(
-			timeSeriesPanel.WithYAxis(timeSeriesPanel.YAxis{
-				Format: &commonSdk.Format{
-					Unit:          string(commonSdk.DecimalUnit),
-					DecimalPlaces: 0,
-				},
-			}),
 			timeSeriesPanel.WithLegend(timeSeriesPanel.Legend{
 				Position: timeSeriesPanel.BottomPosition,
-				Mode:     timeSeriesPanel.ListMode,
+				Mode:     timeSeriesPanel.TableMode,
+				Values:   []commonSdk.Calculation{commonSdk.LastCalculation, commonSdk.MaxCalculation},
 			}),
 			timeSeriesPanel.WithVisual(timeSeriesPanel.Visual{
 				Display:      timeSeriesPanel.LineDisplay,
 				ConnectNulls: false,
-				LineWidth:    0.25,
-				AreaOpacity:  0.5,
-				Palette:      timeSeriesPanel.Palette{Mode: timeSeriesPanel.AutoMode},
+				LineWidth:    1,
+				AreaOpacity:  0.1,
 			}),
 		),
 		panel.AddQuery(
 			query.PromQL(
 				promql.SetLabelMatchers(
-					"sum by (tag) (ztunnel_build_info)",
+					"sum by (tag) (istio_build{component=\"ztunnel\"})",
 					labelMatchers,
 				),
 				dashboards.AddQueryDataSource(datasourceName),
-				query.SeriesNameFormat("{{tag}}"),
+				query.SeriesNameFormat("Version ({{tag}})"),
 			),
 		),
 	)
