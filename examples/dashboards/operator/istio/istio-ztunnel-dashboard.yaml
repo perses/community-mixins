@@ -4,14 +4,14 @@ metadata:
   creationTimestamp: null
   labels:
     app.kubernetes.io/component: dashboard
-    app.kubernetes.io/instance: istio-ztunnel
+    app.kubernetes.io/instance: istio-ztunnel-dashboard
     app.kubernetes.io/name: perses-dashboard
     app.kubernetes.io/part-of: perses-operator
-  name: istio-ztunnel
+  name: istio-ztunnel-dashboard
   namespace: perses-dev
 spec:
   display:
-    name: Istio / Ztunnel
+    name: Istio Ztunnel Dashboard
   duration: 1h
   layouts:
   - kind: Grid

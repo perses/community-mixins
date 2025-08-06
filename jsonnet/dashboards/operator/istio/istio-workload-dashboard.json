@@ -2,19 +2,19 @@
   "kind": "PersesDashboard",
   "apiVersion": "perses.dev/v1alpha1",
   "metadata": {
-    "name": "istio-workload",
+    "name": "istio-workload-dashboard",
     "namespace": "perses-dev",
     "creationTimestamp": null,
     "labels": {
       "app.kubernetes.io/component": "dashboard",
-      "app.kubernetes.io/instance": "istio-workload",
+      "app.kubernetes.io/instance": "istio-workload-dashboard",
       "app.kubernetes.io/name": "perses-dashboard",
       "app.kubernetes.io/part-of": "perses-operator"
     }
   },
   "spec": {
     "display": {
-      "name": "Istio / Workload"
+      "name": "Istio Workload Dashboard"
     },
     "variables": [
       {
@@ -40,6 +40,58 @@
             }
           },
           "name": "cluster"
+        }
+      },
+      {
+        "kind": "ListVariable",
+        "spec": {
+          "display": {
+            "name": "Namespace",
+            "hidden": false
+          },
+          "defaultValue": "bookinfo",
+          "allowAllValue": false,
+          "allowMultiple": false,
+          "plugin": {
+            "kind": "PrometheusLabelValuesVariable",
+            "spec": {
+              "datasource": {
+                "kind": "PrometheusDatasource",
+                "name": "prometheus-datasource"
+              },
+              "labelName": "destination_workload_namespace",
+              "matchers": [
+                "istio_requests_total{cluster=\"$cluster\"}"
+              ]
+            }
+          },
+          "name": "namespace"
+        }
+      },
+      {
+        "kind": "ListVariable",
+        "spec": {
+          "display": {
+            "name": "Workload",
+            "hidden": false
+          },
+          "defaultValue": "details-v1",
+          "allowAllValue": false,
+          "allowMultiple": false,
+          "plugin": {
+            "kind": "PrometheusLabelValuesVariable",
+            "spec": {
+              "datasource": {
+                "kind": "PrometheusDatasource",
+                "name": "prometheus-datasource"
+              },
+              "labelName": "destination_workload",
+              "matchers": [
+                "istio_requests_total{cluster=\"$cluster\",destination_workload_namespace=~\"$namespace\"}"
+              ]
+            }
+          },
+          "name": "workload"
         }
       },
       {
@@ -72,57 +124,7 @@
         "kind": "ListVariable",
         "spec": {
           "display": {
-            "name": "Namespace",
-            "hidden": false
-          },
-          "allowAllValue": false,
-          "allowMultiple": false,
-          "plugin": {
-            "kind": "PrometheusLabelValuesVariable",
-            "spec": {
-              "datasource": {
-                "kind": "PrometheusDatasource",
-                "name": "prometheus-datasource"
-              },
-              "labelName": "destination_workload_namespace",
-              "matchers": [
-                "istio_requests_total{cluster=\"$cluster\"}"
-              ]
-            }
-          },
-          "name": "namespace"
-        }
-      },
-      {
-        "kind": "ListVariable",
-        "spec": {
-          "display": {
-            "name": "Workload",
-            "hidden": false
-          },
-          "allowAllValue": false,
-          "allowMultiple": false,
-          "plugin": {
-            "kind": "PrometheusLabelValuesVariable",
-            "spec": {
-              "datasource": {
-                "kind": "PrometheusDatasource",
-                "name": "prometheus-datasource"
-              },
-              "labelName": "destination_workload",
-              "matchers": [
-                "istio_requests_total{cluster=\"$cluster\",destination_workload_namespace=\"$namespace\"}"
-              ]
-            }
-          },
-          "name": "workload"
-        }
-      },
-      {
-        "kind": "ListVariable",
-        "spec": {
-          "display": {
-            "name": "Source Workload Namespace",
+            "name": "Inbound Workload Namespace",
             "hidden": false
           },
           "allowAllValue": true,
@@ -136,7 +138,7 @@
               },
               "labelName": "source_workload_namespace",
               "matchers": [
-                "istio_requests_total{cluster=\"$cluster\",destination_workload=\"$workload\",destination_workload_namespace=\"$namespace\"}"
+                "istio_requests_total{cluster=\"$cluster\",destination_workload=\"$workload\",destination_workload_namespace=~\"$namespace\"}"
               ]
             }
           },
@@ -147,7 +149,7 @@
         "kind": "ListVariable",
         "spec": {
           "display": {
-            "name": "Source Workload",
+            "name": "Inbound Workload",
             "hidden": false
           },
           "allowAllValue": true,
@@ -161,7 +163,7 @@
               },
               "labelName": "source_workload",
               "matchers": [
-                "istio_requests_total{cluster=\"$cluster\",destination_workload=\"$workload\",destination_workload_namespace=\"$namespace\",source_workload_namespace=~\"$srcns\"}"
+                "istio_requests_total{cluster=\"$cluster\",destination_workload=\"$workload\",destination_workload_namespace=~\"$namespace\",source_workload_namespace=~\"$srcns\"}"
               ]
             }
           },
@@ -186,61 +188,11 @@
               },
               "labelName": "destination_service",
               "matchers": [
-                "istio_requests_total{cluster=\"$cluster\",source_workload=\"$workload\",source_workload_namespace=\"$namespace\"}"
+                "istio_requests_total{cluster=\"$cluster\",source_workload=~\"$workload\",source_workload_namespace=~\"$namespace\"}"
               ]
             }
           },
           "name": "dstsvc"
-        }
-      },
-      {
-        "kind": "ListVariable",
-        "spec": {
-          "display": {
-            "name": "Destination Workload Namespace",
-            "hidden": false
-          },
-          "allowAllValue": true,
-          "allowMultiple": false,
-          "plugin": {
-            "kind": "PrometheusLabelValuesVariable",
-            "spec": {
-              "datasource": {
-                "kind": "PrometheusDatasource",
-                "name": "prometheus-datasource"
-              },
-              "labelName": "destination_workload_namespace",
-              "matchers": [
-                "istio_requests_total{cluster=\"$cluster\",destination_service=~\"$dstsvc\",source_workload=\"$workload\",source_workload_namespace=\"$namespace\"}"
-              ]
-            }
-          },
-          "name": "dstns"
-        }
-      },
-      {
-        "kind": "ListVariable",
-        "spec": {
-          "display": {
-            "name": "Destination Workload",
-            "hidden": false
-          },
-          "allowAllValue": true,
-          "allowMultiple": false,
-          "plugin": {
-            "kind": "PrometheusLabelValuesVariable",
-            "spec": {
-              "datasource": {
-                "kind": "PrometheusDatasource",
-                "name": "prometheus-datasource"
-              },
-              "labelName": "destination_workload",
-              "matchers": [
-                "istio_requests_total{cluster=\"$cluster\",destination_service=~\"$dstsvc\",destination_workload_namespace=~\"$dstns\",source_workload=\"$workload\",source_workload_namespace=\"$namespace\"}"
-              ]
-            }
-          },
-          "name": "dstwl"
         }
       }
     ],
@@ -644,14 +596,14 @@
         "kind": "Grid",
         "spec": {
           "display": {
-            "title": "Incoming Traffic"
+            "title": "Request Metrics"
           },
           "items": [
             {
               "x": 0,
               "y": 0,
               "width": 8,
-              "height": 8,
+              "height": 6,
               "content": {
                 "$ref": "#/spec/panels/0_0"
               }
@@ -660,7 +612,7 @@
               "x": 8,
               "y": 0,
               "width": 8,
-              "height": 8,
+              "height": 6,
               "content": {
                 "$ref": "#/spec/panels/0_1"
               }
@@ -669,7 +621,7 @@
               "x": 16,
               "y": 0,
               "width": 8,
-              "height": 8,
+              "height": 6,
               "content": {
                 "$ref": "#/spec/panels/0_2"
               }
@@ -681,7 +633,7 @@
         "kind": "Grid",
         "spec": {
           "display": {
-            "title": "Outgoing Traffic"
+            "title": "Outbound Traffic"
           },
           "items": [
             {

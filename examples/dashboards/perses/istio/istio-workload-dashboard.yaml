@@ -1,13 +1,13 @@
 kind: Dashboard
 metadata:
-    name: istio-service
+    name: istio-workload-dashboard
     createdAt: 0001-01-01T00:00:00Z
     updatedAt: 0001-01-01T00:00:00Z
     version: 0
     project: perses-dev
 spec:
     display:
-        name: Istio / Service
+        name: Istio Workload Dashboard
     variables:
         - kind: ListVariable
           spec:
@@ -29,6 +29,42 @@ spec:
         - kind: ListVariable
           spec:
             display:
+                name: Namespace
+                hidden: false
+            defaultValue: bookinfo
+            allowAllValue: false
+            allowMultiple: false
+            plugin:
+                kind: PrometheusLabelValuesVariable
+                spec:
+                    datasource:
+                        kind: PrometheusDatasource
+                        name: prometheus-datasource
+                    labelName: destination_workload_namespace
+                    matchers:
+                        - istio_requests_total{cluster="$cluster"}
+            name: namespace
+        - kind: ListVariable
+          spec:
+            display:
+                name: Workload
+                hidden: false
+            defaultValue: details-v1
+            allowAllValue: false
+            allowMultiple: false
+            plugin:
+                kind: PrometheusLabelValuesVariable
+                spec:
+                    datasource:
+                        kind: PrometheusDatasource
+                        name: prometheus-datasource
+                    labelName: destination_workload
+                    matchers:
+                        - istio_requests_total{cluster="$cluster",destination_workload_namespace=~"$namespace"}
+            name: workload
+        - kind: ListVariable
+          spec:
+            display:
                 name: Reporter
                 hidden: false
             defaultValue: destination
@@ -47,24 +83,7 @@ spec:
         - kind: ListVariable
           spec:
             display:
-                name: Service
-                hidden: false
-            allowAllValue: false
-            allowMultiple: false
-            plugin:
-                kind: PrometheusLabelValuesVariable
-                spec:
-                    datasource:
-                        kind: PrometheusDatasource
-                        name: prometheus-datasource
-                    labelName: destination_service
-                    matchers:
-                        - istio_requests_total{cluster="$cluster"}
-            name: service
-        - kind: ListVariable
-          spec:
-            display:
-                name: Client Workload Namespace
+                name: Inbound Workload Namespace
                 hidden: false
             allowAllValue: true
             allowMultiple: false
@@ -76,12 +95,12 @@ spec:
                         name: prometheus-datasource
                     labelName: source_workload_namespace
                     matchers:
-                        - istio_requests_total{cluster="$cluster",destination_service="$service"}
+                        - istio_requests_total{cluster="$cluster",destination_workload="$workload",destination_workload_namespace=~"$namespace"}
             name: srcns
         - kind: ListVariable
           spec:
             display:
-                name: Client Workload
+                name: Inbound Workload
                 hidden: false
             allowAllValue: true
             allowMultiple: false
@@ -93,12 +112,12 @@ spec:
                         name: prometheus-datasource
                     labelName: source_workload
                     matchers:
-                        - istio_requests_total{cluster="$cluster",destination_service="$service",source_workload_namespace=~"$srcns"}
+                        - istio_requests_total{cluster="$cluster",destination_workload="$workload",destination_workload_namespace=~"$namespace",source_workload_namespace=~"$srcns"}
             name: srcwl
         - kind: ListVariable
           spec:
             display:
-                name: Service Workload Namespace
+                name: Destination Service
                 hidden: false
             allowAllValue: true
             allowMultiple: false
@@ -108,34 +127,17 @@ spec:
                     datasource:
                         kind: PrometheusDatasource
                         name: prometheus-datasource
-                    labelName: destination_workload_namespace
+                    labelName: destination_service
                     matchers:
-                        - istio_requests_total{cluster="$cluster",destination_service="$service"}
-            name: dstns
-        - kind: ListVariable
-          spec:
-            display:
-                name: Service Workload
-                hidden: false
-            allowAllValue: true
-            allowMultiple: false
-            plugin:
-                kind: PrometheusLabelValuesVariable
-                spec:
-                    datasource:
-                        kind: PrometheusDatasource
-                        name: prometheus-datasource
-                    labelName: destination_workload
-                    matchers:
-                        - istio_requests_total{cluster="$cluster",destination_service="$service",destination_workload_namespace=~"$dstns"}
-            name: dstwl
+                        - istio_requests_total{cluster="$cluster",source_workload=~"$workload",source_workload_namespace=~"$namespace"}
+            name: dstsvc
     panels:
         "0_0":
             kind: Panel
             spec:
                 display:
-                    name: Client Request Volume
-                    description: Request volume from client workloads to service
+                    name: Incoming Request Volume
+                    description: Request volume to workload by source
                 plugin:
                     kind: TimeSeriesChart
                     spec:
@@ -164,7 +166,25 @@ spec:
                                     round(
                                       sum by (source_workload, source_workload_namespace) (
                                         irate(
-                                          istio_requests_total{destination_service=~"$service",reporter=~"$qrep",source_workload=~"$srcwl",source_workload_namespace=~"$srcns"}[$__rate_interval]
+                                          istio_requests_total{connection_security_policy="mutual_tls",destination_workload=~"$workload",destination_workload_namespace=~"$namespace",reporter=~"$qrep",source_workload=~"$srcwl",source_workload_namespace=~"$srcns"}[$__rate_interval]
+                                        )
+                                      ),
+                                      0.001
+                                    )
+                                seriesNameFormat: "\U0001F512 {{ source_workload }}.{{ source_workload_namespace }}"
+                    - kind: TimeSeriesQuery
+                      spec:
+                        plugin:
+                            kind: PrometheusTimeSeriesQuery
+                            spec:
+                                datasource:
+                                    kind: PrometheusDatasource
+                                    name: prometheus-datasource
+                                query: |-
+                                    round(
+                                      sum by (source_workload, source_workload_namespace) (
+                                        irate(
+                                          istio_requests_total{connection_security_policy!="mutual_tls",destination_workload=~"$workload",destination_workload_namespace=~"$namespace",reporter=~"$qrep",source_workload=~"$srcwl",source_workload_namespace=~"$srcns"}[$__rate_interval]
                                         )
                                       ),
                                       0.001
@@ -174,8 +194,8 @@ spec:
             kind: Panel
             spec:
                 display:
-                    name: Client Success Rate
-                    description: Success rate of requests from client workloads to service
+                    name: Incoming Success Rate
+                    description: Success rate of requests to workload by source
                 plugin:
                     kind: TimeSeriesChart
                     spec:
@@ -204,13 +224,13 @@ spec:
                                 query: |4-
                                       sum by (source_workload, source_workload_namespace) (
                                         irate(
-                                          istio_requests_total{destination_service=~"$service",reporter=~"$qrep",response_code!~"5.*",source_workload=~"$srcwl",source_workload_namespace=~"$srcns"}[$__rate_interval]
+                                          istio_requests_total{destination_workload=~"$workload",destination_workload_namespace=~"$namespace",reporter=~"$qrep",response_code!~"5.*",source_workload=~"$srcwl",source_workload_namespace=~"$srcns"}[$__rate_interval]
                                         )
                                       )
                                     /
                                       sum by (source_workload, source_workload_namespace) (
                                         irate(
-                                          istio_requests_total{destination_service=~"$service",reporter=~"$qrep",source_workload=~"$srcwl",source_workload_namespace=~"$srcns"}[$__rate_interval]
+                                          istio_requests_total{destination_workload=~"$workload",destination_workload_namespace=~"$namespace",reporter=~"$qrep",source_workload=~"$srcwl",source_workload_namespace=~"$srcns"}[$__rate_interval]
                                         )
                                       )
                                 seriesNameFormat: '{{ source_workload }}.{{ source_workload_namespace }}'
@@ -218,8 +238,8 @@ spec:
             kind: Panel
             spec:
                 display:
-                    name: Client Request Duration
-                    description: Request duration percentiles from client workloads to service
+                    name: Incoming Request Duration
+                    description: Request duration percentiles for workload
                 plugin:
                     kind: TimeSeriesChart
                     spec:
@@ -249,7 +269,7 @@ spec:
                                       0.5,
                                       sum by (source_workload, source_workload_namespace, le) (
                                         irate(
-                                          istio_request_duration_milliseconds_bucket{destination_service=~"$service",reporter=~"$qrep",source_workload=~"$srcwl",source_workload_namespace=~"$srcns"}[$__rate_interval]
+                                          istio_request_duration_milliseconds_bucket{destination_workload=~"$workload",destination_workload_namespace=~"$namespace",reporter=~"$qrep",source_workload=~"$srcwl",source_workload_namespace=~"$srcns"}[$__rate_interval]
                                         )
                                       )
                                     )
@@ -267,7 +287,7 @@ spec:
                                       0.9,
                                       sum by (source_workload, source_workload_namespace, le) (
                                         irate(
-                                          istio_request_duration_milliseconds_bucket{destination_service=~"$service",reporter=~"$qrep",source_workload=~"$srcwl",source_workload_namespace=~"$srcns"}[$__rate_interval]
+                                          istio_request_duration_milliseconds_bucket{destination_workload=~"$workload",destination_workload_namespace=~"$namespace",reporter=~"$qrep",source_workload=~"$srcwl",source_workload_namespace=~"$srcns"}[$__rate_interval]
                                         )
                                       )
                                     )
@@ -285,7 +305,7 @@ spec:
                                       0.99,
                                       sum by (source_workload, source_workload_namespace, le) (
                                         irate(
-                                          istio_request_duration_milliseconds_bucket{destination_service=~"$service",reporter=~"$qrep",source_workload=~"$srcwl",source_workload_namespace=~"$srcns"}[$__rate_interval]
+                                          istio_request_duration_milliseconds_bucket{destination_workload=~"$workload",destination_workload_namespace=~"$namespace",reporter=~"$qrep",source_workload=~"$srcwl",source_workload_namespace=~"$srcns"}[$__rate_interval]
                                         )
                                       )
                                     )
@@ -294,8 +314,8 @@ spec:
             kind: Panel
             spec:
                 display:
-                    name: Server Request Volume
-                    description: Request volume to service workloads
+                    name: Outgoing Request Volume
+                    description: Request volume from workload to destinations
                 plugin:
                     kind: TimeSeriesChart
                     spec:
@@ -324,18 +344,62 @@ spec:
                                     round(
                                       sum by (destination_workload, destination_workload_namespace) (
                                         irate(
-                                          istio_requests_total{destination_service=~"$service",destination_workload=~"$dstwl",destination_workload_namespace=~"$dstns",reporter="destination"}[$__rate_interval]
+                                          istio_requests_total{destination_service=~"$dstsvc",destination_workload=~"$dstwl",destination_workload_namespace=~"$dstns",reporter="source",source_workload=~"$workload",source_workload_namespace=~"$namespace"}[$__rate_interval]
                                         )
                                       ),
                                       0.001
                                     )
+                                seriesNameFormat: '{{ destination_workload }}.{{ destination_workload_namespace }}'
+        "1_1":
+            kind: Panel
+            spec:
+                display:
+                    name: Outgoing Success Rate
+                    description: Success rate of outgoing requests from workload
+                plugin:
+                    kind: TimeSeriesChart
+                    spec:
+                        legend:
+                            position: bottom
+                            mode: list
+                        yAxis:
+                            format:
+                                unit: percent
+                            max: 1
+                        visual:
+                            display: line
+                            lineWidth: 0.25
+                            areaOpacity: 0.5
+                            palette:
+                                mode: auto
+                queries:
+                    - kind: TimeSeriesQuery
+                      spec:
+                        plugin:
+                            kind: PrometheusTimeSeriesQuery
+                            spec:
+                                datasource:
+                                    kind: PrometheusDatasource
+                                    name: prometheus-datasource
+                                query: |4-
+                                      sum by (destination_workload, destination_workload_namespace) (
+                                        irate(
+                                          istio_requests_total{destination_service=~"$dstsvc",destination_workload=~"$dstwl",destination_workload_namespace=~"$dstns",reporter="source",response_code!~"5.*",source_workload=~"$workload",source_workload_namespace=~"$namespace"}[$__rate_interval]
+                                        )
+                                      )
+                                    /
+                                      sum by (destination_workload, destination_workload_namespace) (
+                                        irate(
+                                          istio_requests_total{destination_service=~"$dstsvc",destination_workload=~"$dstwl",destination_workload_namespace=~"$dstns",reporter="source",source_workload=~"$workload",source_workload_namespace=~"$namespace"}[$__rate_interval]
+                                        )
+                                      )
                                 seriesNameFormat: '{{ destination_workload }}.{{ destination_workload_namespace }}'
         "2_0":
             kind: Panel
             spec:
                 display:
                     name: TCP Bytes Received
-                    description: TCP bytes received by service workloads
+                    description: TCP bytes received by workload
                 plugin:
                     kind: TimeSeriesChart
                     spec:
@@ -361,18 +425,18 @@ spec:
                                     kind: PrometheusDatasource
                                     name: prometheus-datasource
                                 query: |-
-                                    sum by (destination_workload, destination_workload_namespace) (
+                                    sum by (source_workload, source_workload_namespace) (
                                       irate(
-                                        istio_tcp_received_bytes_total{destination_service=~"$service",destination_workload=~"$dstwl",destination_workload_namespace=~"$dstns",reporter="destination"}[$__rate_interval]
+                                        istio_tcp_received_bytes_total{destination_workload=~"$workload",destination_workload_namespace=~"$namespace",reporter=~"$qrep",source_workload=~"$srcwl",source_workload_namespace=~"$srcns"}[$__rate_interval]
                                       )
                                     )
-                                seriesNameFormat: '{{ destination_workload }}.{{ destination_workload_namespace }}'
+                                seriesNameFormat: '{{ source_workload }}.{{ source_workload_namespace }}'
         "2_1":
             kind: Panel
             spec:
                 display:
                     name: TCP Bytes Sent
-                    description: TCP bytes sent from service workloads
+                    description: TCP bytes sent from workload
                 plugin:
                     kind: TimeSeriesChart
                     spec:
@@ -400,7 +464,7 @@ spec:
                                 query: |-
                                     sum by (destination_workload, destination_workload_namespace) (
                                       irate(
-                                        istio_tcp_sent_bytes_total{destination_service=~"$service",destination_workload=~"$dstwl",destination_workload_namespace=~"$dstns",reporter="destination"}[$__rate_interval]
+                                        istio_tcp_sent_bytes_total{destination_service=~"$dstsvc",destination_workload=~"$dstwl",destination_workload_namespace=~"$dstns",reporter="source",source_workload=~"$workload",source_workload_namespace=~"$namespace"}[$__rate_interval]
                                       )
                                     )
                                 seriesNameFormat: '{{ destination_workload }}.{{ destination_workload_namespace }}'
@@ -408,37 +472,43 @@ spec:
         - kind: Grid
           spec:
             display:
-                title: Client Traffic
+                title: Request Metrics
             items:
                 - x: 0
                   "y": 0
                   width: 8
-                  height: 8
+                  height: 6
                   content:
                     $ref: '#/spec/panels/0_0'
                 - x: 8
                   "y": 0
                   width: 8
-                  height: 8
+                  height: 6
                   content:
                     $ref: '#/spec/panels/0_1'
                 - x: 16
                   "y": 0
                   width: 8
-                  height: 8
+                  height: 6
                   content:
                     $ref: '#/spec/panels/0_2'
         - kind: Grid
           spec:
             display:
-                title: Server Traffic
+                title: Outbound Traffic
             items:
                 - x: 0
                   "y": 0
-                  width: 24
+                  width: 12
                   height: 8
                   content:
                     $ref: '#/spec/panels/1_0'
+                - x: 12
+                  "y": 0
+                  width: 12
+                  height: 8
+                  content:
+                    $ref: '#/spec/panels/1_1'
         - kind: Grid
           spec:
             display:
