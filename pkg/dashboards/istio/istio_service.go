@@ -40,9 +40,9 @@ func withServiceTCP(datasource string, labelMatcher promql.LabelMatcher) dashboa
 func BuildIstioService(project string, datasource string, clusterLabelName string) dashboards.DashboardResult {
 	clusterLabelMatcher := dashboards.GetClusterLabelMatcher(clusterLabelName)
 	return dashboards.NewDashboardResult(
-		dashboard.New("istio-service",
+		dashboard.New("istio-service-dashboard",
 			dashboard.ProjectName(project),
-			dashboard.Name("Istio / Service"),
+			dashboard.Name("Istio Service Dashboard"),
 			dashboard.AddVariable("cluster",
 				listVar.List(
 					labelValuesVar.PrometheusLabelValues("cluster",

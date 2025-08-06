@@ -103,7 +103,7 @@ func Connections(datasourceName string, labelMatchers ...promql.LabelMatcher) pa
 		panel.AddQuery(
 			query.PromQL(
 				promql.SetLabelMatchers(
-					"sum(pilot_xds)",
+					"sum by (tag) (istio_build{component=\"pilot\"})",
 					labelMatchers,
 				),
 				dashboards.AddQueryDataSource(datasourceName),
@@ -114,33 +114,28 @@ func Connections(datasourceName string, labelMatchers ...promql.LabelMatcher) pa
 
 func CPUUsage(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
 	return panelgroup.AddPanel("CPU Usage",
-		panel.Description("CPU usage for Istiod processes."),
+		panel.Description("CPU usage of each running instance"),
 		timeSeriesPanel.Chart(
-			timeSeriesPanel.WithYAxis(timeSeriesPanel.YAxis{
-				Format: &commonSdk.Format{
-					Unit: string(commonSdk.PercentUnit),
-				},
-			}),
 			timeSeriesPanel.WithLegend(timeSeriesPanel.Legend{
 				Position: timeSeriesPanel.BottomPosition,
-				Mode:     timeSeriesPanel.ListMode,
+				Mode:     timeSeriesPanel.TableMode,
+				Values:   []commonSdk.Calculation{commonSdk.LastCalculation, commonSdk.MaxCalculation},
 			}),
 			timeSeriesPanel.WithVisual(timeSeriesPanel.Visual{
 				Display:      timeSeriesPanel.LineDisplay,
 				ConnectNulls: false,
-				LineWidth:    0.25,
-				AreaOpacity:  0.5,
-				Palette:      timeSeriesPanel.Palette{Mode: timeSeriesPanel.AutoMode},
+				LineWidth:    1,
+				AreaOpacity:  0.1,
 			}),
 		),
 		panel.AddQuery(
 			query.PromQL(
 				promql.SetLabelMatchers(
-					"rate(process_cpu_seconds_total{job=\"istiod\"}[1m]) * 100",
+					"sum by (pod) (irate(container_cpu_usage_seconds_total{container=\"discovery\",pod=~\"istiod-.*\"}[$__rate_interval]))",
 					labelMatchers,
 				),
 				dashboards.AddQueryDataSource(datasourceName),
-				query.SeriesNameFormat("{{instance}}"),
+				query.SeriesNameFormat("Container ({{pod}})"),
 			),
 		),
 	)
@@ -204,34 +199,28 @@ func Events(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgr
 
 func Goroutines(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
 	return panelgroup.AddPanel("Goroutines",
-		panel.Description("Number of goroutines in Istiod processes."),
+		panel.Description("Goroutine count for each running instance"),
 		timeSeriesPanel.Chart(
-			timeSeriesPanel.WithYAxis(timeSeriesPanel.YAxis{
-				Format: &commonSdk.Format{
-					Unit:          string(commonSdk.DecimalUnit),
-					DecimalPlaces: 0,
-				},
-			}),
 			timeSeriesPanel.WithLegend(timeSeriesPanel.Legend{
 				Position: timeSeriesPanel.BottomPosition,
-				Mode:     timeSeriesPanel.ListMode,
+				Mode:     timeSeriesPanel.TableMode,
+				Values:   []commonSdk.Calculation{commonSdk.LastCalculation, commonSdk.MaxCalculation},
 			}),
 			timeSeriesPanel.WithVisual(timeSeriesPanel.Visual{
 				Display:      timeSeriesPanel.LineDisplay,
 				ConnectNulls: false,
-				LineWidth:    0.25,
-				AreaOpacity:  0.5,
-				Palette:      timeSeriesPanel.Palette{Mode: timeSeriesPanel.AutoMode},
+				LineWidth:    1,
+				AreaOpacity:  0.1,
 			}),
 		),
 		panel.AddQuery(
 			query.PromQL(
 				promql.SetLabelMatchers(
-					"go_goroutines{job=\"istiod\"}",
+					"sum by (pod) (go_goroutines{app=\"istiod\"})",
 					labelMatchers,
 				),
 				dashboards.AddQueryDataSource(datasourceName),
-				query.SeriesNameFormat("{{instance}}"),
+				query.SeriesNameFormat("Goroutines ({{pod}})"),
 			),
 		),
 	)
@@ -239,7 +228,7 @@ func Goroutines(datasourceName string, labelMatchers ...promql.LabelMatcher) pan
 
 func MemoryAllocations(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
 	return panelgroup.AddPanel("Memory Allocations",
-		panel.Description("Memory allocation rate for Istiod processes."),
+		panel.Description("Details about memory allocations"),
 		timeSeriesPanel.Chart(
 			timeSeriesPanel.WithYAxis(timeSeriesPanel.YAxis{
 				Format: &commonSdk.Format{
@@ -248,24 +237,34 @@ func MemoryAllocations(datasourceName string, labelMatchers ...promql.LabelMatch
 			}),
 			timeSeriesPanel.WithLegend(timeSeriesPanel.Legend{
 				Position: timeSeriesPanel.BottomPosition,
-				Mode:     timeSeriesPanel.ListMode,
+				Mode:     timeSeriesPanel.TableMode,
+				Values:   []commonSdk.Calculation{commonSdk.LastCalculation, commonSdk.MaxCalculation},
 			}),
 			timeSeriesPanel.WithVisual(timeSeriesPanel.Visual{
 				Display:      timeSeriesPanel.LineDisplay,
 				ConnectNulls: false,
-				LineWidth:    0.25,
-				AreaOpacity:  0.5,
-				Palette:      timeSeriesPanel.Palette{Mode: timeSeriesPanel.AutoMode},
+				LineWidth:    1,
+				AreaOpacity:  0.1,
 			}),
 		),
 		panel.AddQuery(
 			query.PromQL(
 				promql.SetLabelMatchers(
-					"rate(go_memstats_alloc_bytes_total{job=\"istiod\"}[1m])",
+					"sum by (pod) (rate(go_memstats_alloc_bytes_total{app=\"istiod\"}[$__rate_interval]))",
 					labelMatchers,
 				),
 				dashboards.AddQueryDataSource(datasourceName),
-				query.SeriesNameFormat("{{instance}}"),
+				query.SeriesNameFormat("Bytes ({{pod}})"),
+			),
+		),
+		panel.AddQuery(
+			query.PromQL(
+				promql.SetLabelMatchers(
+					"sum by (pod) (rate(go_memstats_mallocs_total{app=\"istiod\"}[$__rate_interval]))",
+					labelMatchers,
+				),
+				dashboards.AddQueryDataSource(datasourceName),
+				query.SeriesNameFormat("Objects ({{pod}})"),
 			),
 		),
 	)
@@ -273,7 +272,7 @@ func MemoryAllocations(datasourceName string, labelMatchers ...promql.LabelMatch
 
 func MemoryUsage(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
 	return panelgroup.AddPanel("Memory Usage",
-		panel.Description("Memory usage for Istiod processes."),
+		panel.Description("Memory usage of each running instance"),
 		timeSeriesPanel.Chart(
 			timeSeriesPanel.WithYAxis(timeSeriesPanel.YAxis{
 				Format: &commonSdk.Format{
@@ -282,24 +281,54 @@ func MemoryUsage(datasourceName string, labelMatchers ...promql.LabelMatcher) pa
 			}),
 			timeSeriesPanel.WithLegend(timeSeriesPanel.Legend{
 				Position: timeSeriesPanel.BottomPosition,
-				Mode:     timeSeriesPanel.ListMode,
+				Mode:     timeSeriesPanel.TableMode,
+				Values:   []commonSdk.Calculation{commonSdk.LastCalculation, commonSdk.MaxCalculation},
 			}),
 			timeSeriesPanel.WithVisual(timeSeriesPanel.Visual{
 				Display:      timeSeriesPanel.LineDisplay,
 				ConnectNulls: false,
-				LineWidth:    0.25,
-				AreaOpacity:  0.5,
-				Palette:      timeSeriesPanel.Palette{Mode: timeSeriesPanel.AutoMode},
+				LineWidth:    1,
+				AreaOpacity:  0.1,
 			}),
 		),
 		panel.AddQuery(
 			query.PromQL(
 				promql.SetLabelMatchers(
-					"go_memstats_alloc_bytes{job=\"istiod\"}",
+					"sum by (pod) (container_memory_working_set_bytes{container=\"discovery\",pod=~\"istiod-.*\"})",
 					labelMatchers,
 				),
 				dashboards.AddQueryDataSource(datasourceName),
-				query.SeriesNameFormat("{{instance}}"),
+				query.SeriesNameFormat("Container ({{pod}})"),
+			),
+		),
+		panel.AddQuery(
+			query.PromQL(
+				promql.SetLabelMatchers(
+					"sum by (pod) (go_memstats_stack_inuse_bytes{app=\"istiod\"})",
+					labelMatchers,
+				),
+				dashboards.AddQueryDataSource(datasourceName),
+				query.SeriesNameFormat("Stack ({{pod}})"),
+			),
+		),
+		panel.AddQuery(
+			query.PromQL(
+				promql.SetLabelMatchers(
+					"sum by (pod) (go_memstats_heap_inuse_bytes{app=\"istiod\"})",
+					labelMatchers,
+				),
+				dashboards.AddQueryDataSource(datasourceName),
+				query.SeriesNameFormat("Heap (In Use) ({{pod}})"),
+			),
+		),
+		panel.AddQuery(
+			query.PromQL(
+				promql.SetLabelMatchers(
+					"sum by (pod) (go_memstats_heap_alloc_bytes{app=\"istiod\"})",
+					labelMatchers,
+				),
+				dashboards.AddQueryDataSource(datasourceName),
+				query.SeriesNameFormat("Heap (Allocated) ({{pod}})"),
 			),
 		),
 	)
@@ -330,11 +359,11 @@ func PilotVersions(datasourceName string, labelMatchers ...promql.LabelMatcher) 
 		panel.AddQuery(
 			query.PromQL(
 				promql.SetLabelMatchers(
-					"sum by (tag) (pilot_build_info)",
+					"sum by (tag) (istio_build{component=\"pilot\"})",
 					labelMatchers,
 				),
 				dashboards.AddQueryDataSource(datasourceName),
-				query.SeriesNameFormat("{{tag}}"),
+				query.SeriesNameFormat("Version ({{tag}})"),
 			),
 		),
 	)

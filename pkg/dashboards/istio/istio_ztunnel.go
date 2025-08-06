@@ -57,9 +57,9 @@ func withZtunnelStatus(datasource string, labelMatcher promql.LabelMatcher) dash
 func BuildIstioZtunnel(project string, datasource string, clusterLabelName string) dashboards.DashboardResult {
 	clusterLabelMatcher := dashboards.GetClusterLabelMatcher(clusterLabelName)
 	return dashboards.NewDashboardResult(
-		dashboard.New("istio-ztunnel",
+		dashboard.New("istio-ztunnel-dashboard",
 			dashboard.ProjectName(project),
-			dashboard.Name("Istio / Ztunnel"),
+			dashboard.Name("Istio Ztunnel Dashboard"),
 			dashboard.AddVariable("cluster",
 				listVar.List(
 					labelValuesVar.PrometheusLabelValues("cluster",

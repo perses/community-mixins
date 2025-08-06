@@ -6,94 +6,61 @@ import (
 	"github.com/perses/community-dashboards/pkg/promql"
 	"github.com/perses/perses/go-sdk/dashboard"
 	panelgroup "github.com/perses/perses/go-sdk/panel-group"
-	listVar "github.com/perses/perses/go-sdk/variable/list-variable"
-	labelValuesVar "github.com/perses/plugins/prometheus/sdk/go/variable/label-values"
 )
-
-func withControlPlaneMetrics(datasource string, labelMatcher promql.LabelMatcher) dashboard.Option {
-	return dashboard.AddPanelGroup("Control Plane Metrics",
-		panelgroup.PanelsPerLine(3),
-		panelgroup.PanelHeight(8),
-		panels.PushSize(datasource, labelMatcher),
-		panels.PushTime(datasource, labelMatcher),
-		panels.Connections(datasource, labelMatcher),
-	)
-}
 
 func withControlPlaneResources(datasource string, labelMatcher promql.LabelMatcher) dashboard.Option {
 	return dashboard.AddPanelGroup("Resource Usage",
-		panelgroup.PanelsPerLine(3),
-		panelgroup.PanelHeight(8),
-		panels.CPUUsage(datasource, labelMatcher),
+		panelgroup.PanelsPerLine(4),
+		panelgroup.PanelHeight(10),
 		panels.MemoryUsage(datasource, labelMatcher),
 		panels.MemoryAllocations(datasource, labelMatcher),
-	)
-}
-
-func withControlPlaneEvents(datasource string, labelMatcher promql.LabelMatcher) dashboard.Option {
-	return dashboard.AddPanelGroup("Events",
-		panelgroup.PanelsPerLine(2),
-		panelgroup.PanelHeight(8),
-		panels.Events(datasource, labelMatcher),
+		panels.CPUUsage(datasource, labelMatcher),
 		panels.Goroutines(datasource, labelMatcher),
 	)
 }
 
-func withControlPlaneOperations(datasource string, labelMatcher promql.LabelMatcher) dashboard.Option {
-	return dashboard.AddPanelGroup("Operations",
-		panelgroup.PanelsPerLine(2),
-		panelgroup.PanelHeight(8),
-		panels.Injection(datasource, labelMatcher),
-		panels.Validation(datasource, labelMatcher),
+func withPushInformation(datasource string, labelMatcher promql.LabelMatcher) dashboard.Option {
+	return dashboard.AddPanelGroup("Push Information",
+		panelgroup.PanelsPerLine(3),
+		panelgroup.PanelHeight(10),
+		panels.XDSPushes(datasource, labelMatcher),
+		panels.Events(datasource, labelMatcher),
+		panels.Connections(datasource, labelMatcher),
+		panels.PushErrors(datasource, labelMatcher),
+		panels.PushTime(datasource, labelMatcher),
+		panels.PushSize(datasource, labelMatcher),
 	)
 }
 
-func withControlPlaneStatus(datasource string, labelMatcher promql.LabelMatcher) dashboard.Option {
-	return dashboard.AddPanelGroup("Status",
-		panelgroup.PanelsPerLine(3),
-		panelgroup.PanelHeight(8),
+func withDeployedVersions(datasource string, labelMatcher promql.LabelMatcher) dashboard.Option {
+	return dashboard.AddPanelGroup("Deployed Versions",
+		panelgroup.PanelsPerLine(1),
+		panelgroup.PanelHeight(5),
 		panels.PilotVersions(datasource, labelMatcher),
-		panels.PushErrors(datasource, labelMatcher),
-		panels.XDSPushes(datasource, labelMatcher),
+	)
+}
+
+func withWebhooks(datasource string, labelMatcher promql.LabelMatcher) dashboard.Option {
+	return dashboard.AddPanelGroup("Webhooks",
+		panelgroup.PanelsPerLine(2),
+		panelgroup.PanelHeight(8),
+		panels.Validation(datasource, labelMatcher),
+		panels.Injection(datasource, labelMatcher),
 	)
 }
 
 func BuildIstioControlPlane(project string, datasource string, clusterLabelName string) dashboards.DashboardResult {
-	clusterLabelMatcher := dashboards.GetClusterLabelMatcher(clusterLabelName)
+	// Para coincidir con el original, no usamos variables ni label matchers
+	emptyLabelMatcher := promql.LabelMatcher{}
 	return dashboards.NewDashboardResult(
 		dashboard.New("istio-control-plane",
 			dashboard.ProjectName(project),
-			dashboard.Name("Istio / Control Plane"),
-			dashboard.AddVariable("cluster",
-				listVar.List(
-					labelValuesVar.PrometheusLabelValues("cluster",
-						labelValuesVar.Matchers("pilot_build_info"),
-						dashboards.AddVariableDatasource(datasource),
-					),
-					listVar.DisplayName("cluster"),
-					listVar.AllowMultiple(true),
-				),
-			),
-			dashboards.AddClusterVariable(datasource, clusterLabelName, "pilot_build_info"),
-			dashboard.AddVariable("namespace",
-				listVar.List(
-					labelValuesVar.PrometheusLabelValues("namespace",
-						labelValuesVar.Matchers(
-							promql.SetLabelMatchers(
-								"pilot_build_info",
-								[]promql.LabelMatcher{clusterLabelMatcher, {Name: "cluster", Type: "=", Value: "$cluster"}},
-							),
-						),
-						dashboards.AddVariableDatasource(datasource),
-					),
-					listVar.DisplayName("namespace"),
-				),
-			),
-			withControlPlaneMetrics(datasource, clusterLabelMatcher),
-			withControlPlaneResources(datasource, clusterLabelMatcher),
-			withControlPlaneEvents(datasource, clusterLabelMatcher),
-			withControlPlaneOperations(datasource, clusterLabelMatcher),
-			withControlPlaneStatus(datasource, clusterLabelMatcher),
+			dashboard.Name("Istio Control Plane Dashboard"),
+			// Sin variables para coincidir con el original y evitar problemas con métricas
+			withDeployedVersions(datasource, emptyLabelMatcher),
+			withControlPlaneResources(datasource, emptyLabelMatcher),
+			withPushInformation(datasource, emptyLabelMatcher),
+			withWebhooks(datasource, emptyLabelMatcher),
 		),
 	).Component("istio")
 }

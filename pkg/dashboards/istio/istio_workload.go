@@ -10,18 +10,18 @@ import (
 	labelValuesVar "github.com/perses/plugins/prometheus/sdk/go/variable/label-values"
 )
 
-func withWorkloadIncoming(datasource string, labelMatcher promql.LabelMatcher) dashboard.Option {
-	return dashboard.AddPanelGroup("Incoming Traffic",
+func withWorkloadMetrics(datasource string, labelMatcher promql.LabelMatcher) dashboard.Option {
+	return dashboard.AddPanelGroup("Request Metrics",
 		panelgroup.PanelsPerLine(3),
-		panelgroup.PanelHeight(8),
+		panelgroup.PanelHeight(6),
 		panels.IncomingRequestVolume(datasource, labelMatcher),
 		panels.IncomingSuccessRate(datasource, labelMatcher),
 		panels.IncomingRequestDuration(datasource, labelMatcher),
 	)
 }
 
-func withWorkloadOutgoing(datasource string, labelMatcher promql.LabelMatcher) dashboard.Option {
-	return dashboard.AddPanelGroup("Outgoing Traffic",
+func withWorkloadOutbound(datasource string, labelMatcher promql.LabelMatcher) dashboard.Option {
+	return dashboard.AddPanelGroup("Outbound Traffic",
 		panelgroup.PanelsPerLine(2),
 		panelgroup.PanelHeight(8),
 		panels.OutgoingRequestVolume(datasource, labelMatcher),
@@ -41,9 +41,9 @@ func withWorkloadTCP(datasource string, labelMatcher promql.LabelMatcher) dashbo
 func BuildIstioWorkload(project string, datasource string, clusterLabelName string) dashboards.DashboardResult {
 	clusterLabelMatcher := dashboards.GetClusterLabelMatcher(clusterLabelName)
 	return dashboards.NewDashboardResult(
-		dashboard.New("istio-workload",
+		dashboard.New("istio-workload-dashboard",
 			dashboard.ProjectName(project),
-			dashboard.Name("Istio / Workload"),
+			dashboard.Name("Istio Workload Dashboard"),
 			dashboard.AddVariable("cluster",
 				listVar.List(
 					labelValuesVar.PrometheusLabelValues("cluster",
@@ -55,6 +55,40 @@ func BuildIstioWorkload(project string, datasource string, clusterLabelName stri
 				),
 			),
 			dashboards.AddClusterVariable(datasource, clusterLabelName, "istio_requests_total"),
+			dashboard.AddVariable("namespace",
+				listVar.List(
+					labelValuesVar.PrometheusLabelValues("destination_workload_namespace",
+						labelValuesVar.Matchers(
+							promql.SetLabelMatchers(
+								"istio_requests_total",
+								[]promql.LabelMatcher{clusterLabelMatcher, {Name: "cluster", Type: "=", Value: "$cluster"}},
+							),
+						),
+						dashboards.AddVariableDatasource(datasource),
+					),
+					listVar.DisplayName("Namespace"),
+					listVar.DefaultValue("bookinfo"),
+				),
+			),
+			dashboard.AddVariable("workload",
+				listVar.List(
+					labelValuesVar.PrometheusLabelValues("destination_workload",
+						labelValuesVar.Matchers(
+							promql.SetLabelMatchers(
+								"istio_requests_total",
+								[]promql.LabelMatcher{
+									clusterLabelMatcher,
+									{Name: "cluster", Type: "=", Value: "$cluster"},
+									{Name: "destination_workload_namespace", Type: "=~", Value: "$namespace"},
+								},
+							),
+						),
+						dashboards.AddVariableDatasource(datasource),
+					),
+					listVar.DisplayName("Workload"),
+					listVar.DefaultValue("details-v1"),
+				),
+			),
 			dashboard.AddVariable("qrep",
 				listVar.List(
 					labelValuesVar.PrometheusLabelValues("reporter",
@@ -70,38 +104,6 @@ func BuildIstioWorkload(project string, datasource string, clusterLabelName stri
 					listVar.DefaultValue("destination"),
 				),
 			),
-			dashboard.AddVariable("namespace",
-				listVar.List(
-					labelValuesVar.PrometheusLabelValues("destination_workload_namespace",
-						labelValuesVar.Matchers(
-							promql.SetLabelMatchers(
-								"istio_requests_total",
-								[]promql.LabelMatcher{clusterLabelMatcher, {Name: "cluster", Type: "=", Value: "$cluster"}},
-							),
-						),
-						dashboards.AddVariableDatasource(datasource),
-					),
-					listVar.DisplayName("Namespace"),
-				),
-			),
-			dashboard.AddVariable("workload",
-				listVar.List(
-					labelValuesVar.PrometheusLabelValues("destination_workload",
-						labelValuesVar.Matchers(
-							promql.SetLabelMatchers(
-								"istio_requests_total",
-								[]promql.LabelMatcher{
-									clusterLabelMatcher,
-									{Name: "cluster", Type: "=", Value: "$cluster"},
-									{Name: "destination_workload_namespace", Type: "=", Value: "$namespace"},
-								},
-							),
-						),
-						dashboards.AddVariableDatasource(datasource),
-					),
-					listVar.DisplayName("Workload"),
-				),
-			),
 			dashboard.AddVariable("srcns",
 				listVar.List(
 					labelValuesVar.PrometheusLabelValues("source_workload_namespace",
@@ -112,13 +114,13 @@ func BuildIstioWorkload(project string, datasource string, clusterLabelName stri
 									clusterLabelMatcher,
 									{Name: "cluster", Type: "=", Value: "$cluster"},
 									{Name: "destination_workload", Type: "=", Value: "$workload"},
-									{Name: "destination_workload_namespace", Type: "=", Value: "$namespace"},
+									{Name: "destination_workload_namespace", Type: "=~", Value: "$namespace"},
 								},
 							),
 						),
 						dashboards.AddVariableDatasource(datasource),
 					),
-					listVar.DisplayName("Source Workload Namespace"),
+					listVar.DisplayName("Inbound Workload Namespace"),
 					listVar.AllowAllValue(true),
 				),
 			),
@@ -132,14 +134,14 @@ func BuildIstioWorkload(project string, datasource string, clusterLabelName stri
 									clusterLabelMatcher,
 									{Name: "cluster", Type: "=", Value: "$cluster"},
 									{Name: "destination_workload", Type: "=", Value: "$workload"},
-									{Name: "destination_workload_namespace", Type: "=", Value: "$namespace"},
+									{Name: "destination_workload_namespace", Type: "=~", Value: "$namespace"},
 									{Name: "source_workload_namespace", Type: "=~", Value: "$srcns"},
 								},
 							),
 						),
 						dashboards.AddVariableDatasource(datasource),
 					),
-					listVar.DisplayName("Source Workload"),
+					listVar.DisplayName("Inbound Workload"),
 					listVar.AllowAllValue(true),
 				),
 			),
@@ -152,8 +154,8 @@ func BuildIstioWorkload(project string, datasource string, clusterLabelName stri
 								[]promql.LabelMatcher{
 									clusterLabelMatcher,
 									{Name: "cluster", Type: "=", Value: "$cluster"},
-									{Name: "source_workload", Type: "=", Value: "$workload"},
-									{Name: "source_workload_namespace", Type: "=", Value: "$namespace"},
+									{Name: "source_workload", Type: "=~", Value: "$workload"},
+									{Name: "source_workload_namespace", Type: "=~", Value: "$namespace"},
 								},
 							),
 						),
@@ -163,51 +165,8 @@ func BuildIstioWorkload(project string, datasource string, clusterLabelName stri
 					listVar.AllowAllValue(true),
 				),
 			),
-			dashboard.AddVariable("dstns",
-				listVar.List(
-					labelValuesVar.PrometheusLabelValues("destination_workload_namespace",
-						labelValuesVar.Matchers(
-							promql.SetLabelMatchers(
-								"istio_requests_total",
-								[]promql.LabelMatcher{
-									clusterLabelMatcher,
-									{Name: "cluster", Type: "=", Value: "$cluster"},
-									{Name: "source_workload", Type: "=", Value: "$workload"},
-									{Name: "source_workload_namespace", Type: "=", Value: "$namespace"},
-									{Name: "destination_service", Type: "=~", Value: "$dstsvc"},
-								},
-							),
-						),
-						dashboards.AddVariableDatasource(datasource),
-					),
-					listVar.DisplayName("Destination Workload Namespace"),
-					listVar.AllowAllValue(true),
-				),
-			),
-			dashboard.AddVariable("dstwl",
-				listVar.List(
-					labelValuesVar.PrometheusLabelValues("destination_workload",
-						labelValuesVar.Matchers(
-							promql.SetLabelMatchers(
-								"istio_requests_total",
-								[]promql.LabelMatcher{
-									clusterLabelMatcher,
-									{Name: "cluster", Type: "=", Value: "$cluster"},
-									{Name: "source_workload", Type: "=", Value: "$workload"},
-									{Name: "source_workload_namespace", Type: "=", Value: "$namespace"},
-									{Name: "destination_service", Type: "=~", Value: "$dstsvc"},
-									{Name: "destination_workload_namespace", Type: "=~", Value: "$dstns"},
-								},
-							),
-						),
-						dashboards.AddVariableDatasource(datasource),
-					),
-					listVar.DisplayName("Destination Workload"),
-					listVar.AllowAllValue(true),
-				),
-			),
-			withWorkloadIncoming(datasource, clusterLabelMatcher),
-			withWorkloadOutgoing(datasource, clusterLabelMatcher),
+			withWorkloadMetrics(datasource, clusterLabelMatcher),
+			withWorkloadOutbound(datasource, clusterLabelMatcher),
 			withWorkloadTCP(datasource, clusterLabelMatcher),
 		),
 	).Component("istio")
