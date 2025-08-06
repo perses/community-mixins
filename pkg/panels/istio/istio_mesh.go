@@ -54,7 +54,6 @@ func HTTPGRPCWorkloads(datasourceName string, labelMatchers ...promql.LabelMatch
 					Name: "timestamp",
 				},
 			}),
-			tablePanel.WithDensity(tablePanel.CompactDensity),
 		),
 		panel.AddQuery(
 			query.PromQL(
@@ -134,7 +133,6 @@ func TCPServices(datasourceName string, labelMatchers ...promql.LabelMatcher) pa
 					Name: "timestamp",
 				},
 			}),
-			tablePanel.WithDensity(tablePanel.CompactDensity),
 		),
 		panel.AddQuery(
 			query.PromQL(

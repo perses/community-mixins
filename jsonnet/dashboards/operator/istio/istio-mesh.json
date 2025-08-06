@@ -194,7 +194,6 @@
           "plugin": {
             "kind": "Table",
             "spec": {
-              "density": "auto",
               "columnSettings": [
                 {
                   "name": "Value #requests",
@@ -330,7 +329,6 @@
           "plugin": {
             "kind": "Table",
             "spec": {
-              "density": "auto",
               "columnSettings": [
                 {
                   "name": "Value #sent",

@@ -139,7 +139,6 @@ spec:
                 plugin:
                     kind: Table
                     spec:
-                        density: auto
                         columnSettings:
                             - name: 'Value #requests'
                               header: Requests
@@ -258,7 +257,6 @@ spec:
                 plugin:
                     kind: Table
                     spec:
-                        density: auto
                         columnSettings:
                             - name: 'Value #sent'
                               header: Bytes Sent
