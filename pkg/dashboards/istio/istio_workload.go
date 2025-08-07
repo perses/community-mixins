@@ -9,6 +9,7 @@ import (
 	listVar "github.com/perses/perses/go-sdk/variable/list-variable"
 	markdownPanel "github.com/perses/plugins/markdown/sdk/go"
 	labelValuesVar "github.com/perses/plugins/prometheus/sdk/go/variable/label-values"
+	promqlVar "github.com/perses/plugins/prometheus/sdk/go/variable/promql"
 )
 
 // Helper function to create markdown header panels
@@ -190,9 +191,10 @@ func BuildIstioWorkload(project string, datasource string, clusterLabelName stri
 			),
 			dashboard.AddVariable("dstsvc",
 				listVar.List(
-					labelValuesVar.PrometheusLabelValues("destination_service",
-						labelValuesVar.Matchers("istio_requests_total{reporter=\"source\"}"),
-						dashboards.AddVariableDatasource(datasource),
+					promqlVar.PrometheusPromQL(
+						"sum(istio_requests_total{reporter=\"source\", source_workload=~\"$workload\", source_workload_namespace=~\"$namespace\"}) by (destination_service) or sum(istio_tcp_sent_bytes_total{reporter=\"source\", source_workload=~\"$workload\", source_workload_namespace=~\"$namespace\"}) by (destination_service)",
+						promqlVar.Datasource(datasource),
+						promqlVar.LabelName("destination_service"),
 					),
 					listVar.DisplayName("Destination Service"),
 					listVar.AllowAllValue(true),
