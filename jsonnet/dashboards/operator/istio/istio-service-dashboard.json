@@ -36,7 +36,7 @@
               },
               "labelName": "destination_service",
               "matchers": [
-                "istio_requests_total{}"
+                "sum(istio_requests_total{}) by (destination_service) or sum(istio_tcp_sent_bytes_total{}) by (destination_service)"
               ]
             }
           },
@@ -62,7 +62,7 @@
               },
               "labelName": "reporter",
               "matchers": [
-                "istio_requests_total{}"
+                "up{job=~\"istio-proxy\"}"
               ]
             }
           },
@@ -87,7 +87,7 @@
               },
               "labelName": "source_cluster",
               "matchers": [
-                "istio_requests_total{reporter=~\"$qrep\", destination_service=\"$service\"}"
+                "sum(istio_requests_total{reporter=~\"$qrep\", destination_service=\"$service\"}) by (source_cluster) or sum(istio_tcp_sent_bytes_total{reporter=~\"$qrep\", destination_service=~\"$service\"}) by (source_cluster)"
               ]
             }
           },
@@ -112,7 +112,7 @@
               },
               "labelName": "source_workload_namespace",
               "matchers": [
-                "istio_requests_total{reporter=~\"$qrep\", destination_service=\"$service\"}"
+                "sum(istio_requests_total{reporter=~\"$qrep\", destination_service=\"$service\"}) by (source_workload_namespace) or sum(istio_tcp_sent_bytes_total{reporter=~\"$qrep\", destination_service=~\"$service\"}) by (source_workload_namespace)"
               ]
             }
           },
@@ -137,7 +137,7 @@
               },
               "labelName": "source_workload",
               "matchers": [
-                "istio_requests_total{reporter=~\"$qrep\", destination_service=~\"$service\", source_workload_namespace=~\"$srcns\"}"
+                "sum(istio_requests_total{reporter=~\"$qrep\", destination_service=~\"$service\", source_workload_namespace=~\"$srcns\"}) by (source_workload) or sum(istio_tcp_sent_bytes_total{reporter=~\"$qrep\", destination_service=~\"$service\", source_workload_namespace=~\"$srcns\"}) by (source_workload)"
               ]
             }
           },
@@ -162,7 +162,7 @@
               },
               "labelName": "destination_cluster",
               "matchers": [
-                "istio_requests_total{reporter=\"destination\", destination_service=\"$service\"}"
+                "sum(istio_requests_total{reporter=\"destination\", destination_service=\"$service\"}) by (destination_cluster) or sum(istio_tcp_sent_bytes_total{reporter=\"destination\", destination_service=~\"$service\"}) by (destination_cluster)"
               ]
             }
           },
@@ -187,7 +187,7 @@
               },
               "labelName": "destination_workload_namespace",
               "matchers": [
-                "istio_requests_total{reporter=\"destination\", destination_service=\"$service\"}"
+                "sum(istio_requests_total{reporter=\"destination\", destination_service=\"$service\"}) by (destination_workload_namespace) or sum(istio_tcp_sent_bytes_total{reporter=\"destination\", destination_service=~\"$service\"}) by (destination_workload_namespace)"
               ]
             }
           },
@@ -212,7 +212,7 @@
               },
               "labelName": "destination_workload",
               "matchers": [
-                "istio_requests_total{reporter=\"destination\", destination_service=~\"$service\", destination_workload_namespace=~\"$dstns\"}"
+                "sum(istio_requests_total{reporter=\"destination\", destination_service=~\"$service\", destination_cluster=~\"$dstcluster\", destination_workload_namespace=~\"$dstns\"}) by (destination_workload) or sum(istio_tcp_sent_bytes_total{reporter=\"destination\", destination_service=~\"$service\", destination_cluster=~\"$dstcluster\", destination_workload_namespace=~\"$dstns\"}) by (destination_workload)"
               ]
             }
           },

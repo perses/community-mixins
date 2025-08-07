@@ -113,10 +113,9 @@ func withWorkloadOutboundServicesIIISection(datasource string, labelMatcher prom
 	return dashboard.AddPanelGroup("Outbound Services (III)",
 		panelgroup.PanelsPerLine(3),
 		panelgroup.PanelHeight(6),
-		// TODO: Agregar paneles específicos de outbound duration, request size, response size
-		panels.OutgoingRequestVolume(datasource, labelMatcher),
-		panels.OutgoingSuccessRate(datasource, labelMatcher),
-		panels.OutgoingRequestVolume(datasource, labelMatcher),
+		panels.OutgoingRequestDuration(datasource, labelMatcher),
+		panels.OutgoingRequestSize(datasource, labelMatcher),
+		panels.OutgoingResponseSize(datasource, labelMatcher),
 	)
 }
 
@@ -138,9 +137,10 @@ func BuildIstioWorkload(project string, datasource string, clusterLabelName stri
 			dashboards.AddClusterVariable(datasource, clusterLabelName, "istio_requests_total"),
 			dashboard.AddVariable("namespace",
 				listVar.List(
-					labelValuesVar.PrometheusLabelValues("destination_workload_namespace",
-						labelValuesVar.Matchers("istio_requests_total"),
-						dashboards.AddVariableDatasource(datasource),
+					promqlVar.PrometheusPromQL(
+						"sum(istio_requests_total) by (destination_workload_namespace) or sum(istio_tcp_sent_bytes_total) by (destination_workload_namespace)",
+						promqlVar.Datasource(datasource),
+						promqlVar.LabelName("destination_workload_namespace"),
 					),
 					listVar.DisplayName("Namespace"),
 					listVar.DefaultValue("bookinfo"),
@@ -148,9 +148,10 @@ func BuildIstioWorkload(project string, datasource string, clusterLabelName stri
 			),
 			dashboard.AddVariable("workload",
 				listVar.List(
-					labelValuesVar.PrometheusLabelValues("destination_workload",
-						labelValuesVar.Matchers("istio_requests_total{destination_workload_namespace=~\"$namespace\"}"),
-						dashboards.AddVariableDatasource(datasource),
+					promqlVar.PrometheusPromQL(
+						"(sum(istio_requests_total{destination_workload_namespace=~\"$namespace\"}) by (destination_workload) or sum(istio_requests_total{source_workload_namespace=~\"$namespace\"}) by (source_workload)) or (sum(istio_tcp_sent_bytes_total{destination_workload_namespace=~\"$namespace\"}) by (destination_workload) or sum(istio_tcp_sent_bytes_total{source_workload_namespace=~\"$namespace\"}) by (source_workload))",
+						promqlVar.Datasource(datasource),
+						promqlVar.LabelName("source_workload"),
 					),
 					listVar.DisplayName("Workload"),
 					listVar.DefaultValue("details-v1"),

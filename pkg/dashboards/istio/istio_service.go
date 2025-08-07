@@ -119,7 +119,7 @@ func BuildIstioService(project string, datasource string, clusterLabelName strin
 			dashboard.AddVariable("service",
 				listVar.List(
 					labelValuesVar.PrometheusLabelValues("destination_service",
-						labelValuesVar.Matchers("istio_requests_total"),
+						labelValuesVar.Matchers("sum(istio_requests_total{}) by (destination_service) or sum(istio_tcp_sent_bytes_total{}) by (destination_service)"),
 						dashboards.AddVariableDatasource(datasource),
 					),
 					listVar.DisplayName("Service"),
@@ -130,7 +130,7 @@ func BuildIstioService(project string, datasource string, clusterLabelName strin
 			dashboard.AddVariable("qrep",
 				listVar.List(
 					labelValuesVar.PrometheusLabelValues("reporter",
-						labelValuesVar.Matchers("istio_requests_total"),
+						labelValuesVar.Matchers("up{job=~\"istio-proxy\"}"),
 						dashboards.AddVariableDatasource(datasource),
 					),
 					listVar.DisplayName("Reporter"),
@@ -142,7 +142,7 @@ func BuildIstioService(project string, datasource string, clusterLabelName strin
 			dashboard.AddVariable("srccluster",
 				listVar.List(
 					labelValuesVar.PrometheusLabelValues("source_cluster",
-						labelValuesVar.Matchers("istio_requests_total{reporter=~\"$qrep\", destination_service=\"$service\"}"),
+						labelValuesVar.Matchers("sum(istio_requests_total{reporter=~\"$qrep\", destination_service=\"$service\"}) by (source_cluster) or sum(istio_tcp_sent_bytes_total{reporter=~\"$qrep\", destination_service=~\"$service\"}) by (source_cluster)"),
 						dashboards.AddVariableDatasource(datasource),
 					),
 					listVar.DisplayName("Client Cluster"),
@@ -154,7 +154,7 @@ func BuildIstioService(project string, datasource string, clusterLabelName strin
 			dashboard.AddVariable("srcns",
 				listVar.List(
 					labelValuesVar.PrometheusLabelValues("source_workload_namespace",
-						labelValuesVar.Matchers("istio_requests_total{reporter=~\"$qrep\", destination_service=\"$service\"}"),
+						labelValuesVar.Matchers("sum(istio_requests_total{reporter=~\"$qrep\", destination_service=\"$service\"}) by (source_workload_namespace) or sum(istio_tcp_sent_bytes_total{reporter=~\"$qrep\", destination_service=~\"$service\"}) by (source_workload_namespace)"),
 						dashboards.AddVariableDatasource(datasource),
 					),
 					listVar.DisplayName("Client Workload Namespace"),
@@ -166,7 +166,7 @@ func BuildIstioService(project string, datasource string, clusterLabelName strin
 			dashboard.AddVariable("srcwl",
 				listVar.List(
 					labelValuesVar.PrometheusLabelValues("source_workload",
-						labelValuesVar.Matchers("istio_requests_total{reporter=~\"$qrep\", destination_service=~\"$service\", source_workload_namespace=~\"$srcns\"}"),
+						labelValuesVar.Matchers("sum(istio_requests_total{reporter=~\"$qrep\", destination_service=~\"$service\", source_workload_namespace=~\"$srcns\"}) by (source_workload) or sum(istio_tcp_sent_bytes_total{reporter=~\"$qrep\", destination_service=~\"$service\", source_workload_namespace=~\"$srcns\"}) by (source_workload)"),
 						dashboards.AddVariableDatasource(datasource),
 					),
 					listVar.DisplayName("Client Workload"),
@@ -178,7 +178,7 @@ func BuildIstioService(project string, datasource string, clusterLabelName strin
 			dashboard.AddVariable("dstcluster",
 				listVar.List(
 					labelValuesVar.PrometheusLabelValues("destination_cluster",
-						labelValuesVar.Matchers("istio_requests_total{reporter=\"destination\", destination_service=\"$service\"}"),
+						labelValuesVar.Matchers("sum(istio_requests_total{reporter=\"destination\", destination_service=\"$service\"}) by (destination_cluster) or sum(istio_tcp_sent_bytes_total{reporter=\"destination\", destination_service=~\"$service\"}) by (destination_cluster)"),
 						dashboards.AddVariableDatasource(datasource),
 					),
 					listVar.DisplayName("Service Workload Cluster"),
@@ -190,7 +190,7 @@ func BuildIstioService(project string, datasource string, clusterLabelName strin
 			dashboard.AddVariable("dstns",
 				listVar.List(
 					labelValuesVar.PrometheusLabelValues("destination_workload_namespace",
-						labelValuesVar.Matchers("istio_requests_total{reporter=\"destination\", destination_service=\"$service\"}"),
+						labelValuesVar.Matchers("sum(istio_requests_total{reporter=\"destination\", destination_service=\"$service\"}) by (destination_workload_namespace) or sum(istio_tcp_sent_bytes_total{reporter=\"destination\", destination_service=~\"$service\"}) by (destination_workload_namespace)"),
 						dashboards.AddVariableDatasource(datasource),
 					),
 					listVar.DisplayName("Service Workload Namespace"),
@@ -202,7 +202,7 @@ func BuildIstioService(project string, datasource string, clusterLabelName strin
 			dashboard.AddVariable("dstwl",
 				listVar.List(
 					labelValuesVar.PrometheusLabelValues("destination_workload",
-						labelValuesVar.Matchers("istio_requests_total{reporter=\"destination\", destination_service=~\"$service\", destination_workload_namespace=~\"$dstns\"}"),
+						labelValuesVar.Matchers("sum(istio_requests_total{reporter=\"destination\", destination_service=~\"$service\", destination_cluster=~\"$dstcluster\", destination_workload_namespace=~\"$dstns\"}) by (destination_workload) or sum(istio_tcp_sent_bytes_total{reporter=\"destination\", destination_service=~\"$service\", destination_cluster=~\"$dstcluster\", destination_workload_namespace=~\"$dstns\"}) by (destination_workload)"),
 						dashboards.AddVariableDatasource(datasource),
 					),
 					listVar.DisplayName("Service Workload"),
