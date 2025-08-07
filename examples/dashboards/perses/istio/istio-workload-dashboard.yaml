@@ -114,40 +114,6 @@ spec:
                     matchers:
                         - istio_requests_total{reporter="source"}
             name: dstsvc
-        - kind: ListVariable
-          spec:
-            display:
-                name: Destination Workload Namespace
-                hidden: false
-            allowAllValue: true
-            allowMultiple: true
-            plugin:
-                kind: PrometheusLabelValuesVariable
-                spec:
-                    datasource:
-                        kind: PrometheusDatasource
-                        name: prometheus-datasource
-                    labelName: destination_workload_namespace
-                    matchers:
-                        - istio_requests_total{reporter="source"}
-            name: dstns
-        - kind: ListVariable
-          spec:
-            display:
-                name: Destination Workload
-                hidden: false
-            allowAllValue: true
-            allowMultiple: true
-            plugin:
-                kind: PrometheusLabelValuesVariable
-                spec:
-                    datasource:
-                        kind: PrometheusDatasource
-                        name: prometheus-datasource
-                    labelName: destination_workload
-                    matchers:
-                        - istio_requests_total{reporter="source"}
-            name: dstwl
     panels:
         "0_0":
             kind: Panel
@@ -456,7 +422,7 @@ spec:
             kind: Panel
             spec:
                 display:
-                    name: Incoming Request Volume
+                    name: Incoming Requests By Source And Response Code
                     description: Request volume to workload by source
                 plugin:
                     kind: TimeSeriesChart
@@ -484,14 +450,14 @@ spec:
                                     name: prometheus-datasource
                                 query: |-
                                     round(
-                                      sum by (source_workload, source_workload_namespace) (
+                                      sum by (source_workload, source_workload_namespace, response_code) (
                                         irate(
                                           istio_requests_total{connection_security_policy="mutual_tls",destination_workload=~"$workload",destination_workload_namespace=~"$namespace",reporter=~"$qrep",source_workload=~"$srcwl",source_workload_namespace=~"$srcns"}[1m]
                                         )
                                       ),
                                       0.001
                                     )
-                                seriesNameFormat: "{{ source_workload }}.{{ source_workload_namespace }} (\U0001F510mTLS)"
+                                seriesNameFormat: "{{ source_workload }}.{{ source_workload_namespace }} : {{ response_code }} (\U0001F510mTLS)"
                     - kind: TimeSeriesQuery
                       spec:
                         plugin:
@@ -502,19 +468,19 @@ spec:
                                     name: prometheus-datasource
                                 query: |-
                                     round(
-                                      sum by (source_workload, source_workload_namespace) (
+                                      sum by (source_workload, source_workload_namespace, response_code) (
                                         irate(
                                           istio_requests_total{connection_security_policy!="mutual_tls",destination_workload=~"$workload",destination_workload_namespace=~"$namespace",reporter=~"$qrep",source_workload=~"$srcwl",source_workload_namespace=~"$srcns"}[1m]
                                         )
                                       ),
                                       0.001
                                     )
-                                seriesNameFormat: '{{ source_workload }}.{{ source_workload_namespace }}'
+                                seriesNameFormat: '{{ source_workload }}.{{ source_workload_namespace }} : {{ response_code }}'
         "4_1":
             kind: Panel
             spec:
                 display:
-                    name: Incoming Success Rate
+                    name: Incoming Success Rate (non-5xx responses) By Source
                     description: Success rate of requests to workload by source
                 plugin:
                     kind: TimeSeriesChart
@@ -544,13 +510,34 @@ spec:
                                 query: |4-
                                       sum by (source_workload, source_workload_namespace) (
                                         irate(
-                                          istio_requests_total{destination_workload=~"$workload",destination_workload_namespace=~"$namespace",reporter=~"$qrep",response_code!~"5.*",source_workload=~"$srcwl",source_workload_namespace=~"$srcns"}[1m]
+                                          istio_requests_total{connection_security_policy="mutual_tls",destination_workload=~"$workload",destination_workload_namespace=~"$namespace",reporter=~"$qrep",response_code!~"5.*",source_workload=~"$srcwl",source_workload_namespace=~"$srcns"}[5m]
                                         )
                                       )
                                     /
                                       sum by (source_workload, source_workload_namespace) (
                                         irate(
-                                          istio_requests_total{destination_workload=~"$workload",destination_workload_namespace=~"$namespace",reporter=~"$qrep",source_workload=~"$srcwl",source_workload_namespace=~"$srcns"}[1m]
+                                          istio_requests_total{connection_security_policy="mutual_tls",destination_workload=~"$workload",destination_workload_namespace=~"$namespace",reporter=~"$qrep",source_workload=~"$srcwl",source_workload_namespace=~"$srcns"}[5m]
+                                        )
+                                      )
+                                seriesNameFormat: "{{ source_workload }}.{{ source_workload_namespace }} (\U0001F510mTLS)"
+                    - kind: TimeSeriesQuery
+                      spec:
+                        plugin:
+                            kind: PrometheusTimeSeriesQuery
+                            spec:
+                                datasource:
+                                    kind: PrometheusDatasource
+                                    name: prometheus-datasource
+                                query: |4-
+                                      sum by (source_workload, source_workload_namespace) (
+                                        irate(
+                                          istio_requests_total{connection_security_policy!="mutual_tls",destination_workload=~"$workload",destination_workload_namespace=~"$namespace",reporter=~"$qrep",response_code!~"5.*",source_workload=~"$srcwl",source_workload_namespace=~"$srcns"}[5m]
+                                        )
+                                      )
+                                    /
+                                      sum by (source_workload, source_workload_namespace) (
+                                        irate(
+                                          istio_requests_total{connection_security_policy!="mutual_tls",destination_workload=~"$workload",destination_workload_namespace=~"$namespace",reporter=~"$qrep",source_workload=~"$srcwl",source_workload_namespace=~"$srcns"}[5m]
                                         )
                                       )
                                 seriesNameFormat: '{{ source_workload }}.{{ source_workload_namespace }}'
