@@ -54,6 +54,10 @@ Welcome to the **Perses Community Dashboards** repository! This project is desig
 ### Perses
 - Perses Overview
 
+### Istio Dashboards
+- Based on exported Grafana Dashboards from Istio 1.26
+- Requires a Prometheus datasource named `prometheus-datasource` and a proxy url to Prometheus, Ex. `http://prometheus.istio-system:9090`
+
 ## Library Panels
 
 In addition to the community dashboards, this repository also offers a **library of reusable panels**. These panels can be used as building blocks for custom dashboard creation, enabling you to craft tailored setups to suit specific observability needs.
