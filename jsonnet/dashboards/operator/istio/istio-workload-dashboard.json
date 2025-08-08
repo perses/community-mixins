@@ -76,16 +76,14 @@
           "allowAllValue": false,
           "allowMultiple": true,
           "plugin": {
-            "kind": "PrometheusLabelValuesVariable",
+            "kind": "PrometheusPromQLVariable",
             "spec": {
               "datasource": {
                 "kind": "PrometheusDatasource",
                 "name": "prometheus-datasource"
               },
-              "labelName": "reporter",
-              "matchers": [
-                "istio_requests_total{}"
-              ]
+              "expr": "sum(istio_requests_total) by (reporter)",
+              "labelName": "reporter"
             }
           },
           "name": "qrep"

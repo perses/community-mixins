@@ -24,20 +24,17 @@
             "name": "Service",
             "hidden": false
           },
-          "defaultValue": "details.bookinfo.svc.cluster.local",
           "allowAllValue": false,
           "allowMultiple": false,
           "plugin": {
-            "kind": "PrometheusLabelValuesVariable",
+            "kind": "PrometheusPromQLVariable",
             "spec": {
               "datasource": {
                 "kind": "PrometheusDatasource",
                 "name": "prometheus-datasource"
               },
-              "labelName": "destination_service",
-              "matchers": [
-                "sum(istio_requests_total{}) by (destination_service) or sum(istio_tcp_sent_bytes_total{}) by (destination_service)"
-              ]
+              "expr": "sum(istio_requests_total{}) by (destination_service) or sum(istio_tcp_sent_bytes_total{}) by (destination_service)",
+              "labelName": "destination_service"
             }
           },
           "name": "service"
@@ -54,16 +51,14 @@
           "allowAllValue": false,
           "allowMultiple": true,
           "plugin": {
-            "kind": "PrometheusLabelValuesVariable",
+            "kind": "PrometheusPromQLVariable",
             "spec": {
               "datasource": {
                 "kind": "PrometheusDatasource",
                 "name": "prometheus-datasource"
               },
-              "labelName": "reporter",
-              "matchers": [
-                "up{job=~\"istio-proxy\"}"
-              ]
+              "expr": "sum(istio_requests_total) by (reporter)",
+              "labelName": "reporter"
             }
           },
           "name": "qrep"
@@ -79,16 +74,14 @@
           "allowAllValue": true,
           "allowMultiple": true,
           "plugin": {
-            "kind": "PrometheusLabelValuesVariable",
+            "kind": "PrometheusPromQLVariable",
             "spec": {
               "datasource": {
                 "kind": "PrometheusDatasource",
                 "name": "prometheus-datasource"
               },
-              "labelName": "source_cluster",
-              "matchers": [
-                "sum(istio_requests_total{reporter=~\"$qrep\", destination_service=\"$service\"}) by (source_cluster) or sum(istio_tcp_sent_bytes_total{reporter=~\"$qrep\", destination_service=~\"$service\"}) by (source_cluster)"
-              ]
+              "expr": "sum(istio_requests_total{reporter=~\"$qrep\", destination_service=\"$service\"}) by (source_cluster) or sum(istio_tcp_sent_bytes_total{reporter=~\"$qrep\", destination_service=~\"$service\"}) by (source_cluster)",
+              "labelName": "source_cluster"
             }
           },
           "name": "srccluster"
@@ -104,16 +97,14 @@
           "allowAllValue": true,
           "allowMultiple": true,
           "plugin": {
-            "kind": "PrometheusLabelValuesVariable",
+            "kind": "PrometheusPromQLVariable",
             "spec": {
               "datasource": {
                 "kind": "PrometheusDatasource",
                 "name": "prometheus-datasource"
               },
-              "labelName": "source_workload_namespace",
-              "matchers": [
-                "sum(istio_requests_total{reporter=~\"$qrep\", destination_service=\"$service\"}) by (source_workload_namespace) or sum(istio_tcp_sent_bytes_total{reporter=~\"$qrep\", destination_service=~\"$service\"}) by (source_workload_namespace)"
-              ]
+              "expr": "sum(istio_requests_total{reporter=~\"$qrep\", destination_service=\"$service\"}) by (source_workload_namespace) or sum(istio_tcp_sent_bytes_total{reporter=~\"$qrep\", destination_service=~\"$service\"}) by (source_workload_namespace)",
+              "labelName": "source_workload_namespace"
             }
           },
           "name": "srcns"
@@ -129,16 +120,14 @@
           "allowAllValue": true,
           "allowMultiple": true,
           "plugin": {
-            "kind": "PrometheusLabelValuesVariable",
+            "kind": "PrometheusPromQLVariable",
             "spec": {
               "datasource": {
                 "kind": "PrometheusDatasource",
                 "name": "prometheus-datasource"
               },
-              "labelName": "source_workload",
-              "matchers": [
-                "sum(istio_requests_total{reporter=~\"$qrep\", destination_service=~\"$service\", source_workload_namespace=~\"$srcns\"}) by (source_workload) or sum(istio_tcp_sent_bytes_total{reporter=~\"$qrep\", destination_service=~\"$service\", source_workload_namespace=~\"$srcns\"}) by (source_workload)"
-              ]
+              "expr": "sum(istio_requests_total{reporter=~\"$qrep\", destination_service=~\"$service\", source_workload_namespace=~\"$srcns\"}) by (source_workload) or sum(istio_tcp_sent_bytes_total{reporter=~\"$qrep\", destination_service=~\"$service\", source_workload_namespace=~\"$srcns\"}) by (source_workload)",
+              "labelName": "source_workload"
             }
           },
           "name": "srcwl"
@@ -154,16 +143,14 @@
           "allowAllValue": true,
           "allowMultiple": true,
           "plugin": {
-            "kind": "PrometheusLabelValuesVariable",
+            "kind": "PrometheusPromQLVariable",
             "spec": {
               "datasource": {
                 "kind": "PrometheusDatasource",
                 "name": "prometheus-datasource"
               },
-              "labelName": "destination_cluster",
-              "matchers": [
-                "sum(istio_requests_total{reporter=\"destination\", destination_service=\"$service\"}) by (destination_cluster) or sum(istio_tcp_sent_bytes_total{reporter=\"destination\", destination_service=~\"$service\"}) by (destination_cluster)"
-              ]
+              "expr": "sum(istio_requests_total{reporter=\"destination\", destination_service=\"$service\"}) by (destination_cluster) or sum(istio_tcp_sent_bytes_total{reporter=\"destination\", destination_service=~\"$service\"}) by (destination_cluster)",
+              "labelName": "destination_cluster"
             }
           },
           "name": "dstcluster"
@@ -179,16 +166,14 @@
           "allowAllValue": true,
           "allowMultiple": true,
           "plugin": {
-            "kind": "PrometheusLabelValuesVariable",
+            "kind": "PrometheusPromQLVariable",
             "spec": {
               "datasource": {
                 "kind": "PrometheusDatasource",
                 "name": "prometheus-datasource"
               },
-              "labelName": "destination_workload_namespace",
-              "matchers": [
-                "sum(istio_requests_total{reporter=\"destination\", destination_service=\"$service\"}) by (destination_workload_namespace) or sum(istio_tcp_sent_bytes_total{reporter=\"destination\", destination_service=~\"$service\"}) by (destination_workload_namespace)"
-              ]
+              "expr": "sum(istio_requests_total{reporter=\"destination\", destination_service=\"$service\"}) by (destination_workload_namespace) or sum(istio_tcp_sent_bytes_total{reporter=\"destination\", destination_service=~\"$service\"}) by (destination_workload_namespace)",
+              "labelName": "destination_workload_namespace"
             }
           },
           "name": "dstns"
@@ -204,16 +189,14 @@
           "allowAllValue": true,
           "allowMultiple": true,
           "plugin": {
-            "kind": "PrometheusLabelValuesVariable",
+            "kind": "PrometheusPromQLVariable",
             "spec": {
               "datasource": {
                 "kind": "PrometheusDatasource",
                 "name": "prometheus-datasource"
               },
-              "labelName": "destination_workload",
-              "matchers": [
-                "sum(istio_requests_total{reporter=\"destination\", destination_service=~\"$service\", destination_cluster=~\"$dstcluster\", destination_workload_namespace=~\"$dstns\"}) by (destination_workload) or sum(istio_tcp_sent_bytes_total{reporter=\"destination\", destination_service=~\"$service\", destination_cluster=~\"$dstcluster\", destination_workload_namespace=~\"$dstns\"}) by (destination_workload)"
-              ]
+              "expr": "sum(istio_requests_total{reporter=\"destination\", destination_service=~\"$service\", destination_cluster=~\"$dstcluster\", destination_workload_namespace=~\"$dstns\"}) by (destination_workload) or sum(istio_tcp_sent_bytes_total{reporter=\"destination\", destination_service=~\"$service\", destination_cluster=~\"$dstcluster\", destination_workload_namespace=~\"$dstns\"}) by (destination_workload)",
+              "labelName": "destination_workload"
             }
           },
           "name": "dstwl"
@@ -235,7 +218,7 @@
           }
         }
       },
-      "0_1": {
+      "1_0": {
         "kind": "Panel",
         "spec": {
           "display": {
@@ -283,7 +266,7 @@
           ]
         }
       },
-      "0_2": {
+      "1_1": {
         "kind": "Panel",
         "spec": {
           "display": {
@@ -338,7 +321,7 @@
           ]
         }
       },
-      "0_3": {
+      "1_2": {
         "kind": "Panel",
         "spec": {
           "display": {
@@ -410,7 +393,7 @@
           ]
         }
       },
-      "0_4": {
+      "1_3": {
         "kind": "Panel",
         "spec": {
           "display": {
@@ -461,7 +444,7 @@
           ]
         }
       },
-      "0_5": {
+      "1_4": {
         "kind": "Panel",
         "spec": {
           "display": {
@@ -509,7 +492,7 @@
           ]
         }
       },
-      "0_6": {
+      "1_5": {
         "kind": "Panel",
         "spec": {
           "display": {
@@ -564,7 +547,7 @@
           ]
         }
       },
-      "0_7": {
+      "1_6": {
         "kind": "Panel",
         "spec": {
           "display": {
@@ -636,7 +619,7 @@
           ]
         }
       },
-      "0_8": {
+      "1_7": {
         "kind": "Panel",
         "spec": {
           "display": {
@@ -687,7 +670,7 @@
           ]
         }
       },
-      "1_0": {
+      "2_0": {
         "kind": "Panel",
         "spec": {
           "display": {
@@ -701,7 +684,7 @@
           }
         }
       },
-      "1_1": {
+      "2_1": {
         "kind": "Panel",
         "spec": {
           "display": {
@@ -760,7 +743,7 @@
           ]
         }
       },
-      "1_2": {
+      "2_2": {
         "kind": "Panel",
         "spec": {
           "display": {
@@ -825,7 +808,7 @@
           ]
         }
       },
-      "2_0": {
+      "3_0": {
         "kind": "Panel",
         "spec": {
           "display": {
@@ -985,7 +968,7 @@
           ]
         }
       },
-      "2_1": {
+      "3_1": {
         "kind": "Panel",
         "spec": {
           "display": {
@@ -1145,7 +1128,7 @@
           ]
         }
       },
-      "2_2": {
+      "3_2": {
         "kind": "Panel",
         "spec": {
           "display": {
@@ -1305,7 +1288,7 @@
           ]
         }
       },
-      "3_0": {
+      "4_0": {
         "kind": "Panel",
         "spec": {
           "display": {
@@ -1369,7 +1352,7 @@
           ]
         }
       },
-      "3_1": {
+      "4_1": {
         "kind": "Panel",
         "spec": {
           "display": {
@@ -1433,7 +1416,7 @@
           ]
         }
       },
-      "4_0": {
+      "5_0": {
         "kind": "Panel",
         "spec": {
           "display": {
@@ -1447,7 +1430,7 @@
           }
         }
       },
-      "4_1": {
+      "5_1": {
         "kind": "Panel",
         "spec": {
           "display": {
@@ -1506,7 +1489,7 @@
           ]
         }
       },
-      "4_2": {
+      "5_2": {
         "kind": "Panel",
         "spec": {
           "display": {
@@ -1571,7 +1554,7 @@
           ]
         }
       },
-      "5_0": {
+      "6_0": {
         "kind": "Panel",
         "spec": {
           "display": {
@@ -1731,7 +1714,7 @@
           ]
         }
       },
-      "5_1": {
+      "6_1": {
         "kind": "Panel",
         "spec": {
           "display": {
@@ -1891,7 +1874,7 @@
           ]
         }
       },
-      "5_2": {
+      "6_2": {
         "kind": "Panel",
         "spec": {
           "display": {
@@ -2051,7 +2034,7 @@
           ]
         }
       },
-      "6_0": {
+      "7_0": {
         "kind": "Panel",
         "spec": {
           "display": {
@@ -2115,7 +2098,7 @@
           ]
         }
       },
-      "6_1": {
+      "7_1": {
         "kind": "Panel",
         "spec": {
           "display": {
@@ -2191,82 +2174,92 @@
             {
               "x": 0,
               "y": 0,
-              "width": 6,
+              "width": 24,
               "height": 4,
               "content": {
                 "$ref": "#/spec/panels/0_0"
               }
-            },
+            }
+          ]
+        }
+      },
+      {
+        "kind": "Grid",
+        "spec": {
+          "display": {
+            "title": "General"
+          },
+          "items": [
             {
-              "x": 6,
+              "x": 0,
               "y": 0,
-              "width": 6,
+              "width": 12,
               "height": 4,
               "content": {
-                "$ref": "#/spec/panels/0_1"
+                "$ref": "#/spec/panels/1_0"
               }
             },
             {
               "x": 12,
               "y": 0,
-              "width": 6,
+              "width": 12,
               "height": 4,
               "content": {
-                "$ref": "#/spec/panels/0_2"
-              }
-            },
-            {
-              "x": 18,
-              "y": 0,
-              "width": 6,
-              "height": 4,
-              "content": {
-                "$ref": "#/spec/panels/0_3"
+                "$ref": "#/spec/panels/1_1"
               }
             },
             {
               "x": 0,
               "y": 4,
-              "width": 6,
+              "width": 12,
               "height": 4,
               "content": {
-                "$ref": "#/spec/panels/0_4"
-              }
-            },
-            {
-              "x": 6,
-              "y": 4,
-              "width": 6,
-              "height": 4,
-              "content": {
-                "$ref": "#/spec/panels/0_5"
+                "$ref": "#/spec/panels/1_2"
               }
             },
             {
               "x": 12,
               "y": 4,
-              "width": 6,
+              "width": 12,
               "height": 4,
               "content": {
-                "$ref": "#/spec/panels/0_6"
-              }
-            },
-            {
-              "x": 18,
-              "y": 4,
-              "width": 6,
-              "height": 4,
-              "content": {
-                "$ref": "#/spec/panels/0_7"
+                "$ref": "#/spec/panels/1_3"
               }
             },
             {
               "x": 0,
               "y": 8,
-              "width": 6,
+              "width": 12,
               "height": 4,
               "content": {
-                "$ref": "#/spec/panels/0_8"
+                "$ref": "#/spec/panels/1_4"
+              }
+            },
+            {
+              "x": 12,
+              "y": 8,
+              "width": 12,
+              "height": 4,
+              "content": {
+                "$ref": "#/spec/panels/1_5"
+              }
+            },
+            {
+              "x": 0,
+              "y": 12,
+              "width": 12,
+              "height": 4,
+              "content": {
+                "$ref": "#/spec/panels/1_6"
+              }
+            },
+            {
+              "x": 12,
+              "y": 12,
+              "width": 12,
+              "height": 4,
+              "content": {
+                "$ref": "#/spec/panels/1_7"
               }
             }
           ]
@@ -2285,7 +2278,7 @@
               "width": 12,
               "height": 6,
               "content": {
-                "$ref": "#/spec/panels/1_0"
+                "$ref": "#/spec/panels/2_0"
               }
             },
             {
@@ -2294,7 +2287,7 @@
               "width": 12,
               "height": 6,
               "content": {
-                "$ref": "#/spec/panels/1_1"
+                "$ref": "#/spec/panels/2_1"
               }
             },
             {
@@ -2303,7 +2296,7 @@
               "width": 12,
               "height": 6,
               "content": {
-                "$ref": "#/spec/panels/1_2"
+                "$ref": "#/spec/panels/2_2"
               }
             }
           ]
@@ -2322,7 +2315,7 @@
               "width": 8,
               "height": 6,
               "content": {
-                "$ref": "#/spec/panels/2_0"
+                "$ref": "#/spec/panels/3_0"
               }
             },
             {
@@ -2331,7 +2324,7 @@
               "width": 8,
               "height": 6,
               "content": {
-                "$ref": "#/spec/panels/2_1"
+                "$ref": "#/spec/panels/3_1"
               }
             },
             {
@@ -2340,7 +2333,7 @@
               "width": 8,
               "height": 6,
               "content": {
-                "$ref": "#/spec/panels/2_2"
+                "$ref": "#/spec/panels/3_2"
               }
             }
           ]
@@ -2351,34 +2344,6 @@
         "spec": {
           "display": {
             "title": "Client Workloads (III)"
-          },
-          "items": [
-            {
-              "x": 0,
-              "y": 0,
-              "width": 12,
-              "height": 6,
-              "content": {
-                "$ref": "#/spec/panels/3_0"
-              }
-            },
-            {
-              "x": 12,
-              "y": 0,
-              "width": 12,
-              "height": 6,
-              "content": {
-                "$ref": "#/spec/panels/3_1"
-              }
-            }
-          ]
-        }
-      },
-      {
-        "kind": "Grid",
-        "spec": {
-          "display": {
-            "title": "Service Workloads"
           },
           "items": [
             {
@@ -2398,6 +2363,34 @@
               "content": {
                 "$ref": "#/spec/panels/4_1"
               }
+            }
+          ]
+        }
+      },
+      {
+        "kind": "Grid",
+        "spec": {
+          "display": {
+            "title": "Service Workloads"
+          },
+          "items": [
+            {
+              "x": 0,
+              "y": 0,
+              "width": 12,
+              "height": 6,
+              "content": {
+                "$ref": "#/spec/panels/5_0"
+              }
+            },
+            {
+              "x": 12,
+              "y": 0,
+              "width": 12,
+              "height": 6,
+              "content": {
+                "$ref": "#/spec/panels/5_1"
+              }
             },
             {
               "x": 0,
@@ -2405,7 +2398,7 @@
               "width": 12,
               "height": 6,
               "content": {
-                "$ref": "#/spec/panels/4_2"
+                "$ref": "#/spec/panels/5_2"
               }
             }
           ]
@@ -2424,7 +2417,7 @@
               "width": 8,
               "height": 6,
               "content": {
-                "$ref": "#/spec/panels/5_0"
+                "$ref": "#/spec/panels/6_0"
               }
             },
             {
@@ -2433,7 +2426,7 @@
               "width": 8,
               "height": 6,
               "content": {
-                "$ref": "#/spec/panels/5_1"
+                "$ref": "#/spec/panels/6_1"
               }
             },
             {
@@ -2442,7 +2435,7 @@
               "width": 8,
               "height": 6,
               "content": {
-                "$ref": "#/spec/panels/5_2"
+                "$ref": "#/spec/panels/6_2"
               }
             }
           ]
@@ -2461,7 +2454,7 @@
               "width": 12,
               "height": 6,
               "content": {
-                "$ref": "#/spec/panels/6_0"
+                "$ref": "#/spec/panels/7_0"
               }
             },
             {
@@ -2470,7 +2463,7 @@
               "width": 12,
               "height": 6,
               "content": {
-                "$ref": "#/spec/panels/6_1"
+                "$ref": "#/spec/panels/7_1"
               }
             }
           ]

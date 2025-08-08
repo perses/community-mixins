@@ -159,9 +159,10 @@ func BuildIstioWorkload(project string, datasource string, clusterLabelName stri
 			),
 			dashboard.AddVariable("qrep",
 				listVar.List(
-					labelValuesVar.PrometheusLabelValues("reporter",
-						labelValuesVar.Matchers("istio_requests_total"),
-						dashboards.AddVariableDatasource(datasource),
+					promqlVar.PrometheusPromQL(
+						"sum(istio_requests_total) by (reporter)",
+						promqlVar.Datasource(datasource),
+						promqlVar.LabelName("reporter"),
 					),
 					listVar.DisplayName("Reporter"),
 					listVar.DefaultValue("destination"),

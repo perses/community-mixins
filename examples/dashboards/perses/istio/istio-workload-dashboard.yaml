@@ -52,14 +52,13 @@ spec:
             allowAllValue: false
             allowMultiple: true
             plugin:
-                kind: PrometheusLabelValuesVariable
+                kind: PrometheusPromQLVariable
                 spec:
                     datasource:
                         kind: PrometheusDatasource
                         name: prometheus-datasource
+                    expr: sum(istio_requests_total) by (reporter)
                     labelName: reporter
-                    matchers:
-                        - istio_requests_total{}
             name: qrep
         - kind: ListVariable
           spec:
