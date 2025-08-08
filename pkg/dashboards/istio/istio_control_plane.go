@@ -50,13 +50,11 @@ func withWebhooks(datasource string, labelMatcher promql.LabelMatcher) dashboard
 }
 
 func BuildIstioControlPlane(project string, datasource string, clusterLabelName string) dashboards.DashboardResult {
-	// Para coincidir con el original, no usamos variables ni label matchers
 	emptyLabelMatcher := promql.LabelMatcher{}
 	return dashboards.NewDashboardResult(
 		dashboard.New("istio-control-plane",
 			dashboard.ProjectName(project),
 			dashboard.Name("Istio Control Plane Dashboard"),
-			// Sin variables para coincidir con el original y evitar problemas con métricas
 			withDeployedVersions(datasource, emptyLabelMatcher),
 			withControlPlaneResources(datasource, emptyLabelMatcher),
 			withPushInformation(datasource, emptyLabelMatcher),

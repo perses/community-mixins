@@ -64,7 +64,6 @@ func withIstiodResourceUsage(datasource string, labelMatcher promql.LabelMatcher
 }
 
 func BuildIstioPerformance(project string, datasource string, clusterLabelName string) dashboards.DashboardResult {
-	// Para coincidir con el original, no usamos variables ni label matchers
 	emptyLabelMatcher := promql.LabelMatcher{}
 	return dashboards.NewDashboardResult(
 		dashboard.New("istio-performance",

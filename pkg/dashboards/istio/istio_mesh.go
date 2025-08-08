@@ -37,7 +37,6 @@ func withIstioComponentVersions(datasource string, labelMatcher promql.LabelMatc
 }
 
 func BuildIstioMesh(project string, datasource string, clusterLabelName string) dashboards.DashboardResult {
-	// Para coincidir con el original, no usamos variables ni label matchers
 	emptyLabelMatcher := promql.LabelMatcher{}
 	return dashboards.NewDashboardResult(
 		dashboard.New("istio-mesh",

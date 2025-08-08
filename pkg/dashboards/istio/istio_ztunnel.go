@@ -39,7 +39,6 @@ func withOperationsGroup(datasource string, labelMatcher promql.LabelMatcher) da
 }
 
 func BuildIstioZtunnel(project string, datasource string, clusterLabelName string) dashboards.DashboardResult {
-	// Para coincidir con el original, no usamos variables ni label matchers
 	emptyLabelMatcher := promql.LabelMatcher{}
 	return dashboards.NewDashboardResult(
 		dashboard.New("istio-ztunnel-dashboard",

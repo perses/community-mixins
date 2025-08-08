@@ -11,7 +11,7 @@ import (
 	promqlVar "github.com/perses/plugins/prometheus/sdk/go/variable/promql"
 )
 
-// General section - matches JSON layout exactly
+// General section
 func withGeneralSection(datasource string, labelMatcher promql.LabelMatcher) dashboard.Option {
 	return dashboard.AddPanelGroup("General",
 		panelgroup.PanelsPerLine(1),
@@ -225,7 +225,6 @@ func BuildIstioService(project string, datasource string, clusterLabelName strin
 					listVar.AllowMultiple(true),
 				),
 			),
-			// Add all sections that match the JSON layout
 			withGeneralSection(datasource, clusterLabelMatcher),
 			withGeneralSectionII(datasource, clusterLabelMatcher),
 			withClientWorkloadsSection(datasource, clusterLabelMatcher),
