@@ -55,6 +55,15 @@ func HTTPGRPCWorkloads(datasourceName string, labelMatchers ...promql.LabelMatch
 					Name: "timestamp",
 				},
 			}),
+
+			tablePanel.Transform([]commonSdk.Transform{
+				{
+					Kind: commonSdk.MergeSeriesKind,
+					Spec: commonSdk.MergeSeriesSpec{
+						Disabled: false,
+					},
+				},
+			}),
 		),
 		panel.AddQuery(
 			query.PromQL(
@@ -138,6 +147,15 @@ func TCPServices(datasourceName string, labelMatchers ...promql.LabelMatcher) pa
 				},
 				{
 					Name: "timestamp",
+				},
+			}),
+
+			tablePanel.Transform([]commonSdk.Transform{
+				{
+					Kind: commonSdk.MergeSeriesKind,
+					Spec: commonSdk.MergeSeriesSpec{
+						Disabled: false,
+					},
 				},
 			}),
 		),

@@ -243,6 +243,9 @@ spec:
             - name: destination_workload_namespace
             - name: destination_workload
             - name: timestamp
+            transforms:
+            - kind: MergeSeries
+              spec: {}
         queries:
         - kind: TimeSeriesQuery
           spec:
@@ -378,6 +381,9 @@ spec:
             - name: destination_workload_namespace
             - name: destination_workload
             - name: timestamp
+            transforms:
+            - kind: MergeSeries
+              spec: {}
         queries:
         - kind: TimeSeriesQuery
           spec:

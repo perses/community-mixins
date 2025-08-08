@@ -273,6 +273,12 @@
                 {
                   "name": "timestamp"
                 }
+              ],
+              "transforms": [
+                {
+                  "kind": "MergeSeries",
+                  "spec": {}
+                }
               ]
             }
           },
@@ -395,6 +401,12 @@
                 },
                 {
                   "name": "timestamp"
+                }
+              ],
+              "transforms": [
+                {
+                  "kind": "MergeSeries",
+                  "spec": {}
                 }
               ]
             }
