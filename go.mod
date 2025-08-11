@@ -17,7 +17,7 @@ require (
 	github.com/prometheus/prometheus v0.305.0
 	gopkg.in/yaml.v3 v3.0.1
 	k8s.io/apimachinery v0.33.3
-	sigs.k8s.io/yaml v1.5.0
+	sigs.k8s.io/yaml v1.6.0
 )
 
 require go.yaml.in/yaml/v2 v2.4.2 // indirect
