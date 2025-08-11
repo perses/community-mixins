@@ -12,7 +12,7 @@ import (
 )
 
 // General section
-func withGeneralSection(datasource string, labelMatcher promql.LabelMatcher) dashboard.Option {
+func withGeneralSection(labelMatcher promql.LabelMatcher) dashboard.Option {
 	return dashboard.AddPanelGroup("General",
 		panelgroup.PanelsPerLine(1),
 		panelgroup.PanelHeight(4),
