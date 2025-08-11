@@ -54,9 +54,13 @@ Welcome to the **Perses Community Dashboards** repository! This project is desig
 ### Perses
 - Perses Overview
 
-### Istio Dashboards
-- Based on exported Grafana Dashboards from Istio 1.26
-- Requires a Prometheus datasource named `prometheus-datasource` and a proxy url to Prometheus, Ex. `http://prometheus.istio-system:9090`
+### Istio
+- Istio Control Plane Dashboard
+- Istio Mesh Dashboard
+- Istio Performance Dashboard
+- Istio Service Dashboard
+- Istio Workload Dashboard
+- Istio Ztunnel Dashboard
 
 ## Library Panels
 
