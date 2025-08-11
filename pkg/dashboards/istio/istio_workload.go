@@ -52,7 +52,7 @@ func withWorkloadGeneralIIISection(datasource string, labelMatcher promql.LabelM
 	)
 }
 
-func withWorkloadInboundWorkloadsSection(datasource string, labelMatcher promql.LabelMatcher) dashboard.Option {
+func withWorkloadInboundWorkloadsSection(datasource string) dashboard.Option {
 	return dashboard.AddPanelGroup("Inbound Workloads",
 		panelgroup.PanelsPerLine(1),
 		panelgroup.PanelHeight(3),
