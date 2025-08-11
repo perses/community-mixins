@@ -21,7 +21,7 @@ func createWorkloadHeaderPanel(title string) panelgroup.Option {
 	)
 }
 
-func withWorkloadGeneralSection(datasource string, labelMatcher promql.LabelMatcher) dashboard.Option {
+func withWorkloadGeneralSection(datasource string) dashboard.Option {
 	return dashboard.AddPanelGroup("General",
 		panelgroup.PanelsPerLine(1),
 		panelgroup.PanelHeight(3),
