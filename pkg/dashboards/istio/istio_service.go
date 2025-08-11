@@ -12,7 +12,7 @@ import (
 )
 
 // General section
-func withGeneralSection(labelMatcher promql.LabelMatcher) dashboard.Option {
+func withGeneralSection() dashboard.Option {
 	return dashboard.AddPanelGroup("General",
 		panelgroup.PanelsPerLine(1),
 		panelgroup.PanelHeight(4),
@@ -225,7 +225,7 @@ func BuildIstioService(project string, datasource string, clusterLabelName strin
 					listVar.AllowMultiple(true),
 				),
 			),
-			withGeneralSection(datasource, clusterLabelMatcher),
+			withGeneralSection(),
 			withGeneralSectionII(datasource, clusterLabelMatcher),
 			withClientWorkloadsSection(datasource, clusterLabelMatcher),
 			withClientWorkloadsIISection(datasource, clusterLabelMatcher),

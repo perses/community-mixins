@@ -21,7 +21,7 @@ func createWorkloadHeaderPanel(title string) panelgroup.Option {
 	)
 }
 
-func withWorkloadGeneralSection(datasource string) dashboard.Option {
+func withWorkloadGeneralSection() dashboard.Option {
 	return dashboard.AddPanelGroup("General",
 		panelgroup.PanelsPerLine(1),
 		panelgroup.PanelHeight(3),
@@ -52,7 +52,7 @@ func withWorkloadGeneralIIISection(datasource string, labelMatcher promql.LabelM
 	)
 }
 
-func withWorkloadInboundWorkloadsSection(datasource string) dashboard.Option {
+func withWorkloadInboundWorkloadsSection() dashboard.Option {
 	return dashboard.AddPanelGroup("Inbound Workloads",
 		panelgroup.PanelsPerLine(1),
 		panelgroup.PanelHeight(3),
@@ -92,7 +92,7 @@ func withWorkloadInboundWorkloadsIVSection(datasource string, labelMatcher promq
 	)
 }
 
-func withWorkloadOutboundServicesSection(datasource string) dashboard.Option {
+func withWorkloadOutboundServicesSection() dashboard.Option {
 	return dashboard.AddPanelGroup("Outbound Services",
 		panelgroup.PanelsPerLine(1),
 		panelgroup.PanelHeight(3),
@@ -204,14 +204,14 @@ func BuildIstioWorkload(project string, datasource string, clusterLabelName stri
 				),
 			),
 			// Add all sections that match the JSON layout
-			withWorkloadGeneralSection(datasource, clusterLabelMatcher),
+			withWorkloadGeneralSection(),
 			withWorkloadGeneralIISection(datasource, clusterLabelMatcher),
 			withWorkloadGeneralIIISection(datasource, clusterLabelMatcher),
-			withWorkloadInboundWorkloadsSection(datasource, clusterLabelMatcher),
+			withWorkloadInboundWorkloadsSection(),
 			withWorkloadInboundWorkloadsIISection(datasource, clusterLabelMatcher),
 			withWorkloadInboundWorkloadsIIISection(datasource, clusterLabelMatcher),
 			withWorkloadInboundWorkloadsIVSection(datasource, clusterLabelMatcher),
-			withWorkloadOutboundServicesSection(datasource, clusterLabelMatcher),
+			withWorkloadOutboundServicesSection(),
 			withWorkloadOutboundServicesIISection(datasource, clusterLabelMatcher),
 			withWorkloadOutboundServicesIIISection(datasource, clusterLabelMatcher),
 			withWorkloadOutboundServicesIVSection(datasource, clusterLabelMatcher),
