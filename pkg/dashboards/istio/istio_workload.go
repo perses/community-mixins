@@ -92,7 +92,7 @@ func withWorkloadInboundWorkloadsIVSection(datasource string, labelMatcher promq
 	)
 }
 
-func withWorkloadOutboundServicesSection(datasource string, labelMatcher promql.LabelMatcher) dashboard.Option {
+func withWorkloadOutboundServicesSection(datasource string) dashboard.Option {
 	return dashboard.AddPanelGroup("Outbound Services",
 		panelgroup.PanelsPerLine(1),
 		panelgroup.PanelHeight(3),
