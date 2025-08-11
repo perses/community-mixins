@@ -54,6 +54,14 @@ Welcome to the **Perses Community Dashboards** repository! This project is desig
 ### Perses
 - Perses Overview
 
+### Istio
+- Istio Control Plane Dashboard
+- Istio Mesh Dashboard
+- Istio Performance Dashboard
+- Istio Service Dashboard
+- Istio Workload Dashboard
+- Istio Ztunnel Dashboard
+
 ## Library Panels
 
 In addition to the community dashboards, this repository also offers a **library of reusable panels**. These panels can be used as building blocks for custom dashboard creation, enabling you to craft tailored setups to suit specific observability needs.
