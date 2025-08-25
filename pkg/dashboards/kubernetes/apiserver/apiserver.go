@@ -1,15 +1,19 @@
 package apiserver
 
 import (
-	"github.com/perses/community-dashboards/pkg/dashboards"
-	panelsGostats "github.com/perses/community-dashboards/pkg/panels/gostats"
-	panels "github.com/perses/community-dashboards/pkg/panels/kubernetes"
-	"github.com/perses/community-dashboards/pkg/promql"
+	"log"
+
 	"github.com/perses/perses/go-sdk/dashboard"
 	panelgroup "github.com/perses/perses/go-sdk/panel-group"
 	listVar "github.com/perses/perses/go-sdk/variable/list-variable"
 	labelValuesVar "github.com/perses/plugins/prometheus/sdk/go/variable/label-values"
 	"github.com/prometheus/prometheus/model/labels"
+	"github.com/prometheus/prometheus/promql/parser"
+
+	"github.com/perses/community-dashboards/pkg/dashboards"
+	panelsGostats "github.com/perses/community-dashboards/pkg/panels/gostats"
+	panels "github.com/perses/community-dashboards/pkg/panels/kubernetes"
+	"github.com/perses/community-dashboards/pkg/promql"
 )
 
 func withMarkdown(datasource string, labelMatcher promql.LabelMatcher) dashboard.Option {
@@ -62,14 +66,10 @@ func withWorkQueueGroup(datasource string, labelMatcher promql.LabelMatcher) das
 }
 
 func withAPIServerResources(datasource string, clusterLabelMatcher *labels.Matcher) dashboard.Option {
-	labelMatchersToUse := []*labels.Matcher{
-		promql.ClusterVarV2,
-		promql.InstanceVarV2,
-		{
-			Name:  "job",
-			Value: "kube-apiserver",
-			Type:  labels.MatchEqual,
-		},
+	// Use GetLabelMatchers to parse the matcher into prometheus objects
+	labelMatchersToUse, err := parser.ParseMetricSelector("{" + panels.GetAPIServerMatcher() + "}")
+	if err != nil {
+		log.Fatalf("error parsing API server matcher: '%s', err=%v", panels.GetAPIServerMatcher(), err.Error())
 	}
 
 	labelMatchersToUse = append(labelMatchersToUse, clusterLabelMatcher)
