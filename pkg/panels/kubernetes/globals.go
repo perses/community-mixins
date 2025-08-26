@@ -81,9 +81,9 @@ func SetControllerManagerLabelValue(labelValue string) {
 	CONTROLLER_MANAGER_LABEL_VALUE = labelValue
 }
 
-// SetCadvisorLabelValue sets the label value for the cadvisor job globally.
-// WARNING: Ensure you only set this to value that represents a Cadvisor specifically.
-func SetCadvisorLabelValue(labelValue string) {
+// SetCAdvisorLabelValue sets the label value for the cadvisor job globally.
+// WARNING: Ensure you only set this to value that represents a CAdvisor specifically.
+func SetCAdvisorLabelValue(labelValue string) {
 	CADVISOR_LABEL_VALUE = labelValue
 }
 
