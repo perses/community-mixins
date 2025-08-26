@@ -2,94 +2,107 @@ package kubernetes
 
 // Globals to emulate customization behaviors https://github.com/kubernetes-monitoring/kubernetes-mixin?tab=readme-ov-file#customising-the-mixin.
 var (
-	CADVISOR_MATCHER           = "job=\"cadvisor\""
-	KUBE_STATE_METRICS_MATCHER = "job=\"kube-state-metrics\""
-	KUBELET_MATCHER            = "job=\"kubelet\""
-	NODE_EXPORTER_MATCHER      = "job=\"node-exporter\""
-	CONTROLLER_MANAGER_MATCHER = "job=\"kube-controller-manager\""
-	KUBE_SCHEDULER_MATCHER     = "job=\"kube-scheduler\""
-	KUBE_PROXY_MATCHER         = "job=\"kube-proxy\""
-	API_SERVER_MATCHER         = "job=\"kube-apiserver\""
+	API_SERVER_LABEL_VALUE         = "kube-apiserver"
+	KUBELET_LABEL_VALUE            = "kubelet"
+	NODE_EXPORTER_LABEL_VALUE      = "node-exporter"
+	CONTROLLER_MANAGER_LABEL_VALUE = "kube-controller-manager"
+	KUBE_SCHEDULER_LABEL_VALUE     = "kube-scheduler"
+	KUBE_PROXY_LABEL_VALUE         = "kube-proxy"
+	KUBE_STATE_METRICS_LABEL_VALUE = "kube-state-metrics"
+	CADVISOR_LABEL_VALUE           = "cadvisor"
+
+	// Matchers are now computed dynamically via getter functions
 )
 
 // GetCAdvisorMatcher returns the matcher for the cadvisor job.
 func GetCAdvisorMatcher() string {
-	return CADVISOR_MATCHER
+	return "job=\"" + CADVISOR_LABEL_VALUE + "\""
 }
 
 // GetKubeStateMetricsMatcher returns the matcher for the kube-state-metrics job.
 func GetKubeStateMetricsMatcher() string {
-	return KUBE_STATE_METRICS_MATCHER
+	return "job=\"" + KUBE_STATE_METRICS_LABEL_VALUE + "\""
 }
 
 // GetKubeletMatcher returns the matcher for the kubelet job.
 func GetKubeletMatcher() string {
-	return KUBELET_MATCHER
+	return "job=\"" + KUBELET_LABEL_VALUE + "\""
 }
 
 // GetAPIServerMatcher returns the matcher for the api server job.
 func GetAPIServerMatcher() string {
-	return API_SERVER_MATCHER
+	return "job=\"" + API_SERVER_LABEL_VALUE + "\""
 }
 
 // GetNodeExporterMatcher returns the matcher for the node-exporter job.
 func GetNodeExporterMatcher() string {
-	return NODE_EXPORTER_MATCHER
+	return "job=\"" + NODE_EXPORTER_LABEL_VALUE + "\""
 }
 
 // GetControllerManagerMatcher returns the matcher for the controller-manager job.
 func GetControllerManagerMatcher() string {
-	return CONTROLLER_MANAGER_MATCHER
+	return "job=\"" + CONTROLLER_MANAGER_LABEL_VALUE + "\""
 }
 
 // GetSchedulerMatcher returns the matcher for the scheduler job.
 func GetSchedulerMatcher() string {
-	return KUBE_SCHEDULER_MATCHER
+	return "job=\"" + KUBE_SCHEDULER_LABEL_VALUE + "\""
 }
 
 // GetKubeProxyMatcher returns the matcher for the kube-proxy job.
 func GetKubeProxyMatcher() string {
-	return KUBE_PROXY_MATCHER
+	return "job=\"" + KUBE_PROXY_LABEL_VALUE + "\""
 }
 
-// SetCAdvisorMatcher sets the matcher for the cadvisor job globally.
-func SetCAdvisorMatcher(matcher string) {
-	CADVISOR_MATCHER = matcher
+// NOTE: Matcher setter functions have been removed since matchers are now computed dynamically.
+// Use the SetXXXLabelValue functions instead to change the underlying label values.
+
+// SetAPIServerLabelValue sets the label value for the api server job globally.
+// WARNING: Ensure you only set this to value that represents a Kube API Server specifically.
+func SetAPIServerLabelValue(labelValue string) {
+	API_SERVER_LABEL_VALUE = labelValue
 }
 
-// SetKubeStateMetricsMatcher sets the matcher for the kube-state-metrics job globally.
-func SetKubeStateMetricsMatcher(matcher string) {
-	KUBE_STATE_METRICS_MATCHER = matcher
+// SetKubeletLabelValue sets the label value for the kubelet job globally.
+// WARNING: Ensure you only set this to value that represents a Kubelet specifically.
+func SetKubeletLabelValue(labelValue string) {
+	KUBELET_LABEL_VALUE = labelValue
 }
 
-// SetKubeletMatcher sets the matcher for the kubelet job globally.
-func SetKubeletMatcher(matcher string) {
-	KUBELET_MATCHER = matcher
+// SetNodeExporterLabelValue sets the label value for the node-exporter job globally.
+// WARNING: Ensure you only set this to value that represents a Node Exporter specifically.
+func SetNodeExporterLabelValue(labelValue string) {
+	NODE_EXPORTER_LABEL_VALUE = labelValue
 }
 
-// SetNodeExporterMatcher sets the matcher for the node-exporter job globally.
-func SetNodeExporterMatcher(matcher string) {
-	NODE_EXPORTER_MATCHER = matcher
+// SetControllerManagerLabelValue sets the label value for the controller-manager job globally.
+// WARNING: Ensure you only set this to value that represents a Controller Manager specifically.
+func SetControllerManagerLabelValue(labelValue string) {
+	CONTROLLER_MANAGER_LABEL_VALUE = labelValue
 }
 
-// SetControllerManagerMatcher sets the matcher for the controller-manager job globally.
-func SetControllerManagerMatcher(matcher string) {
-	CONTROLLER_MANAGER_MATCHER = matcher
+// SetCAdvisorLabelValue sets the label value for the cadvisor job globally.
+// WARNING: Ensure you only set this to value that represents a CAdvisor specifically.
+func SetCAdvisorLabelValue(labelValue string) {
+	CADVISOR_LABEL_VALUE = labelValue
 }
 
-// SetSchedulerMatcher sets the matcher for the scheduler job globally.
-func SetSchedulerMatcher(matcher string) {
-	KUBE_SCHEDULER_MATCHER = matcher
+// SetSchedulerLabelValue sets the label value for the scheduler job globally.
+// WARNING: Ensure you only set this to value that represents a Scheduler specifically.
+func SetSchedulerLabelValue(labelValue string) {
+	KUBE_SCHEDULER_LABEL_VALUE = labelValue
 }
 
-// SetKubeProxyMatcher sets the matcher for the kube-proxy job globally.
-func SetKubeProxyMatcher(matcher string) {
-	KUBE_PROXY_MATCHER = matcher
+// SetKubeProxyLabelValue sets the label value for the kube-proxy job globally.
+// WARNING: Ensure you only set this to value that represents a Kube Proxy specifically.
+func SetKubeProxyLabelValue(labelValue string) {
+	KUBE_PROXY_LABEL_VALUE = labelValue
 }
 
-// SetKubeletMatcher sets the matcher for the api server job globally.
-func SetAPIServeMatcher(matcher string) {
-	API_SERVER_MATCHER = matcher
+// SetKubeStateMetricsLabelValue sets the label value for the kube-state-metrics job globally.
+// WARNING: Ensure you only set this to value that represents a Kube State Metrics specifically.
+func SetKubeStateMetricsLabelValue(labelValue string) {
+	KUBE_STATE_METRICS_LABEL_VALUE = labelValue
 }
 
 // Metrics deprecation considerations: https://github.com/kubernetes-monitoring/kubernetes-mixin?tab=readme-ov-file#metrics-deprecation

@@ -45,7 +45,7 @@ func withProxyKubeAPIRequestsGroup(datasource string, labelMatcher promql.LabelM
 		promql.InstanceVar,
 		{
 			Name:  "job",
-			Value: "kube-proxy",
+			Value: panels.KUBE_PROXY_LABEL_VALUE,
 			Type:  "=",
 		},
 	}
@@ -68,7 +68,7 @@ func withProxyResources(datasource string, clusterLabelMatcher *labels.Matcher) 
 		promql.InstanceVarV2,
 		{
 			Name:  "job",
-			Value: "kube-proxy",
+			Value: panels.KUBE_PROXY_LABEL_VALUE,
 			Type:  labels.MatchEqual,
 		},
 	}

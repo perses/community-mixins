@@ -67,7 +67,7 @@ func withAPIServerResources(datasource string, clusterLabelMatcher *labels.Match
 		promql.InstanceVarV2,
 		{
 			Name:  "job",
-			Value: "kube-apiserver",
+			Value: panels.API_SERVER_LABEL_VALUE,
 			Type:  labels.MatchEqual,
 		},
 	}

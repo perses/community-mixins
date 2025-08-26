@@ -106,7 +106,7 @@ func withKubeletResources(datasource string, clusterLabelMatcher *labels.Matcher
 		promql.InstanceVarV2,
 		{
 			Name:  "job",
-			Value: "kubelet",
+			Value: panels.KUBELET_LABEL_VALUE,
 			Type:  labels.MatchEqual,
 		},
 	}
