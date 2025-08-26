@@ -36,7 +36,7 @@ func withCMKubeAPIRequestsGroup(datasource string, labelMatcher promql.LabelMatc
 		promql.InstanceVar,
 		{
 			Name:  "job",
-			Value: "kube-controller-manager",
+			Value: panels.CONTROLLER_MANAGER_LABEL_VALUE,
 			Type:  "=",
 		},
 	}
@@ -59,7 +59,7 @@ func withCMResources(datasource string, clusterLabelMatcher *labels.Matcher) das
 		promql.InstanceVarV2,
 		{
 			Name:  "job",
-			Value: "kube-controller-manager",
+			Value: panels.CONTROLLER_MANAGER_LABEL_VALUE,
 			Type:  labels.MatchEqual,
 		},
 	}

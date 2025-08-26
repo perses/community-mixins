@@ -2,14 +2,23 @@ package kubernetes
 
 // Globals to emulate customization behaviors https://github.com/kubernetes-monitoring/kubernetes-mixin?tab=readme-ov-file#customising-the-mixin.
 var (
-	CADVISOR_MATCHER           = "job=\"cadvisor\""
-	KUBE_STATE_METRICS_MATCHER = "job=\"kube-state-metrics\""
-	KUBELET_MATCHER            = "job=\"kubelet\""
-	NODE_EXPORTER_MATCHER      = "job=\"node-exporter\""
-	CONTROLLER_MANAGER_MATCHER = "job=\"kube-controller-manager\""
-	KUBE_SCHEDULER_MATCHER     = "job=\"kube-scheduler\""
-	KUBE_PROXY_MATCHER         = "job=\"kube-proxy\""
-	API_SERVER_MATCHER         = "job=\"kube-apiserver\""
+	API_SERVER_LABEL_VALUE         = "kube-apiserver"
+	KUBELET_LABEL_VALUE            = "kubelet"
+	NODE_EXPORTER_LABEL_VALUE      = "node-exporter"
+	CONTROLLER_MANAGER_LABEL_VALUE = "kube-controller-manager"
+	KUBE_SCHEDULER_LABEL_VALUE     = "kube-scheduler"
+	KUBE_PROXY_LABEL_VALUE         = "kube-proxy"
+	KUBE_STATE_METRICS_LABEL_VALUE = "kube-state-metrics"
+	CADVISOR_LABEL_VALUE           = "cadvisor"
+
+	CADVISOR_MATCHER           = "job=\"" + CADVISOR_LABEL_VALUE + "\""
+	KUBE_STATE_METRICS_MATCHER = "job=\"" + KUBE_STATE_METRICS_LABEL_VALUE + "\""
+	KUBELET_MATCHER            = "job=\"" + KUBELET_LABEL_VALUE + "\""
+	NODE_EXPORTER_MATCHER      = "job=\"" + NODE_EXPORTER_LABEL_VALUE + "\""
+	CONTROLLER_MANAGER_MATCHER = "job=\"" + CONTROLLER_MANAGER_LABEL_VALUE + "\""
+	KUBE_SCHEDULER_MATCHER     = "job=\"" + KUBE_SCHEDULER_LABEL_VALUE + "\""
+	KUBE_PROXY_MATCHER         = "job=\"" + KUBE_PROXY_LABEL_VALUE + "\""
+	API_SERVER_MATCHER         = "job=\"" + API_SERVER_LABEL_VALUE + "\""
 )
 
 // GetCAdvisorMatcher returns the matcher for the cadvisor job.
@@ -90,6 +99,48 @@ func SetKubeProxyMatcher(matcher string) {
 // SetKubeletMatcher sets the matcher for the api server job globally.
 func SetAPIServeMatcher(matcher string) {
 	API_SERVER_MATCHER = matcher
+}
+
+// SetAPIServerLabelValue sets the label value for the api server job globally.
+// WARNING: Ensure you only set this to value that represents a Kube API Server specifically.
+func SetAPIServerLabelValue(labelValue string) {
+	API_SERVER_LABEL_VALUE = labelValue
+}
+
+// SetKubeletLabelValue sets the label value for the kubelet job globally.
+// WARNING: Ensure you only set this to value that represents a Kubelet specifically.
+func SetKubeletLabelValue(labelValue string) {
+	KUBELET_LABEL_VALUE = labelValue
+}
+
+// SetNodeExporterLabelValue sets the label value for the node-exporter job globally.
+// WARNING: Ensure you only set this to value that represents a Node Exporter specifically.
+func SetNodeExporterLabelValue(labelValue string) {
+	NODE_EXPORTER_LABEL_VALUE = labelValue
+}
+
+// SetControllerManagerLabelValue sets the label value for the controller-manager job globally.
+// WARNING: Ensure you only set this to value that represents a Controller Manager specifically.
+func SetControllerManagerLabelValue(labelValue string) {
+	CONTROLLER_MANAGER_LABEL_VALUE = labelValue
+}
+
+// SetCadvisorLabelValue sets the label value for the cadvisor job globally.
+// WARNING: Ensure you only set this to value that represents a Cadvisor specifically.
+func SetCadvisorLabelValue(labelValue string) {
+	CADVISOR_LABEL_VALUE = labelValue
+}
+
+// SetSchedulerLabelValue sets the label value for the scheduler job globally.
+// WARNING: Ensure you only set this to value that represents a Scheduler specifically.
+func SetSchedulerLabelValue(labelValue string) {
+	KUBE_SCHEDULER_LABEL_VALUE = labelValue
+}
+
+// SetKubeProxyLabelValue sets the label value for the kube-proxy job globally.
+// WARNING: Ensure you only set this to value that represents a Kube Proxy specifically.
+func SetKubeProxyLabelValue(labelValue string) {
+	KUBE_PROXY_LABEL_VALUE = labelValue
 }
 
 // Metrics deprecation considerations: https://github.com/kubernetes-monitoring/kubernetes-mixin?tab=readme-ov-file#metrics-deprecation

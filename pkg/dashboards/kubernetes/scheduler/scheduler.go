@@ -35,7 +35,7 @@ func withSchedulerKubeAPIRequestsGroup(datasource string, labelMatcher promql.La
 		promql.InstanceVar,
 		{
 			Name:  "job",
-			Value: "kube-scheduler",
+			Value: panels.KUBE_SCHEDULER_LABEL_VALUE,
 			Type:  "=",
 		},
 	}
@@ -58,7 +58,7 @@ func withSchedulerResources(datasource string, clusterLabelMatcher *labels.Match
 		promql.InstanceVarV2,
 		{
 			Name:  "job",
-			Value: "kube-scheduler",
+			Value: panels.KUBE_SCHEDULER_LABEL_VALUE,
 			Type:  labels.MatchEqual,
 		},
 	}
