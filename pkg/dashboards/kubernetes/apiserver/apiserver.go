@@ -66,11 +66,16 @@ func withWorkQueueGroup(datasource string, labelMatcher promql.LabelMatcher) das
 }
 
 func withAPIServerResources(datasource string, clusterLabelMatcher *labels.Matcher) dashboard.Option {
-	// Use GetLabelMatchers to parse the matcher into prometheus objects
-	labelMatchersToUse, err := parser.ParseMetricSelector("{" + panels.GetAPIServerMatcher() + "}")
+	labelMatchersToUse := []*labels.Matcher{
+		promql.ClusterVarV2,
+		promql.InstanceVarV2,
+	}
+
+	apiServerLabelMatchers, err := parser.ParseMetricSelector("{" + panels.GetAPIServerMatcher() + "}")
 	if err != nil {
 		log.Fatalf("error parsing API server matcher: '%s', err=%v", panels.GetAPIServerMatcher(), err.Error())
 	}
+	labelMatchersToUse = append(labelMatchersToUse, apiServerLabelMatchers...)
 
 	labelMatchersToUse = append(labelMatchersToUse, clusterLabelMatcher)
 
