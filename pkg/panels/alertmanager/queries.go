@@ -6,6 +6,7 @@ import (
 	"github.com/perses/promql-builder/label"
 	"github.com/perses/promql-builder/vector"
 	"github.com/prometheus/prometheus/promql/parser"
+	"maps"
 )
 
 var AlertmanagerCommonPanelQueries = map[string]parser.Expr{
@@ -77,7 +78,5 @@ var AlertmanagerCommonPanelQueries = map[string]parser.Expr{
 // Refer to panel queries in the map, that you'd like to override.
 // The convention of naming followed, is to use Panel function name (with _suffix, in case panel has multiple queries)
 func OverrideAlertmanagerPanelQueries(queries map[string]parser.Expr) {
-	for k, v := range queries {
-		AlertmanagerCommonPanelQueries[k] = v
-	}
+	maps.Copy(AlertmanagerCommonPanelQueries, queries)
 }
