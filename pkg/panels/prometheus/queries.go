@@ -7,6 +7,7 @@ import (
 	"github.com/perses/promql-builder/matrix"
 	"github.com/perses/promql-builder/vector"
 	"github.com/prometheus/prometheus/promql/parser"
+	"maps"
 )
 
 var PrometheusCommonPanelQueries = map[string]parser.Expr{
@@ -413,7 +414,5 @@ var PrometheusCommonPanelQueries = map[string]parser.Expr{
 // Refer to panel queries in the map, that you'd like to override.
 // The convention of naming followed, is to use Panel function name (with _suffix, in case panel has multiple queries)
 func OverridePrometheusPanelQueries(queries map[string]parser.Expr) {
-	for k, v := range queries {
-		PrometheusCommonPanelQueries[k] = v
-	}
+	maps.Copy(PrometheusCommonPanelQueries, queries)
 }
