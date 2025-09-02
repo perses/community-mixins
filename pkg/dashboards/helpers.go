@@ -11,19 +11,19 @@ import (
 )
 
 var (
-	SecondsUnit            = string(commonSdk.SecondsUnit)
-	DecimalUnit            = string(commonSdk.DecimalUnit)
-	BytesUnit              = string(commonSdk.BytesUnit)
 	BytesPerSecondsUnit    = string(commonSdk.BytesPerSecondsUnit)
-	MilliSecondsUnit       = string(commonSdk.MilliSecondsUnit)
-	PercentDecimalUnit     = string(commonSdk.PercentDecimalUnit)
-	RequestsPerSecondsUnit = string(commonSdk.RequestsPerSecondsUnit)
-	OpsPerSecondsUnit      = string(commonSdk.OpsPerSecondsUnit)
-	PercentUnit            = string(commonSdk.PercentUnit)
+	BytesUnit              = string(commonSdk.BytesUnit)
 	CountsPerSecondsUnit   = string(commonSdk.CountsPerSecondsUnit)
+	DecimalUnit            = string(commonSdk.DecimalUnit)
+	MilliSecondsUnit       = string(commonSdk.MilliSecondsUnit)
+	OpsPerSecondsUnit      = string(commonSdk.OpsPerSecondsUnit)
 	PacketsPerSecondsUnit  = string(commonSdk.PacketsPerSecondsUnit)
-	ReadsPerSecondsUnit    = string(commonSdk.ReadsPerSecondsUnit)
+	PercentDecimalUnit     = string(commonSdk.PercentDecimalUnit)
 	PercentMode            = string(commonSdk.PercentMode)
+	PercentUnit            = string(commonSdk.PercentUnit)
+	ReadsPerSecondsUnit    = string(commonSdk.ReadsPerSecondsUnit)
+	RequestsPerSecondsUnit = string(commonSdk.RequestsPerSecondsUnit)
+	SecondsUnit            = string(commonSdk.SecondsUnit)
 )
 
 func AddVariableDatasource(datasourceName string) labelValuesVar.Option {
