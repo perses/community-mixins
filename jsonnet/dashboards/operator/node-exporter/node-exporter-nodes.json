@@ -4,7 +4,6 @@
   "metadata": {
     "name": "node-exporter-nodes",
     "namespace": "perses-dev",
-    "creationTimestamp": null,
     "labels": {
       "app.kubernetes.io/component": "dashboard",
       "app.kubernetes.io/instance": "node-exporter-nodes",

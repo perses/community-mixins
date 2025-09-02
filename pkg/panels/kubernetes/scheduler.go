@@ -17,7 +17,7 @@ func SchedulerUpStatus(datasourceName string, labelMatchers ...promql.LabelMatch
 		panel.Description("Shows the status of the scheduler."),
 		statPanel.Chart(
 			statPanel.Format(commonSdk.Format{
-				Unit:          string(commonSdk.DecimalUnit),
+				Unit:          &dashboards.DecimalUnit,
 				DecimalPlaces: 0,
 			}),
 			statPanel.ValueFontSize(50),
@@ -40,7 +40,7 @@ func SchedulingRate(datasourceName string, labelMatchers ...promql.LabelMatcher)
 		timeSeriesPanel.Chart(
 			timeSeriesPanel.WithYAxis(timeSeriesPanel.YAxis{
 				Format: &commonSdk.Format{
-					Unit: string(commonSdk.OpsPerSecondsUnit),
+					Unit: &dashboards.OpsPerSecondsUnit,
 				},
 			}),
 			timeSeriesPanel.WithLegend(timeSeriesPanel.Legend{
@@ -105,7 +105,7 @@ func SchedulingLatency(datasourceName string, labelMatchers ...promql.LabelMatch
 		timeSeriesPanel.Chart(
 			timeSeriesPanel.WithYAxis(timeSeriesPanel.YAxis{
 				Format: &commonSdk.Format{
-					Unit: string(commonSdk.SecondsUnit),
+					Unit: &dashboards.SecondsUnit,
 				},
 			}),
 			timeSeriesPanel.WithLegend(timeSeriesPanel.Legend{

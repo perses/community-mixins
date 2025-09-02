@@ -41,7 +41,7 @@ func VCPUPer1kRPS(datasourceName string, labelMatchers ...promql.LabelMatcher) p
 			}),
 			timeSeriesPanel.WithYAxis(timeSeriesPanel.YAxis{
 				Format: &commonSdk.Format{
-					Unit: string(commonSdk.DecimalUnit),
+					Unit: &dashboards.DecimalUnit,
 				},
 			}),
 		),
@@ -83,7 +83,7 @@ func VCPU(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgrou
 			}),
 			timeSeriesPanel.WithYAxis(timeSeriesPanel.YAxis{
 				Format: &commonSdk.Format{
-					Unit: string(commonSdk.DecimalUnit),
+					Unit: &dashboards.DecimalUnit,
 				},
 			}),
 		),
@@ -125,7 +125,7 @@ func PerformanceMemoryUsage(datasourceName string, labelMatchers ...promql.Label
 			}),
 			timeSeriesPanel.WithYAxis(timeSeriesPanel.YAxis{
 				Format: &commonSdk.Format{
-					Unit: string(commonSdk.BytesUnit),
+					Unit: &dashboards.BytesUnit,
 				},
 			}),
 		),
@@ -167,7 +167,7 @@ func BytesTransferred(datasourceName string, labelMatchers ...promql.LabelMatche
 			}),
 			timeSeriesPanel.WithYAxis(timeSeriesPanel.YAxis{
 				Format: &commonSdk.Format{
-					Unit: "bytes/sec",
+					Unit: &dashboards.BytesPerSecondsUnit,
 				},
 			}),
 		),
@@ -209,7 +209,7 @@ func IstioComponentsByVersion(datasourceName string, labelMatchers ...promql.Lab
 			}),
 			timeSeriesPanel.WithYAxis(timeSeriesPanel.YAxis{
 				Format: &commonSdk.Format{
-					Unit: string(commonSdk.DecimalUnit),
+					Unit: &dashboards.DecimalUnit,
 				},
 			}),
 		),
@@ -241,7 +241,7 @@ func ProxyMemory(datasourceName string, labelMatchers ...promql.LabelMatcher) pa
 			}),
 			timeSeriesPanel.WithYAxis(timeSeriesPanel.YAxis{
 				Format: &commonSdk.Format{
-					Unit: string(commonSdk.BytesUnit),
+					Unit: &dashboards.BytesUnit,
 				},
 			}),
 		),
@@ -273,7 +273,7 @@ func ProxyVCPU(datasourceName string, labelMatchers ...promql.LabelMatcher) pane
 			}),
 			timeSeriesPanel.WithYAxis(timeSeriesPanel.YAxis{
 				Format: &commonSdk.Format{
-					Unit: string(commonSdk.DecimalUnit),
+					Unit: &dashboards.DecimalUnit,
 				},
 			}),
 		),
@@ -305,7 +305,7 @@ func ProxyDisk(datasourceName string, labelMatchers ...promql.LabelMatcher) pane
 			}),
 			timeSeriesPanel.WithYAxis(timeSeriesPanel.YAxis{
 				Format: &commonSdk.Format{
-					Unit: string(commonSdk.BytesUnit),
+					Unit: &dashboards.BytesUnit,
 				},
 			}),
 		),
@@ -337,7 +337,7 @@ func IstiodMemory(datasourceName string, labelMatchers ...promql.LabelMatcher) p
 			}),
 			timeSeriesPanel.WithYAxis(timeSeriesPanel.YAxis{
 				Format: &commonSdk.Format{
-					Unit: string(commonSdk.BytesUnit),
+					Unit: &dashboards.BytesUnit,
 				},
 			}),
 		),
@@ -449,7 +449,7 @@ func IstiodVCPU(datasourceName string, labelMatchers ...promql.LabelMatcher) pan
 			}),
 			timeSeriesPanel.WithYAxis(timeSeriesPanel.YAxis{
 				Format: &commonSdk.Format{
-					Unit: string(commonSdk.DecimalUnit),
+					Unit: &dashboards.DecimalUnit,
 				},
 			}),
 		),
@@ -501,7 +501,7 @@ func IstiodDisk(datasourceName string, labelMatchers ...promql.LabelMatcher) pan
 			}),
 			timeSeriesPanel.WithYAxis(timeSeriesPanel.YAxis{
 				Format: &commonSdk.Format{
-					Unit: string(commonSdk.BytesUnit),
+					Unit: &dashboards.BytesUnit,
 				},
 			}),
 		),
@@ -539,7 +539,7 @@ func IstiodGoroutines(datasourceName string, labelMatchers ...promql.LabelMatche
 			}),
 			timeSeriesPanel.WithYAxis(timeSeriesPanel.YAxis{
 				Format: &commonSdk.Format{
-					Unit: string(commonSdk.DecimalUnit),
+					Unit: &dashboards.DecimalUnit,
 				},
 			}),
 		),

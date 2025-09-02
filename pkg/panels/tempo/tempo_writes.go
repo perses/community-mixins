@@ -17,7 +17,7 @@ func WritesGatewayQPS(datasourceName string, labelMatchers ...promql.LabelMatche
 		timeSeriesPanel.Chart(
 			timeSeriesPanel.WithYAxis(timeSeriesPanel.YAxis{
 				Format: &commonSdk.Format{
-					Unit:          string(commonSdk.DecimalUnit),
+					Unit:          &dashboards.DecimalUnit,
 					DecimalPlaces: 0,
 				},
 			}),
@@ -53,7 +53,7 @@ func WritesGatewayLatency(datasourceName string, labelMatchers ...promql.LabelMa
 		timeSeriesPanel.Chart(
 			timeSeriesPanel.WithYAxis(timeSeriesPanel.YAxis{
 				Format: &commonSdk.Format{
-					Unit: string(commonSdk.MilliSecondsUnit),
+					Unit: &dashboards.MilliSecondsUnit,
 				},
 			}),
 			timeSeriesPanel.WithLegend(timeSeriesPanel.Legend{
@@ -108,7 +108,7 @@ func WritesEnvoyProxyQPS(datasourceName string, labelMatchers ...promql.LabelMat
 		timeSeriesPanel.Chart(
 			timeSeriesPanel.WithYAxis(timeSeriesPanel.YAxis{
 				Format: &commonSdk.Format{
-					Unit:          string(commonSdk.DecimalUnit),
+					Unit:          &dashboards.DecimalUnit,
 					DecimalPlaces: 0,
 				},
 			}),
@@ -171,7 +171,7 @@ func WritesDistributorSpansSecond(datasourceName string, labelMatchers ...promql
 		timeSeriesPanel.Chart(
 			timeSeriesPanel.WithYAxis(timeSeriesPanel.YAxis{
 				Format: &commonSdk.Format{
-					Unit:          string(commonSdk.DecimalUnit),
+					Unit:          &dashboards.DecimalUnit,
 					DecimalPlaces: 0,
 				},
 			}),
@@ -216,7 +216,7 @@ func WritesDistributorBytesPerSecond(datasourceName string, labelMatchers ...pro
 		timeSeriesPanel.Chart(
 			timeSeriesPanel.WithYAxis(timeSeriesPanel.YAxis{
 				Format: &commonSdk.Format{
-					Unit: string(commonSdk.BytesPerSecondsUnit),
+					Unit: &dashboards.BytesPerSecondsUnit,
 				},
 			}),
 			timeSeriesPanel.WithLegend(timeSeriesPanel.Legend{
@@ -250,7 +250,7 @@ func WritesDistributorLatency(datasourceName string, labelMatchers ...promql.Lab
 		timeSeriesPanel.Chart(
 			timeSeriesPanel.WithYAxis(timeSeriesPanel.YAxis{
 				Format: &commonSdk.Format{
-					Unit: string(commonSdk.MilliSecondsUnit),
+					Unit: &dashboards.MilliSecondsUnit,
 				},
 			}),
 			timeSeriesPanel.WithLegend(timeSeriesPanel.Legend{
@@ -305,7 +305,7 @@ func WritesDistributorKafkaAppendRecords(datasourceName string, labelMatchers ..
 		timeSeriesPanel.Chart(
 			timeSeriesPanel.WithYAxis(timeSeriesPanel.YAxis{
 				Format: &commonSdk.Format{
-					Unit:          string(commonSdk.DecimalUnit),
+					Unit:          &dashboards.DecimalUnit,
 					DecimalPlaces: 0,
 				},
 			}),
@@ -340,7 +340,7 @@ func WritesDistributorKafkaAppendFail(datasourceName string, labelMatchers ...pr
 		timeSeriesPanel.Chart(
 			timeSeriesPanel.WithYAxis(timeSeriesPanel.YAxis{
 				Format: &commonSdk.Format{
-					Unit:          string(commonSdk.DecimalUnit),
+					Unit:          &dashboards.DecimalUnit,
 					DecimalPlaces: 0,
 				},
 			}),
@@ -375,7 +375,7 @@ func WritesDistributorKafkaWrite(datasourceName string, labelMatchers ...promql.
 		timeSeriesPanel.Chart(
 			timeSeriesPanel.WithYAxis(timeSeriesPanel.YAxis{
 				Format: &commonSdk.Format{
-					Unit:          string(commonSdk.DecimalUnit),
+					Unit:          &dashboards.DecimalUnit,
 					DecimalPlaces: 0,
 				},
 			}),
@@ -410,7 +410,7 @@ func WritesDistributorKafkaWriteLatency(datasourceName string, labelMatchers ...
 		timeSeriesPanel.Chart(
 			timeSeriesPanel.WithYAxis(timeSeriesPanel.YAxis{
 				Format: &commonSdk.Format{
-					Unit: string(commonSdk.MilliSecondsUnit),
+					Unit: &dashboards.MilliSecondsUnit,
 				},
 			}),
 			timeSeriesPanel.WithLegend(timeSeriesPanel.Legend{
@@ -465,7 +465,7 @@ func WritesIngesterQPS(datasourceName string, labelMatchers ...promql.LabelMatch
 		timeSeriesPanel.Chart(
 			timeSeriesPanel.WithYAxis(timeSeriesPanel.YAxis{
 				Format: &commonSdk.Format{
-					Unit:          string(commonSdk.DecimalUnit),
+					Unit:          &dashboards.DecimalUnit,
 					DecimalPlaces: 0,
 				},
 			}),
@@ -501,7 +501,7 @@ func WritesIngesterLatency(datasourceName string, labelMatchers ...promql.LabelM
 		timeSeriesPanel.Chart(
 			timeSeriesPanel.WithYAxis(timeSeriesPanel.YAxis{
 				Format: &commonSdk.Format{
-					Unit: string(commonSdk.MilliSecondsUnit),
+					Unit: &dashboards.MilliSecondsUnit,
 				},
 			}),
 			timeSeriesPanel.WithLegend(timeSeriesPanel.Legend{
@@ -556,7 +556,7 @@ func WritesMemcachedIngesterQPS(datasourceName string, labelMatchers ...promql.L
 		timeSeriesPanel.Chart(
 			timeSeriesPanel.WithYAxis(timeSeriesPanel.YAxis{
 				Format: &commonSdk.Format{
-					Unit:          string(commonSdk.DecimalUnit),
+					Unit:          &dashboards.DecimalUnit,
 					DecimalPlaces: 0,
 				},
 			}),
@@ -592,7 +592,7 @@ func WritesMemcachedIngesterLatency(datasourceName string, labelMatchers ...prom
 		timeSeriesPanel.Chart(
 			timeSeriesPanel.WithYAxis(timeSeriesPanel.YAxis{
 				Format: &commonSdk.Format{
-					Unit: string(commonSdk.MilliSecondsUnit),
+					Unit: &dashboards.MilliSecondsUnit,
 				},
 			}),
 			timeSeriesPanel.WithLegend(timeSeriesPanel.Legend{
@@ -647,7 +647,7 @@ func WritesBackendIngesterQPS(datasourceName string, labelMatchers ...promql.Lab
 		timeSeriesPanel.Chart(
 			timeSeriesPanel.WithYAxis(timeSeriesPanel.YAxis{
 				Format: &commonSdk.Format{
-					Unit:          string(commonSdk.DecimalUnit),
+					Unit:          &dashboards.DecimalUnit,
 					DecimalPlaces: 0,
 				},
 			}),
@@ -683,7 +683,7 @@ func WritesBackendIngesterLatency(datasourceName string, labelMatchers ...promql
 		timeSeriesPanel.Chart(
 			timeSeriesPanel.WithYAxis(timeSeriesPanel.YAxis{
 				Format: &commonSdk.Format{
-					Unit: string(commonSdk.MilliSecondsUnit),
+					Unit: &dashboards.MilliSecondsUnit,
 				},
 			}),
 			timeSeriesPanel.WithLegend(timeSeriesPanel.Legend{
@@ -738,7 +738,7 @@ func WritesMemcachedCompactorQPS(datasourceName string, labelMatchers ...promql.
 		timeSeriesPanel.Chart(
 			timeSeriesPanel.WithYAxis(timeSeriesPanel.YAxis{
 				Format: &commonSdk.Format{
-					Unit:          string(commonSdk.DecimalUnit),
+					Unit:          &dashboards.DecimalUnit,
 					DecimalPlaces: 0,
 				},
 			}),
@@ -774,7 +774,7 @@ func WritesMemcachedCompactorLatency(datasourceName string, labelMatchers ...pro
 		timeSeriesPanel.Chart(
 			timeSeriesPanel.WithYAxis(timeSeriesPanel.YAxis{
 				Format: &commonSdk.Format{
-					Unit: string(commonSdk.MilliSecondsUnit),
+					Unit: &dashboards.MilliSecondsUnit,
 				},
 			}),
 			timeSeriesPanel.WithLegend(timeSeriesPanel.Legend{
@@ -829,7 +829,7 @@ func WritesBackendCompactorQPS(datasourceName string, labelMatchers ...promql.La
 		timeSeriesPanel.Chart(
 			timeSeriesPanel.WithYAxis(timeSeriesPanel.YAxis{
 				Format: &commonSdk.Format{
-					Unit:          string(commonSdk.DecimalUnit),
+					Unit:          &dashboards.DecimalUnit,
 					DecimalPlaces: 0,
 				},
 			}),
@@ -865,7 +865,7 @@ func WritesBackendCompactorLatency(datasourceName string, labelMatchers ...promq
 		timeSeriesPanel.Chart(
 			timeSeriesPanel.WithYAxis(timeSeriesPanel.YAxis{
 				Format: &commonSdk.Format{
-					Unit: string(commonSdk.MilliSecondsUnit),
+					Unit: &dashboards.MilliSecondsUnit,
 				},
 			}),
 			timeSeriesPanel.WithLegend(timeSeriesPanel.Legend{

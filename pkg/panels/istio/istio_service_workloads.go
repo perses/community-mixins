@@ -48,7 +48,7 @@ func IncomingSuccessRateByService(datasourceName string, labelMatchers ...promql
 	return panelgroup.AddPanel("Incoming Success Rate (non-5xx responses) By Destination Workload",
 		timeSeriesPanel.Chart(
 			timeSeriesPanel.WithYAxis(timeSeriesPanel.YAxis{
-				Format: &commonSdk.Format{Unit: string(commonSdk.PercentDecimalUnit)},
+				Format: &commonSdk.Format{Unit: &dashboards.PercentDecimalUnit},
 				Min:    0,
 				Max:    1.01,
 			}),
@@ -84,7 +84,7 @@ func IncomingRequestDurationByService(datasourceName string, labelMatchers ...pr
 	return panelgroup.AddPanel("Incoming Request Duration By Service Workload",
 		timeSeriesPanel.Chart(
 			timeSeriesPanel.WithYAxis(timeSeriesPanel.YAxis{
-				Format: &commonSdk.Format{Unit: string(commonSdk.SecondsUnit)},
+				Format: &commonSdk.Format{Unit: &dashboards.SecondsUnit},
 				Min:    0,
 			}),
 			timeSeriesPanel.WithLegend(timeSeriesPanel.Legend{
@@ -163,7 +163,7 @@ func IncomingRequestSizeByService(datasourceName string, labelMatchers ...promql
 	return panelgroup.AddPanel("Incoming Request Size By Service Workload",
 		timeSeriesPanel.Chart(
 			timeSeriesPanel.WithYAxis(timeSeriesPanel.YAxis{
-				Format: &commonSdk.Format{Unit: string(commonSdk.BytesUnit)},
+				Format: &commonSdk.Format{Unit: &dashboards.BytesUnit},
 				Min:    0,
 			}),
 			timeSeriesPanel.WithLegend(timeSeriesPanel.Legend{
@@ -242,7 +242,7 @@ func ResponseSizeByService(datasourceName string, labelMatchers ...promql.LabelM
 	return panelgroup.AddPanel("Response Size By Service Workload",
 		timeSeriesPanel.Chart(
 			timeSeriesPanel.WithYAxis(timeSeriesPanel.YAxis{
-				Format: &commonSdk.Format{Unit: string(commonSdk.BytesUnit)},
+				Format: &commonSdk.Format{Unit: &dashboards.BytesUnit},
 				Min:    0,
 			}),
 			timeSeriesPanel.WithLegend(timeSeriesPanel.Legend{
@@ -321,7 +321,7 @@ func BytesReceivedFromTCPService(datasourceName string, labelMatchers ...promql.
 	return panelgroup.AddPanel("Bytes Received from Incoming TCP Connection",
 		timeSeriesPanel.Chart(
 			timeSeriesPanel.WithYAxis(timeSeriesPanel.YAxis{
-				Format: &commonSdk.Format{Unit: string(commonSdk.BytesPerSecondsUnit)},
+				Format: &commonSdk.Format{Unit: &dashboards.BytesPerSecondsUnit},
 				Min:    0,
 			}),
 			timeSeriesPanel.WithLegend(timeSeriesPanel.Legend{
@@ -356,7 +356,7 @@ func BytesSentToTCPService(datasourceName string, labelMatchers ...promql.LabelM
 	return panelgroup.AddPanel("Bytes Sent to Incoming TCP Connection",
 		timeSeriesPanel.Chart(
 			timeSeriesPanel.WithYAxis(timeSeriesPanel.YAxis{
-				Format: &commonSdk.Format{Unit: string(commonSdk.BytesPerSecondsUnit)},
+				Format: &commonSdk.Format{Unit: &dashboards.BytesPerSecondsUnit},
 				Min:    0,
 			}),
 			timeSeriesPanel.WithLegend(timeSeriesPanel.Legend{

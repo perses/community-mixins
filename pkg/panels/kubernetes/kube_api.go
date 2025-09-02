@@ -16,7 +16,7 @@ func KubeAPIRequestRate(datasourceName string, labelMatchers ...promql.LabelMatc
 		timeSeriesPanel.Chart(
 			timeSeriesPanel.WithYAxis(timeSeriesPanel.YAxis{
 				Format: &commonSdk.Format{
-					Unit: string(commonSdk.RequestsPerSecondsUnit),
+					Unit: &dashboards.RequestsPerSecondsUnit,
 				},
 			}),
 			timeSeriesPanel.WithLegend(timeSeriesPanel.Legend{
@@ -82,7 +82,7 @@ func PostRequestLatency(datasourceName string, labelMatchers ...promql.LabelMatc
 		timeSeriesPanel.Chart(
 			timeSeriesPanel.WithYAxis(timeSeriesPanel.YAxis{
 				Format: &commonSdk.Format{
-					Unit: string(commonSdk.SecondsUnit),
+					Unit: &dashboards.SecondsUnit,
 				},
 			}),
 			timeSeriesPanel.WithLegend(timeSeriesPanel.Legend{
@@ -117,7 +117,7 @@ func GetRequestLatency(datasourceName string, labelMatchers ...promql.LabelMatch
 		timeSeriesPanel.Chart(
 			timeSeriesPanel.WithYAxis(timeSeriesPanel.YAxis{
 				Format: &commonSdk.Format{
-					Unit: string(commonSdk.SecondsUnit),
+					Unit: &dashboards.SecondsUnit,
 				},
 			}),
 			timeSeriesPanel.WithLegend(timeSeriesPanel.Legend{

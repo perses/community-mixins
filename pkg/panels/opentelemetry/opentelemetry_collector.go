@@ -26,7 +26,7 @@ func SpanRate(datasource string, labelMatchers ...*labels.Matcher) panelgroup.Op
 		timeSeriesPanel.Chart(
 			timeSeriesPanel.WithYAxis(timeSeriesPanel.YAxis{
 				Format: &commonSdk.Format{
-					Unit: string(commonSdk.DecimalUnit),
+					Unit: &dashboards.DecimalUnit,
 				},
 			}),
 			timeSeriesPanel.WithLegend(timeSeriesPanel.Legend{
@@ -73,7 +73,7 @@ func MeticPointsRate(datasource string, labelMatchers ...*labels.Matcher) panelg
 		timeSeriesPanel.Chart(
 			timeSeriesPanel.WithYAxis(timeSeriesPanel.YAxis{
 				Format: &commonSdk.Format{
-					Unit: string(commonSdk.DecimalUnit),
+					Unit: &dashboards.DecimalUnit,
 				},
 			}),
 			timeSeriesPanel.WithLegend(timeSeriesPanel.Legend{
@@ -120,7 +120,7 @@ func LogRecordsRate(datasource string, labelMatchers ...*labels.Matcher) panelgr
 		timeSeriesPanel.Chart(
 			timeSeriesPanel.WithYAxis(timeSeriesPanel.YAxis{
 				Format: &commonSdk.Format{
-					Unit: string(commonSdk.DecimalUnit),
+					Unit: &dashboards.DecimalUnit,
 				},
 			}),
 			timeSeriesPanel.WithLegend(timeSeriesPanel.Legend{
@@ -166,7 +166,7 @@ func SpanProcessorRate(datasource string, labelMatchers ...*labels.Matcher) pane
 		timeSeriesPanel.Chart(
 			timeSeriesPanel.WithYAxis(timeSeriesPanel.YAxis{
 				Format: &commonSdk.Format{
-					Unit: string(commonSdk.DecimalUnit),
+					Unit: &dashboards.DecimalUnit,
 				},
 			}),
 			timeSeriesPanel.WithLegend(timeSeriesPanel.Legend{
@@ -212,7 +212,7 @@ func MetricProcessorRate(datasource string, labelMatchers ...*labels.Matcher) pa
 		timeSeriesPanel.Chart(
 			timeSeriesPanel.WithYAxis(timeSeriesPanel.YAxis{
 				Format: &commonSdk.Format{
-					Unit: string(commonSdk.DecimalUnit),
+					Unit: &dashboards.DecimalUnit,
 				},
 			}),
 			timeSeriesPanel.WithLegend(timeSeriesPanel.Legend{
@@ -258,7 +258,7 @@ func LogProcessorRate(datasource string, labelMatchers ...*labels.Matcher) panel
 		timeSeriesPanel.Chart(
 			timeSeriesPanel.WithYAxis(timeSeriesPanel.YAxis{
 				Format: &commonSdk.Format{
-					Unit: string(commonSdk.DecimalUnit),
+					Unit: &dashboards.DecimalUnit,
 				},
 			}),
 			timeSeriesPanel.WithLegend(timeSeriesPanel.Legend{
@@ -304,7 +304,7 @@ func BatchProcessorBatchSendSize(datasource string, labelMatchers ...*labels.Mat
 		timeSeriesPanel.Chart(
 			timeSeriesPanel.WithYAxis(timeSeriesPanel.YAxis{
 				Format: &commonSdk.Format{
-					Unit: string(commonSdk.DecimalUnit),
+					Unit: &dashboards.DecimalUnit,
 				},
 			}),
 			timeSeriesPanel.WithLegend(timeSeriesPanel.Legend{
@@ -337,7 +337,7 @@ func BatchProcessorBatchSendSizeCount(datasource string, labelMatchers ...*label
 		timeSeriesPanel.Chart(
 			timeSeriesPanel.WithYAxis(timeSeriesPanel.YAxis{
 				Format: &commonSdk.Format{
-					Unit: string(commonSdk.DecimalUnit),
+					Unit: &dashboards.DecimalUnit,
 				},
 			}),
 			timeSeriesPanel.WithLegend(timeSeriesPanel.Legend{
@@ -381,7 +381,7 @@ func BatchProcessorBatchSizeTriggerSend(datasource string, labelMatchers ...*lab
 		timeSeriesPanel.Chart(
 			timeSeriesPanel.WithYAxis(timeSeriesPanel.YAxis{
 				Format: &commonSdk.Format{
-					Unit: string(commonSdk.DecimalUnit),
+					Unit: &dashboards.DecimalUnit,
 				},
 			}),
 		),
@@ -420,7 +420,7 @@ func SpanExporterRate(datasource string, labelMatchers ...*labels.Matcher) panel
 		timeSeriesPanel.Chart(
 			timeSeriesPanel.WithYAxis(timeSeriesPanel.YAxis{
 				Format: &commonSdk.Format{
-					Unit: string(commonSdk.DecimalUnit),
+					Unit: &dashboards.DecimalUnit,
 				},
 			}),
 		),
@@ -469,7 +469,7 @@ func MetricExporterRate(datasource string, labelMatchers ...*labels.Matcher) pan
 		timeSeriesPanel.Chart(
 			timeSeriesPanel.WithYAxis(timeSeriesPanel.YAxis{
 				Format: &commonSdk.Format{
-					Unit: string(commonSdk.DecimalUnit),
+					Unit: &dashboards.DecimalUnit,
 				},
 			}),
 		),
@@ -518,7 +518,7 @@ func LogExporterRate(datasource string, labelMatchers ...*labels.Matcher) panelg
 		timeSeriesPanel.Chart(
 			timeSeriesPanel.WithYAxis(timeSeriesPanel.YAxis{
 				Format: &commonSdk.Format{
-					Unit: string(commonSdk.DecimalUnit),
+					Unit: &dashboards.DecimalUnit,
 				},
 			}),
 		),
@@ -566,7 +566,7 @@ func QueueSizeExporterRate(datasource string, labelMatchers ...*labels.Matcher) 
 		timeSeriesPanel.Chart(
 			timeSeriesPanel.WithYAxis(timeSeriesPanel.YAxis{
 				Format: &commonSdk.Format{
-					Unit: string(commonSdk.DecimalUnit),
+					Unit: &dashboards.DecimalUnit,
 				},
 			}),
 		),
@@ -594,7 +594,7 @@ func QueueCapacityExporterRate(datasource string, labelMatchers ...*labels.Match
 		timeSeriesPanel.Chart(
 			timeSeriesPanel.WithYAxis(timeSeriesPanel.YAxis{
 				Format: &commonSdk.Format{
-					Unit: string(commonSdk.DecimalUnit),
+					Unit: &dashboards.DecimalUnit,
 				},
 			}),
 		),
@@ -622,7 +622,7 @@ func QueueUtilizationExporterRate(datasource string, labelMatchers ...*labels.Ma
 		timeSeriesPanel.Chart(
 			timeSeriesPanel.WithYAxis(timeSeriesPanel.YAxis{
 				Format: &commonSdk.Format{
-					Unit: string(commonSdk.PercentUnit),
+					Unit: &dashboards.PercentUnit,
 				},
 			}),
 		),

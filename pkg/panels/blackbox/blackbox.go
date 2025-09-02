@@ -33,7 +33,7 @@ func ProbeStatusMap(datasourceName string, labelMatchers ...*labels.Matcher) pan
 		stat.Chart(
 			stat.Calculation(commonSdk.LastCalculation),
 			stat.Format(commonSdk.Format{
-				Unit:          string(commonSdk.DecimalUnit),
+				Unit:          &dashboards.DecimalUnit,
 				DecimalPlaces: 0,
 			}),
 			stat.WithSparkline(stat.Sparkline{
@@ -88,7 +88,7 @@ func ProbeSuccessCount(datasourceName string, labelMatchers ...*labels.Matcher) 
 		stat.Chart(
 			stat.Calculation(commonSdk.LastCalculation),
 			stat.Format(commonSdk.Format{
-				Unit:          string(commonSdk.DecimalUnit),
+				Unit:          &dashboards.DecimalUnit,
 				DecimalPlaces: 0,
 			}),
 			stat.WithSparkline(stat.Sparkline{
@@ -132,7 +132,7 @@ func ProbeSuccessPercent(datasourceName string, labelMatchers ...*labels.Matcher
 		stat.Chart(
 			stat.Calculation(commonSdk.LastCalculation),
 			stat.Format(commonSdk.Format{
-				Unit: string(commonSdk.PercentDecimalUnit),
+				Unit: &dashboards.PercentDecimalUnit,
 			}),
 			stat.WithSparkline(stat.Sparkline{
 				Width: 1,
@@ -186,7 +186,7 @@ func ProbeHTTPSSL(datasourceName string, labelMatchers ...*labels.Matcher) panel
 		stat.Chart(
 			stat.Calculation(commonSdk.LastCalculation),
 			stat.Format(commonSdk.Format{
-				Unit: string(commonSdk.PercentDecimalUnit),
+				Unit: &dashboards.PercentDecimalUnit,
 			}),
 			stat.WithSparkline(stat.Sparkline{
 				Width: 1,
@@ -239,7 +239,7 @@ func ProbeAverageDuration(datasourceName string, labelMatchers ...*labels.Matche
 		stat.Chart(
 			stat.Calculation(commonSdk.LastCalculation),
 			stat.Format(commonSdk.Format{
-				Unit: string(commonSdk.SecondsUnit),
+				Unit: &dashboards.SecondsUnit,
 			}),
 			stat.WithSparkline(stat.Sparkline{
 				Width: 1,
@@ -282,7 +282,7 @@ func ProbeUptimeSuccess(datasourceName string, labelMatchers ...*labels.Matcher)
 		stat.Chart(
 			stat.Calculation(commonSdk.LastCalculation),
 			stat.Format(commonSdk.Format{
-				Unit:          string(commonSdk.PercentDecimalUnit),
+				Unit:          &dashboards.PercentDecimalUnit,
 				DecimalPlaces: 0,
 			}),
 			stat.WithSparkline(stat.Sparkline{
@@ -337,7 +337,7 @@ func ProbeUptimeMonthly(datasourceName string, labelMatchers ...*labels.Matcher)
 		stat.Chart(
 			stat.Calculation(commonSdk.LastCalculation),
 			stat.Format(commonSdk.Format{
-				Unit: string(commonSdk.PercentDecimalUnit),
+				Unit: &dashboards.PercentDecimalUnit,
 			}),
 			stat.WithSparkline(stat.Sparkline{
 				Width: 1,
@@ -393,7 +393,7 @@ func ProbeDurationSeconds(datasourceName string, labelMatchers ...*labels.Matche
 		timeSeriesPanel.Chart(
 			timeSeriesPanel.WithYAxis(timeSeriesPanel.YAxis{
 				Format: &commonSdk.Format{
-					Unit: string(commonSdk.SecondsUnit),
+					Unit: &dashboards.SecondsUnit,
 				},
 			}),
 			timeSeriesPanel.WithLegend(timeSeriesPanel.Legend{
@@ -453,7 +453,7 @@ func ProbePhases(datasourceName string, labelMatchers ...*labels.Matcher) panelg
 		timeSeriesPanel.Chart(
 			timeSeriesPanel.WithYAxis(timeSeriesPanel.YAxis{
 				Format: &commonSdk.Format{
-					Unit: string(commonSdk.SecondsUnit),
+					Unit: &dashboards.SecondsUnit,
 				},
 			}),
 			timeSeriesPanel.WithLegend(timeSeriesPanel.Legend{
@@ -512,7 +512,7 @@ func ProbeStatusCode(datasourceName string, labelMatchers ...*labels.Matcher) pa
 		stat.Chart(
 			stat.Calculation(commonSdk.LastCalculation),
 			stat.Format(commonSdk.Format{
-				Unit:          string(commonSdk.DecimalUnit),
+				Unit:          &dashboards.DecimalUnit,
 				DecimalPlaces: 0,
 			}),
 			stat.ValueFontSize(50),
@@ -571,7 +571,7 @@ func ProbeTLSVersion(datasourceName string, labelMatchers ...*labels.Matcher) pa
 		stat.Chart(
 			stat.Calculation(commonSdk.LastCalculation),
 			stat.Format(commonSdk.Format{
-				Unit: string(commonSdk.DecimalUnit),
+				Unit: &dashboards.DecimalUnit,
 			}),
 			stat.WithSparkline(stat.Sparkline{
 				Width: 1,
@@ -615,7 +615,7 @@ func ProbeSSLExpiry(datasourceName string, labelMatchers ...*labels.Matcher) pan
 		stat.Chart(
 			stat.Calculation(commonSdk.LastCalculation),
 			stat.Format(commonSdk.Format{
-				Unit: string(commonSdk.DecimalUnit),
+				Unit: &dashboards.DecimalUnit,
 			}),
 			stat.WithSparkline(stat.Sparkline{
 				Width: 1,
@@ -658,7 +658,7 @@ func ProbeRedirects(datasourceName string, labelMatchers ...*labels.Matcher) pan
 		stat.Chart(
 			stat.Calculation(commonSdk.LastCalculation),
 			stat.Format(commonSdk.Format{
-				Unit:          string(commonSdk.DecimalUnit),
+				Unit:          &dashboards.DecimalUnit,
 				DecimalPlaces: 0,
 			}),
 			stat.WithSparkline(stat.Sparkline{
@@ -714,7 +714,7 @@ func ProbeHTTPVersion(datasourceName string, labelMatchers ...*labels.Matcher) p
 		stat.Chart(
 			stat.Calculation(commonSdk.LastCalculation),
 			stat.Format(commonSdk.Format{
-				Unit: string(commonSdk.DecimalUnit),
+				Unit: &dashboards.DecimalUnit,
 			}),
 			stat.WithSparkline(stat.Sparkline{
 				Width: 1,
@@ -758,7 +758,7 @@ func ProbeAverageDurationInstance(datasourceName string, labelMatchers ...*label
 		stat.Chart(
 			stat.Calculation(commonSdk.MeanCalculation),
 			stat.Format(commonSdk.Format{
-				Unit: string(commonSdk.SecondsUnit),
+				Unit: &dashboards.SecondsUnit,
 			}),
 			stat.WithSparkline(stat.Sparkline{
 				Width: 1,
@@ -801,7 +801,7 @@ func ProbeAverageDNSLookupPerInstance(datasourceName string, labelMatchers ...*l
 		stat.Chart(
 			stat.Calculation(commonSdk.MeanCalculation),
 			stat.Format(commonSdk.Format{
-				Unit: string(commonSdk.SecondsUnit),
+				Unit: &dashboards.SecondsUnit,
 			}),
 			stat.WithSparkline(stat.Sparkline{
 				Width: 1,

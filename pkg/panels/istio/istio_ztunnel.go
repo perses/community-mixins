@@ -16,7 +16,7 @@ func ZtunnelBytesTransmitted(datasourceName string, labelMatchers ...promql.Labe
 		timeSeriesPanel.Chart(
 			timeSeriesPanel.WithYAxis(timeSeriesPanel.YAxis{
 				Format: &commonSdk.Format{
-					Unit: "bytes/sec",
+					Unit: &dashboards.BytesPerSecondsUnit,
 				},
 			}),
 			timeSeriesPanel.WithLegend(timeSeriesPanel.Legend{
@@ -60,7 +60,7 @@ func ZtunnelConnections(datasourceName string, labelMatchers ...promql.LabelMatc
 		timeSeriesPanel.Chart(
 			timeSeriesPanel.WithYAxis(timeSeriesPanel.YAxis{
 				Format: &commonSdk.Format{
-					Unit: "counts/sec",
+					Unit: &dashboards.CountsPerSecondsUnit,
 				},
 			}),
 			timeSeriesPanel.WithLegend(timeSeriesPanel.Legend{
@@ -162,7 +162,7 @@ func ZtunnelMemoryUsage(datasourceName string, labelMatchers ...promql.LabelMatc
 		timeSeriesPanel.Chart(
 			timeSeriesPanel.WithYAxis(timeSeriesPanel.YAxis{
 				Format: &commonSdk.Format{
-					Unit: string(commonSdk.BytesUnit),
+					Unit: &dashboards.BytesUnit,
 				},
 			}),
 			timeSeriesPanel.WithLegend(timeSeriesPanel.Legend{

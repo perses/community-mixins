@@ -44,7 +44,7 @@ func WorkloadNamespaceCPUUsageQuota(datasourceName string, labelMatchers ...prom
 					Header: "CPU Usage",
 					Align:  tablePanel.RightAlign,
 					Format: &commonSdk.Format{
-						Unit:          commonSdk.DecimalUnit,
+						Unit:          &dashboards.DecimalUnit,
 						DecimalPlaces: 4,
 					},
 				},
@@ -53,7 +53,7 @@ func WorkloadNamespaceCPUUsageQuota(datasourceName string, labelMatchers ...prom
 					Header: "CPU Requests",
 					Align:  tablePanel.RightAlign,
 					Format: &commonSdk.Format{
-						Unit:          commonSdk.DecimalUnit,
+						Unit:          &dashboards.DecimalUnit,
 						DecimalPlaces: 4,
 					},
 				},
@@ -62,7 +62,7 @@ func WorkloadNamespaceCPUUsageQuota(datasourceName string, labelMatchers ...prom
 					Header: "CPU Requests %",
 					Align:  tablePanel.RightAlign,
 					Format: &commonSdk.Format{
-						Unit:          string(commonSdk.PercentDecimalUnit),
+						Unit:          &dashboards.PercentDecimalUnit,
 						DecimalPlaces: 4,
 					},
 				},
@@ -71,7 +71,7 @@ func WorkloadNamespaceCPUUsageQuota(datasourceName string, labelMatchers ...prom
 					Header: "CPU Limits",
 					Align:  tablePanel.RightAlign,
 					Format: &commonSdk.Format{
-						Unit:          commonSdk.DecimalUnit,
+						Unit:          &dashboards.DecimalUnit,
 						DecimalPlaces: 4,
 					},
 				},
@@ -80,7 +80,7 @@ func WorkloadNamespaceCPUUsageQuota(datasourceName string, labelMatchers ...prom
 					Header: "CPU Limits %",
 					Align:  tablePanel.RightAlign,
 					Format: &commonSdk.Format{
-						Unit:          string(commonSdk.PercentDecimalUnit),
+						Unit:          &dashboards.PercentDecimalUnit,
 						DecimalPlaces: 4,
 					},
 				},
@@ -180,7 +180,7 @@ func WorkloadNamespaceMemoryUsageQuota(datasourceName string, labelMatchers ...p
 					Header: "Memory Usage",
 					Align:  tablePanel.RightAlign,
 					Format: &commonSdk.Format{
-						Unit: commonSdk.BytesUnit,
+						Unit: &dashboards.BytesUnit,
 					},
 				},
 				{
@@ -188,7 +188,7 @@ func WorkloadNamespaceMemoryUsageQuota(datasourceName string, labelMatchers ...p
 					Header: "Memory Requests",
 					Align:  tablePanel.RightAlign,
 					Format: &commonSdk.Format{
-						Unit: commonSdk.BytesUnit,
+						Unit: &dashboards.BytesUnit,
 					},
 				},
 				{
@@ -196,7 +196,7 @@ func WorkloadNamespaceMemoryUsageQuota(datasourceName string, labelMatchers ...p
 					Header: "Memory Requests %",
 					Align:  tablePanel.RightAlign,
 					Format: &commonSdk.Format{
-						Unit:          string(commonSdk.PercentDecimalUnit),
+						Unit:          &dashboards.PercentDecimalUnit,
 						DecimalPlaces: 4,
 					},
 				},
@@ -205,7 +205,7 @@ func WorkloadNamespaceMemoryUsageQuota(datasourceName string, labelMatchers ...p
 					Header: "Memory Limits",
 					Align:  tablePanel.RightAlign,
 					Format: &commonSdk.Format{
-						Unit: commonSdk.BytesUnit,
+						Unit: &dashboards.BytesUnit,
 					},
 				},
 				{
@@ -213,7 +213,7 @@ func WorkloadNamespaceMemoryUsageQuota(datasourceName string, labelMatchers ...p
 					Header: "Memory Limits %",
 					Align:  tablePanel.RightAlign,
 					Format: &commonSdk.Format{
-						Unit:          string(commonSdk.PercentDecimalUnit),
+						Unit:          &dashboards.PercentDecimalUnit,
 						DecimalPlaces: 4,
 					},
 				},
@@ -303,7 +303,7 @@ func WorkloadNamespaceCurrentNetworkUsage(datasourceName string, labelMatchers .
 					Header: "Current Receive Bandwidth",
 					Align:  tablePanel.RightAlign,
 					Format: &commonSdk.Format{
-						Unit: string(commonSdk.BytesPerSecondsUnit),
+						Unit: &dashboards.BytesPerSecondsUnit,
 					},
 				},
 				{
@@ -311,7 +311,7 @@ func WorkloadNamespaceCurrentNetworkUsage(datasourceName string, labelMatchers .
 					Header: "Current Transmit Bandwidth",
 					Align:  tablePanel.RightAlign,
 					Format: &commonSdk.Format{
-						Unit: string(commonSdk.BytesPerSecondsUnit),
+						Unit: &dashboards.BytesPerSecondsUnit,
 					},
 				},
 				{
@@ -319,7 +319,7 @@ func WorkloadNamespaceCurrentNetworkUsage(datasourceName string, labelMatchers .
 					Header: "Rate of Received Packets",
 					Align:  tablePanel.RightAlign,
 					Format: &commonSdk.Format{
-						Unit: string(commonSdk.PacketsPerSecondsUnit),
+						Unit: &dashboards.PacketsPerSecondsUnit,
 					},
 				},
 				{
@@ -327,7 +327,7 @@ func WorkloadNamespaceCurrentNetworkUsage(datasourceName string, labelMatchers .
 					Header: "Rate of Transmitted Packets",
 					Align:  tablePanel.RightAlign,
 					Format: &commonSdk.Format{
-						Unit: string(commonSdk.PacketsPerSecondsUnit),
+						Unit: &dashboards.PacketsPerSecondsUnit,
 					},
 				},
 				{
@@ -335,7 +335,7 @@ func WorkloadNamespaceCurrentNetworkUsage(datasourceName string, labelMatchers .
 					Header: "Rate of Received Packets Dropped",
 					Align:  tablePanel.RightAlign,
 					Format: &commonSdk.Format{
-						Unit: string(commonSdk.PacketsPerSecondsUnit),
+						Unit: &dashboards.PacketsPerSecondsUnit,
 					},
 				},
 				{
@@ -343,7 +343,7 @@ func WorkloadNamespaceCurrentNetworkUsage(datasourceName string, labelMatchers .
 					Header: "Rate of Transmitted Packets Dropped",
 					Align:  tablePanel.RightAlign,
 					Format: &commonSdk.Format{
-						Unit: string(commonSdk.PacketsPerSecondsUnit),
+						Unit: &dashboards.PacketsPerSecondsUnit,
 					},
 				},
 				{

@@ -188,7 +188,7 @@ func GlobalRequestVolume(datasourceName string, labelMatchers ...promql.LabelMat
 		statPanel.Chart(
 			statPanel.Calculation(commonSdk.LastCalculation),
 			statPanel.Format(commonSdk.Format{
-				Unit: string(commonSdk.RequestsPerSecondsUnit),
+				Unit: &dashboards.RequestsPerSecondsUnit,
 			}),
 			statPanel.WithSparkline(statPanel.Sparkline{
 				Width: 1,
@@ -220,7 +220,7 @@ func GlobalSuccessRate(datasourceName string, labelMatchers ...promql.LabelMatch
 		statPanel.Chart(
 			statPanel.Calculation(commonSdk.LastCalculation),
 			statPanel.Format(commonSdk.Format{
-				Unit: string(commonSdk.PercentDecimalUnit),
+				Unit: &dashboards.PercentDecimalUnit,
 			}),
 			statPanel.WithSparkline(statPanel.Sparkline{
 				Width: 1,
@@ -252,7 +252,7 @@ func Global4xxRate(datasourceName string, labelMatchers ...promql.LabelMatcher) 
 		statPanel.Chart(
 			statPanel.Calculation(commonSdk.LastCalculation),
 			statPanel.Format(commonSdk.Format{
-				Unit: string(commonSdk.RequestsPerSecondsUnit),
+				Unit: &dashboards.RequestsPerSecondsUnit,
 			}),
 			statPanel.WithSparkline(statPanel.Sparkline{
 				Width: 1,
@@ -284,7 +284,7 @@ func Global5xxRate(datasourceName string, labelMatchers ...promql.LabelMatcher) 
 		statPanel.Chart(
 			statPanel.Calculation(commonSdk.LastCalculation),
 			statPanel.Format(commonSdk.Format{
-				Unit: string(commonSdk.RequestsPerSecondsUnit),
+				Unit: &dashboards.RequestsPerSecondsUnit,
 			}),
 			statPanel.WithSparkline(statPanel.Sparkline{
 				Width: 1,

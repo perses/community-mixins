@@ -61,7 +61,7 @@ func HTTPRequestsLatencyPanel(datasourceName string, labelMatchers ...promql.Lab
 		timeSeriesPanel.Chart(
 			timeSeriesPanel.WithYAxis(timeSeriesPanel.YAxis{
 				Format: &common.Format{
-					Unit: string(common.SecondsUnit),
+					Unit: &dashboards.SecondsUnit,
 				},
 			}),
 			timeSeriesPanel.WithLegend(timeSeriesPanel.Legend{
@@ -95,7 +95,7 @@ func HTTPRequestsRatePanel(datasourceName string, labelMatchers ...promql.LabelM
 		timeSeriesPanel.Chart(
 			timeSeriesPanel.WithYAxis(timeSeriesPanel.YAxis{
 				Format: &common.Format{
-					Unit: string(common.DecimalUnit),
+					Unit: &dashboards.DecimalUnit,
 				},
 			}),
 			timeSeriesPanel.WithLegend(timeSeriesPanel.Legend{
@@ -132,7 +132,7 @@ func HTTPErrorPercentagePanel(datasourceName string, labelMatchers ...promql.Lab
 			timeSeriesPanel.WithYAxis(
 				timeSeriesPanel.YAxis{
 					Format: &common.Format{
-						Unit: string(common.PercentDecimalUnit),
+						Unit: &dashboards.PercentDecimalUnit,
 					},
 				},
 			),
@@ -172,7 +172,7 @@ func FileDescriptors(datasourceName string, labelMatchers ...promql.LabelMatcher
 		timeSeriesPanel.Chart(
 			timeSeriesPanel.WithYAxis(timeSeriesPanel.YAxis{
 				Format: &common.Format{
-					Unit: string(common.DecimalUnit),
+					Unit: &dashboards.DecimalUnit,
 				},
 			}),
 			timeSeriesPanel.WithLegend(timeSeriesPanel.Legend{
@@ -217,7 +217,7 @@ func PluginSchemaLoadAttempts(datasourceName string, labelMatchers ...promql.Lab
 		timeSeriesPanel.Chart(
 			timeSeriesPanel.WithYAxis(timeSeriesPanel.YAxis{
 				Format: &common.Format{
-					Unit: string(common.DecimalUnit),
+					Unit: &dashboards.DecimalUnit,
 				},
 			}),
 			timeSeriesPanel.WithLegend(timeSeriesPanel.Legend{

@@ -198,7 +198,7 @@ func NotificationDuration(datasourceName string, labelMatchers ...*labels.Matche
 		timeSeriesPanel.Chart(
 			timeSeriesPanel.WithYAxis(timeSeriesPanel.YAxis{
 				Format: &commonSdk.Format{
-					Unit: string(commonSdk.SecondsUnit),
+					Unit: &dashboards.SecondsUnit,
 				},
 			}),
 			timeSeriesPanel.WithLegend(timeSeriesPanel.Legend{

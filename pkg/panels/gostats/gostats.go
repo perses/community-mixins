@@ -19,7 +19,7 @@ func MemoryUsage(datasourceName string, seriesNameToUse string, labelMatchers ..
 		timeSeriesPanel.Chart(
 			timeSeriesPanel.WithYAxis(timeSeriesPanel.YAxis{
 				Format: &commonSdk.Format{
-					Unit: string(commonSdk.BytesUnit),
+					Unit: &dashboards.BytesUnit,
 				},
 			}),
 			timeSeriesPanel.WithLegend(timeSeriesPanel.Legend{
@@ -114,7 +114,7 @@ func Goroutines(datasourceName string, seriesNameToUse string, labelMatchers ...
 		timeSeriesPanel.Chart(
 			timeSeriesPanel.WithYAxis(timeSeriesPanel.YAxis{
 				Format: &commonSdk.Format{
-					Unit: string(commonSdk.DecimalUnit),
+					Unit: &dashboards.DecimalUnit,
 				},
 			}),
 			timeSeriesPanel.WithLegend(timeSeriesPanel.Legend{
@@ -149,7 +149,7 @@ func GarbageCollectionPauseTimeQuantiles(datasourceName string, seriesNameToUse 
 		timeSeriesPanel.Chart(
 			timeSeriesPanel.WithYAxis(timeSeriesPanel.YAxis{
 				Format: &commonSdk.Format{
-					Unit: string(commonSdk.SecondsUnit),
+					Unit: &dashboards.SecondsUnit,
 				},
 			}),
 			timeSeriesPanel.WithLegend(timeSeriesPanel.Legend{
@@ -184,7 +184,7 @@ func CPUUsage(datasourceName string, seriesNameToUse string, labelMatchers ...*l
 		timeSeriesPanel.Chart(
 			timeSeriesPanel.WithYAxis(timeSeriesPanel.YAxis{
 				Format: &commonSdk.Format{
-					Unit: string(commonSdk.DecimalUnit),
+					Unit: &dashboards.DecimalUnit,
 				},
 			}),
 			timeSeriesPanel.WithLegend(timeSeriesPanel.Legend{

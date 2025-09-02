@@ -79,7 +79,7 @@ func KubernetesCPUUtilizationStat(granularity, datasourceName string, labelMatch
 		panel.Description(description),
 		statPanel.Chart(
 			statPanel.Format(commonSdk.Format{
-				Unit:          string(commonSdk.PercentUnit),
+				Unit:          &dashboards.PercentUnit,
 				DecimalPlaces: 2,
 			}),
 			statPanel.ValueFontSize(50),
@@ -127,7 +127,7 @@ func KubernetesCPURequestsCommitmentStat(granularity, datasourceName string, lab
 		panel.Description(description),
 		statPanel.Chart(
 			statPanel.Format(commonSdk.Format{
-				Unit:          string(commonSdk.PercentUnit),
+				Unit:          &dashboards.PercentUnit,
 				DecimalPlaces: 2,
 			}),
 			statPanel.ValueFontSize(50),
@@ -175,7 +175,7 @@ func KubernetesCPULimitsCommitmentStat(granularity, datasourceName string, label
 		panel.Description(description),
 		statPanel.Chart(
 			statPanel.Format(commonSdk.Format{
-				Unit:          string(commonSdk.PercentUnit),
+				Unit:          &dashboards.PercentUnit,
 				DecimalPlaces: 2,
 			}),
 			statPanel.ValueFontSize(50),
@@ -253,7 +253,7 @@ func KubernetesMemoryUtilizationStat(granularity, datasourceName string, labelMa
 		panel.Description(description),
 		statPanel.Chart(
 			statPanel.Format(commonSdk.Format{
-				Unit:          string(commonSdk.PercentUnit),
+				Unit:          &dashboards.PercentUnit,
 				DecimalPlaces: 2,
 			}),
 			statPanel.ValueFontSize(50),
@@ -301,7 +301,7 @@ func KubernetesMemoryRequestsCommitmentStat(granularity, datasourceName string, 
 		panel.Description(description),
 		statPanel.Chart(
 			statPanel.Format(commonSdk.Format{
-				Unit:          string(commonSdk.PercentUnit),
+				Unit:          &dashboards.PercentUnit,
 				DecimalPlaces: 2,
 			}),
 			statPanel.ValueFontSize(50),
@@ -349,7 +349,7 @@ func KubernetesMemoryLimitsCommitmentStat(granularity, datasourceName string, la
 		panel.Description(description),
 		statPanel.Chart(
 			statPanel.Format(commonSdk.Format{
-				Unit:          string(commonSdk.PercentUnit),
+				Unit:          &dashboards.PercentUnit,
 				DecimalPlaces: 2,
 			}),
 			statPanel.ValueFontSize(50),
@@ -540,7 +540,7 @@ func KubernetesCPUUsage(granularity, datasourceName string, labelMatchers ...pro
 		timeSeriesPanel.Chart(
 			timeSeriesPanel.WithYAxis(timeSeriesPanel.YAxis{
 				Format: &commonSdk.Format{
-					Unit: string(commonSdk.DecimalUnit),
+					Unit: &dashboards.DecimalUnit,
 				},
 			}),
 			timeSeriesPanel.WithLegend(timeSeriesPanel.Legend{
@@ -766,7 +766,7 @@ func KubernetesMemoryUsage(granularity, datasourceName string, labelMatchers ...
 		timeSeriesPanel.Chart(
 			timeSeriesPanel.WithYAxis(timeSeriesPanel.YAxis{
 				Format: &commonSdk.Format{
-					Unit: string(commonSdk.BytesUnit),
+					Unit: &dashboards.BytesUnit,
 				},
 			}),
 			timeSeriesPanel.WithLegend(timeSeriesPanel.Legend{

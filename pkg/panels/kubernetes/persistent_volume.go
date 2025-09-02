@@ -18,7 +18,7 @@ func VolumeSpaceUsage(datasourceName string, labelMatchers ...promql.LabelMatche
 		timeSeriesPanel.Chart(
 			timeSeriesPanel.WithYAxis(timeSeriesPanel.YAxis{
 				Format: &commonSdk.Format{
-					Unit: string(commonSdk.BytesUnit),
+					Unit: &dashboards.BytesUnit,
 				},
 			}),
 			timeSeriesPanel.WithLegend(timeSeriesPanel.Legend{
@@ -64,7 +64,7 @@ func VolumeSpaceUsageGauge(datasourceName string, labelMatchers ...promql.LabelM
 		gaugePanel.Chart(
 			gaugePanel.Calculation(commonSdk.LastCalculation),
 			gaugePanel.Format(commonSdk.Format{
-				Unit: string(commonSdk.PercentUnit),
+				Unit: &dashboards.PercentUnit,
 			}),
 			gaugePanel.Thresholds(commonSdk.Thresholds{
 				Mode:         commonSdk.AbsoluteMode,
@@ -103,7 +103,7 @@ func VolumeInodesUsage(datasourceName string, labelMatchers ...promql.LabelMatch
 		timeSeriesPanel.Chart(
 			timeSeriesPanel.WithYAxis(timeSeriesPanel.YAxis{
 				Format: &commonSdk.Format{
-					Unit: string(commonSdk.BytesUnit),
+					Unit: &dashboards.BytesUnit,
 				},
 			}),
 			timeSeriesPanel.WithLegend(timeSeriesPanel.Legend{
@@ -149,7 +149,7 @@ func VolumeInodesUsageGauge(datasourceName string, labelMatchers ...promql.Label
 		gaugePanel.Chart(
 			gaugePanel.Calculation(commonSdk.LastCalculation),
 			gaugePanel.Format(commonSdk.Format{
-				Unit: string(commonSdk.PercentUnit),
+				Unit: &dashboards.PercentUnit,
 			}),
 			gaugePanel.Thresholds(commonSdk.Thresholds{
 				Mode:         commonSdk.AbsoluteMode,

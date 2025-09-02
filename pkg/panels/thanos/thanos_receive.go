@@ -20,7 +20,7 @@ func RemoteWriteRequestRate(datasourceName string, labelMatchers ...*labels.Matc
 		timeSeriesPanel.Chart(
 			timeSeriesPanel.WithYAxis(timeSeriesPanel.YAxis{
 				Format: &commonSdk.Format{
-					Unit: string(commonSdk.RequestsPerSecondsUnit),
+					Unit: &dashboards.RequestsPerSecondsUnit,
 				},
 			}),
 			timeSeriesPanel.WithLegend(timeSeriesPanel.Legend{
@@ -55,7 +55,7 @@ func RemoteWriteRequestErrors(datasourceName string, labelMatchers ...*labels.Ma
 		timeSeriesPanel.Chart(
 			timeSeriesPanel.WithYAxis(timeSeriesPanel.YAxis{
 				Format: &commonSdk.Format{
-					Unit: string(commonSdk.PercentUnit),
+					Unit: &dashboards.PercentUnit,
 				},
 			}),
 			timeSeriesPanel.WithLegend(timeSeriesPanel.Legend{
@@ -90,7 +90,7 @@ func RemoteWriteRequestDurations(datasourceName string, labelMatchers ...*labels
 		timeSeriesPanel.Chart(
 			timeSeriesPanel.WithYAxis(timeSeriesPanel.YAxis{
 				Format: &commonSdk.Format{
-					Unit: string(commonSdk.SecondsUnit),
+					Unit: &dashboards.SecondsUnit,
 				},
 			}),
 			timeSeriesPanel.WithLegend(timeSeriesPanel.Legend{
@@ -144,7 +144,7 @@ func TenantedRemoteWriteRequestRate(datasourceName string, labelMatchers ...*lab
 		timeSeriesPanel.Chart(
 			timeSeriesPanel.WithYAxis(timeSeriesPanel.YAxis{
 				Format: &commonSdk.Format{
-					Unit: string(commonSdk.RequestsPerSecondsUnit),
+					Unit: &dashboards.RequestsPerSecondsUnit,
 				},
 			}),
 			timeSeriesPanel.WithLegend(timeSeriesPanel.Legend{
@@ -178,7 +178,7 @@ func TenantedRemoteWriteRequestErrors(datasourceName string, labelMatchers ...*l
 		timeSeriesPanel.Chart(
 			timeSeriesPanel.WithYAxis(timeSeriesPanel.YAxis{
 				Format: &commonSdk.Format{
-					Unit: string(commonSdk.PercentUnit),
+					Unit: &dashboards.PercentUnit,
 				},
 			}),
 			timeSeriesPanel.WithLegend(timeSeriesPanel.Legend{
@@ -212,7 +212,7 @@ func TenantedRemoteWriteRequestDurations(datasourceName string, labelMatchers ..
 		timeSeriesPanel.Chart(
 			timeSeriesPanel.WithYAxis(timeSeriesPanel.YAxis{
 				Format: &commonSdk.Format{
-					Unit: string(commonSdk.SecondsUnit),
+					Unit: &dashboards.SecondsUnit,
 				},
 			}),
 			timeSeriesPanel.WithLegend(timeSeriesPanel.Legend{
@@ -246,7 +246,7 @@ func AvgRemoteWriteRequestSize(datasourceName string, labelMatchers ...*labels.M
 		timeSeriesPanel.Chart(
 			timeSeriesPanel.WithYAxis(timeSeriesPanel.YAxis{
 				Format: &commonSdk.Format{
-					Unit: string(commonSdk.BytesUnit),
+					Unit: &dashboards.BytesUnit,
 				},
 			}),
 			timeSeriesPanel.WithLegend(timeSeriesPanel.Legend{
@@ -279,7 +279,7 @@ func AvgFailedRemoteWriteRequestSize(datasourceName string, labelMatchers ...*la
 		timeSeriesPanel.Chart(
 			timeSeriesPanel.WithYAxis(timeSeriesPanel.YAxis{
 				Format: &commonSdk.Format{
-					Unit: string(commonSdk.BytesUnit),
+					Unit: &dashboards.BytesUnit,
 				},
 			}),
 			timeSeriesPanel.WithLegend(timeSeriesPanel.Legend{
@@ -313,7 +313,7 @@ func InflightRemoteWriteRequests(datasourceName string, labelMatchers ...*labels
 		timeSeriesPanel.Chart(
 			timeSeriesPanel.WithYAxis(timeSeriesPanel.YAxis{
 				Format: &commonSdk.Format{
-					Unit: string(commonSdk.DecimalUnit),
+					Unit: &dashboards.DecimalUnit,
 				},
 			}),
 			timeSeriesPanel.WithLegend(timeSeriesPanel.Legend{
@@ -463,7 +463,7 @@ func RemoteWriteReplicationRate(datasourceName string, labelMatchers ...*labels.
 		timeSeriesPanel.Chart(
 			timeSeriesPanel.WithYAxis(timeSeriesPanel.YAxis{
 				Format: &commonSdk.Format{
-					Unit: string(commonSdk.RequestsPerSecondsUnit),
+					Unit: &dashboards.RequestsPerSecondsUnit,
 				},
 			}),
 			timeSeriesPanel.WithLegend(timeSeriesPanel.Legend{
@@ -497,7 +497,7 @@ func RemoteWriteReplicationErrorRate(datasourceName string, labelMatchers ...*la
 		timeSeriesPanel.Chart(
 			timeSeriesPanel.WithYAxis(timeSeriesPanel.YAxis{
 				Format: &commonSdk.Format{
-					Unit: string(commonSdk.RequestsPerSecondsUnit),
+					Unit: &dashboards.RequestsPerSecondsUnit,
 				},
 			}),
 			timeSeriesPanel.WithLegend(timeSeriesPanel.Legend{
@@ -531,7 +531,7 @@ func RemoteWriteForwardRate(datasourceName string, labelMatchers ...*labels.Matc
 		timeSeriesPanel.Chart(
 			timeSeriesPanel.WithYAxis(timeSeriesPanel.YAxis{
 				Format: &commonSdk.Format{
-					Unit: string(commonSdk.RequestsPerSecondsUnit),
+					Unit: &dashboards.RequestsPerSecondsUnit,
 				},
 			}),
 			timeSeriesPanel.WithLegend(timeSeriesPanel.Legend{
@@ -565,7 +565,7 @@ func RemoteWriteForwardErrorRate(datasourceName string, labelMatchers ...*labels
 		timeSeriesPanel.Chart(
 			timeSeriesPanel.WithYAxis(timeSeriesPanel.YAxis{
 				Format: &commonSdk.Format{
-					Unit: string(commonSdk.RequestsPerSecondsUnit),
+					Unit: &dashboards.RequestsPerSecondsUnit,
 				},
 			}),
 			timeSeriesPanel.WithLegend(timeSeriesPanel.Legend{
@@ -599,7 +599,7 @@ func WriteGRPCUnaryRate(datasourceName string, labelMatchers ...*labels.Matcher)
 		timeSeriesPanel.Chart(
 			timeSeriesPanel.WithYAxis(timeSeriesPanel.YAxis{
 				Format: &commonSdk.Format{
-					Unit: string(commonSdk.RequestsPerSecondsUnit),
+					Unit: &dashboards.RequestsPerSecondsUnit,
 				},
 			}),
 			timeSeriesPanel.WithLegend(timeSeriesPanel.Legend{
@@ -634,7 +634,7 @@ func WriteGRPCUnaryErrors(datasourceName string, labelMatchers ...*labels.Matche
 		timeSeriesPanel.Chart(
 			timeSeriesPanel.WithYAxis(timeSeriesPanel.YAxis{
 				Format: &commonSdk.Format{
-					Unit: string(commonSdk.PercentUnit),
+					Unit: &dashboards.PercentUnit,
 				},
 			}),
 			timeSeriesPanel.WithLegend(timeSeriesPanel.Legend{
@@ -669,7 +669,7 @@ func WriteGPRCUnaryDurations(datasourceName string, labelMatchers ...*labels.Mat
 		timeSeriesPanel.Chart(
 			timeSeriesPanel.WithYAxis(timeSeriesPanel.YAxis{
 				Format: &commonSdk.Format{
-					Unit: string(commonSdk.SecondsUnit),
+					Unit: &dashboards.SecondsUnit,
 				},
 			}),
 			timeSeriesPanel.WithLegend(timeSeriesPanel.Legend{
@@ -825,7 +825,7 @@ func BucketUploadTable(datasourceName string, labelMatchers ...*labels.Matcher) 
 					Name:   "value",
 					Header: "Uploaded Ago",
 					Format: &commonSdk.Format{
-						Unit: string(commonSdk.SecondsUnit),
+						Unit: &dashboards.SecondsUnit,
 					},
 				},
 				{

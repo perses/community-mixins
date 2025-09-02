@@ -16,7 +16,7 @@ func IncomingRequestVolume(datasourceName string, labelMatchers ...promql.LabelM
 		timeSeriesPanel.Chart(
 			timeSeriesPanel.WithYAxis(timeSeriesPanel.YAxis{
 				Format: &commonSdk.Format{
-					Unit: string(commonSdk.RequestsPerSecondsUnit),
+					Unit: &dashboards.RequestsPerSecondsUnit,
 				},
 			}),
 			timeSeriesPanel.WithLegend(timeSeriesPanel.Legend{
@@ -60,7 +60,7 @@ func IncomingSuccessRate(datasourceName string, labelMatchers ...promql.LabelMat
 		timeSeriesPanel.Chart(
 			timeSeriesPanel.WithYAxis(timeSeriesPanel.YAxis{
 				Format: &commonSdk.Format{
-					Unit: string(commonSdk.PercentUnit),
+					Unit: &dashboards.PercentUnit,
 				},
 				Min: 0,
 				Max: 1,
@@ -106,7 +106,7 @@ func IncomingRequestDuration(datasourceName string, labelMatchers ...promql.Labe
 		timeSeriesPanel.Chart(
 			timeSeriesPanel.WithYAxis(timeSeriesPanel.YAxis{
 				Format: &commonSdk.Format{
-					Unit: string(commonSdk.MilliSecondsUnit),
+					Unit: &dashboards.MilliSecondsUnit,
 				},
 			}),
 			timeSeriesPanel.WithLegend(timeSeriesPanel.Legend{
@@ -252,7 +252,7 @@ func OutgoingSuccessRate(datasourceName string, labelMatchers ...promql.LabelMat
 		timeSeriesPanel.Chart(
 			timeSeriesPanel.WithYAxis(timeSeriesPanel.YAxis{
 				Format: &commonSdk.Format{
-					Unit: string(commonSdk.PercentUnit),
+					Unit: &dashboards.PercentUnit,
 				},
 				Min: 0,
 				Max: 1,
@@ -603,7 +603,7 @@ func TCPBytesReceived(datasourceName string, labelMatchers ...promql.LabelMatche
 		timeSeriesPanel.Chart(
 			timeSeriesPanel.WithYAxis(timeSeriesPanel.YAxis{
 				Format: &commonSdk.Format{
-					Unit: string(commonSdk.BytesPerSecondsUnit),
+					Unit: &dashboards.BytesPerSecondsUnit,
 				},
 			}),
 			timeSeriesPanel.WithLegend(timeSeriesPanel.Legend{
@@ -647,7 +647,7 @@ func TCPBytesSent(datasourceName string, labelMatchers ...promql.LabelMatcher) p
 		timeSeriesPanel.Chart(
 			timeSeriesPanel.WithYAxis(timeSeriesPanel.YAxis{
 				Format: &commonSdk.Format{
-					Unit: string(commonSdk.BytesPerSecondsUnit),
+					Unit: &dashboards.BytesPerSecondsUnit,
 				},
 			}),
 			timeSeriesPanel.WithLegend(timeSeriesPanel.Legend{

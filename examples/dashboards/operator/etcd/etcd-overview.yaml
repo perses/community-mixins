@@ -1,7 +1,6 @@
 apiVersion: perses.dev/v1alpha1
 kind: PersesDashboard
 metadata:
-  creationTimestamp: null
   labels:
     app.kubernetes.io/component: dashboard
     app.kubernetes.io/instance: etcd-overview

@@ -34,7 +34,7 @@ func WorkloadCPUUsageQuota(datasourceName string, labelMatchers ...promql.LabelM
 					Header: "CPU Usage",
 					Align:  tablePanel.RightAlign,
 					Format: &commonSdk.Format{
-						Unit:          commonSdk.DecimalUnit,
+						Unit:          &dashboards.DecimalUnit,
 						DecimalPlaces: 4,
 					},
 				},
@@ -43,7 +43,7 @@ func WorkloadCPUUsageQuota(datasourceName string, labelMatchers ...promql.LabelM
 					Header: "CPU Requests",
 					Align:  tablePanel.RightAlign,
 					Format: &commonSdk.Format{
-						Unit:          commonSdk.DecimalUnit,
+						Unit:          &dashboards.DecimalUnit,
 						DecimalPlaces: 4,
 					},
 				},
@@ -52,7 +52,7 @@ func WorkloadCPUUsageQuota(datasourceName string, labelMatchers ...promql.LabelM
 					Header: "CPU Requests %",
 					Align:  tablePanel.RightAlign,
 					Format: &commonSdk.Format{
-						Unit:          string(commonSdk.PercentDecimalUnit),
+						Unit:          &dashboards.PercentDecimalUnit,
 						DecimalPlaces: 4,
 					},
 				},
@@ -61,7 +61,7 @@ func WorkloadCPUUsageQuota(datasourceName string, labelMatchers ...promql.LabelM
 					Header: "CPU Limits",
 					Align:  tablePanel.RightAlign,
 					Format: &commonSdk.Format{
-						Unit:          commonSdk.DecimalUnit,
+						Unit:          &dashboards.DecimalUnit,
 						DecimalPlaces: 4,
 					},
 				},
@@ -70,7 +70,7 @@ func WorkloadCPUUsageQuota(datasourceName string, labelMatchers ...promql.LabelM
 					Header: "CPU Limits %",
 					Align:  tablePanel.RightAlign,
 					Format: &commonSdk.Format{
-						Unit:          string(commonSdk.PercentDecimalUnit),
+						Unit:          &dashboards.PercentDecimalUnit,
 						DecimalPlaces: 4,
 					},
 				},
@@ -151,7 +151,7 @@ func WorkloadMemoryUsageQuota(datasourceName string, labelMatchers ...promql.Lab
 					Header: "Memory Usage",
 					Align:  tablePanel.RightAlign,
 					Format: &commonSdk.Format{
-						Unit:          commonSdk.BytesUnit,
+						Unit:          &dashboards.BytesUnit,
 						DecimalPlaces: 4,
 					},
 				},
@@ -160,7 +160,7 @@ func WorkloadMemoryUsageQuota(datasourceName string, labelMatchers ...promql.Lab
 					Header: "Memory Requests",
 					Align:  tablePanel.RightAlign,
 					Format: &commonSdk.Format{
-						Unit:          commonSdk.BytesUnit,
+						Unit:          &dashboards.BytesUnit,
 						DecimalPlaces: 4,
 					},
 				},
@@ -169,7 +169,7 @@ func WorkloadMemoryUsageQuota(datasourceName string, labelMatchers ...promql.Lab
 					Header: "Memory Requests %",
 					Align:  tablePanel.RightAlign,
 					Format: &commonSdk.Format{
-						Unit:          string(commonSdk.PercentDecimalUnit),
+						Unit:          &dashboards.PercentDecimalUnit,
 						DecimalPlaces: 4,
 					},
 				},
@@ -178,7 +178,7 @@ func WorkloadMemoryUsageQuota(datasourceName string, labelMatchers ...promql.Lab
 					Header: "Memory Limits",
 					Align:  tablePanel.RightAlign,
 					Format: &commonSdk.Format{
-						Unit:          commonSdk.BytesUnit,
+						Unit:          &dashboards.BytesUnit,
 						DecimalPlaces: 4,
 					},
 				},
@@ -187,7 +187,7 @@ func WorkloadMemoryUsageQuota(datasourceName string, labelMatchers ...promql.Lab
 					Header: "Memory Limits %",
 					Align:  tablePanel.RightAlign,
 					Format: &commonSdk.Format{
-						Unit:          string(commonSdk.PercentDecimalUnit),
+						Unit:          &dashboards.PercentDecimalUnit,
 						DecimalPlaces: 4,
 					},
 				},
@@ -268,7 +268,7 @@ func WorkloadCurrentNetworkUsage(datasourceName string, labelMatchers ...promql.
 					Header: "Current Receive Bandwidth",
 					Align:  tablePanel.RightAlign,
 					Format: &commonSdk.Format{
-						Unit: string(commonSdk.BytesPerSecondsUnit),
+						Unit: &dashboards.BytesPerSecondsUnit,
 					},
 				},
 				{
@@ -276,7 +276,7 @@ func WorkloadCurrentNetworkUsage(datasourceName string, labelMatchers ...promql.
 					Header: "Current Transmit Bandwidth",
 					Align:  tablePanel.RightAlign,
 					Format: &commonSdk.Format{
-						Unit: string(commonSdk.BytesPerSecondsUnit),
+						Unit: &dashboards.BytesPerSecondsUnit,
 					},
 				},
 				{
@@ -284,7 +284,7 @@ func WorkloadCurrentNetworkUsage(datasourceName string, labelMatchers ...promql.
 					Header: "Rate of Received Packets",
 					Align:  tablePanel.RightAlign,
 					Format: &commonSdk.Format{
-						Unit: string(commonSdk.PacketsPerSecondsUnit),
+						Unit: &dashboards.PacketsPerSecondsUnit,
 					},
 				},
 				{
@@ -292,7 +292,7 @@ func WorkloadCurrentNetworkUsage(datasourceName string, labelMatchers ...promql.
 					Header: "Rate of Transmitted Packets",
 					Align:  tablePanel.RightAlign,
 					Format: &commonSdk.Format{
-						Unit: string(commonSdk.PacketsPerSecondsUnit),
+						Unit: &dashboards.PacketsPerSecondsUnit,
 					},
 				},
 				{
@@ -300,7 +300,7 @@ func WorkloadCurrentNetworkUsage(datasourceName string, labelMatchers ...promql.
 					Header: "Rate of Received Packets Dropped",
 					Align:  tablePanel.RightAlign,
 					Format: &commonSdk.Format{
-						Unit: string(commonSdk.PacketsPerSecondsUnit),
+						Unit: &dashboards.PacketsPerSecondsUnit,
 					},
 				},
 				{
@@ -308,7 +308,7 @@ func WorkloadCurrentNetworkUsage(datasourceName string, labelMatchers ...promql.
 					Header: "Rate of Transmitted Packets Dropped",
 					Align:  tablePanel.RightAlign,
 					Format: &commonSdk.Format{
-						Unit: string(commonSdk.PacketsPerSecondsUnit),
+						Unit: &dashboards.PacketsPerSecondsUnit,
 					},
 				},
 				{

@@ -16,7 +16,7 @@ func IncomingRequestSizeBySource(datasourceName string, labelMatchers ...promql.
 		timeSeriesPanel.Chart(
 			timeSeriesPanel.WithYAxis(timeSeriesPanel.YAxis{
 				Format: &commonSdk.Format{
-					Unit: string(commonSdk.BytesUnit),
+					Unit: &dashboards.BytesUnit,
 				},
 				Min: 0,
 			}),
@@ -130,7 +130,7 @@ func IncomingResponseSizeBySource(datasourceName string, labelMatchers ...promql
 		timeSeriesPanel.Chart(
 			timeSeriesPanel.WithYAxis(timeSeriesPanel.YAxis{
 				Format: &commonSdk.Format{
-					Unit: string(commonSdk.BytesUnit),
+					Unit: &dashboards.BytesUnit,
 				},
 				Min: 0,
 			}),
@@ -234,7 +234,7 @@ func InboundTCPBytesReceived(datasourceName string, labelMatchers ...promql.Labe
 		timeSeriesPanel.Chart(
 			timeSeriesPanel.WithYAxis(timeSeriesPanel.YAxis{
 				Format: &commonSdk.Format{
-					Unit: string(commonSdk.BytesPerSecondsUnit),
+					Unit: &dashboards.BytesPerSecondsUnit,
 				},
 				Min: 0,
 			}),
@@ -278,7 +278,7 @@ func InboundTCPBytesSent(datasourceName string, labelMatchers ...promql.LabelMat
 		timeSeriesPanel.Chart(
 			timeSeriesPanel.WithYAxis(timeSeriesPanel.YAxis{
 				Format: &commonSdk.Format{
-					Unit: string(commonSdk.BytesPerSecondsUnit),
+					Unit: &dashboards.BytesPerSecondsUnit,
 				},
 				Min: 0,
 			}),

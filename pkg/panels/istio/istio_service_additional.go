@@ -16,7 +16,7 @@ func IncomingRequestDurationByClient(datasourceName string, labelMatchers ...pro
 	return panelgroup.AddPanel("Incoming Request Duration By Source",
 		timeSeriesPanel.Chart(
 			timeSeriesPanel.WithYAxis(timeSeriesPanel.YAxis{
-				Format: &commonSdk.Format{Unit: string(commonSdk.SecondsUnit)},
+				Format: &commonSdk.Format{Unit: &dashboards.SecondsUnit},
 				Min:    0,
 			}),
 			timeSeriesPanel.WithLegend(timeSeriesPanel.Legend{
@@ -95,7 +95,7 @@ func IncomingRequestSizeByClient(datasourceName string, labelMatchers ...promql.
 	return panelgroup.AddPanel("Incoming Request Size By Source",
 		timeSeriesPanel.Chart(
 			timeSeriesPanel.WithYAxis(timeSeriesPanel.YAxis{
-				Format: &commonSdk.Format{Unit: string(commonSdk.BytesUnit)},
+				Format: &commonSdk.Format{Unit: &dashboards.BytesUnit},
 				Min:    0,
 			}),
 			timeSeriesPanel.WithLegend(timeSeriesPanel.Legend{
@@ -174,7 +174,7 @@ func ResponseSizeByClient(datasourceName string, labelMatchers ...promql.LabelMa
 	return panelgroup.AddPanel("Response Size By Source",
 		timeSeriesPanel.Chart(
 			timeSeriesPanel.WithYAxis(timeSeriesPanel.YAxis{
-				Format: &commonSdk.Format{Unit: string(commonSdk.BytesUnit)},
+				Format: &commonSdk.Format{Unit: &dashboards.BytesUnit},
 				Min:    0,
 			}),
 			timeSeriesPanel.WithLegend(timeSeriesPanel.Legend{
@@ -253,7 +253,7 @@ func BytesReceivedFromTCPClient(datasourceName string, labelMatchers ...promql.L
 	return panelgroup.AddPanel("Bytes Received from Incoming TCP Connection",
 		timeSeriesPanel.Chart(
 			timeSeriesPanel.WithYAxis(timeSeriesPanel.YAxis{
-				Format: &commonSdk.Format{Unit: string(commonSdk.BytesPerSecondsUnit)},
+				Format: &commonSdk.Format{Unit: &dashboards.BytesPerSecondsUnit},
 				Min:    0,
 			}),
 			timeSeriesPanel.WithLegend(timeSeriesPanel.Legend{
@@ -288,7 +288,7 @@ func BytesSentToTCPClient(datasourceName string, labelMatchers ...promql.LabelMa
 	return panelgroup.AddPanel("Bytes Sent to Incoming TCP Connection",
 		timeSeriesPanel.Chart(
 			timeSeriesPanel.WithYAxis(timeSeriesPanel.YAxis{
-				Format: &commonSdk.Format{Unit: string(commonSdk.BytesPerSecondsUnit)},
+				Format: &commonSdk.Format{Unit: &dashboards.BytesPerSecondsUnit},
 				Min:    0,
 			}),
 			timeSeriesPanel.WithLegend(timeSeriesPanel.Legend{

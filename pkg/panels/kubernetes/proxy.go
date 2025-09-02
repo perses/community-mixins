@@ -17,7 +17,7 @@ func ProxyUpStatus(datasourceName string, labelMatchers ...promql.LabelMatcher) 
 		panel.Description("Shows the status of the proxy."),
 		statPanel.Chart(
 			statPanel.Format(commonSdk.Format{
-				Unit:          string(commonSdk.DecimalUnit),
+				Unit:          &dashboards.DecimalUnit,
 				DecimalPlaces: 0,
 			}),
 			statPanel.ValueFontSize(50),
@@ -40,7 +40,7 @@ func RulesSyncRate(datasourceName string, labelMatchers ...promql.LabelMatcher) 
 		timeSeriesPanel.Chart(
 			timeSeriesPanel.WithYAxis(timeSeriesPanel.YAxis{
 				Format: &commonSdk.Format{
-					Unit: string(commonSdk.OpsPerSecondsUnit),
+					Unit: &dashboards.OpsPerSecondsUnit,
 				},
 			}),
 			timeSeriesPanel.WithLegend(timeSeriesPanel.Legend{
@@ -75,7 +75,7 @@ func RulesSyncLatency(datasourceName string, labelMatchers ...promql.LabelMatche
 		timeSeriesPanel.Chart(
 			timeSeriesPanel.WithYAxis(timeSeriesPanel.YAxis{
 				Format: &commonSdk.Format{
-					Unit: string(commonSdk.SecondsUnit),
+					Unit: &dashboards.SecondsUnit,
 				},
 			}),
 			timeSeriesPanel.WithLegend(timeSeriesPanel.Legend{
@@ -110,7 +110,7 @@ func NetworkProgrammingRate(datasourceName string, labelMatchers ...promql.Label
 		timeSeriesPanel.Chart(
 			timeSeriesPanel.WithYAxis(timeSeriesPanel.YAxis{
 				Format: &commonSdk.Format{
-					Unit: string(commonSdk.OpsPerSecondsUnit),
+					Unit: &dashboards.OpsPerSecondsUnit,
 				},
 			}),
 			timeSeriesPanel.WithLegend(timeSeriesPanel.Legend{
@@ -145,7 +145,7 @@ func NetworkProgrammingLatency(datasourceName string, labelMatchers ...promql.La
 		timeSeriesPanel.Chart(
 			timeSeriesPanel.WithYAxis(timeSeriesPanel.YAxis{
 				Format: &commonSdk.Format{
-					Unit: string(commonSdk.SecondsUnit),
+					Unit: &dashboards.SecondsUnit,
 				},
 			}),
 			timeSeriesPanel.WithLegend(timeSeriesPanel.Legend{

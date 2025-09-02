@@ -17,7 +17,7 @@ func ClientRequestVolume(datasourceName string, labelMatchers ...promql.LabelMat
 		timeSeriesPanel.Chart(
 			timeSeriesPanel.WithYAxis(timeSeriesPanel.YAxis{
 				Format: &commonSdk.Format{
-					Unit: string(commonSdk.RequestsPerSecondsUnit),
+					Unit: &dashboards.RequestsPerSecondsUnit,
 				},
 			}),
 			timeSeriesPanel.WithLegend(timeSeriesPanel.Legend{
@@ -51,7 +51,7 @@ func ClientSuccessRate(datasourceName string, labelMatchers ...promql.LabelMatch
 		timeSeriesPanel.Chart(
 			timeSeriesPanel.WithYAxis(timeSeriesPanel.YAxis{
 				Format: &commonSdk.Format{
-					Unit: string(commonSdk.PercentUnit),
+					Unit: &dashboards.PercentUnit,
 				},
 				Min: 0,
 				Max: 1,
@@ -87,7 +87,7 @@ func ClientRequestDuration(datasourceName string, labelMatchers ...promql.LabelM
 		timeSeriesPanel.Chart(
 			timeSeriesPanel.WithYAxis(timeSeriesPanel.YAxis{
 				Format: &commonSdk.Format{
-					Unit: string(commonSdk.MilliSecondsUnit),
+					Unit: &dashboards.MilliSecondsUnit,
 				},
 			}),
 			timeSeriesPanel.WithLegend(timeSeriesPanel.Legend{
@@ -141,7 +141,7 @@ func ServerRequestVolume(datasourceName string, labelMatchers ...promql.LabelMat
 		timeSeriesPanel.Chart(
 			timeSeriesPanel.WithYAxis(timeSeriesPanel.YAxis{
 				Format: &commonSdk.Format{
-					Unit: string(commonSdk.RequestsPerSecondsUnit),
+					Unit: &dashboards.RequestsPerSecondsUnit,
 				},
 			}),
 			timeSeriesPanel.WithLegend(timeSeriesPanel.Legend{
@@ -175,7 +175,7 @@ func ServiceTCPBytesReceived(datasourceName string, labelMatchers ...promql.Labe
 		timeSeriesPanel.Chart(
 			timeSeriesPanel.WithYAxis(timeSeriesPanel.YAxis{
 				Format: &commonSdk.Format{
-					Unit: string(commonSdk.BytesPerSecondsUnit),
+					Unit: &dashboards.BytesPerSecondsUnit,
 				},
 			}),
 			timeSeriesPanel.WithLegend(timeSeriesPanel.Legend{
@@ -209,7 +209,7 @@ func ServiceTCPBytesSent(datasourceName string, labelMatchers ...promql.LabelMat
 		timeSeriesPanel.Chart(
 			timeSeriesPanel.WithYAxis(timeSeriesPanel.YAxis{
 				Format: &commonSdk.Format{
-					Unit: string(commonSdk.BytesPerSecondsUnit),
+					Unit: &dashboards.BytesPerSecondsUnit,
 				},
 			}),
 			timeSeriesPanel.WithLegend(timeSeriesPanel.Legend{
@@ -268,7 +268,7 @@ func ClientSuccessRateStat(datasourceName string, labelMatchers ...promql.LabelM
 	return panelgroup.AddPanel("Client Success Rate (non-5xx responses)",
 		statPanel.Chart(
 			statPanel.Calculation(commonSdk.LastCalculation),
-			statPanel.Format(commonSdk.Format{Unit: string(commonSdk.PercentDecimalUnit)}),
+			statPanel.Format(commonSdk.Format{Unit: &dashboards.PercentDecimalUnit}),
 			statPanel.WithSparkline(statPanel.Sparkline{
 				Width: 1,
 			}),
@@ -295,7 +295,7 @@ func ClientRequestDurationChart(datasourceName string, labelMatchers ...promql.L
 	return panelgroup.AddPanel("Client Request Duration",
 		timeSeriesPanel.Chart(
 			timeSeriesPanel.WithYAxis(timeSeriesPanel.YAxis{
-				Format: &commonSdk.Format{Unit: string(commonSdk.SecondsUnit)},
+				Format: &commonSdk.Format{Unit: &dashboards.SecondsUnit},
 			}),
 			timeSeriesPanel.WithLegend(timeSeriesPanel.Legend{
 				Position: timeSeriesPanel.RightPosition,
@@ -330,7 +330,7 @@ func TCPReceivedBytesStat(datasourceName string, labelMatchers ...promql.LabelMa
 	return panelgroup.AddPanel("TCP Received Bytes",
 		statPanel.Chart(
 			statPanel.Calculation(commonSdk.MeanCalculation),
-			statPanel.Format(commonSdk.Format{Unit: string(commonSdk.BytesPerSecondsUnit)}),
+			statPanel.Format(commonSdk.Format{Unit: &dashboards.BytesPerSecondsUnit}),
 			statPanel.WithSparkline(statPanel.Sparkline{
 				Width: 1,
 			}),
@@ -381,7 +381,7 @@ func ServerSuccessRateStat(datasourceName string, labelMatchers ...promql.LabelM
 	return panelgroup.AddPanel("Server Success Rate (non-5xx responses)",
 		statPanel.Chart(
 			statPanel.Calculation(commonSdk.LastCalculation),
-			statPanel.Format(commonSdk.Format{Unit: string(commonSdk.PercentDecimalUnit)}),
+			statPanel.Format(commonSdk.Format{Unit: &dashboards.PercentDecimalUnit}),
 			statPanel.WithSparkline(statPanel.Sparkline{
 				Width: 1,
 			}),
@@ -408,7 +408,7 @@ func ServerRequestDurationChart(datasourceName string, labelMatchers ...promql.L
 	return panelgroup.AddPanel("Server Request Duration",
 		timeSeriesPanel.Chart(
 			timeSeriesPanel.WithYAxis(timeSeriesPanel.YAxis{
-				Format: &commonSdk.Format{Unit: string(commonSdk.SecondsUnit)},
+				Format: &commonSdk.Format{Unit: &dashboards.SecondsUnit},
 			}),
 			timeSeriesPanel.WithLegend(timeSeriesPanel.Legend{
 				Position: timeSeriesPanel.RightPosition,
@@ -443,7 +443,7 @@ func TCPSentBytesStat(datasourceName string, labelMatchers ...promql.LabelMatche
 	return panelgroup.AddPanel("TCP Sent Bytes",
 		statPanel.Chart(
 			statPanel.Calculation(commonSdk.MeanCalculation),
-			statPanel.Format(commonSdk.Format{Unit: string(commonSdk.BytesPerSecondsUnit)}),
+			statPanel.Format(commonSdk.Format{Unit: &dashboards.BytesPerSecondsUnit}),
 			statPanel.WithSparkline(statPanel.Sparkline{
 				Width: 1,
 			}),
@@ -503,7 +503,7 @@ func IncomingSuccessRateByClient(datasourceName string, labelMatchers ...promql.
 	return panelgroup.AddPanel("Incoming Success Rate (non-5xx responses) By Source",
 		timeSeriesPanel.Chart(
 			timeSeriesPanel.WithYAxis(timeSeriesPanel.YAxis{
-				Format: &commonSdk.Format{Unit: string(commonSdk.PercentDecimalUnit)},
+				Format: &commonSdk.Format{Unit: &dashboards.PercentDecimalUnit},
 				Min:    0,
 				Max:    1.01,
 			}),

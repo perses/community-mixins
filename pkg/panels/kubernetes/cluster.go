@@ -34,7 +34,7 @@ func ClusterCPUUsageQuota(datasourceName string, labelMatchers ...promql.LabelMa
 					Header: "Pods",
 					Align:  tablePanel.RightAlign,
 					Format: &commonSdk.Format{
-						Unit: string(commonSdk.DecimalUnit),
+						Unit: &dashboards.DecimalUnit,
 					},
 				},
 				{
@@ -42,7 +42,7 @@ func ClusterCPUUsageQuota(datasourceName string, labelMatchers ...promql.LabelMa
 					Header: "Workloads",
 					Align:  tablePanel.RightAlign,
 					Format: &commonSdk.Format{
-						Unit: string(commonSdk.DecimalUnit),
+						Unit: &dashboards.DecimalUnit,
 					},
 				},
 				{
@@ -50,7 +50,7 @@ func ClusterCPUUsageQuota(datasourceName string, labelMatchers ...promql.LabelMa
 					Header: "CPU Usage",
 					Align:  tablePanel.RightAlign,
 					Format: &commonSdk.Format{
-						Unit:          string(commonSdk.DecimalUnit),
+						Unit:          &dashboards.DecimalUnit,
 						DecimalPlaces: 4,
 					},
 				},
@@ -59,7 +59,7 @@ func ClusterCPUUsageQuota(datasourceName string, labelMatchers ...promql.LabelMa
 					Header: "CPU Requests",
 					Align:  tablePanel.RightAlign,
 					Format: &commonSdk.Format{
-						Unit:          string(commonSdk.DecimalUnit),
+						Unit:          &dashboards.DecimalUnit,
 						DecimalPlaces: 4,
 					},
 				},
@@ -68,7 +68,7 @@ func ClusterCPUUsageQuota(datasourceName string, labelMatchers ...promql.LabelMa
 					Header: "CPU Requests %",
 					Align:  tablePanel.RightAlign,
 					Format: &commonSdk.Format{
-						Unit:          string(commonSdk.PercentDecimalUnit),
+						Unit:          &dashboards.PercentDecimalUnit,
 						DecimalPlaces: 4,
 					},
 				},
@@ -77,7 +77,7 @@ func ClusterCPUUsageQuota(datasourceName string, labelMatchers ...promql.LabelMa
 					Header: "CPU Limits",
 					Align:  tablePanel.RightAlign,
 					Format: &commonSdk.Format{
-						Unit:          string(commonSdk.DecimalUnit),
+						Unit:          &dashboards.DecimalUnit,
 						DecimalPlaces: 4,
 					},
 				},
@@ -86,7 +86,7 @@ func ClusterCPUUsageQuota(datasourceName string, labelMatchers ...promql.LabelMa
 					Header: "CPU Limits %",
 					Align:  tablePanel.RightAlign,
 					Format: &commonSdk.Format{
-						Unit:          string(commonSdk.PercentDecimalUnit),
+						Unit:          &dashboards.PercentDecimalUnit,
 						DecimalPlaces: 4,
 					},
 				},
@@ -185,7 +185,7 @@ func ClusterMemoryUsageQuota(datasourceName string, labelMatchers ...promql.Labe
 					Header: "Pods",
 					Align:  tablePanel.RightAlign,
 					Format: &commonSdk.Format{
-						Unit: string(commonSdk.DecimalUnit),
+						Unit: &dashboards.DecimalUnit,
 					},
 				},
 				{
@@ -193,7 +193,7 @@ func ClusterMemoryUsageQuota(datasourceName string, labelMatchers ...promql.Labe
 					Header: "Workloads",
 					Align:  tablePanel.RightAlign,
 					Format: &commonSdk.Format{
-						Unit: string(commonSdk.DecimalUnit),
+						Unit: &dashboards.DecimalUnit,
 					},
 				},
 				{
@@ -201,7 +201,7 @@ func ClusterMemoryUsageQuota(datasourceName string, labelMatchers ...promql.Labe
 					Header: "Memory Usage",
 					Align:  tablePanel.RightAlign,
 					Format: &commonSdk.Format{
-						Unit: string(commonSdk.BytesUnit),
+						Unit: &dashboards.BytesUnit,
 					},
 				},
 				{
@@ -209,7 +209,7 @@ func ClusterMemoryUsageQuota(datasourceName string, labelMatchers ...promql.Labe
 					Header: "Memory Requests",
 					Align:  tablePanel.RightAlign,
 					Format: &commonSdk.Format{
-						Unit: string(commonSdk.BytesUnit),
+						Unit: &dashboards.BytesUnit,
 					},
 				},
 				{
@@ -217,7 +217,7 @@ func ClusterMemoryUsageQuota(datasourceName string, labelMatchers ...promql.Labe
 					Header: "Memory Requests %",
 					Align:  tablePanel.RightAlign,
 					Format: &commonSdk.Format{
-						Unit:          string(commonSdk.PercentDecimalUnit),
+						Unit:          &dashboards.PercentDecimalUnit,
 						DecimalPlaces: 4,
 					},
 				},
@@ -226,7 +226,7 @@ func ClusterMemoryUsageQuota(datasourceName string, labelMatchers ...promql.Labe
 					Header: "Memory Limits",
 					Align:  tablePanel.RightAlign,
 					Format: &commonSdk.Format{
-						Unit: string(commonSdk.BytesUnit),
+						Unit: &dashboards.BytesUnit,
 					},
 				},
 				{
@@ -234,7 +234,7 @@ func ClusterMemoryUsageQuota(datasourceName string, labelMatchers ...promql.Labe
 					Header: "Memory Limits %",
 					Align:  tablePanel.RightAlign,
 					Format: &commonSdk.Format{
-						Unit:          string(commonSdk.PercentDecimalUnit),
+						Unit:          &dashboards.PercentDecimalUnit,
 						DecimalPlaces: 4,
 					},
 				},
@@ -333,7 +333,7 @@ func ClusterCurrentNetworkUsage(datasourceName string, labelMatchers ...promql.L
 					Header: "Current Receive Bandwidth",
 					Align:  tablePanel.RightAlign,
 					Format: &commonSdk.Format{
-						Unit: string(commonSdk.BytesPerSecondsUnit),
+						Unit: &dashboards.BytesPerSecondsUnit,
 					},
 				},
 				{
@@ -341,7 +341,7 @@ func ClusterCurrentNetworkUsage(datasourceName string, labelMatchers ...promql.L
 					Header: "Current Transmit Bandwidth",
 					Align:  tablePanel.RightAlign,
 					Format: &commonSdk.Format{
-						Unit: string(commonSdk.BytesPerSecondsUnit),
+						Unit: &dashboards.BytesPerSecondsUnit,
 					},
 				},
 				{
@@ -349,7 +349,7 @@ func ClusterCurrentNetworkUsage(datasourceName string, labelMatchers ...promql.L
 					Header: "Rate of Received Packets",
 					Align:  tablePanel.RightAlign,
 					Format: &commonSdk.Format{
-						Unit: string(commonSdk.PacketsPerSecondsUnit),
+						Unit: &dashboards.PacketsPerSecondsUnit,
 					},
 				},
 				{
@@ -357,7 +357,7 @@ func ClusterCurrentNetworkUsage(datasourceName string, labelMatchers ...promql.L
 					Header: "Rate of Transmitted Packets",
 					Align:  tablePanel.RightAlign,
 					Format: &commonSdk.Format{
-						Unit: string(commonSdk.PacketsPerSecondsUnit),
+						Unit: &dashboards.PacketsPerSecondsUnit,
 					},
 				},
 				{
@@ -365,7 +365,7 @@ func ClusterCurrentNetworkUsage(datasourceName string, labelMatchers ...promql.L
 					Header: "Rate of Received Packets Dropped",
 					Align:  tablePanel.RightAlign,
 					Format: &commonSdk.Format{
-						Unit: string(commonSdk.PacketsPerSecondsUnit),
+						Unit: &dashboards.PacketsPerSecondsUnit,
 					},
 				},
 				{
@@ -373,7 +373,7 @@ func ClusterCurrentNetworkUsage(datasourceName string, labelMatchers ...promql.L
 					Header: "Rate of Transmitted Packets Dropped",
 					Align:  tablePanel.RightAlign,
 					Format: &commonSdk.Format{
-						Unit: string(commonSdk.PacketsPerSecondsUnit),
+						Unit: &dashboards.PacketsPerSecondsUnit,
 					},
 				},
 				{
@@ -462,7 +462,7 @@ func ClusterCurrentStorageIO(datasourceName string, labelMatchers ...promql.Labe
 					Header: "IOPS(Reads)",
 					Align:  tablePanel.RightAlign,
 					Format: &commonSdk.Format{
-						Unit: string(commonSdk.OpsPerSecondsUnit),
+						Unit: &dashboards.OpsPerSecondsUnit,
 					},
 				},
 				{
@@ -470,7 +470,7 @@ func ClusterCurrentStorageIO(datasourceName string, labelMatchers ...promql.Labe
 					Header: "IOPS(Writes)",
 					Align:  tablePanel.RightAlign,
 					Format: &commonSdk.Format{
-						Unit: string(commonSdk.OpsPerSecondsUnit),
+						Unit: &dashboards.OpsPerSecondsUnit,
 					},
 				},
 				{
@@ -478,7 +478,7 @@ func ClusterCurrentStorageIO(datasourceName string, labelMatchers ...promql.Labe
 					Header: "IOPS(Reads + Writes)",
 					Align:  tablePanel.RightAlign,
 					Format: &commonSdk.Format{
-						Unit: string(commonSdk.OpsPerSecondsUnit),
+						Unit: &dashboards.OpsPerSecondsUnit,
 					},
 				},
 				{
@@ -486,7 +486,7 @@ func ClusterCurrentStorageIO(datasourceName string, labelMatchers ...promql.Labe
 					Header: "Throughput(Reads)",
 					Align:  tablePanel.RightAlign,
 					Format: &commonSdk.Format{
-						Unit: string(commonSdk.BytesPerSecondsUnit),
+						Unit: &dashboards.BytesPerSecondsUnit,
 					},
 				},
 				{
@@ -494,7 +494,7 @@ func ClusterCurrentStorageIO(datasourceName string, labelMatchers ...promql.Labe
 					Header: "Throughput(Writes)",
 					Align:  tablePanel.RightAlign,
 					Format: &commonSdk.Format{
-						Unit: string(commonSdk.BytesPerSecondsUnit),
+						Unit: &dashboards.BytesPerSecondsUnit,
 					},
 				},
 				{
@@ -502,7 +502,7 @@ func ClusterCurrentStorageIO(datasourceName string, labelMatchers ...promql.Labe
 					Header: "Throughput(Reads + Writes)",
 					Align:  tablePanel.RightAlign,
 					Format: &commonSdk.Format{
-						Unit: string(commonSdk.BytesPerSecondsUnit),
+						Unit: &dashboards.BytesPerSecondsUnit,
 					},
 				},
 				{

@@ -16,7 +16,7 @@ func PushSize(datasourceName string, labelMatchers ...promql.LabelMatcher) panel
 		timeSeriesPanel.Chart(
 			timeSeriesPanel.WithYAxis(timeSeriesPanel.YAxis{
 				Format: &commonSdk.Format{
-					Unit: string(commonSdk.BytesUnit),
+					Unit: &dashboards.BytesUnit,
 				},
 			}),
 			timeSeriesPanel.WithLegend(timeSeriesPanel.Legend{
@@ -50,7 +50,7 @@ func PushTime(datasourceName string, labelMatchers ...promql.LabelMatcher) panel
 		timeSeriesPanel.Chart(
 			timeSeriesPanel.WithYAxis(timeSeriesPanel.YAxis{
 				Format: &commonSdk.Format{
-					Unit: string(commonSdk.MilliSecondsUnit),
+					Unit: &dashboards.MilliSecondsUnit,
 				},
 			}),
 			timeSeriesPanel.WithLegend(timeSeriesPanel.Legend{
@@ -84,7 +84,7 @@ func Connections(datasourceName string, labelMatchers ...promql.LabelMatcher) pa
 		timeSeriesPanel.Chart(
 			timeSeriesPanel.WithYAxis(timeSeriesPanel.YAxis{
 				Format: &commonSdk.Format{
-					Unit:          string(commonSdk.DecimalUnit),
+					Unit:          &dashboards.DecimalUnit,
 					DecimalPlaces: 0,
 				},
 			}),
@@ -158,7 +158,7 @@ func Events(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgr
 		timeSeriesPanel.Chart(
 			timeSeriesPanel.WithYAxis(timeSeriesPanel.YAxis{
 				Format: &commonSdk.Format{
-					Unit:          string(commonSdk.DecimalUnit),
+					Unit:          &dashboards.DecimalUnit,
 					DecimalPlaces: 0,
 				},
 			}),
@@ -243,7 +243,7 @@ func MemoryAllocations(datasourceName string, labelMatchers ...promql.LabelMatch
 		timeSeriesPanel.Chart(
 			timeSeriesPanel.WithYAxis(timeSeriesPanel.YAxis{
 				Format: &commonSdk.Format{
-					Unit: string(commonSdk.BytesPerSecondsUnit),
+					Unit: &dashboards.BytesPerSecondsUnit,
 				},
 			}),
 			timeSeriesPanel.WithLegend(timeSeriesPanel.Legend{
@@ -287,7 +287,7 @@ func MemoryUsage(datasourceName string, labelMatchers ...promql.LabelMatcher) pa
 		timeSeriesPanel.Chart(
 			timeSeriesPanel.WithYAxis(timeSeriesPanel.YAxis{
 				Format: &commonSdk.Format{
-					Unit: string(commonSdk.BytesUnit),
+					Unit: &dashboards.BytesUnit,
 				},
 			}),
 			timeSeriesPanel.WithLegend(timeSeriesPanel.Legend{
@@ -351,7 +351,7 @@ func PilotVersions(datasourceName string, labelMatchers ...promql.LabelMatcher) 
 		timeSeriesPanel.Chart(
 			timeSeriesPanel.WithYAxis(timeSeriesPanel.YAxis{
 				Format: &commonSdk.Format{
-					Unit:          string(commonSdk.DecimalUnit),
+					Unit:          &dashboards.DecimalUnit,
 					DecimalPlaces: 0,
 				},
 			}),
@@ -386,7 +386,7 @@ func PushErrors(datasourceName string, labelMatchers ...promql.LabelMatcher) pan
 		timeSeriesPanel.Chart(
 			timeSeriesPanel.WithYAxis(timeSeriesPanel.YAxis{
 				Format: &commonSdk.Format{
-					Unit:          string(commonSdk.DecimalUnit),
+					Unit:          &dashboards.DecimalUnit,
 					DecimalPlaces: 0,
 				},
 			}),
@@ -432,7 +432,7 @@ func Injection(datasourceName string, labelMatchers ...promql.LabelMatcher) pane
 		timeSeriesPanel.Chart(
 			timeSeriesPanel.WithYAxis(timeSeriesPanel.YAxis{
 				Format: &commonSdk.Format{
-					Unit:          string(commonSdk.DecimalUnit),
+					Unit:          &dashboards.DecimalUnit,
 					DecimalPlaces: 0,
 				},
 			}),
@@ -478,7 +478,7 @@ func Validation(datasourceName string, labelMatchers ...promql.LabelMatcher) pan
 		timeSeriesPanel.Chart(
 			timeSeriesPanel.WithYAxis(timeSeriesPanel.YAxis{
 				Format: &commonSdk.Format{
-					Unit:          string(commonSdk.DecimalUnit),
+					Unit:          &dashboards.DecimalUnit,
 					DecimalPlaces: 0,
 				},
 			}),
@@ -524,7 +524,7 @@ func XDSPushes(datasourceName string, labelMatchers ...promql.LabelMatcher) pane
 		timeSeriesPanel.Chart(
 			timeSeriesPanel.WithYAxis(timeSeriesPanel.YAxis{
 				Format: &commonSdk.Format{
-					Unit:          string(commonSdk.DecimalUnit),
+					Unit:          &dashboards.DecimalUnit,
 					DecimalPlaces: 0,
 				},
 			}),

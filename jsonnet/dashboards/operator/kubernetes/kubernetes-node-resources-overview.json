@@ -4,7 +4,6 @@
   "metadata": {
     "name": "kubernetes-node-resources-overview",
     "namespace": "perses-dev",
-    "creationTimestamp": null,
     "labels": {
       "app.kubernetes.io/component": "dashboard",
       "app.kubernetes.io/instance": "kubernetes-node-resources-overview",

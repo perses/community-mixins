@@ -4,7 +4,6 @@
   "metadata": {
     "name": "kubernetes-persistent-volume-overview",
     "namespace": "perses-dev",
-    "creationTimestamp": null,
     "labels": {
       "app.kubernetes.io/component": "dashboard",
       "app.kubernetes.io/instance": "kubernetes-persistent-volume-overview",
