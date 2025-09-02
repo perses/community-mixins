@@ -44,7 +44,7 @@ func IncomingSuccessRateStat(datasourceName string, labelMatchers ...promql.Labe
 	return panelgroup.AddPanel("Incoming Success Rate (non-5xx responses)",
 		statPanel.Chart(
 			statPanel.Calculation(commonSdk.MeanCalculation),
-			statPanel.Format(commonSdk.Format{Unit: string(commonSdk.PercentDecimalUnit)}),
+			statPanel.Format(commonSdk.Format{Unit: &dashboards.PercentDecimalUnit}),
 			statPanel.WithSparkline(statPanel.Sparkline{
 				Width: 1,
 			}),
@@ -75,7 +75,7 @@ func RequestDurationChart(datasourceName string, labelMatchers ...promql.LabelMa
 		timeSeriesPanel.Chart(
 			timeSeriesPanel.WithYAxis(timeSeriesPanel.YAxis{
 				Format: &commonSdk.Format{
-					Unit: string(commonSdk.SecondsUnit),
+					Unit: &dashboards.SecondsUnit,
 				},
 			}),
 			timeSeriesPanel.WithLegend(timeSeriesPanel.Legend{
@@ -127,7 +127,7 @@ func TCPServerTrafficStat(datasourceName string, labelMatchers ...promql.LabelMa
 	return panelgroup.AddPanel("TCP Server Traffic",
 		statPanel.Chart(
 			statPanel.Calculation(commonSdk.MeanCalculation),
-			statPanel.Format(commonSdk.Format{Unit: string(commonSdk.BytesPerSecondsUnit)}),
+			statPanel.Format(commonSdk.Format{Unit: &dashboards.BytesPerSecondsUnit}),
 			statPanel.WithSparkline(statPanel.Sparkline{
 				Width: 1,
 			}),
@@ -156,7 +156,7 @@ func TCPClientTrafficStat(datasourceName string, labelMatchers ...promql.LabelMa
 	return panelgroup.AddPanel("TCP Client Traffic",
 		statPanel.Chart(
 			statPanel.Calculation(commonSdk.MeanCalculation),
-			statPanel.Format(commonSdk.Format{Unit: string(commonSdk.BytesPerSecondsUnit)}),
+			statPanel.Format(commonSdk.Format{Unit: &dashboards.BytesPerSecondsUnit}),
 			statPanel.WithSparkline(statPanel.Sparkline{
 				Width: 1,
 			}),

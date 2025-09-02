@@ -2,11 +2,28 @@ package dashboards
 
 import (
 	"github.com/perses/community-dashboards/pkg/promql"
+	commonSdk "github.com/perses/perses/go-sdk/common"
 	"github.com/perses/perses/go-sdk/dashboard"
 	listVar "github.com/perses/perses/go-sdk/variable/list-variable"
 	"github.com/perses/plugins/prometheus/sdk/go/query"
 	labelValuesVar "github.com/perses/plugins/prometheus/sdk/go/variable/label-values"
 	"github.com/prometheus/prometheus/model/labels"
+)
+
+var (
+	SecondsUnit            = string(commonSdk.SecondsUnit)
+	DecimalUnit            = string(commonSdk.DecimalUnit)
+	BytesUnit              = string(commonSdk.BytesUnit)
+	BytesPerSecondsUnit    = string(commonSdk.BytesPerSecondsUnit)
+	MilliSecondsUnit       = string(commonSdk.MilliSecondsUnit)
+	PercentDecimalUnit     = string(commonSdk.PercentDecimalUnit)
+	RequestsPerSecondsUnit = string(commonSdk.RequestsPerSecondsUnit)
+	OpsPerSecondsUnit      = string(commonSdk.OpsPerSecondsUnit)
+	PercentUnit            = string(commonSdk.PercentUnit)
+	CountsPerSecondsUnit   = string(commonSdk.CountsPerSecondsUnit)
+	PacketsPerSecondsUnit  = string(commonSdk.PacketsPerSecondsUnit)
+	ReadsPerSecondsUnit    = string(commonSdk.ReadsPerSecondsUnit)
+	PercentMode            = string(commonSdk.PercentMode)
 )
 
 func AddVariableDatasource(datasourceName string) labelValuesVar.Option {

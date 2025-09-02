@@ -18,7 +18,7 @@ func RunningKubeletStat(datasourceName string, labelMatchers ...promql.LabelMatc
 		statPanel.Chart(
 			statPanel.Calculation(commonSdk.LastCalculation),
 			statPanel.Format(commonSdk.Format{
-				Unit:          string(commonSdk.DecimalUnit),
+				Unit:          &dashboards.DecimalUnit,
 				DecimalPlaces: 0,
 			}),
 		),
@@ -40,7 +40,7 @@ func RunningPodStat(datasourceName string, labelMatchers ...promql.LabelMatcher)
 		statPanel.Chart(
 			statPanel.Calculation(commonSdk.LastCalculation),
 			statPanel.Format(commonSdk.Format{
-				Unit:          string(commonSdk.DecimalUnit),
+				Unit:          &dashboards.DecimalUnit,
 				DecimalPlaces: 0,
 			}),
 		),
@@ -62,7 +62,7 @@ func RunningContainersStat(datasourceName string, labelMatchers ...promql.LabelM
 		statPanel.Chart(
 			statPanel.Calculation(commonSdk.LastCalculation),
 			statPanel.Format(commonSdk.Format{
-				Unit:          string(commonSdk.DecimalUnit),
+				Unit:          &dashboards.DecimalUnit,
 				DecimalPlaces: 0,
 			}),
 		),
@@ -84,7 +84,7 @@ func ActVolumeCountStat(datasourceName string, labelMatchers ...promql.LabelMatc
 		statPanel.Chart(
 			statPanel.Calculation(commonSdk.LastCalculation),
 			statPanel.Format(commonSdk.Format{
-				Unit:          string(commonSdk.DecimalUnit),
+				Unit:          &dashboards.DecimalUnit,
 				DecimalPlaces: 0,
 			}),
 		),
@@ -106,7 +106,7 @@ func DesiredVolumeCountStat(datasourceName string, labelMatchers ...promql.Label
 		statPanel.Chart(
 			statPanel.Calculation(commonSdk.LastCalculation),
 			statPanel.Format(commonSdk.Format{
-				Unit:          string(commonSdk.DecimalUnit),
+				Unit:          &dashboards.DecimalUnit,
 				DecimalPlaces: 0,
 			}),
 		),
@@ -128,7 +128,7 @@ func ConfigErrorCountStat(datasourceName string, labelMatchers ...promql.LabelMa
 		statPanel.Chart(
 			statPanel.Calculation(commonSdk.LastCalculation),
 			statPanel.Format(commonSdk.Format{
-				Unit:          string(commonSdk.DecimalUnit),
+				Unit:          &dashboards.DecimalUnit,
 				DecimalPlaces: 0,
 			}),
 		),
@@ -150,7 +150,7 @@ func OperationRate(datasourceName string, labelMatchers ...promql.LabelMatcher) 
 		timeSeriesPanel.Chart(
 			timeSeriesPanel.WithYAxis(timeSeriesPanel.YAxis{
 				Format: &commonSdk.Format{
-					Unit: string(commonSdk.OpsPerSecondsUnit),
+					Unit: &dashboards.OpsPerSecondsUnit,
 				},
 			}),
 			timeSeriesPanel.WithLegend(timeSeriesPanel.Legend{
@@ -186,7 +186,7 @@ func OperationErrorRate(datasourceName string, labelMatchers ...promql.LabelMatc
 		timeSeriesPanel.Chart(
 			timeSeriesPanel.WithYAxis(timeSeriesPanel.YAxis{
 				Format: &commonSdk.Format{
-					Unit: string(commonSdk.OpsPerSecondsUnit),
+					Unit: &dashboards.OpsPerSecondsUnit,
 				},
 			}),
 			timeSeriesPanel.WithLegend(timeSeriesPanel.Legend{
@@ -222,7 +222,7 @@ func OperationDurationQuantile(datasourceName string, labelMatchers ...promql.La
 		timeSeriesPanel.Chart(
 			timeSeriesPanel.WithYAxis(timeSeriesPanel.YAxis{
 				Format: &commonSdk.Format{
-					Unit: string(commonSdk.SecondsUnit),
+					Unit: &dashboards.SecondsUnit,
 				},
 			}),
 			timeSeriesPanel.WithLegend(timeSeriesPanel.Legend{
@@ -257,7 +257,7 @@ func PodStartRate(datasourceName string, labelMatchers ...promql.LabelMatcher) p
 		timeSeriesPanel.Chart(
 			timeSeriesPanel.WithYAxis(timeSeriesPanel.YAxis{
 				Format: &commonSdk.Format{
-					Unit: string(commonSdk.OpsPerSecondsUnit),
+					Unit: &dashboards.OpsPerSecondsUnit,
 				},
 			}),
 			timeSeriesPanel.WithLegend(timeSeriesPanel.Legend{
@@ -302,7 +302,7 @@ func PodStartDuration(datasourceName string, labelMatchers ...promql.LabelMatche
 		timeSeriesPanel.Chart(
 			timeSeriesPanel.WithYAxis(timeSeriesPanel.YAxis{
 				Format: &commonSdk.Format{
-					Unit: string(commonSdk.SecondsUnit),
+					Unit: &dashboards.SecondsUnit,
 				},
 			}),
 			timeSeriesPanel.WithLegend(timeSeriesPanel.Legend{
@@ -347,7 +347,7 @@ func StorageOperationRate(datasourceName string, labelMatchers ...promql.LabelMa
 		timeSeriesPanel.Chart(
 			timeSeriesPanel.WithYAxis(timeSeriesPanel.YAxis{
 				Format: &commonSdk.Format{
-					Unit: string(commonSdk.OpsPerSecondsUnit),
+					Unit: &dashboards.OpsPerSecondsUnit,
 				},
 			}),
 			timeSeriesPanel.WithLegend(timeSeriesPanel.Legend{
@@ -383,7 +383,7 @@ func StorageOperationErrorRate(datasourceName string, labelMatchers ...promql.La
 		timeSeriesPanel.Chart(
 			timeSeriesPanel.WithYAxis(timeSeriesPanel.YAxis{
 				Format: &commonSdk.Format{
-					Unit: string(commonSdk.OpsPerSecondsUnit),
+					Unit: &dashboards.OpsPerSecondsUnit,
 				},
 			}),
 			timeSeriesPanel.WithLegend(timeSeriesPanel.Legend{
@@ -419,7 +419,7 @@ func StorageOperationDuration(datasourceName string, labelMatchers ...promql.Lab
 		timeSeriesPanel.Chart(
 			timeSeriesPanel.WithYAxis(timeSeriesPanel.YAxis{
 				Format: &commonSdk.Format{
-					Unit: string(commonSdk.SecondsUnit),
+					Unit: &dashboards.SecondsUnit,
 				},
 			}),
 			timeSeriesPanel.WithLegend(timeSeriesPanel.Legend{
@@ -454,7 +454,7 @@ func CgroupManagerOperationRate(datasourceName string, labelMatchers ...promql.L
 		timeSeriesPanel.Chart(
 			timeSeriesPanel.WithYAxis(timeSeriesPanel.YAxis{
 				Format: &commonSdk.Format{
-					Unit: string(commonSdk.OpsPerSecondsUnit),
+					Unit: &dashboards.OpsPerSecondsUnit,
 				},
 			}),
 			timeSeriesPanel.WithLegend(timeSeriesPanel.Legend{
@@ -489,7 +489,7 @@ func CgroupManagerQuantile(datasourceName string, labelMatchers ...promql.LabelM
 		timeSeriesPanel.Chart(
 			timeSeriesPanel.WithYAxis(timeSeriesPanel.YAxis{
 				Format: &commonSdk.Format{
-					Unit: string(commonSdk.SecondsUnit),
+					Unit: &dashboards.SecondsUnit,
 				},
 			}),
 			timeSeriesPanel.WithLegend(timeSeriesPanel.Legend{
@@ -524,7 +524,7 @@ func PLEGRelistRate(datasourceName string, labelMatchers ...promql.LabelMatcher)
 		timeSeriesPanel.Chart(
 			timeSeriesPanel.WithYAxis(timeSeriesPanel.YAxis{
 				Format: &commonSdk.Format{
-					Unit: string(commonSdk.OpsPerSecondsUnit),
+					Unit: &dashboards.OpsPerSecondsUnit,
 				},
 			}),
 			timeSeriesPanel.WithLegend(timeSeriesPanel.Legend{
@@ -559,7 +559,7 @@ func PLEGRelistInterval(datasourceName string, labelMatchers ...promql.LabelMatc
 		timeSeriesPanel.Chart(
 			timeSeriesPanel.WithYAxis(timeSeriesPanel.YAxis{
 				Format: &commonSdk.Format{
-					Unit: string(commonSdk.SecondsUnit),
+					Unit: &dashboards.SecondsUnit,
 				},
 			}),
 			timeSeriesPanel.WithLegend(timeSeriesPanel.Legend{
@@ -594,7 +594,7 @@ func PLEGRelistDuration(datasourceName string, labelMatchers ...promql.LabelMatc
 		timeSeriesPanel.Chart(
 			timeSeriesPanel.WithYAxis(timeSeriesPanel.YAxis{
 				Format: &commonSdk.Format{
-					Unit: string(commonSdk.SecondsUnit),
+					Unit: &dashboards.SecondsUnit,
 				},
 			}),
 			timeSeriesPanel.WithLegend(timeSeriesPanel.Legend{
@@ -629,7 +629,7 @@ func RPCRate(datasourceName string, labelMatchers ...promql.LabelMatcher) panelg
 		timeSeriesPanel.Chart(
 			timeSeriesPanel.WithYAxis(timeSeriesPanel.YAxis{
 				Format: &commonSdk.Format{
-					Unit: string(commonSdk.OpsPerSecondsUnit),
+					Unit: &dashboards.OpsPerSecondsUnit,
 				},
 			}),
 			timeSeriesPanel.WithLegend(timeSeriesPanel.Legend{
@@ -695,7 +695,7 @@ func RequestDurationQuantile(datasourceName string, labelMatchers ...promql.Labe
 		timeSeriesPanel.Chart(
 			timeSeriesPanel.WithYAxis(timeSeriesPanel.YAxis{
 				Format: &commonSdk.Format{
-					Unit: string(commonSdk.SecondsUnit),
+					Unit: &dashboards.SecondsUnit,
 				},
 			}),
 			timeSeriesPanel.WithLegend(timeSeriesPanel.Legend{

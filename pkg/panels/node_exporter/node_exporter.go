@@ -34,7 +34,7 @@ func NodeCPUUsagePercentage(datasourceName string, labelMatchers ...promql.Label
 		timeSeriesPanel.Chart(
 			timeSeriesPanel.WithYAxis(timeSeriesPanel.YAxis{
 				Format: &commonSdk.Format{
-					Unit: string(commonSdk.PercentDecimalUnit),
+					Unit: &dashboards.PercentDecimalUnit,
 				},
 			}),
 			timeSeriesPanel.WithLegend(timeSeriesPanel.Legend{
@@ -77,7 +77,7 @@ func ClusterNodeCPUUsagePercentage(datasourceName string, labelMatchers ...promq
 		timeSeriesPanel.Chart(
 			timeSeriesPanel.WithYAxis(timeSeriesPanel.YAxis{
 				Format: &commonSdk.Format{
-					Unit: string(commonSdk.PercentDecimalUnit),
+					Unit: &dashboards.PercentDecimalUnit,
 				},
 			}),
 			timeSeriesPanel.WithLegend(timeSeriesPanel.Legend{
@@ -124,7 +124,7 @@ func ClusterNodeCPUSaturationPercentage(datasourceName string, labelMatchers ...
 		timeSeriesPanel.Chart(
 			timeSeriesPanel.WithYAxis(timeSeriesPanel.YAxis{
 				Format: &commonSdk.Format{
-					Unit: string(commonSdk.PercentDecimalUnit),
+					Unit: &dashboards.PercentDecimalUnit,
 				},
 			}),
 			timeSeriesPanel.WithLegend(timeSeriesPanel.Legend{
@@ -167,7 +167,7 @@ func ClusterNodeMemoryUsagePercentage(datasourceName string, labelMatchers ...pr
 		timeSeriesPanel.Chart(
 			timeSeriesPanel.WithYAxis(timeSeriesPanel.YAxis{
 				Format: &commonSdk.Format{
-					Unit: string(commonSdk.PercentDecimalUnit),
+					Unit: &dashboards.PercentDecimalUnit,
 				},
 			}),
 			timeSeriesPanel.WithLegend(timeSeriesPanel.Legend{
@@ -214,7 +214,7 @@ func ClusterNodeMemorySaturationPercentage(datasourceName string, labelMatchers 
 		timeSeriesPanel.Chart(
 			timeSeriesPanel.WithYAxis(timeSeriesPanel.YAxis{
 				Format: &commonSdk.Format{
-					Unit: string(commonSdk.ReadsPerSecondsUnit),
+					Unit: &dashboards.ReadsPerSecondsUnit,
 				},
 			}),
 			timeSeriesPanel.WithLegend(timeSeriesPanel.Legend{
@@ -261,7 +261,7 @@ func ClusterNodeDiskUsagePercentage(datasourceName string, labelMatchers ...prom
 		timeSeriesPanel.Chart(
 			timeSeriesPanel.WithYAxis(timeSeriesPanel.YAxis{
 				Format: &commonSdk.Format{
-					Unit: string(commonSdk.PercentDecimalUnit),
+					Unit: &dashboards.PercentDecimalUnit,
 				},
 			}),
 			timeSeriesPanel.WithLegend(timeSeriesPanel.Legend{
@@ -297,7 +297,7 @@ func ClusterNodeDiskSaturationPercentage(datasourceName string, labelMatchers ..
 		timeSeriesPanel.Chart(
 			timeSeriesPanel.WithYAxis(timeSeriesPanel.YAxis{
 				Format: &commonSdk.Format{
-					Unit: string(commonSdk.PercentDecimalUnit),
+					Unit: &dashboards.PercentDecimalUnit,
 				},
 			}),
 			timeSeriesPanel.WithLegend(timeSeriesPanel.Legend{
@@ -334,7 +334,7 @@ func ClusterNodeDiskSpacePercentage(datasourceName string, labelMatchers ...prom
 		timeSeriesPanel.Chart(
 			timeSeriesPanel.WithYAxis(timeSeriesPanel.YAxis{
 				Format: &commonSdk.Format{
-					Unit: string(commonSdk.PercentDecimalUnit),
+					Unit: &dashboards.PercentDecimalUnit,
 				},
 			}),
 			timeSeriesPanel.WithLegend(timeSeriesPanel.Legend{
@@ -370,7 +370,7 @@ func ClusterNodeNetworkSaturationBytes(datasourceName string, labelMatchers ...p
 		timeSeriesPanel.Chart(
 			timeSeriesPanel.WithYAxis(timeSeriesPanel.YAxis{
 				Format: &commonSdk.Format{
-					Unit: string(commonSdk.BytesPerSecondsUnit),
+					Unit: &dashboards.BytesPerSecondsUnit,
 				},
 			}),
 			timeSeriesPanel.WithLegend(timeSeriesPanel.Legend{
@@ -407,7 +407,7 @@ func ClusterNodeNetworkUsageBytes(datasourceName string, labelMatchers ...promql
 		timeSeriesPanel.Chart(
 			timeSeriesPanel.WithYAxis(timeSeriesPanel.YAxis{
 				Format: &commonSdk.Format{
-					Unit: string(commonSdk.BytesPerSecondsUnit),
+					Unit: &dashboards.BytesPerSecondsUnit,
 				},
 			}),
 			timeSeriesPanel.WithLegend(timeSeriesPanel.Legend{
@@ -532,7 +532,7 @@ func NodeMemoryUsageBytes(datasourceName string, labelMatchers ...promql.LabelMa
 		timeSeriesPanel.Chart(
 			timeSeriesPanel.WithYAxis(timeSeriesPanel.YAxis{
 				Format: &commonSdk.Format{
-					Unit:        string(commonSdk.BytesUnit),
+					Unit:        &dashboards.BytesUnit,
 					ShortValues: true,
 				},
 			}),
@@ -596,7 +596,7 @@ func NodeMemoryUsagePercentage(datasourceName string, labelMatchers ...promql.La
 		gauge.Chart(
 			gauge.Calculation(commonSdk.LastCalculation),
 			gauge.Format(commonSdk.Format{
-				Unit: string(commonSdk.PercentMode),
+				Unit: &dashboards.PercentMode,
 			}),
 			gauge.Thresholds(commonSdk.Thresholds{
 				Mode:         commonSdk.AbsoluteMode,
@@ -648,7 +648,7 @@ func NodeDiskIOBytes(datasourceName string, labelMatchers ...promql.LabelMatcher
 		timeSeriesPanel.Chart(
 			timeSeriesPanel.WithYAxis(timeSeriesPanel.YAxis{
 				Format: &commonSdk.Format{
-					Unit: string(commonSdk.BytesUnit),
+					Unit: &dashboards.BytesUnit,
 				},
 			}),
 			timeSeriesPanel.WithLegend(timeSeriesPanel.Legend{
@@ -694,7 +694,7 @@ func NodeDiskIOSeconds(datasourceName string, labelMatchers ...promql.LabelMatch
 		timeSeriesPanel.Chart(
 			timeSeriesPanel.WithYAxis(timeSeriesPanel.YAxis{
 				Format: &commonSdk.Format{
-					Unit: string(commonSdk.SecondsUnit),
+					Unit: &dashboards.SecondsUnit,
 				},
 			}),
 			timeSeriesPanel.WithLegend(timeSeriesPanel.Legend{
@@ -738,7 +738,7 @@ func NodeNetworkReceivedBytes(datasourceName string, labelMatchers ...promql.Lab
 		timeSeriesPanel.Chart(
 			timeSeriesPanel.WithYAxis(timeSeriesPanel.YAxis{
 				Format: &commonSdk.Format{
-					Unit: string(commonSdk.BytesPerSecondsUnit),
+					Unit: &dashboards.BytesPerSecondsUnit,
 				},
 			}),
 			timeSeriesPanel.WithLegend(timeSeriesPanel.Legend{
@@ -782,7 +782,7 @@ func NodeNetworkTransmitedBytes(datasourceName string, labelMatchers ...promql.L
 		timeSeriesPanel.Chart(
 			timeSeriesPanel.WithYAxis(timeSeriesPanel.YAxis{
 				Format: &commonSdk.Format{
-					Unit: string(commonSdk.BytesPerSecondsUnit),
+					Unit: &dashboards.BytesPerSecondsUnit,
 				},
 			}),
 			timeSeriesPanel.WithLegend(timeSeriesPanel.Legend{

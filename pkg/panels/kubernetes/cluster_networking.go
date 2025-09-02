@@ -18,7 +18,7 @@ func ClusterTCPRetransmitRate(datasourceName string, labelMatchers ...promql.Lab
 		timeSeriesPanel.Chart(
 			timeSeriesPanel.WithYAxis(timeSeriesPanel.YAxis{
 				Format: &commonSdk.Format{
-					Unit: string(commonSdk.PercentUnit),
+					Unit: &dashboards.PercentUnit,
 				},
 			}),
 			timeSeriesPanel.WithLegend(timeSeriesPanel.Legend{
@@ -53,7 +53,7 @@ func ClusterTCPSYNRetransmitRate(datasourceName string, labelMatchers ...promql.
 		timeSeriesPanel.Chart(
 			timeSeriesPanel.WithYAxis(timeSeriesPanel.YAxis{
 				Format: &commonSdk.Format{
-					Unit: string(commonSdk.PercentUnit),
+					Unit: &dashboards.PercentUnit,
 				},
 			}),
 			timeSeriesPanel.WithLegend(timeSeriesPanel.Legend{
@@ -105,7 +105,7 @@ func ClusterNetworkingCurrentStatus(datasourceName string, labelMatchers ...prom
 					Header: "Rx Bytes",
 					Align:  tablePanel.RightAlign,
 					Format: &commonSdk.Format{
-						Unit: string(commonSdk.BytesPerSecondsUnit),
+						Unit: &dashboards.BytesPerSecondsUnit,
 					},
 				},
 				{
@@ -113,7 +113,7 @@ func ClusterNetworkingCurrentStatus(datasourceName string, labelMatchers ...prom
 					Header: "Tx Bytes",
 					Align:  tablePanel.RightAlign,
 					Format: &commonSdk.Format{
-						Unit: string(commonSdk.BytesPerSecondsUnit),
+						Unit: &dashboards.BytesPerSecondsUnit,
 					},
 				},
 				{
@@ -121,7 +121,7 @@ func ClusterNetworkingCurrentStatus(datasourceName string, labelMatchers ...prom
 					Header: "Rx Bytes (Avg)",
 					Align:  tablePanel.RightAlign,
 					Format: &commonSdk.Format{
-						Unit: string(commonSdk.BytesPerSecondsUnit),
+						Unit: &dashboards.BytesPerSecondsUnit,
 					},
 				},
 				{
@@ -129,7 +129,7 @@ func ClusterNetworkingCurrentStatus(datasourceName string, labelMatchers ...prom
 					Header: "Tx Bytes (Avg)",
 					Align:  tablePanel.RightAlign,
 					Format: &commonSdk.Format{
-						Unit: string(commonSdk.BytesPerSecondsUnit),
+						Unit: &dashboards.BytesPerSecondsUnit,
 					},
 				},
 				{
@@ -137,7 +137,7 @@ func ClusterNetworkingCurrentStatus(datasourceName string, labelMatchers ...prom
 					Header: "Rx Packets",
 					Align:  tablePanel.RightAlign,
 					Format: &commonSdk.Format{
-						Unit: string(commonSdk.PacketsPerSecondsUnit),
+						Unit: &dashboards.PacketsPerSecondsUnit,
 					},
 				},
 				{
@@ -145,7 +145,7 @@ func ClusterNetworkingCurrentStatus(datasourceName string, labelMatchers ...prom
 					Header: "Tx Packets",
 					Align:  tablePanel.RightAlign,
 					Format: &commonSdk.Format{
-						Unit: string(commonSdk.PacketsPerSecondsUnit),
+						Unit: &dashboards.PacketsPerSecondsUnit,
 					},
 				},
 				{
@@ -153,7 +153,7 @@ func ClusterNetworkingCurrentStatus(datasourceName string, labelMatchers ...prom
 					Header: "Rx Packets Dropped",
 					Align:  tablePanel.RightAlign,
 					Format: &commonSdk.Format{
-						Unit: string(commonSdk.PacketsPerSecondsUnit),
+						Unit: &dashboards.PacketsPerSecondsUnit,
 					},
 				},
 				{
@@ -161,7 +161,7 @@ func ClusterNetworkingCurrentStatus(datasourceName string, labelMatchers ...prom
 					Header: "Tx Packets Dropped",
 					Align:  tablePanel.RightAlign,
 					Format: &commonSdk.Format{
-						Unit: string(commonSdk.PacketsPerSecondsUnit),
+						Unit: &dashboards.PacketsPerSecondsUnit,
 					},
 				},
 				{

@@ -40,7 +40,7 @@ func TenantDistributorBytes(datasourceName string, labelMatchers ...promql.Label
 		timeSeriesPanel.Chart(
 			timeSeriesPanel.WithYAxis(timeSeriesPanel.YAxis{
 				Format: &commonSdk.Format{
-					Unit: string(commonSdk.BytesPerSecondsUnit),
+					Unit: &dashboards.BytesPerSecondsUnit,
 				},
 			}),
 			timeSeriesPanel.WithLegend(timeSeriesPanel.Legend{
@@ -94,7 +94,7 @@ func TenantDistributorSpan(datasourceName string, labelMatchers ...promql.LabelM
 		timeSeriesPanel.Chart(
 			timeSeriesPanel.WithYAxis(timeSeriesPanel.YAxis{
 				Format: &commonSdk.Format{
-					Unit:          string(commonSdk.DecimalUnit),
+					Unit:          &dashboards.DecimalUnit,
 					DecimalPlaces: 0,
 				},
 			}),
@@ -139,7 +139,7 @@ func TenantLiveTraces(datasourceName string, labelMatchers ...promql.LabelMatche
 		timeSeriesPanel.Chart(
 			timeSeriesPanel.WithYAxis(timeSeriesPanel.YAxis{
 				Format: &commonSdk.Format{
-					Unit:          string(commonSdk.DecimalUnit),
+					Unit:          &dashboards.DecimalUnit,
 					DecimalPlaces: 0,
 				},
 			}),
@@ -194,7 +194,7 @@ func TenantQueriesID(datasourceName string, labelMatchers ...promql.LabelMatcher
 		timeSeriesPanel.Chart(
 			timeSeriesPanel.WithYAxis(timeSeriesPanel.YAxis{
 				Format: &commonSdk.Format{
-					Unit:          string(commonSdk.DecimalUnit),
+					Unit:          &dashboards.DecimalUnit,
 					DecimalPlaces: 0,
 				},
 			}),
@@ -229,7 +229,7 @@ func TenantQueriesSearch(datasourceName string, labelMatchers ...promql.LabelMat
 		timeSeriesPanel.Chart(
 			timeSeriesPanel.WithYAxis(timeSeriesPanel.YAxis{
 				Format: &commonSdk.Format{
-					Unit:          string(commonSdk.DecimalUnit),
+					Unit:          &dashboards.DecimalUnit,
 					DecimalPlaces: 0,
 				},
 			}),
@@ -264,7 +264,7 @@ func TenantBlockslistLength(datasourceName string, labelMatchers ...promql.Label
 		timeSeriesPanel.Chart(
 			timeSeriesPanel.WithYAxis(timeSeriesPanel.YAxis{
 				Format: &commonSdk.Format{
-					Unit:          string(commonSdk.DecimalUnit),
+					Unit:          &dashboards.DecimalUnit,
 					DecimalPlaces: 0,
 				},
 			}),
@@ -299,7 +299,7 @@ func TenantOutstandingCompactions(datasourceName string, labelMatchers ...promql
 		timeSeriesPanel.Chart(
 			timeSeriesPanel.WithYAxis(timeSeriesPanel.YAxis{
 				Format: &commonSdk.Format{
-					Unit:          string(commonSdk.DecimalUnit),
+					Unit:          &dashboards.DecimalUnit,
 					DecimalPlaces: 0,
 				},
 			}),
@@ -334,7 +334,7 @@ func TenantMetricGeneratorBytes(datasourceName string, labelMatchers ...promql.L
 		timeSeriesPanel.Chart(
 			timeSeriesPanel.WithYAxis(timeSeriesPanel.YAxis{
 				Format: &commonSdk.Format{
-					Unit: string(commonSdk.BytesPerSecondsUnit),
+					Unit: &dashboards.BytesPerSecondsUnit,
 				},
 			}),
 			timeSeriesPanel.WithLegend(timeSeriesPanel.Legend{
@@ -368,7 +368,7 @@ func TenantMetricGeneratorActiveSeries(datasourceName string, labelMatchers ...p
 		timeSeriesPanel.Chart(
 			timeSeriesPanel.WithYAxis(timeSeriesPanel.YAxis{
 				Format: &commonSdk.Format{
-					Unit:          string(commonSdk.DecimalUnit),
+					Unit:          &dashboards.DecimalUnit,
 					DecimalPlaces: 0,
 				},
 			}),

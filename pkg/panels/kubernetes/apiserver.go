@@ -26,7 +26,7 @@ func APIServerAvailability(datasourceName string, labelMatchers ...promql.LabelM
 		statPanel.Chart(
 			statPanel.Calculation(commonSdk.LastCalculation),
 			statPanel.Format(commonSdk.Format{
-				Unit:          string(commonSdk.PercentUnit),
+				Unit:          &dashboards.PercentUnit,
 				DecimalPlaces: 3,
 			}),
 			statPanel.ValueFontSize(50),
@@ -49,7 +49,7 @@ func APIServerErrorBudget(datasourceName string, labelMatchers ...promql.LabelMa
 		timeSeriesPanel.Chart(
 			timeSeriesPanel.WithYAxis(timeSeriesPanel.YAxis{
 				Format: &commonSdk.Format{
-					Unit: string(commonSdk.PercentUnit),
+					Unit: &dashboards.PercentUnit,
 				},
 			}),
 			timeSeriesPanel.WithLegend(timeSeriesPanel.Legend{
@@ -84,7 +84,7 @@ func APIServerReadAvailability(datasourceName string, labelMatchers ...promql.La
 		statPanel.Chart(
 			statPanel.Calculation(commonSdk.LastCalculation),
 			statPanel.Format(commonSdk.Format{
-				Unit:          string(commonSdk.PercentUnit),
+				Unit:          &dashboards.PercentUnit,
 				DecimalPlaces: 3,
 			}),
 			statPanel.ValueFontSize(50),
@@ -107,7 +107,7 @@ func APIServerReadSLIRequests(datasourceName string, labelMatchers ...promql.Lab
 		timeSeriesPanel.Chart(
 			timeSeriesPanel.WithYAxis(timeSeriesPanel.YAxis{
 				Format: &commonSdk.Format{
-					Unit: string(commonSdk.RequestsPerSecondsUnit),
+					Unit: &dashboards.RequestsPerSecondsUnit,
 				},
 			}),
 			timeSeriesPanel.WithLegend(timeSeriesPanel.Legend{
@@ -143,7 +143,7 @@ func APIServerReadSLIErrors(datasourceName string, labelMatchers ...promql.Label
 		timeSeriesPanel.Chart(
 			timeSeriesPanel.WithYAxis(timeSeriesPanel.YAxis{
 				Format: &commonSdk.Format{
-					Unit: string(commonSdk.PercentUnit),
+					Unit: &dashboards.PercentUnit,
 				},
 			}),
 			timeSeriesPanel.WithLegend(timeSeriesPanel.Legend{
@@ -178,7 +178,7 @@ func APIServerReadSLIDuration(datasourceName string, labelMatchers ...promql.Lab
 		timeSeriesPanel.Chart(
 			timeSeriesPanel.WithYAxis(timeSeriesPanel.YAxis{
 				Format: &commonSdk.Format{
-					Unit: string(commonSdk.SecondsUnit),
+					Unit: &dashboards.SecondsUnit,
 				},
 			}),
 			timeSeriesPanel.WithLegend(timeSeriesPanel.Legend{
@@ -212,7 +212,7 @@ func APIServerWriteAvailability(datasourceName string, labelMatchers ...promql.L
 		statPanel.Chart(
 			statPanel.Calculation(commonSdk.LastCalculation),
 			statPanel.Format(commonSdk.Format{
-				Unit:          string(commonSdk.PercentUnit),
+				Unit:          &dashboards.PercentUnit,
 				DecimalPlaces: 3,
 			}),
 			statPanel.ValueFontSize(50),
@@ -235,7 +235,7 @@ func APIServerWriteSLIRequests(datasourceName string, labelMatchers ...promql.La
 		timeSeriesPanel.Chart(
 			timeSeriesPanel.WithYAxis(timeSeriesPanel.YAxis{
 				Format: &commonSdk.Format{
-					Unit: string(commonSdk.RequestsPerSecondsUnit),
+					Unit: &dashboards.RequestsPerSecondsUnit,
 				},
 			}),
 			timeSeriesPanel.WithLegend(timeSeriesPanel.Legend{
@@ -271,7 +271,7 @@ func APIServerWriteSLIErrors(datasourceName string, labelMatchers ...promql.Labe
 		timeSeriesPanel.Chart(
 			timeSeriesPanel.WithYAxis(timeSeriesPanel.YAxis{
 				Format: &commonSdk.Format{
-					Unit: string(commonSdk.PercentUnit),
+					Unit: &dashboards.PercentUnit,
 				},
 			}),
 			timeSeriesPanel.WithLegend(timeSeriesPanel.Legend{
@@ -306,7 +306,7 @@ func APIServerWriteSLIDuration(datasourceName string, labelMatchers ...promql.La
 		timeSeriesPanel.Chart(
 			timeSeriesPanel.WithYAxis(timeSeriesPanel.YAxis{
 				Format: &commonSdk.Format{
-					Unit: string(commonSdk.SecondsUnit),
+					Unit: &dashboards.SecondsUnit,
 				},
 			}),
 			timeSeriesPanel.WithLegend(timeSeriesPanel.Legend{
@@ -340,7 +340,7 @@ func APIServerWorkQueueAddRate(datasourceName string, labelMatchers ...promql.La
 		timeSeriesPanel.Chart(
 			timeSeriesPanel.WithYAxis(timeSeriesPanel.YAxis{
 				Format: &commonSdk.Format{
-					Unit: string(commonSdk.DecimalUnit),
+					Unit: &dashboards.DecimalUnit,
 				},
 			}),
 			timeSeriesPanel.WithLegend(timeSeriesPanel.Legend{
@@ -375,7 +375,7 @@ func APIServerWorkQueueDepth(datasourceName string, labelMatchers ...promql.Labe
 		timeSeriesPanel.Chart(
 			timeSeriesPanel.WithYAxis(timeSeriesPanel.YAxis{
 				Format: &commonSdk.Format{
-					Unit: string(commonSdk.DecimalUnit),
+					Unit: &dashboards.DecimalUnit,
 				},
 			}),
 			timeSeriesPanel.WithLegend(timeSeriesPanel.Legend{
@@ -410,7 +410,7 @@ func APIServerWorkQueueLatency(datasourceName string, labelMatchers ...promql.La
 		timeSeriesPanel.Chart(
 			timeSeriesPanel.WithYAxis(timeSeriesPanel.YAxis{
 				Format: &commonSdk.Format{
-					Unit: string(commonSdk.SecondsUnit),
+					Unit: &dashboards.SecondsUnit,
 				},
 			}),
 			timeSeriesPanel.WithLegend(timeSeriesPanel.Legend{

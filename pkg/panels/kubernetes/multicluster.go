@@ -34,7 +34,7 @@ func MultiClusterCPUUsageQuota(datasourceName string, labelMatchers ...promql.La
 					Header: "CPU Usage",
 					Align:  tablePanel.RightAlign,
 					Format: &commonSdk.Format{
-						Unit:          commonSdk.DecimalUnit,
+						Unit:          &dashboards.DecimalUnit,
 						DecimalPlaces: 4,
 					},
 				},
@@ -43,7 +43,7 @@ func MultiClusterCPUUsageQuota(datasourceName string, labelMatchers ...promql.La
 					Header: "CPU Requests",
 					Align:  tablePanel.RightAlign,
 					Format: &commonSdk.Format{
-						Unit:          commonSdk.DecimalUnit,
+						Unit:          &dashboards.DecimalUnit,
 						DecimalPlaces: 4,
 					},
 				},
@@ -52,7 +52,7 @@ func MultiClusterCPUUsageQuota(datasourceName string, labelMatchers ...promql.La
 					Header: "CPU Requests %",
 					Align:  tablePanel.RightAlign,
 					Format: &commonSdk.Format{
-						Unit:          string(commonSdk.PercentDecimalUnit),
+						Unit:          &dashboards.PercentDecimalUnit,
 						DecimalPlaces: 4,
 					},
 				},
@@ -61,7 +61,7 @@ func MultiClusterCPUUsageQuota(datasourceName string, labelMatchers ...promql.La
 					Header: "CPU Limits",
 					Align:  tablePanel.RightAlign,
 					Format: &commonSdk.Format{
-						Unit:          commonSdk.DecimalUnit,
+						Unit:          &dashboards.DecimalUnit,
 						DecimalPlaces: 4,
 					},
 				},
@@ -70,7 +70,7 @@ func MultiClusterCPUUsageQuota(datasourceName string, labelMatchers ...promql.La
 					Header: "CPU Limits %",
 					Align:  tablePanel.RightAlign,
 					Format: &commonSdk.Format{
-						Unit:          string(commonSdk.PercentDecimalUnit),
+						Unit:          &dashboards.PercentDecimalUnit,
 						DecimalPlaces: 4,
 					},
 				},
@@ -151,7 +151,7 @@ func MultiClusterMemoryUsageQuota(datasourceName string, labelMatchers ...promql
 					Header: "Memory Usage",
 					Align:  tablePanel.RightAlign,
 					Format: &commonSdk.Format{
-						Unit: commonSdk.BytesUnit,
+						Unit: &dashboards.BytesUnit,
 					},
 				},
 				{
@@ -159,7 +159,7 @@ func MultiClusterMemoryUsageQuota(datasourceName string, labelMatchers ...promql
 					Header: "Memory Requests",
 					Align:  tablePanel.RightAlign,
 					Format: &commonSdk.Format{
-						Unit: commonSdk.BytesUnit,
+						Unit: &dashboards.BytesUnit,
 					},
 				},
 				{
@@ -167,7 +167,7 @@ func MultiClusterMemoryUsageQuota(datasourceName string, labelMatchers ...promql
 					Header: "Memory Requests %",
 					Align:  tablePanel.RightAlign,
 					Format: &commonSdk.Format{
-						Unit:          string(commonSdk.PercentDecimalUnit),
+						Unit:          &dashboards.PercentDecimalUnit,
 						DecimalPlaces: 4,
 					},
 				},
@@ -176,7 +176,7 @@ func MultiClusterMemoryUsageQuota(datasourceName string, labelMatchers ...promql
 					Header: "Memory Limits",
 					Align:  tablePanel.RightAlign,
 					Format: &commonSdk.Format{
-						Unit: commonSdk.BytesUnit,
+						Unit: &dashboards.BytesUnit,
 					},
 				},
 				{
@@ -184,7 +184,7 @@ func MultiClusterMemoryUsageQuota(datasourceName string, labelMatchers ...promql
 					Header: "Memory Limits %",
 					Align:  tablePanel.RightAlign,
 					Format: &commonSdk.Format{
-						Unit:          string(commonSdk.PercentDecimalUnit),
+						Unit:          &dashboards.PercentDecimalUnit,
 						DecimalPlaces: 4,
 					},
 				},

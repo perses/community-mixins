@@ -4,7 +4,6 @@
   "metadata": {
     "name": "kubernetes-pod-networking-overview",
     "namespace": "perses-dev",
-    "creationTimestamp": null,
     "labels": {
       "app.kubernetes.io/component": "dashboard",
       "app.kubernetes.io/instance": "kubernetes-pod-networking-overview",

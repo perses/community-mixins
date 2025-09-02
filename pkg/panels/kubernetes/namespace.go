@@ -34,7 +34,7 @@ func NamespaceCPUUsageQuota(datasourceName string, labelMatchers ...promql.Label
 					Header: "CPU Usage",
 					Align:  tablePanel.RightAlign,
 					Format: &commonSdk.Format{
-						Unit:          commonSdk.DecimalUnit,
+						Unit:          &dashboards.DecimalUnit,
 						DecimalPlaces: 4,
 					},
 				},
@@ -43,7 +43,7 @@ func NamespaceCPUUsageQuota(datasourceName string, labelMatchers ...promql.Label
 					Header: "CPU Requests",
 					Align:  tablePanel.RightAlign,
 					Format: &commonSdk.Format{
-						Unit:          commonSdk.DecimalUnit,
+						Unit:          &dashboards.DecimalUnit,
 						DecimalPlaces: 4,
 					},
 				},
@@ -52,7 +52,7 @@ func NamespaceCPUUsageQuota(datasourceName string, labelMatchers ...promql.Label
 					Header: "CPU Requests %",
 					Align:  tablePanel.RightAlign,
 					Format: &commonSdk.Format{
-						Unit:          string(commonSdk.PercentDecimalUnit),
+						Unit:          &dashboards.PercentDecimalUnit,
 						DecimalPlaces: 4,
 					},
 				},
@@ -61,7 +61,7 @@ func NamespaceCPUUsageQuota(datasourceName string, labelMatchers ...promql.Label
 					Header: "CPU Limits",
 					Align:  tablePanel.RightAlign,
 					Format: &commonSdk.Format{
-						Unit:          commonSdk.DecimalUnit,
+						Unit:          &dashboards.DecimalUnit,
 						DecimalPlaces: 4,
 					},
 				},
@@ -70,7 +70,7 @@ func NamespaceCPUUsageQuota(datasourceName string, labelMatchers ...promql.Label
 					Header: "CPU Limits %",
 					Align:  tablePanel.RightAlign,
 					Format: &commonSdk.Format{
-						Unit:          string(commonSdk.PercentDecimalUnit),
+						Unit:          &dashboards.PercentDecimalUnit,
 						DecimalPlaces: 4,
 					},
 				},
@@ -151,7 +151,7 @@ func NamespaceMemoryUsageQuota(datasourceName string, labelMatchers ...promql.La
 					Header: "Memory Usage",
 					Align:  tablePanel.RightAlign,
 					Format: &commonSdk.Format{
-						Unit: commonSdk.BytesUnit,
+						Unit: &dashboards.BytesUnit,
 					},
 				},
 				{
@@ -159,7 +159,7 @@ func NamespaceMemoryUsageQuota(datasourceName string, labelMatchers ...promql.La
 					Header: "Memory Requests",
 					Align:  tablePanel.RightAlign,
 					Format: &commonSdk.Format{
-						Unit: commonSdk.BytesUnit,
+						Unit: &dashboards.BytesUnit,
 					},
 				},
 				{
@@ -167,7 +167,7 @@ func NamespaceMemoryUsageQuota(datasourceName string, labelMatchers ...promql.La
 					Header: "Memory Requests %",
 					Align:  tablePanel.RightAlign,
 					Format: &commonSdk.Format{
-						Unit:          string(commonSdk.PercentDecimalUnit),
+						Unit:          &dashboards.PercentDecimalUnit,
 						DecimalPlaces: 4,
 					},
 				},
@@ -176,7 +176,7 @@ func NamespaceMemoryUsageQuota(datasourceName string, labelMatchers ...promql.La
 					Header: "Memory Limits",
 					Align:  tablePanel.RightAlign,
 					Format: &commonSdk.Format{
-						Unit: commonSdk.BytesUnit,
+						Unit: &dashboards.BytesUnit,
 					},
 				},
 				{
@@ -184,7 +184,7 @@ func NamespaceMemoryUsageQuota(datasourceName string, labelMatchers ...promql.La
 					Header: "Memory Limits %",
 					Align:  tablePanel.RightAlign,
 					Format: &commonSdk.Format{
-						Unit:          string(commonSdk.PercentDecimalUnit),
+						Unit:          &dashboards.PercentDecimalUnit,
 						DecimalPlaces: 4,
 					},
 				},
@@ -193,7 +193,7 @@ func NamespaceMemoryUsageQuota(datasourceName string, labelMatchers ...promql.La
 					Header: "Memory Usage (RSS)",
 					Align:  tablePanel.RightAlign,
 					Format: &commonSdk.Format{
-						Unit: commonSdk.BytesUnit,
+						Unit: &dashboards.BytesUnit,
 					},
 				},
 				{
@@ -201,7 +201,7 @@ func NamespaceMemoryUsageQuota(datasourceName string, labelMatchers ...promql.La
 					Header: "Memory Usage (Cache)",
 					Align:  tablePanel.RightAlign,
 					Format: &commonSdk.Format{
-						Unit: commonSdk.BytesUnit,
+						Unit: &dashboards.BytesUnit,
 					},
 				},
 				{
@@ -209,7 +209,7 @@ func NamespaceMemoryUsageQuota(datasourceName string, labelMatchers ...promql.La
 					Header: "Memory Usage (Swap)",
 					Align:  tablePanel.RightAlign,
 					Format: &commonSdk.Format{
-						Unit: commonSdk.BytesUnit,
+						Unit: &dashboards.BytesUnit,
 					},
 				},
 				{
@@ -316,7 +316,7 @@ func NamespaceCurrentNetworkUsage(datasourceName string, labelMatchers ...promql
 					Header: "Current Receive Bandwidth",
 					Align:  tablePanel.RightAlign,
 					Format: &commonSdk.Format{
-						Unit: string(commonSdk.BytesPerSecondsUnit),
+						Unit: &dashboards.BytesPerSecondsUnit,
 					},
 				},
 				{
@@ -324,7 +324,7 @@ func NamespaceCurrentNetworkUsage(datasourceName string, labelMatchers ...promql
 					Header: "Current Transmit Bandwidth",
 					Align:  tablePanel.RightAlign,
 					Format: &commonSdk.Format{
-						Unit: string(commonSdk.BytesPerSecondsUnit),
+						Unit: &dashboards.BytesPerSecondsUnit,
 					},
 				},
 				{
@@ -332,7 +332,7 @@ func NamespaceCurrentNetworkUsage(datasourceName string, labelMatchers ...promql
 					Header: "Rate of Received Packets",
 					Align:  tablePanel.RightAlign,
 					Format: &commonSdk.Format{
-						Unit: string(commonSdk.PacketsPerSecondsUnit),
+						Unit: &dashboards.PacketsPerSecondsUnit,
 					},
 				},
 				{
@@ -340,7 +340,7 @@ func NamespaceCurrentNetworkUsage(datasourceName string, labelMatchers ...promql
 					Header: "Rate of Transmitted Packets",
 					Align:  tablePanel.RightAlign,
 					Format: &commonSdk.Format{
-						Unit: string(commonSdk.PacketsPerSecondsUnit),
+						Unit: &dashboards.PacketsPerSecondsUnit,
 					},
 				},
 				{
@@ -348,7 +348,7 @@ func NamespaceCurrentNetworkUsage(datasourceName string, labelMatchers ...promql
 					Header: "Rate of Received Packets Dropped",
 					Align:  tablePanel.RightAlign,
 					Format: &commonSdk.Format{
-						Unit: string(commonSdk.PacketsPerSecondsUnit),
+						Unit: &dashboards.PacketsPerSecondsUnit,
 					},
 				},
 				{
@@ -356,7 +356,7 @@ func NamespaceCurrentNetworkUsage(datasourceName string, labelMatchers ...promql
 					Header: "Rate of Transmitted Packets Dropped",
 					Align:  tablePanel.RightAlign,
 					Format: &commonSdk.Format{
-						Unit: string(commonSdk.PacketsPerSecondsUnit),
+						Unit: &dashboards.PacketsPerSecondsUnit,
 					},
 				},
 				{
@@ -445,7 +445,7 @@ func NamespaceCurrentStorageIO(datasourceName string, labelMatchers ...promql.La
 					Header: "IOPS(Reads)",
 					Align:  tablePanel.RightAlign,
 					Format: &commonSdk.Format{
-						Unit: string(commonSdk.OpsPerSecondsUnit),
+						Unit: &dashboards.OpsPerSecondsUnit,
 					},
 				},
 				{
@@ -453,7 +453,7 @@ func NamespaceCurrentStorageIO(datasourceName string, labelMatchers ...promql.La
 					Header: "IOPS(Writes)",
 					Align:  tablePanel.RightAlign,
 					Format: &commonSdk.Format{
-						Unit: string(commonSdk.OpsPerSecondsUnit),
+						Unit: &dashboards.OpsPerSecondsUnit,
 					},
 				},
 				{
@@ -461,7 +461,7 @@ func NamespaceCurrentStorageIO(datasourceName string, labelMatchers ...promql.La
 					Header: "IOPS(Reads + Writes)",
 					Align:  tablePanel.RightAlign,
 					Format: &commonSdk.Format{
-						Unit: string(commonSdk.OpsPerSecondsUnit),
+						Unit: &dashboards.OpsPerSecondsUnit,
 					},
 				},
 				{
@@ -469,7 +469,7 @@ func NamespaceCurrentStorageIO(datasourceName string, labelMatchers ...promql.La
 					Header: "Throughput(Reads)",
 					Align:  tablePanel.RightAlign,
 					Format: &commonSdk.Format{
-						Unit: string(commonSdk.BytesPerSecondsUnit),
+						Unit: &dashboards.BytesPerSecondsUnit,
 					},
 				},
 				{
@@ -477,7 +477,7 @@ func NamespaceCurrentStorageIO(datasourceName string, labelMatchers ...promql.La
 					Header: "Throughput(Writes)",
 					Align:  tablePanel.RightAlign,
 					Format: &commonSdk.Format{
-						Unit: string(commonSdk.BytesPerSecondsUnit),
+						Unit: &dashboards.BytesPerSecondsUnit,
 					},
 				},
 				{
@@ -485,7 +485,7 @@ func NamespaceCurrentStorageIO(datasourceName string, labelMatchers ...promql.La
 					Header: "Throughput(Reads + Writes)",
 					Align:  tablePanel.RightAlign,
 					Format: &commonSdk.Format{
-						Unit: string(commonSdk.BytesPerSecondsUnit),
+						Unit: &dashboards.BytesPerSecondsUnit,
 					},
 				},
 				{

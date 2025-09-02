@@ -39,7 +39,7 @@ func WorkloadNamespaceCurrentNetworkStatus(datasourceName string, labelMatchers 
 					Header: "Rx Bytes",
 					Align:  tablePanel.RightAlign,
 					Format: &commonSdk.Format{
-						Unit: string(commonSdk.BytesPerSecondsUnit),
+						Unit: &dashboards.BytesPerSecondsUnit,
 					},
 				},
 				{
@@ -47,7 +47,7 @@ func WorkloadNamespaceCurrentNetworkStatus(datasourceName string, labelMatchers 
 					Header: "Tx Bytes",
 					Align:  tablePanel.RightAlign,
 					Format: &commonSdk.Format{
-						Unit: string(commonSdk.BytesPerSecondsUnit),
+						Unit: &dashboards.BytesPerSecondsUnit,
 					},
 				},
 				{
@@ -55,7 +55,7 @@ func WorkloadNamespaceCurrentNetworkStatus(datasourceName string, labelMatchers 
 					Header: "Rx Bytes (Avg)",
 					Align:  tablePanel.RightAlign,
 					Format: &commonSdk.Format{
-						Unit: string(commonSdk.BytesPerSecondsUnit),
+						Unit: &dashboards.BytesPerSecondsUnit,
 					},
 				},
 				{
@@ -63,7 +63,7 @@ func WorkloadNamespaceCurrentNetworkStatus(datasourceName string, labelMatchers 
 					Header: "Tx Bytes (Avg)",
 					Align:  tablePanel.RightAlign,
 					Format: &commonSdk.Format{
-						Unit: string(commonSdk.BytesPerSecondsUnit),
+						Unit: &dashboards.BytesPerSecondsUnit,
 					},
 				},
 				{
@@ -71,7 +71,7 @@ func WorkloadNamespaceCurrentNetworkStatus(datasourceName string, labelMatchers 
 					Header: "Rx Packets",
 					Align:  tablePanel.RightAlign,
 					Format: &commonSdk.Format{
-						Unit: string(commonSdk.PacketsPerSecondsUnit),
+						Unit: &dashboards.PacketsPerSecondsUnit,
 					},
 				},
 				{
@@ -79,7 +79,7 @@ func WorkloadNamespaceCurrentNetworkStatus(datasourceName string, labelMatchers 
 					Header: "Tx Packets",
 					Align:  tablePanel.RightAlign,
 					Format: &commonSdk.Format{
-						Unit: string(commonSdk.PacketsPerSecondsUnit),
+						Unit: &dashboards.PacketsPerSecondsUnit,
 					},
 				},
 				{
@@ -87,7 +87,7 @@ func WorkloadNamespaceCurrentNetworkStatus(datasourceName string, labelMatchers 
 					Header: "Rx Packets Dropped",
 					Align:  tablePanel.RightAlign,
 					Format: &commonSdk.Format{
-						Unit: string(commonSdk.PacketsPerSecondsUnit),
+						Unit: &dashboards.PacketsPerSecondsUnit,
 					},
 				},
 				{
@@ -95,7 +95,7 @@ func WorkloadNamespaceCurrentNetworkStatus(datasourceName string, labelMatchers 
 					Header: "Tx Packets Dropped",
 					Align:  tablePanel.RightAlign,
 					Format: &commonSdk.Format{
-						Unit: string(commonSdk.PacketsPerSecondsUnit),
+						Unit: &dashboards.PacketsPerSecondsUnit,
 					},
 				},
 				{
