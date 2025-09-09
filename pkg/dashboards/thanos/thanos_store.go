@@ -14,7 +14,7 @@ import (
 func withThanosBlockOperationsGroup(datasource string, labelMatcher *labels.Matcher) dashboard.Option {
 	return dashboard.AddPanelGroup("Block Operations",
 		panelgroup.PanelsPerLine(4),
-		panelgroup.PanelHeight(8),
+		panelgroup.PanelHeight(10),
 		panels.BlockLoadRate(datasource, labelMatcher),
 		panels.BlockLoadErrors(datasource, labelMatcher),
 		panels.BlockDropRate(datasource, labelMatcher),
@@ -25,7 +25,7 @@ func withThanosBlockOperationsGroup(datasource string, labelMatcher *labels.Matc
 func withThanosCacheOperationsGroup(datasource string, labelMatcher *labels.Matcher) dashboard.Option {
 	return dashboard.AddPanelGroup("Cache Operations",
 		panelgroup.PanelsPerLine(4),
-		panelgroup.PanelHeight(8),
+		panelgroup.PanelHeight(10),
 		panels.CacheRequestRate(datasource, labelMatcher),
 		panels.CacheHitRate(datasource, labelMatcher),
 		panels.CacheItemsAddRate(datasource, labelMatcher),
@@ -36,7 +36,7 @@ func withThanosCacheOperationsGroup(datasource string, labelMatcher *labels.Matc
 func withThanosQueryOperationsGroup(datasource string, labelMatcher *labels.Matcher) dashboard.Option {
 	return dashboard.AddPanelGroup("Query Operations",
 		panelgroup.PanelsPerLine(4),
-		panelgroup.PanelHeight(8),
+		panelgroup.PanelHeight(10),
 		panels.BlocksQueried(datasource, labelMatcher),
 		panels.DataFetched(datasource, labelMatcher),
 		panels.DataTouched(datasource, labelMatcher),
@@ -47,7 +47,7 @@ func withThanosQueryOperationsGroup(datasource string, labelMatcher *labels.Matc
 func withThanosQueryOperationDurationGroup(datasource string, labelMatcher *labels.Matcher) dashboard.Option {
 	return dashboard.AddPanelGroup("Query Operation Durations",
 		panelgroup.PanelsPerLine(3),
-		panelgroup.PanelHeight(8),
+		panelgroup.PanelHeight(10),
 		panels.GetAllSeriesDurations(datasource, labelMatcher),
 		panels.MergeDurations(datasource, labelMatcher),
 		panels.GateWaitingDurations(datasource, labelMatcher),
@@ -57,7 +57,7 @@ func withThanosQueryOperationDurationGroup(datasource string, labelMatcher *labe
 func withThanosStoreSentGroup(datasource string, labelMatcher *labels.Matcher) dashboard.Option {
 	return dashboard.AddPanelGroup("Store Sent Chunk Size",
 		panelgroup.PanelsPerLine(1),
-		panelgroup.PanelHeight(8),
+		panelgroup.PanelHeight(10),
 		panels.StoreSentChunkSizes(datasource, labelMatcher),
 	)
 }

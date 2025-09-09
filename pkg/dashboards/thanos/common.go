@@ -19,7 +19,7 @@ func withThanosResourcesGroup(datasource string, labelMatcher *labels.Matcher) d
 
 	return dashboard.AddPanelGroup("Resources",
 		panelgroup.PanelsPerLine(4),
-		panelgroup.PanelHeight(8),
+		panelgroup.PanelHeight(10),
 		panelsGostats.CPUUsage(datasource, "pod", labelMatchersToUse...),
 		panelsGostats.MemoryUsage(datasource, "pod", labelMatchersToUse...),
 		panelsGostats.Goroutines(datasource, "pod", labelMatchersToUse...),
@@ -30,7 +30,7 @@ func withThanosResourcesGroup(datasource string, labelMatcher *labels.Matcher) d
 func withThanosBucketOperationsGroup(datasource string, labelMatcher *labels.Matcher) dashboard.Option {
 	return dashboard.AddPanelGroup("Bucket Operations",
 		panelgroup.PanelsPerLine(3),
-		panelgroup.PanelHeight(8),
+		panelgroup.PanelHeight(10),
 		panels.BucketOperationRate(datasource, labelMatcher),
 		panels.BucketOperationErrors(datasource, labelMatcher),
 		panels.BucketOperationDurations(datasource, labelMatcher),
@@ -40,7 +40,7 @@ func withThanosBucketOperationsGroup(datasource string, labelMatcher *labels.Mat
 func withThanosReadGRPCUnaryGroup(datasource string, labelMatcher *labels.Matcher) dashboard.Option {
 	return dashboard.AddPanelGroup("Read gRPC Unary (StoreAPI Info/Labels)",
 		panelgroup.PanelsPerLine(3),
-		panelgroup.PanelHeight(8),
+		panelgroup.PanelHeight(10),
 		panels.ReadGRPCUnaryRate(datasource, labelMatcher),
 		panels.ReadGRPCUnaryErrors(datasource, labelMatcher),
 		panels.ReadGPRCUnaryDurations(datasource, labelMatcher),
@@ -50,7 +50,7 @@ func withThanosReadGRPCUnaryGroup(datasource string, labelMatcher *labels.Matche
 func withThanosReadGRPCStreamGroup(datasource string, labelMatcher *labels.Matcher) dashboard.Option {
 	return dashboard.AddPanelGroup("Read gRPC Stream (StoreAPI Series/Exemplars)",
 		panelgroup.PanelsPerLine(3),
-		panelgroup.PanelHeight(8),
+		panelgroup.PanelHeight(10),
 		panels.ReadGRPCStreamRate(datasource, labelMatcher),
 		panels.ReadGRPCStreamErrors(datasource, labelMatcher),
 		panels.ReadGPRCStreamDurations(datasource, labelMatcher),

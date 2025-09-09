@@ -20,25 +20,25 @@ spec:
       items:
       - content:
           $ref: '#/spec/panels/0_0'
-        height: 8
+        height: 10
         width: 6
         x: 0
         "y": 0
       - content:
           $ref: '#/spec/panels/0_1'
-        height: 8
+        height: 10
         width: 6
         x: 6
         "y": 0
       - content:
           $ref: '#/spec/panels/0_2'
-        height: 8
+        height: 10
         width: 6
         x: 12
         "y": 0
       - content:
           $ref: '#/spec/panels/0_3'
-        height: 8
+        height: 10
         width: 6
         x: 18
         "y": 0
@@ -49,25 +49,25 @@ spec:
       items:
       - content:
           $ref: '#/spec/panels/1_0'
-        height: 8
+        height: 10
         width: 6
         x: 0
         "y": 0
       - content:
           $ref: '#/spec/panels/1_1'
-        height: 8
+        height: 10
         width: 6
         x: 6
         "y": 0
       - content:
           $ref: '#/spec/panels/1_2'
-        height: 8
+        height: 10
         width: 6
         x: 12
         "y": 0
       - content:
           $ref: '#/spec/panels/1_3'
-        height: 8
+        height: 10
         width: 6
         x: 18
         "y": 0
@@ -78,19 +78,19 @@ spec:
       items:
       - content:
           $ref: '#/spec/panels/2_0'
-        height: 6
+        height: 10
         width: 8
         x: 0
         "y": 0
       - content:
           $ref: '#/spec/panels/2_1'
-        height: 6
+        height: 10
         width: 8
         x: 8
         "y": 0
       - content:
           $ref: '#/spec/panels/2_2'
-        height: 6
+        height: 10
         width: 8
         x: 16
         "y": 0
@@ -101,19 +101,19 @@ spec:
       items:
       - content:
           $ref: '#/spec/panels/3_0'
-        height: 8
+        height: 10
         width: 8
         x: 0
         "y": 0
       - content:
           $ref: '#/spec/panels/3_1'
-        height: 8
+        height: 10
         width: 8
         x: 8
         "y": 0
       - content:
           $ref: '#/spec/panels/3_2'
-        height: 8
+        height: 10
         width: 8
         x: 16
         "y": 0
@@ -124,19 +124,19 @@ spec:
       items:
       - content:
           $ref: '#/spec/panels/4_0'
-        height: 8
+        height: 10
         width: 8
         x: 0
         "y": 0
       - content:
           $ref: '#/spec/panels/4_1'
-        height: 8
+        height: 10
         width: 8
         x: 8
         "y": 0
       - content:
           $ref: '#/spec/panels/4_2'
-        height: 8
+        height: 10
         width: 8
         x: 16
         "y": 0
@@ -147,25 +147,25 @@ spec:
       items:
       - content:
           $ref: '#/spec/panels/5_0'
-        height: 8
+        height: 10
         width: 6
         x: 0
         "y": 0
       - content:
           $ref: '#/spec/panels/5_1'
-        height: 8
+        height: 10
         width: 6
         x: 6
         "y": 0
       - content:
           $ref: '#/spec/panels/5_2'
-        height: 8
+        height: 10
         width: 6
         x: 12
         "y": 0
       - content:
           $ref: '#/spec/panels/5_3'
-        height: 8
+        height: 10
         width: 6
         x: 18
         "y": 0
