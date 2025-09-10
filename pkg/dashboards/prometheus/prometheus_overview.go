@@ -2,6 +2,7 @@ package prometheus
 
 import (
 	"github.com/perses/community-dashboards/pkg/dashboards"
+	panelsGostats "github.com/perses/community-dashboards/pkg/panels/gostats"
 	panels "github.com/perses/community-dashboards/pkg/panels/prometheus"
 	"github.com/perses/community-dashboards/pkg/promql"
 	"github.com/perses/perses/go-sdk/dashboard"
@@ -53,6 +54,23 @@ func withPrometheusQueryGroup(datasource string, labelMatcher *labels.Matcher) d
 	)
 }
 
+func withPrometheusResourcesGroup(datasource string, labelMatcher *labels.Matcher) dashboard.Option {
+	labelMatchersToUse := []*labels.Matcher{
+		promql.InstanceVarV2,
+		promql.JobVarV2,
+	}
+	labelMatchersToUse = append(labelMatchersToUse, labelMatcher)
+
+	return dashboard.AddPanelGroup("Resources",
+		panelgroup.PanelsPerLine(4),
+		panelgroup.PanelHeight(10),
+		panelsGostats.CPUUsage(datasource, "pod", labelMatchersToUse...),
+		panelsGostats.MemoryUsage(datasource, "pod", labelMatchersToUse...),
+		panelsGostats.Goroutines(datasource, "pod", labelMatchersToUse...),
+		panelsGostats.GarbageCollectionPauseTimeQuantiles(datasource, "pod", labelMatchersToUse...),
+	)
+}
+
 func BuildPrometheusOverview(project string, datasource string, clusterLabelName string) dashboards.DashboardResult {
 	clusterLabelMatcher := dashboards.GetClusterLabelMatcherV2(clusterLabelName)
 	return dashboards.NewDashboardResult(
@@ -88,6 +106,7 @@ func BuildPrometheusOverview(project string, datasource string, clusterLabelName
 			withPrometheusRetrievalGroup(datasource, clusterLabelMatcher),
 			withPrometheusStorageGroup(datasource, clusterLabelMatcher),
 			withPrometheusQueryGroup(datasource, clusterLabelMatcher),
+			withPrometheusResourcesGroup(datasource, clusterLabelMatcher),
 		),
 	).Component("prometheus")
 }
