@@ -816,7 +816,7 @@
               "x": 0,
               "y": 0,
               "width": 6,
-              "height": 8,
+              "height": 10,
               "content": {
                 "$ref": "#/spec/panels/0_0"
               }
@@ -825,7 +825,7 @@
               "x": 6,
               "y": 0,
               "width": 6,
-              "height": 8,
+              "height": 10,
               "content": {
                 "$ref": "#/spec/panels/0_1"
               }
@@ -834,7 +834,7 @@
               "x": 12,
               "y": 0,
               "width": 6,
-              "height": 8,
+              "height": 10,
               "content": {
                 "$ref": "#/spec/panels/0_2"
               }
@@ -843,7 +843,7 @@
               "x": 18,
               "y": 0,
               "width": 6,
-              "height": 8,
+              "height": 10,
               "content": {
                 "$ref": "#/spec/panels/0_3"
               }
@@ -862,7 +862,7 @@
               "x": 0,
               "y": 0,
               "width": 6,
-              "height": 8,
+              "height": 10,
               "content": {
                 "$ref": "#/spec/panels/1_0"
               }
@@ -871,7 +871,7 @@
               "x": 6,
               "y": 0,
               "width": 6,
-              "height": 8,
+              "height": 10,
               "content": {
                 "$ref": "#/spec/panels/1_1"
               }
@@ -880,7 +880,7 @@
               "x": 12,
               "y": 0,
               "width": 6,
-              "height": 8,
+              "height": 10,
               "content": {
                 "$ref": "#/spec/panels/1_2"
               }
@@ -889,7 +889,7 @@
               "x": 18,
               "y": 0,
               "width": 6,
-              "height": 8,
+              "height": 10,
               "content": {
                 "$ref": "#/spec/panels/1_3"
               }
@@ -908,7 +908,7 @@
               "x": 0,
               "y": 0,
               "width": 6,
-              "height": 8,
+              "height": 10,
               "content": {
                 "$ref": "#/spec/panels/2_0"
               }
@@ -917,7 +917,7 @@
               "x": 6,
               "y": 0,
               "width": 6,
-              "height": 8,
+              "height": 10,
               "content": {
                 "$ref": "#/spec/panels/2_1"
               }
@@ -926,7 +926,7 @@
               "x": 12,
               "y": 0,
               "width": 6,
-              "height": 8,
+              "height": 10,
               "content": {
                 "$ref": "#/spec/panels/2_2"
               }
@@ -935,7 +935,7 @@
               "x": 18,
               "y": 0,
               "width": 6,
-              "height": 8,
+              "height": 10,
               "content": {
                 "$ref": "#/spec/panels/2_3"
               }

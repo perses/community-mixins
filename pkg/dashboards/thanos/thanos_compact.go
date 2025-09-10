@@ -14,7 +14,7 @@ import (
 func withThanosCompactTODOGroup(datasource string, labelMatcher *labels.Matcher) dashboard.Option {
 	return dashboard.AddPanelGroup("TODO Operations",
 		panelgroup.PanelsPerLine(4),
-		panelgroup.PanelHeight(6),
+		panelgroup.PanelHeight(10),
 		panels.TodoCompactionBlocks(datasource, labelMatcher),
 		panels.TodoCompactions(datasource, labelMatcher),
 		panels.TodoDeletions(datasource, labelMatcher),
@@ -25,7 +25,7 @@ func withThanosCompactTODOGroup(datasource string, labelMatcher *labels.Matcher)
 func withThanosCompactGroupCompactionGroup(datasource string, labelMatcher *labels.Matcher) dashboard.Option {
 	return dashboard.AddPanelGroup("Group Compactions",
 		panelgroup.PanelsPerLine(2),
-		panelgroup.PanelHeight(8),
+		panelgroup.PanelHeight(10),
 		panels.GroupCompactionRate(datasource, labelMatcher),
 		panels.GroupCompactionErrors(datasource, labelMatcher),
 	)
@@ -34,7 +34,7 @@ func withThanosCompactGroupCompactionGroup(datasource string, labelMatcher *labe
 func withThanosCompactDownsampleGroup(datasource string, labelMatcher *labels.Matcher) dashboard.Option {
 	return dashboard.AddPanelGroup("Downsample Operations",
 		panelgroup.PanelsPerLine(3),
-		panelgroup.PanelHeight(8),
+		panelgroup.PanelHeight(10),
 		panels.DownsampleRate(datasource, labelMatcher),
 		panels.DownsampleErrors(datasource, labelMatcher),
 		panels.DownsampleDurations(datasource, labelMatcher),
@@ -44,7 +44,7 @@ func withThanosCompactDownsampleGroup(datasource string, labelMatcher *labels.Ma
 func withThanosCompactSyncMetaGroup(datasource string, labelMatcher *labels.Matcher) dashboard.Option {
 	return dashboard.AddPanelGroup("Sync Meta",
 		panelgroup.PanelsPerLine(3),
-		panelgroup.PanelHeight(8),
+		panelgroup.PanelHeight(10),
 		panels.SyncMetaRate(datasource, labelMatcher),
 		panels.SyncMetaErrors(datasource, labelMatcher),
 		panels.SyncMetaDurations(datasource, labelMatcher),
@@ -54,7 +54,7 @@ func withThanosCompactSyncMetaGroup(datasource string, labelMatcher *labels.Matc
 func withThanosCompactBlockDeletionGroup(datasource string, labelMatcher *labels.Matcher) dashboard.Option {
 	return dashboard.AddPanelGroup("Block Deletion",
 		panelgroup.PanelsPerLine(3),
-		panelgroup.PanelHeight(8),
+		panelgroup.PanelHeight(10),
 		panels.DeletionRate(datasource, labelMatcher),
 		panels.DeletionErrors(datasource, labelMatcher),
 		panels.MarkingRate(datasource, labelMatcher),
@@ -64,7 +64,7 @@ func withThanosCompactBlockDeletionGroup(datasource string, labelMatcher *labels
 func withThanosCompactHaltedGroup(datasource string, labelMatcher *labels.Matcher) dashboard.Option {
 	return dashboard.AddPanelGroup("Halted Compactors",
 		panelgroup.PanelsPerLine(1),
-		panelgroup.PanelHeight(8),
+		panelgroup.PanelHeight(10),
 		panels.HaltedCompactors(datasource, labelMatcher),
 	)
 }
@@ -72,7 +72,7 @@ func withThanosCompactHaltedGroup(datasource string, labelMatcher *labels.Matche
 func withThanosCompactGarbageCollectionGroup(datasource string, labelMatcher *labels.Matcher) dashboard.Option {
 	return dashboard.AddPanelGroup("Garbage Collection",
 		panelgroup.PanelsPerLine(3),
-		panelgroup.PanelHeight(8),
+		panelgroup.PanelHeight(10),
 		panels.GarbageCollectionRate(datasource, labelMatcher),
 		panels.GarbageCollectionErrors(datasource, labelMatcher),
 		panels.GarbageCollectionDurations(datasource, labelMatcher),
