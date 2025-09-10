@@ -148,13 +148,13 @@ spec:
                                     kind: PrometheusDatasource
                                     name: prometheus-datasource
                                 query: |4-
-                                        (
-                                          sum by (handler, code) (
-                                            rate(perses_http_request_total{code=~"4..|5..",instance=~"$instance",job=~"$job"}[$__rate_interval])
-                                          )
+                                        sum by (handler, code) (
+                                          rate(perses_http_request_total{code=~"4..|5..",instance=~"$instance",job=~"$job"}[$__rate_interval])
                                         )
                                       / ignoring (code) group_left ()
-                                        (sum by (handler) (rate(perses_http_request_total{instance=~"$instance",job=~"$job"}[$__rate_interval])))
+                                        sum by (handler) (
+                                          rate(perses_http_request_total{instance=~"$instance",job=~"$job"}[$__rate_interval])
+                                        )
                                     *
                                       100
                                 seriesNameFormat: '{{handler}} {{code}}'
