@@ -168,7 +168,7 @@ spec:
       spec:
         display:
           description: Shows the rate of gRPC requests.
-          name: RPC Rate
+          name: gRPC Rate
         plugin:
           kind: TimeSeriesChart
           spec:
@@ -197,7 +197,9 @@ spec:
                   name: prometheus-datasource
                 query: |-
                   sum(
-                    rate(grpc_server_started_total{cluster="$cluster",grpc_type="unary",job=~".*etcd.*"}[$__rate_interval])
+                    rate(
+                      grpc_server_started_total{cluster="$cluster",grpc_type="unary",job=~".*etcd.*"}[$__rate_interval]
+                    )
                   )
                 seriesNameFormat: RPC Rate
         - kind: TimeSeriesQuery
@@ -341,7 +343,9 @@ spec:
                   histogram_quantile(
                     0.99,
                     sum by (instance, le) (
-                      rate(etcd_disk_wal_fsync_duration_seconds_bucket{cluster="$cluster",job=~".*etcd.*"}[$__rate_interval])
+                      rate(
+                        etcd_disk_wal_fsync_duration_seconds_bucket{cluster="$cluster",job=~".*etcd.*"}[$__rate_interval]
+                      )
                     )
                   )
                 seriesNameFormat: '{{instance}} WAL fsync'
@@ -427,7 +431,10 @@ spec:
                 datasource:
                   kind: PrometheusDatasource
                   name: prometheus-datasource
-                query: rate(etcd_network_client_grpc_received_bytes_total{cluster="$cluster",job=~".*etcd.*"}[$__rate_interval])
+                query: |-
+                  rate(
+                    etcd_network_client_grpc_received_bytes_total{cluster="$cluster",job=~".*etcd.*"}[$__rate_interval]
+                  )
                 seriesNameFormat: '{{instance}} client traffic in'
     "4_1":
       kind: Panel
@@ -460,7 +467,10 @@ spec:
                 datasource:
                   kind: PrometheusDatasource
                   name: prometheus-datasource
-                query: rate(etcd_network_client_grpc_sent_bytes_total{cluster="$cluster",job=~".*etcd.*"}[$__rate_interval])
+                query: |-
+                  rate(
+                    etcd_network_client_grpc_sent_bytes_total{cluster="$cluster",job=~".*etcd.*"}[$__rate_interval]
+                  )
                 seriesNameFormat: '{{instance}} client traffic out'
     "4_2":
       kind: Panel

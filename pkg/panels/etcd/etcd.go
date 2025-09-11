@@ -3,16 +3,16 @@ package etcd
 import (
 	"github.com/perses/community-dashboards/pkg/dashboards"
 	"github.com/perses/community-dashboards/pkg/promql"
+	commonSdk "github.com/perses/perses/go-sdk/common"
 	"github.com/perses/perses/go-sdk/panel"
 	panelgroup "github.com/perses/perses/go-sdk/panel-group"
 	"github.com/perses/plugins/prometheus/sdk/go/query"
-
-	commonSdk "github.com/perses/perses/go-sdk/common"
 	statPanel "github.com/perses/plugins/statchart/sdk/go"
 	timeSeriesPanel "github.com/perses/plugins/timeserieschart/sdk/go"
+	"github.com/prometheus/prometheus/model/labels"
 )
 
-func EtcdUpStatus(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
+func EtcdUpStatus(datasourceName string, labelMatchers ...*labels.Matcher) panelgroup.Option {
 	return panelgroup.AddPanel("Up",
 		panel.Description("Shows the status of etcd."),
 		statPanel.Chart(
@@ -24,10 +24,10 @@ func EtcdUpStatus(datasourceName string, labelMatchers ...promql.LabelMatcher) p
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchers(
-					"sum(etcd_server_has_leader{job=~\".*etcd.*\", cluster=\"$cluster\"})",
+				promql.SetLabelMatchersV2(
+					EtcdCommonPanelQueries["EtcdUpStatus"],
 					labelMatchers,
-				),
+				).Pretty(0),
 				dashboards.AddQueryDataSource(datasourceName),
 				query.SeriesNameFormat("{{cluster}} {{namespace}}"),
 			),
@@ -35,8 +35,8 @@ func EtcdUpStatus(datasourceName string, labelMatchers ...promql.LabelMatcher) p
 	)
 }
 
-func RPCRate(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
-	return panelgroup.AddPanel("RPC Rate",
+func RPCRate(datasourceName string, labelMatchers ...*labels.Matcher) panelgroup.Option {
+	return panelgroup.AddPanel("gRPC Rate",
 		panel.Description("Shows the rate of gRPC requests."),
 		timeSeriesPanel.Chart(
 			timeSeriesPanel.WithYAxis(timeSeriesPanel.YAxis{
@@ -60,20 +60,20 @@ func RPCRate(datasourceName string, labelMatchers ...promql.LabelMatcher) panelg
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchers(
-					"sum(rate(grpc_server_started_total{job=~\".*etcd.*\", cluster=\"$cluster\",grpc_type=\"unary\"}[$__rate_interval]))",
+				promql.SetLabelMatchersV2(
+					EtcdCommonPanelQueries["EtcdgRPCRateStarted"],
 					labelMatchers,
-				),
+				).Pretty(0),
 				dashboards.AddQueryDataSource(datasourceName),
 				query.SeriesNameFormat("RPC Rate"),
 			),
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchers(
-					"sum(rate(grpc_server_handled_total{job=~\".*etcd.*\", cluster=\"$cluster\",grpc_type=\"unary\",grpc_code=~\"Unknown|FailedPrecondition|ResourceExhausted|Internal|Unavailable|DataLoss|DeadlineExceeded\"}[$__rate_interval]))",
+				promql.SetLabelMatchersV2(
+					EtcdCommonPanelQueries["EtcdgRPCRateTotal"],
 					labelMatchers,
-				),
+				).Pretty(0),
 				dashboards.AddQueryDataSource(datasourceName),
 				query.SeriesNameFormat("RPC failed Rate"),
 			),
@@ -81,7 +81,7 @@ func RPCRate(datasourceName string, labelMatchers ...promql.LabelMatcher) panelg
 	)
 }
 
-func ActiveStreams(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
+func ActiveStreams(datasourceName string, labelMatchers ...*labels.Matcher) panelgroup.Option {
 	return panelgroup.AddPanel("Active Streams",
 		panel.Description("Shows the number of active streams."),
 		timeSeriesPanel.Chart(
@@ -106,20 +106,20 @@ func ActiveStreams(datasourceName string, labelMatchers ...promql.LabelMatcher) 
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchers(
-					"sum(grpc_server_started_total{job=~\".*etcd.*\",cluster=\"$cluster\",grpc_service=\"etcdserverpb.Watch\",grpc_type=\"bidi_stream\"}) - sum(grpc_server_handled_total{cluster=\"$cluster\",grpc_service=\"etcdserverpb.Watch\",grpc_type=\"bidi_stream\"})",
+				promql.SetLabelMatchersV2(
+					EtcdCommonPanelQueries["EtcdActiveStreamsWatch"],
 					labelMatchers,
-				),
+				).Pretty(0),
 				dashboards.AddQueryDataSource(datasourceName),
 				query.SeriesNameFormat("Watch Streams"),
 			),
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchers(
-					"sum(grpc_server_started_total{job=~\".*etcd.*\",cluster=\"$cluster\",grpc_service=\"etcdserverpb.Lease\",grpc_type=\"bidi_stream\"}) - sum(grpc_server_handled_total{cluster=\"$cluster\",grpc_service=\"etcdserverpb.Lease\",grpc_type=\"bidi_stream\"})",
+				promql.SetLabelMatchersV2(
+					EtcdCommonPanelQueries["EtcdActiveStreamsLease"],
 					labelMatchers,
-				),
+				).Pretty(0),
 				dashboards.AddQueryDataSource(datasourceName),
 				query.SeriesNameFormat("Lease Streams"),
 			),
@@ -127,7 +127,7 @@ func ActiveStreams(datasourceName string, labelMatchers ...promql.LabelMatcher) 
 	)
 }
 
-func DBSize(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
+func DBSize(datasourceName string, labelMatchers ...*labels.Matcher) panelgroup.Option {
 	return panelgroup.AddPanel("DB Size",
 		panel.Description("Shows the size of the etcd database."),
 		timeSeriesPanel.Chart(
@@ -151,10 +151,10 @@ func DBSize(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgr
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchers(
-					"etcd_mvcc_db_total_size_in_bytes{job=~\".*etcd.*\", cluster=\"$cluster\"}",
+				promql.SetLabelMatchersV2(
+					EtcdCommonPanelQueries["EtcdDBSize"],
 					labelMatchers,
-				),
+				).Pretty(0),
 				dashboards.AddQueryDataSource(datasourceName),
 				query.SeriesNameFormat("{{instance}} DB Size"),
 			),
@@ -162,7 +162,7 @@ func DBSize(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgr
 	)
 }
 
-func DiskSyncDuration(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
+func DiskSyncDuration(datasourceName string, labelMatchers ...*labels.Matcher) panelgroup.Option {
 	return panelgroup.AddPanel("Disk Sync Duration",
 		panel.Description("Shows the duration of the etcd disk sync for WAL and DB."),
 		timeSeriesPanel.Chart(
@@ -186,20 +186,20 @@ func DiskSyncDuration(datasourceName string, labelMatchers ...promql.LabelMatche
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchers(
-					"histogram_quantile(0.99, sum(rate(etcd_disk_wal_fsync_duration_seconds_bucket{job=~\".*etcd.*\", cluster=\"$cluster\"}[$__rate_interval])) by (instance, le))",
+				promql.SetLabelMatchersV2(
+					EtcdCommonPanelQueries["EtcdDiskSyncWalFsyncDuration"],
 					labelMatchers,
-				),
+				).Pretty(0),
 				dashboards.AddQueryDataSource(datasourceName),
 				query.SeriesNameFormat("{{instance}} WAL fsync"),
 			),
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchers(
-					"histogram_quantile(0.99, sum(rate(etcd_disk_backend_commit_duration_seconds_bucket{job=~\".*etcd.*\", cluster=\"$cluster\"}[$__rate_interval])) by (instance, le))",
+				promql.SetLabelMatchersV2(
+					EtcdCommonPanelQueries["EtcdDiskSyncBackendDuration"],
 					labelMatchers,
-				),
+				).Pretty(0),
 				dashboards.AddQueryDataSource(datasourceName),
 				query.SeriesNameFormat("{{instance}} DB fsync"),
 			),
@@ -207,7 +207,7 @@ func DiskSyncDuration(datasourceName string, labelMatchers ...promql.LabelMatche
 	)
 }
 
-func ClientTrafficIn(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
+func ClientTrafficIn(datasourceName string, labelMatchers ...*labels.Matcher) panelgroup.Option {
 	return panelgroup.AddPanel("Client Traffic In",
 		panel.Description("Shows the client traffic into etcd."),
 		timeSeriesPanel.Chart(
@@ -231,10 +231,10 @@ func ClientTrafficIn(datasourceName string, labelMatchers ...promql.LabelMatcher
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchers(
-					"rate(etcd_network_client_grpc_received_bytes_total{job=~\".*etcd.*\", cluster=\"$cluster\"}[$__rate_interval])",
+				promql.SetLabelMatchersV2(
+					EtcdCommonPanelQueries["EtcdClientTrafficIn"],
 					labelMatchers,
-				),
+				).Pretty(0),
 				dashboards.AddQueryDataSource(datasourceName),
 				query.SeriesNameFormat("{{instance}} client traffic in"),
 			),
@@ -242,7 +242,7 @@ func ClientTrafficIn(datasourceName string, labelMatchers ...promql.LabelMatcher
 	)
 }
 
-func ClientTrafficOut(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
+func ClientTrafficOut(datasourceName string, labelMatchers ...*labels.Matcher) panelgroup.Option {
 	return panelgroup.AddPanel("Client Traffic Out",
 		panel.Description("Shows the client traffic out of etcd."),
 		timeSeriesPanel.Chart(
@@ -266,10 +266,10 @@ func ClientTrafficOut(datasourceName string, labelMatchers ...promql.LabelMatche
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchers(
-					"rate(etcd_network_client_grpc_sent_bytes_total{job=~\".*etcd.*\", cluster=\"$cluster\"}[$__rate_interval])",
+				promql.SetLabelMatchersV2(
+					EtcdCommonPanelQueries["EtcdClientTrafficOut"],
 					labelMatchers,
-				),
+				).Pretty(0),
 				dashboards.AddQueryDataSource(datasourceName),
 				query.SeriesNameFormat("{{instance}} client traffic out"),
 			),
@@ -277,7 +277,7 @@ func ClientTrafficOut(datasourceName string, labelMatchers ...promql.LabelMatche
 	)
 }
 
-func PeerTrafficIn(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
+func PeerTrafficIn(datasourceName string, labelMatchers ...*labels.Matcher) panelgroup.Option {
 	return panelgroup.AddPanel("Peer Traffic In",
 		panel.Description("Shows the peer traffic into etcd."),
 		timeSeriesPanel.Chart(
@@ -301,10 +301,10 @@ func PeerTrafficIn(datasourceName string, labelMatchers ...promql.LabelMatcher) 
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchers(
-					"sum(rate(etcd_network_peer_received_bytes_total{job=~\".*etcd.*\", cluster=\"$cluster\"}[$__rate_interval])) by (instance)",
+				promql.SetLabelMatchersV2(
+					EtcdCommonPanelQueries["EtcdPeerTrafficIn"],
 					labelMatchers,
-				),
+				).Pretty(0),
 				dashboards.AddQueryDataSource(datasourceName),
 				query.SeriesNameFormat("{{instance}} peer traffic in"),
 			),
@@ -312,7 +312,7 @@ func PeerTrafficIn(datasourceName string, labelMatchers ...promql.LabelMatcher) 
 	)
 }
 
-func PeerTrafficOut(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
+func PeerTrafficOut(datasourceName string, labelMatchers ...*labels.Matcher) panelgroup.Option {
 	return panelgroup.AddPanel("Peer Traffic Out",
 		panel.Description("Shows the peer traffic out of etcd."),
 		timeSeriesPanel.Chart(
@@ -336,10 +336,10 @@ func PeerTrafficOut(datasourceName string, labelMatchers ...promql.LabelMatcher)
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchers(
-					"sum(rate(etcd_network_peer_sent_bytes_total{job=~\".*etcd.*\", cluster=\"$cluster\"}[$__rate_interval])) by (instance)",
+				promql.SetLabelMatchersV2(
+					EtcdCommonPanelQueries["EtcdPeerTrafficOut"],
 					labelMatchers,
-				),
+				).Pretty(0),
 				dashboards.AddQueryDataSource(datasourceName),
 				query.SeriesNameFormat("{{instance}} peer traffic out"),
 			),
@@ -347,7 +347,7 @@ func PeerTrafficOut(datasourceName string, labelMatchers ...promql.LabelMatcher)
 	)
 }
 
-func RaftProposals(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
+func RaftProposals(datasourceName string, labelMatchers ...*labels.Matcher) panelgroup.Option {
 	return panelgroup.AddPanel("Raft Proposals / Leader Elections in a day",
 		panel.Description("Shows the number of times etcd has leader elections in a day."),
 		timeSeriesPanel.Chart(
@@ -371,10 +371,10 @@ func RaftProposals(datasourceName string, labelMatchers ...promql.LabelMatcher) 
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchers(
-					"changes(etcd_server_leader_changes_seen_total{job=~\".*etcd.*\", cluster=\"$cluster\"}[1d])",
+				promql.SetLabelMatchersV2(
+					EtcdCommonPanelQueries["EtcdRaftProposals"],
 					labelMatchers,
-				),
+				).Pretty(0),
 				dashboards.AddQueryDataSource(datasourceName),
 				query.SeriesNameFormat("{{instance}} total leader elections per day"),
 			),
@@ -382,7 +382,7 @@ func RaftProposals(datasourceName string, labelMatchers ...promql.LabelMatcher) 
 	)
 }
 
-func PeerRoundtripTime(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
+func PeerRoundtripTime(datasourceName string, labelMatchers ...*labels.Matcher) panelgroup.Option {
 	return panelgroup.AddPanel("Peer Roundtrip Time",
 		panel.Description("Shows the roundtrip time of the peer traffic."),
 		timeSeriesPanel.Chart(
@@ -406,10 +406,10 @@ func PeerRoundtripTime(datasourceName string, labelMatchers ...promql.LabelMatch
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchers(
-					"histogram_quantile(0.99, sum by (instance, le) (rate(etcd_network_peer_round_trip_time_seconds_bucket{job=~\".*etcd.*\", cluster=\"$cluster\"}[$__rate_interval])))",
+				promql.SetLabelMatchersV2(
+					EtcdCommonPanelQueries["EtcdPeerRoundtripTime"],
 					labelMatchers,
-				),
+				).Pretty(0),
 				dashboards.AddQueryDataSource(datasourceName),
 				query.SeriesNameFormat("{{instance}} peer roundtrip time"),
 			),
