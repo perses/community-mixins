@@ -9,12 +9,12 @@ import (
 	panelgroup "github.com/perses/perses/go-sdk/panel-group"
 	listvariable "github.com/perses/perses/go-sdk/variable/list-variable"
 	labelvalues "github.com/perses/plugins/prometheus/sdk/go/variable/label-values"
+	"github.com/perses/promql-builder/vector"
 	"github.com/prometheus/prometheus/model/labels"
 )
 
 func BuildPersesOverview(project string, datasource string, clusterLabelName string) dashboards.DashboardResult {
-	clusterLabelMatcher := dashboards.GetClusterLabelMatcher(clusterLabelName)
-	clusterLabelMatcherV2 := dashboards.GetClusterLabelMatcherV2(clusterLabelName)
+	clusterLabelMatcher := dashboards.GetClusterLabelMatcherV2(clusterLabelName)
 	return dashboards.NewDashboardResult(
 		dashboard.New("perses-overview",
 			dashboard.ProjectName(project),
@@ -32,10 +32,10 @@ func BuildPersesOverview(project string, datasource string, clusterLabelName str
 				listvariable.List(
 					labelvalues.PrometheusLabelValues("instance",
 						labelvalues.Matchers(
-							promql.SetLabelMatchers(
-								"perses_build_info",
-								[]promql.LabelMatcher{clusterLabelMatcher, {Name: "job", Type: "=", Value: "$job"}},
-							),
+							promql.SetLabelMatchersV2(
+								vector.New(vector.WithMetricName("perses_build_info")),
+								[]*labels.Matcher{clusterLabelMatcher, {Name: "job", Type: labels.MatchEqual, Value: "$job"}},
+							).Pretty(0),
 						),
 						dashboards.AddVariableDatasource(datasource),
 					),
@@ -44,18 +44,18 @@ func BuildPersesOverview(project string, datasource string, clusterLabelName str
 			),
 			withPersesOverviewStatsGroup(datasource, clusterLabelMatcher),
 			withPersesAPiRequestGroup(datasource, clusterLabelMatcher),
-			withPersesResources(datasource, clusterLabelMatcherV2, clusterLabelMatcher),
+			withPersesResources(datasource, clusterLabelMatcher),
 			withPersesPlugins(datasource, clusterLabelMatcher),
 		),
 	).Component("perses")
 }
 
-func withPersesOverviewStatsGroup(datasource string, clusterLabelMatcher promql.LabelMatcher) dashboard.Option {
+func withPersesOverviewStatsGroup(datasource string, clusterLabelMatcher *labels.Matcher) dashboard.Option {
 	return dashboard.AddPanelGroup("Perses Stats", panelgroup.PanelsPerLine(1),
 		perses.StatsTable(datasource, clusterLabelMatcher))
 }
 
-func withPersesAPiRequestGroup(datasource string, clusterLabelMatcher promql.LabelMatcher) dashboard.Option {
+func withPersesAPiRequestGroup(datasource string, clusterLabelMatcher *labels.Matcher) dashboard.Option {
 	return dashboard.AddPanelGroup("API Requests", panelgroup.PanelsPerLine(2),
 		perses.HTTPRequestsRatePanel(datasource, clusterLabelMatcher),
 		perses.HTTPErrorPercentagePanel(datasource, clusterLabelMatcher),
@@ -63,12 +63,12 @@ func withPersesAPiRequestGroup(datasource string, clusterLabelMatcher promql.Lab
 	)
 }
 
-func withPersesResources(datasource string, clusterLabelMatcherV2 *labels.Matcher, clusterLabelMatcher promql.LabelMatcher) dashboard.Option {
+func withPersesResources(datasource string, labelMatcher *labels.Matcher) dashboard.Option {
 	labelMatchersToUse := []*labels.Matcher{
 		promql.InstanceVarV2,
 		promql.JobVarV2,
 	}
-	labelMatchersToUse = append(labelMatchersToUse, clusterLabelMatcherV2)
+	labelMatchersToUse = append(labelMatchersToUse, labelMatcher)
 
 	return dashboard.AddPanelGroup("Resource Usage",
 		panelgroup.PanelsPerLine(3),
@@ -77,11 +77,11 @@ func withPersesResources(datasource string, clusterLabelMatcherV2 *labels.Matche
 		panelsGostats.CPUUsage(datasource, "pod", labelMatchersToUse...),
 		panelsGostats.Goroutines(datasource, "pod", labelMatchersToUse...),
 		panelsGostats.GarbageCollectionPauseTimeQuantiles(datasource, "pod", labelMatchersToUse...),
-		perses.FileDescriptors(datasource, clusterLabelMatcher),
+		perses.FileDescriptors(datasource, labelMatchersToUse...),
 	)
 }
 
-func withPersesPlugins(datasource string, clusterLabelMatcher promql.LabelMatcher) dashboard.Option {
+func withPersesPlugins(datasource string, clusterLabelMatcher *labels.Matcher) dashboard.Option {
 	return dashboard.AddPanelGroup("Plugins Usage", panelgroup.PanelsPerLine(1), panelgroup.PanelHeight(8),
 		perses.PluginSchemaLoadAttempts(datasource, clusterLabelMatcher))
 }

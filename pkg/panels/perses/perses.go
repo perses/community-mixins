@@ -3,16 +3,16 @@ package perses
 import (
 	"github.com/perses/community-dashboards/pkg/dashboards"
 	"github.com/perses/community-dashboards/pkg/promql"
+	"github.com/perses/perses/go-sdk/common"
 	"github.com/perses/perses/go-sdk/panel"
 	panelgroup "github.com/perses/perses/go-sdk/panel-group"
 	"github.com/perses/plugins/prometheus/sdk/go/query"
-	timeSeriesPanel "github.com/perses/plugins/timeserieschart/sdk/go"
-
-	"github.com/perses/perses/go-sdk/common"
 	tablePanel "github.com/perses/plugins/table/sdk/go"
+	timeSeriesPanel "github.com/perses/plugins/timeserieschart/sdk/go"
+	"github.com/prometheus/prometheus/model/labels"
 )
 
-func StatsTable(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
+func StatsTable(datasourceName string, labelMatchers ...*labels.Matcher) panelgroup.Option {
 	return panelgroup.AddPanel("Perses Stats",
 		tablePanel.Table(
 			tablePanel.WithColumnSettings([]tablePanel.ColumnSettings{
@@ -48,14 +48,17 @@ func StatsTable(datasourceName string, labelMatchers ...promql.LabelMatcher) pan
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchers("count by (job, instance, version, namespace, pod) (perses_build_info{job=~'$job', instance=~'$instance'})", labelMatchers),
+				promql.SetLabelMatchersV2(
+					PersesCommonPanelQueries["PersesStatsTable"],
+					labelMatchers,
+				).Pretty(0),
 				dashboards.AddQueryDataSource(datasourceName),
 			),
 		),
 	)
 }
 
-func HTTPRequestsLatencyPanel(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
+func HTTPRequestsLatencyPanel(datasourceName string, labelMatchers ...*labels.Matcher) panelgroup.Option {
 	return panelgroup.AddPanel("HTTP Requests Latency",
 		panel.Description("Displays the latency of HTTP requests over a 5-minute window."),
 		timeSeriesPanel.Chart(
@@ -78,10 +81,10 @@ func HTTPRequestsLatencyPanel(datasourceName string, labelMatchers ...promql.Lab
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchers(
-					"sum by (handler, method) (rate(perses_http_request_duration_second_sum{job=~'$job', instance=~'$instance'}[$__rate_interval])) / sum by (handler, method) (rate(perses_http_request_duration_second_count{job=~'$job', instance=~'$instance'}[$__rate_interval]))",
+				promql.SetLabelMatchersV2(
+					PersesCommonPanelQueries["PersesHTTPLatency"],
 					labelMatchers,
-				),
+				).Pretty(0),
 				dashboards.AddQueryDataSource(datasourceName),
 				query.SeriesNameFormat("{{handler}} {{method}}"),
 			),
@@ -89,7 +92,7 @@ func HTTPRequestsLatencyPanel(datasourceName string, labelMatchers ...promql.Lab
 	)
 }
 
-func HTTPRequestsRatePanel(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
+func HTTPRequestsRatePanel(datasourceName string, labelMatchers ...*labels.Matcher) panelgroup.Option {
 	return panelgroup.AddPanel("HTTP Requests Rate",
 		panel.Description("Displays the rate of HTTP requests over a 5-minute window."),
 		timeSeriesPanel.Chart(
@@ -113,10 +116,10 @@ func HTTPRequestsRatePanel(datasourceName string, labelMatchers ...promql.LabelM
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchers(
-					"sum by (handler, code) (rate(perses_http_request_total{job=~'$job', instance=~'$instance'}[$__rate_interval]))",
+				promql.SetLabelMatchersV2(
+					PersesCommonPanelQueries["PersesHTTPRequestRate"],
 					labelMatchers,
-				),
+				).Pretty(0),
 				dashboards.AddQueryDataSource(datasourceName),
 				query.SeriesNameFormat("{{handler}} {{method}} {{code}}"),
 			),
@@ -124,7 +127,7 @@ func HTTPRequestsRatePanel(datasourceName string, labelMatchers ...promql.LabelM
 	)
 }
 
-func HTTPErrorPercentagePanel(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
+func HTTPErrorPercentagePanel(datasourceName string, labelMatchers ...*labels.Matcher) panelgroup.Option {
 	return panelgroup.AddPanel(
 		"HTTP Errors Percentage",
 		panel.Description("Displays the percentage of HTTP errors over total requests."),
@@ -155,10 +158,10 @@ func HTTPErrorPercentagePanel(datasourceName string, labelMatchers ...promql.Lab
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchers(
-					"(sum by (handler, code) (rate(perses_http_request_total{job=~'$job', instance=~'$instance', code=~'4..|5..'}[$__rate_interval]))) / ignoring(code) group_left() (sum by (handler) (rate(perses_http_request_total{job=~'$job', instance=~'$instance'}[$__rate_interval]))) * 100",
+				promql.SetLabelMatchersV2(
+					PersesCommonPanelQueries["PersesHTTPErrorsPercentage"],
 					labelMatchers,
-				),
+				).Pretty(0),
 				dashboards.AddQueryDataSource(datasourceName),
 				query.SeriesNameFormat("{{handler}} {{code}}"),
 			),
@@ -166,7 +169,7 @@ func HTTPErrorPercentagePanel(datasourceName string, labelMatchers ...promql.Lab
 	)
 }
 
-func FileDescriptors(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
+func FileDescriptors(datasourceName string, labelMatchers ...*labels.Matcher) panelgroup.Option {
 	return panelgroup.AddPanel("File Descriptors",
 		panel.Description("Displays the number of open and max file descriptors."),
 		timeSeriesPanel.Chart(
@@ -190,20 +193,20 @@ func FileDescriptors(datasourceName string, labelMatchers ...promql.LabelMatcher
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchers(
-					"process_open_fds{job=~'$job', instance=~'$instance'}",
+				promql.SetLabelMatchersV2(
+					PersesCommonPanelQueries["PersesFileDescriptorsOpenFDS"],
 					labelMatchers,
-				),
+				).Pretty(0),
 				dashboards.AddQueryDataSource(datasourceName),
 				query.SeriesNameFormat("{{instance}} - {{pod}} Open FDs"),
 			),
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchers(
-					"process_max_fds{job=~'$job', instance=~'$instance'}",
+				promql.SetLabelMatchersV2(
+					PersesCommonPanelQueries["PersesFileDescriptorsMaxFDS"],
 					labelMatchers,
-				),
+				).Pretty(0),
 				dashboards.AddQueryDataSource(datasourceName),
 				query.SeriesNameFormat("{{instance}} - {{pod}} - Max FDs"),
 			),
@@ -211,7 +214,7 @@ func FileDescriptors(datasourceName string, labelMatchers ...promql.LabelMatcher
 	)
 }
 
-func PluginSchemaLoadAttempts(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
+func PluginSchemaLoadAttempts(datasourceName string, labelMatchers ...*labels.Matcher) panelgroup.Option {
 	return panelgroup.AddPanel("Plugin Schema Load Attempts",
 		panel.Description("Displays the success and failure attempts to load plugin schemas."),
 		timeSeriesPanel.Chart(
@@ -235,10 +238,10 @@ func PluginSchemaLoadAttempts(datasourceName string, labelMatchers ...promql.Lab
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchers(
-					"perses_plugin_schemas_load_attempts{job=~'$job', instance=~'$instance'}",
+				promql.SetLabelMatchersV2(
+					PersesCommonPanelQueries["PersesPluginSchemaLoadAttempts"],
 					labelMatchers,
-				),
+				).Pretty(0),
 				dashboards.AddQueryDataSource(datasourceName),
 				query.SeriesNameFormat("{{pod}} - {{schema}} - {{status}}"),
 			),

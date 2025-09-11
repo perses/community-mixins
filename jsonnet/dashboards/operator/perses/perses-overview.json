@@ -219,7 +219,7 @@
                       "kind": "PrometheusDatasource",
                       "name": "prometheus-datasource"
                     },
-                    "query": "    (\n      sum by (handler, code) (\n        rate(perses_http_request_total{code=~\"4..|5..\",instance=~\"$instance\",job=~\"$job\"}[$__rate_interval])\n      )\n    )\n  / ignoring (code) group_left ()\n    (sum by (handler) (rate(perses_http_request_total{instance=~\"$instance\",job=~\"$job\"}[$__rate_interval])))\n*\n  100",
+                    "query": "    sum by (handler, code) (\n      rate(perses_http_request_total{code=~\"4..|5..\",instance=~\"$instance\",job=~\"$job\"}[$__rate_interval])\n    )\n  / ignoring (code) group_left ()\n    sum by (handler) (\n      rate(perses_http_request_total{instance=~\"$instance\",job=~\"$job\"}[$__rate_interval])\n    )\n*\n  100",
                     "seriesNameFormat": "{{handler}} {{code}}"
                   }
                 }
