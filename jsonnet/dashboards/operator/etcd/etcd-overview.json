@@ -84,7 +84,7 @@
         "kind": "Panel",
         "spec": {
           "display": {
-            "name": "RPC Rate",
+            "name": "gRPC Rate",
             "description": "Shows the rate of gRPC requests."
           },
           "plugin": {
@@ -122,7 +122,7 @@
                       "kind": "PrometheusDatasource",
                       "name": "prometheus-datasource"
                     },
-                    "query": "sum(\n  rate(grpc_server_started_total{cluster=\"$cluster\",grpc_type=\"unary\",job=~\".*etcd.*\"}[$__rate_interval])\n)",
+                    "query": "sum(\n  rate(\n    grpc_server_started_total{cluster=\"$cluster\",grpc_type=\"unary\",job=~\".*etcd.*\"}[$__rate_interval]\n  )\n)",
                     "seriesNameFormat": "RPC Rate"
                   }
                 }
@@ -305,7 +305,7 @@
                       "kind": "PrometheusDatasource",
                       "name": "prometheus-datasource"
                     },
-                    "query": "histogram_quantile(\n  0.99,\n  sum by (instance, le) (\n    rate(etcd_disk_wal_fsync_duration_seconds_bucket{cluster=\"$cluster\",job=~\".*etcd.*\"}[$__rate_interval])\n  )\n)",
+                    "query": "histogram_quantile(\n  0.99,\n  sum by (instance, le) (\n    rate(\n      etcd_disk_wal_fsync_duration_seconds_bucket{cluster=\"$cluster\",job=~\".*etcd.*\"}[$__rate_interval]\n    )\n  )\n)",
                     "seriesNameFormat": "{{instance}} WAL fsync"
                   }
                 }
@@ -421,7 +421,7 @@
                       "kind": "PrometheusDatasource",
                       "name": "prometheus-datasource"
                     },
-                    "query": "rate(etcd_network_client_grpc_received_bytes_total{cluster=\"$cluster\",job=~\".*etcd.*\"}[$__rate_interval])",
+                    "query": "rate(\n  etcd_network_client_grpc_received_bytes_total{cluster=\"$cluster\",job=~\".*etcd.*\"}[$__rate_interval]\n)",
                     "seriesNameFormat": "{{instance}} client traffic in"
                   }
                 }
@@ -471,7 +471,7 @@
                       "kind": "PrometheusDatasource",
                       "name": "prometheus-datasource"
                     },
-                    "query": "rate(etcd_network_client_grpc_sent_bytes_total{cluster=\"$cluster\",job=~\".*etcd.*\"}[$__rate_interval])",
+                    "query": "rate(\n  etcd_network_client_grpc_sent_bytes_total{cluster=\"$cluster\",job=~\".*etcd.*\"}[$__rate_interval]\n)",
                     "seriesNameFormat": "{{instance}} client traffic out"
                   }
                 }

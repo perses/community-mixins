@@ -9,10 +9,11 @@ import (
 	panelgroup "github.com/perses/perses/go-sdk/panel-group"
 	listVar "github.com/perses/perses/go-sdk/variable/list-variable"
 	labelValuesVar "github.com/perses/plugins/prometheus/sdk/go/variable/label-values"
+	"github.com/perses/promql-builder/vector"
 	"github.com/prometheus/prometheus/model/labels"
 )
 
-func withETCDStatsGroup(datasource string, labelMatcher promql.LabelMatcher) dashboard.Option {
+func withETCDStatsGroup(datasource string, labelMatcher *labels.Matcher) dashboard.Option {
 	return dashboard.AddPanelGroup("etcd Status",
 		panelgroup.PanelsPerLine(1),
 		panelgroup.PanelHeight(8),
@@ -20,7 +21,7 @@ func withETCDStatsGroup(datasource string, labelMatcher promql.LabelMatcher) das
 	)
 }
 
-func withRPCGroup(datasource string, labelMatcher promql.LabelMatcher) dashboard.Option {
+func withRPCGroup(datasource string, labelMatcher *labels.Matcher) dashboard.Option {
 	return dashboard.AddPanelGroup("RPC and Streams",
 		panelgroup.PanelsPerLine(2),
 		panelgroup.PanelHeight(8),
@@ -29,7 +30,7 @@ func withRPCGroup(datasource string, labelMatcher promql.LabelMatcher) dashboard
 	)
 }
 
-func withDBGroup(datasource string, labelMatcher promql.LabelMatcher) dashboard.Option {
+func withDBGroup(datasource string, labelMatcher *labels.Matcher) dashboard.Option {
 	return dashboard.AddPanelGroup("etcd DB",
 		panelgroup.PanelsPerLine(2),
 		panelgroup.PanelHeight(8),
@@ -38,7 +39,7 @@ func withDBGroup(datasource string, labelMatcher promql.LabelMatcher) dashboard.
 	)
 }
 
-func withTrafficGroup(datasource string, labelMatcher promql.LabelMatcher) dashboard.Option {
+func withTrafficGroup(datasource string, labelMatcher *labels.Matcher) dashboard.Option {
 	return dashboard.AddPanelGroup("etcd Traffic",
 		panelgroup.PanelsPerLine(2),
 		panelgroup.PanelHeight(8),
@@ -49,7 +50,7 @@ func withTrafficGroup(datasource string, labelMatcher promql.LabelMatcher) dashb
 	)
 }
 
-func withRaftGroup(datasource string, labelMatcher promql.LabelMatcher) dashboard.Option {
+func withRaftGroup(datasource string, labelMatcher *labels.Matcher) dashboard.Option {
 	return dashboard.AddPanelGroup("etcd Raft",
 		panelgroup.PanelsPerLine(1),
 		panelgroup.PanelHeight(8),
@@ -57,7 +58,7 @@ func withRaftGroup(datasource string, labelMatcher promql.LabelMatcher) dashboar
 	)
 }
 
-func withRoundTripTimeGroup(datasource string, labelMatcher promql.LabelMatcher) dashboard.Option {
+func withRoundTripTimeGroup(datasource string, labelMatcher *labels.Matcher) dashboard.Option {
 	return dashboard.AddPanelGroup("etcd Peer Round Trip Time",
 		panelgroup.PanelsPerLine(1),
 		panelgroup.PanelHeight(8),
@@ -89,8 +90,7 @@ func withETCDResources(datasource string, clusterLabelMatcher *labels.Matcher) d
 }
 
 func BuildETCDOverview(project string, datasource string, clusterLabelName string) dashboards.DashboardResult {
-	clusterLabelMatcher := dashboards.GetClusterLabelMatcher(clusterLabelName)
-	clusterLabelMatcherV2 := dashboards.GetClusterLabelMatcherV2(clusterLabelName)
+	clusterLabelMatcher := dashboards.GetClusterLabelMatcherV2(clusterLabelName)
 	return dashboards.NewDashboardResult(
 		dashboard.New("etcd-overview",
 			dashboard.ProjectName(project),
@@ -98,7 +98,12 @@ func BuildETCDOverview(project string, datasource string, clusterLabelName strin
 			dashboard.AddVariable("cluster",
 				listVar.List(
 					labelValuesVar.PrometheusLabelValues("cluster",
-						labelValuesVar.Matchers("etcd_server_has_leader{job=~\".*etcd.*\"}"),
+						labelValuesVar.Matchers(
+							promql.SetLabelMatchersV2(
+								vector.New(vector.WithMetricName("etcd_server_has_leader")),
+								[]*labels.Matcher{clusterLabelMatcher, {Name: "job", Type: labels.MatchRegexp, Value: ".*etcd.*"}},
+							).Pretty(0),
+						),
 						dashboards.AddVariableDatasource(datasource),
 					),
 					listVar.DisplayName("cluster"),
@@ -110,7 +115,7 @@ func BuildETCDOverview(project string, datasource string, clusterLabelName strin
 			withRaftGroup(datasource, clusterLabelMatcher),
 			withTrafficGroup(datasource, clusterLabelMatcher),
 			withRoundTripTimeGroup(datasource, clusterLabelMatcher),
-			withETCDResources(datasource, clusterLabelMatcherV2),
+			withETCDResources(datasource, clusterLabelMatcher),
 		),
 	).Component("etcd")
 }
