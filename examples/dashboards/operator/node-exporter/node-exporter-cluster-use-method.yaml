@@ -119,15 +119,11 @@ spec:
                   kind: PrometheusDatasource
                   name: prometheus-datasource
                 query: |2-
-                    (
-                        (
-                            instance:node_cpu_utilisation:rate5m{instance=~"$instance",job="node"}
-                          *
-                            instance:node_num_cpu:sum{instance=~"$instance",job="node"}
-                        )
-                      !=
-                        0
-                    )
+                        instance:node_cpu_utilisation:rate5m{instance=~"$instance",job="node"}
+                      *
+                        instance:node_num_cpu:sum{instance=~"$instance",job="node"}
+                    !=
+                      0
                   /
                     scalar(sum(instance:node_num_cpu:sum{instance=~"$instance",job="node"}))
                 seriesNameFormat: '{{instance}}'
@@ -158,11 +154,9 @@ spec:
                   kind: PrometheusDatasource
                   name: prometheus-datasource
                 query: |2-
-                    (
-                        instance:node_load1_per_cpu:ratio{instance=~"$instance",job="node"}
-                      /
-                        scalar(count(instance:node_load1_per_cpu:ratio{instance=~"$instance",job="node"}))
-                    )
+                      instance:node_load1_per_cpu:ratio{instance=~"$instance",job="node"}
+                    /
+                      scalar(count(instance:node_load1_per_cpu:ratio{instance=~"$instance",job="node"}))
                   !=
                     0
                 seriesNameFormat: '{{instance}}'
@@ -193,11 +187,9 @@ spec:
                   kind: PrometheusDatasource
                   name: prometheus-datasource
                 query: |2-
-                    (
-                        instance:node_memory_utilisation:ratio{instance=~"$instance",job="node"}
-                      /
-                        scalar(count(instance:node_memory_utilisation:ratio{instance=~"$instance",job="node"}))
-                    )
+                      instance:node_memory_utilisation:ratio{instance=~"$instance",job="node"}
+                    /
+                      scalar(count(instance:node_memory_utilisation:ratio{instance=~"$instance",job="node"}))
                   !=
                     0
                 seriesNameFormat: '{{instance}}'
@@ -325,11 +317,9 @@ spec:
                   kind: PrometheusDatasource
                   name: prometheus-datasource
                 query: |2-
-                    (
-                        instance_device:node_disk_io_time_seconds:rate5m{instance=~"$instance",job="node"}
-                      /
-                        scalar(count(instance_device:node_disk_io_time_seconds:rate5m{instance=~"$instance",job="node"}))
-                    )
+                      instance_device:node_disk_io_time_seconds:rate5m{instance=~"$instance",job="node"}
+                    /
+                      scalar(count(instance_device:node_disk_io_time_seconds:rate5m{instance=~"$instance",job="node"}))
                   !=
                     0
                 seriesNameFormat: '{{instance}}'
@@ -360,11 +350,11 @@ spec:
                   kind: PrometheusDatasource
                   name: prometheus-datasource
                 query: |2-
-                    (
-                        instance_device:node_disk_io_time_seconds:rate5m{instance=~"$instance",job="node"}
-                      /
-                        scalar(count(instance_device:node_disk_io_time_seconds:rate5m{instance=~"$instance",job="node"}))
-                    )
+                      instance_device:node_disk_io_time_weighted_seconds:rate5m{instance=~"$instance",job="node"}
+                    /
+                      scalar(
+                        count(instance_device:node_disk_io_time_weighted_seconds:rate5m{instance=~"$instance",job="node"})
+                      )
                   !=
                     0
                 seriesNameFormat: '{{instance}}'
@@ -395,17 +385,13 @@ spec:
                   kind: PrometheusDatasource
                   name: prometheus-datasource
                 query: |2-
-                    sum without (device) (
-                      max without (fstype, mountpoint) (
-                          (
-                              node_filesystem_size_bytes{fstype!="",instance=~"$instance",job="node",mountpoint!=""}
-                            -
-                              node_filesystem_avail_bytes{fstype!="",instance=~"$instance",job="node",mountpoint!=""}
-                          )
-                        !=
-                          0
+                      sum without (device) (
+                        max without (fstype, mountpoint) (
+                          node_filesystem_size_bytes{fstype!="",instance=~"$instance",job="node",mountpoint!=""}
+                        )
                       )
-                    )
+                    -
+                      node_filesystem_avail_bytes{fstype!="",instance=~"$instance",job="node",mountpoint!=""}
                   /
                     scalar(
                       sum(

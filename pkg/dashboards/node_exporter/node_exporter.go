@@ -5,13 +5,15 @@ import (
 	"github.com/perses/community-dashboards/pkg/promql"
 	"github.com/perses/perses/go-sdk/dashboard"
 	panelgroup "github.com/perses/perses/go-sdk/panel-group"
+	"github.com/perses/promql-builder/vector"
 
 	panels "github.com/perses/community-dashboards/pkg/panels/node_exporter"
 	listVar "github.com/perses/perses/go-sdk/variable/list-variable"
 	labelValuesVar "github.com/perses/plugins/prometheus/sdk/go/variable/label-values"
+	"github.com/prometheus/prometheus/model/labels"
 )
 
-func withNodeExporterNodesCPU(datasource string, labelMatcher promql.LabelMatcher) dashboard.Option {
+func withNodeExporterNodesCPU(datasource string, labelMatcher *labels.Matcher) dashboard.Option {
 	return dashboard.AddPanelGroup("CPU",
 		panelgroup.PanelsPerLine(2),
 		panels.NodeCPUUsagePercentage(datasource, labelMatcher),
@@ -19,7 +21,7 @@ func withNodeExporterNodesCPU(datasource string, labelMatcher promql.LabelMatche
 	)
 }
 
-func withNodeExporterNodesMemory(datasource string, labelMatcher promql.LabelMatcher) dashboard.Option {
+func withNodeExporterNodesMemory(datasource string, labelMatcher *labels.Matcher) dashboard.Option {
 	return dashboard.AddPanelGroup("Memory",
 		panelgroup.PanelsPerLine(2),
 		panels.NodeMemoryUsageBytes(datasource, labelMatcher),
@@ -27,7 +29,7 @@ func withNodeExporterNodesMemory(datasource string, labelMatcher promql.LabelMat
 	)
 }
 
-func withNodeExporterNodesDisk(datasource string, labelMatcher promql.LabelMatcher) dashboard.Option {
+func withNodeExporterNodesDisk(datasource string, labelMatcher *labels.Matcher) dashboard.Option {
 	return dashboard.AddPanelGroup("Disk",
 		panelgroup.PanelsPerLine(2),
 		panels.NodeDiskIOBytes(datasource, labelMatcher),
@@ -35,7 +37,7 @@ func withNodeExporterNodesDisk(datasource string, labelMatcher promql.LabelMatch
 	)
 }
 
-func withNodeExporterNodesNetwork(datasource string, labelMatcher promql.LabelMatcher) dashboard.Option {
+func withNodeExporterNodesNetwork(datasource string, labelMatcher *labels.Matcher) dashboard.Option {
 	return dashboard.AddPanelGroup("Network",
 		panelgroup.PanelsPerLine(2),
 		panels.NodeNetworkReceivedBytes(datasource, labelMatcher),
@@ -44,7 +46,7 @@ func withNodeExporterNodesNetwork(datasource string, labelMatcher promql.LabelMa
 }
 
 func BuildNodeExporterNodes(project string, datasource string, clusterLabelName string) dashboards.DashboardResult {
-	clusterLabelMatcher := dashboards.GetClusterLabelMatcher(clusterLabelName)
+	clusterLabelMatcher := dashboards.GetClusterLabelMatcherV2(clusterLabelName)
 	return dashboards.NewDashboardResult(
 		dashboard.New("node-exporter-nodes",
 			dashboard.ProjectName(project),
@@ -55,10 +57,17 @@ func BuildNodeExporterNodes(project string, datasource string, clusterLabelName 
 					labelValuesVar.PrometheusLabelValues("instance",
 						dashboards.AddVariableDatasource(datasource),
 						labelValuesVar.Matchers(
-							promql.SetLabelMatchers(
-								"node_uname_info{job='node', sysname!='Darwin'}",
-								[]promql.LabelMatcher{clusterLabelMatcher},
-							)),
+							promql.SetLabelMatchersV2(
+								vector.New(vector.WithMetricName("node_uname_info")),
+								[]*labels.Matcher{clusterLabelMatcher,
+									{Name: "job", Type: labels.MatchEqual, Value: "node"},
+									{Name: "sysname", Type: labels.MatchNotEqual, Value: "Darwin"}},
+							).Pretty(0),
+						),
+						// promql.SetLabelMatchers(
+						// 	"node_uname_info{job='node', sysname!='Darwin'}",
+						// 	[]*labels.Matcher{clusterLabelMatcher},
+						// )),
 					),
 					listVar.DisplayName("instance"),
 					listVar.AllowAllValue(true),

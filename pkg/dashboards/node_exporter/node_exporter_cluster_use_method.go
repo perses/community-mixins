@@ -8,9 +8,11 @@ import (
 	panelgroup "github.com/perses/perses/go-sdk/panel-group"
 	listVar "github.com/perses/perses/go-sdk/variable/list-variable"
 	labelValuesVar "github.com/perses/plugins/prometheus/sdk/go/variable/label-values"
+	"github.com/perses/promql-builder/vector"
+	"github.com/prometheus/prometheus/model/labels"
 )
 
-func withClusterCPU(datasource string, clusterLabelMatcher promql.LabelMatcher, instanceLabelMatcher promql.LabelMatcher) dashboard.Option {
+func withClusterCPU(datasource string, clusterLabelMatcher *labels.Matcher, instanceLabelMatcher *labels.Matcher) dashboard.Option {
 	return dashboard.AddPanelGroup("CPU",
 		panelgroup.PanelsPerLine(2),
 		panels.ClusterNodeCPUUsagePercentage(datasource, clusterLabelMatcher, instanceLabelMatcher),
@@ -18,7 +20,7 @@ func withClusterCPU(datasource string, clusterLabelMatcher promql.LabelMatcher, 
 	)
 }
 
-func withClusterMemory(datasource string, clusterLabelMatcher promql.LabelMatcher, instanceLabelMatcher promql.LabelMatcher) dashboard.Option {
+func withClusterMemory(datasource string, clusterLabelMatcher *labels.Matcher, instanceLabelMatcher *labels.Matcher) dashboard.Option {
 	return dashboard.AddPanelGroup("Memory",
 		panelgroup.PanelsPerLine(2),
 		panels.ClusterNodeMemoryUsagePercentage(datasource, clusterLabelMatcher, instanceLabelMatcher),
@@ -26,7 +28,7 @@ func withClusterMemory(datasource string, clusterLabelMatcher promql.LabelMatche
 	)
 }
 
-func withClusterNetwork(datasource string, clusterLabelMatcher promql.LabelMatcher, instanceLabelMatcher promql.LabelMatcher) dashboard.Option {
+func withClusterNetwork(datasource string, clusterLabelMatcher *labels.Matcher, instanceLabelMatcher *labels.Matcher) dashboard.Option {
 	return dashboard.AddPanelGroup("Network",
 		panelgroup.PanelsPerLine(2),
 		panels.ClusterNodeNetworkUsageBytes(datasource, clusterLabelMatcher, instanceLabelMatcher),
@@ -34,7 +36,7 @@ func withClusterNetwork(datasource string, clusterLabelMatcher promql.LabelMatch
 	)
 }
 
-func withClusterDiskIO(datasource string, clusterLabelMatcher promql.LabelMatcher, instanceLabelMatcher promql.LabelMatcher) dashboard.Option {
+func withClusterDiskIO(datasource string, clusterLabelMatcher *labels.Matcher, instanceLabelMatcher *labels.Matcher) dashboard.Option {
 	return dashboard.AddPanelGroup("Disk IO",
 		panelgroup.PanelsPerLine(2),
 		panels.ClusterNodeDiskUsagePercentage(datasource, clusterLabelMatcher, instanceLabelMatcher),
@@ -42,7 +44,7 @@ func withClusterDiskIO(datasource string, clusterLabelMatcher promql.LabelMatche
 	)
 }
 
-func withClusterDiskSpace(datasource string, clusterLabelMatcher promql.LabelMatcher, instanceLabelMatcher promql.LabelMatcher) dashboard.Option {
+func withClusterDiskSpace(datasource string, clusterLabelMatcher *labels.Matcher, instanceLabelMatcher *labels.Matcher) dashboard.Option {
 	return dashboard.AddPanelGroup("Disk Space",
 		panelgroup.PanelsPerLine(1),
 		panels.ClusterNodeDiskSpacePercentage(datasource, clusterLabelMatcher, instanceLabelMatcher),
@@ -50,11 +52,11 @@ func withClusterDiskSpace(datasource string, clusterLabelMatcher promql.LabelMat
 }
 
 func BuildNodeExporterClusterUseMethod(project string, datasource string, clusterLabelName string) dashboards.DashboardResult {
-	clusterLabelMatcher := dashboards.GetClusterLabelMatcher(clusterLabelName)
-	instanceLabelMatcher := promql.LabelMatcher{
+	clusterLabelMatcher := dashboards.GetClusterLabelMatcherV2(clusterLabelName)
+	instanceLabelMatcher := &labels.Matcher{
 		Name:  "instance",
 		Value: "$instance",
-		Type:  "=~",
+		Type:  labels.MatchRegexp,
 	}
 	return dashboards.NewDashboardResult(
 		dashboard.New("node-exporter-cluster-use-method",
@@ -66,10 +68,17 @@ func BuildNodeExporterClusterUseMethod(project string, datasource string, cluste
 					labelValuesVar.PrometheusLabelValues("instance",
 						dashboards.AddVariableDatasource(datasource),
 						labelValuesVar.Matchers(
-							promql.SetLabelMatchers(
-								"node_uname_info{job='node', sysname!='Darwin'}",
-								[]promql.LabelMatcher{clusterLabelMatcher},
-							)),
+							promql.SetLabelMatchersV2(
+								vector.New(vector.WithMetricName("node_uname_info")),
+								[]*labels.Matcher{clusterLabelMatcher,
+									{Name: "job", Type: labels.MatchEqual, Value: "node"},
+									{Name: "sysname", Type: labels.MatchNotEqual, Value: "Darwin"}},
+							).Pretty(0),
+							// promql.SetLabelMatchers(
+							// 	"node_uname_info{job='node', sysname!='Darwin'}",
+							// 	[]*labels.Matcher{clusterLabelMatcher},
+							// )
+						),
 					),
 					listVar.DisplayName("instance"),
 					listVar.AllowAllValue(true),
