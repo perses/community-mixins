@@ -382,13 +382,15 @@ spec:
                   kind: PrometheusDatasource
                   name: custom-datasource
                 query: |2-
-                      sum without (device) (
-                        max without (fstype, mountpoint) (
-                          node_filesystem_size_bytes{fstype!="",instance=~"$instance",job="node",mountpoint!=""}
-                        )
+                    sum without (device) (
+                      max without (fstype, mountpoint) (
+                            node_filesystem_size_bytes{fstype!="",instance=~"$instance",job="node",mountpoint!=""}
+                          -
+                            node_filesystem_avail_bytes{fstype!="",instance=~"$instance",job="node",mountpoint!=""}
+                        !=
+                          0
                       )
-                    -
-                      node_filesystem_avail_bytes{fstype!="",instance=~"$instance",job="node",mountpoint!=""}
+                    )
                   /
                     scalar(
                       sum(

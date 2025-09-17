@@ -445,7 +445,7 @@
                       "kind": "PrometheusDatasource",
                       "name": "prometheus-datasource"
                     },
-                    "query": "    sum without (device) (\n      max without (fstype, mountpoint) (\n        node_filesystem_size_bytes{fstype!=\"\",instance=~\"$instance\",job=\"node\",mountpoint!=\"\"}\n      )\n    )\n  -\n    node_filesystem_avail_bytes{fstype!=\"\",instance=~\"$instance\",job=\"node\",mountpoint!=\"\"}\n/\n  scalar(\n    sum(\n      max without (fstype, mountpoint) (\n        node_filesystem_size_bytes{fstype!=\"\",instance=~\"$instance\",job=\"node\",mountpoint!=\"\"}\n      )\n    )\n  )",
+                    "query": "  sum without (device) (\n    max without (fstype, mountpoint) (\n          node_filesystem_size_bytes{fstype!=\"\",instance=~\"$instance\",job=\"node\",mountpoint!=\"\"}\n        -\n          node_filesystem_avail_bytes{fstype!=\"\",instance=~\"$instance\",job=\"node\",mountpoint!=\"\"}\n      !=\n        0\n    )\n  )\n/\n  scalar(\n    sum(\n      max without (fstype, mountpoint) (\n        node_filesystem_size_bytes{fstype!=\"\",instance=~\"$instance\",job=\"node\",mountpoint!=\"\"}\n      )\n    )\n  )",
                     "seriesNameFormat": "{{instance}}"
                   }
                 }

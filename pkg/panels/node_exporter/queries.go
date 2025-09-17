@@ -170,30 +170,33 @@ var NodeExporterCommonPanelQueries = map[string]parser.Expr{
 		&parser.NumberLiteral{Val: 0},
 	),
 	"NodeExporterClusterNodeDiskSpacePercentage": promqlbuilder.Div(
-		promqlbuilder.Sub(
-			promqlbuilder.Sum(
-				promqlbuilder.Max(
-					vector.New(
-						vector.WithMetricName("node_filesystem_size_bytes"),
-						vector.WithLabelMatchers(
-							label.New("fstype").NotEqual(""),
-							label.New("instance").EqualRegexp("$instance"),
-							label.New("job").Equal("node"),
-							label.New("mountpoint").NotEqual(""),
+		promqlbuilder.Sum(
+			promqlbuilder.Max(
+				promqlbuilder.Neq(
+					promqlbuilder.Sub(
+						vector.New(
+							vector.WithMetricName("node_filesystem_size_bytes"),
+							vector.WithLabelMatchers(
+								label.New("fstype").NotEqual(""),
+								label.New("instance").EqualRegexp("$instance"),
+								label.New("job").Equal("node"),
+								label.New("mountpoint").NotEqual(""),
+							),
+						),
+						vector.New(
+							vector.WithMetricName("node_filesystem_avail_bytes"),
+							vector.WithLabelMatchers(
+								label.New("fstype").NotEqual(""),
+								label.New("instance").EqualRegexp("$instance"),
+								label.New("job").Equal("node"),
+								label.New("mountpoint").NotEqual(""),
+							),
 						),
 					),
-				).Without("fstype", "mountpoint"),
-			).Without("device"),
-			vector.New(
-				vector.WithMetricName("node_filesystem_avail_bytes"),
-				vector.WithLabelMatchers(
-					label.New("fstype").NotEqual(""),
-					label.New("instance").EqualRegexp("$instance"),
-					label.New("job").Equal("node"),
-					label.New("mountpoint").NotEqual(""),
+					&parser.NumberLiteral{Val: 0},
 				),
-			),
-		),
+			).Without("fstype", "mountpoint"),
+		).Without("device"),
 		promqlbuilder.Scalar(
 			promqlbuilder.Sum(
 				promqlbuilder.Max(
