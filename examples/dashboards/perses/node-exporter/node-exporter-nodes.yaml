@@ -198,7 +198,7 @@ spec:
                                     kind: PrometheusDatasource
                                     name: prometheus-datasource
                                 query: |4-
-                                      1
+                                      100
                                     -
                                         avg(node_memory_MemAvailable_bytes{instance="$instance",job="node"})
                                       /

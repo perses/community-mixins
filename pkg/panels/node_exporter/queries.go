@@ -293,7 +293,7 @@ var NodeExporterCommonPanelQueries = map[string]parser.Expr{
 		),
 	),
 	"NodeExporterNodeMemoryUsagePercentage": promqlbuilder.Sub(
-		&parser.NumberLiteral{Val: 1},
+		&parser.NumberLiteral{Val: 100},
 		promqlbuilder.Div(
 			promqlbuilder.Avg(
 				vector.New(

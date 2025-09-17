@@ -292,7 +292,7 @@
                       "kind": "PrometheusDatasource",
                       "name": "prometheus-datasource"
                     },
-                    "query": "  1\n-\n    avg(node_memory_MemAvailable_bytes{instance=\"$instance\",job=\"node\"})\n  /\n    avg(node_memory_MemTotal_bytes{instance=\"$instance\",job=\"node\"}) * 100",
+                    "query": "  100\n-\n    avg(node_memory_MemAvailable_bytes{instance=\"$instance\",job=\"node\"})\n  /\n    avg(node_memory_MemTotal_bytes{instance=\"$instance\",job=\"node\"}) * 100",
                     "seriesNameFormat": "Memory - Usage"
                   }
                 }

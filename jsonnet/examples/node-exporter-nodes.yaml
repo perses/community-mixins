@@ -253,7 +253,7 @@ spec:
                   kind: PrometheusDatasource
                   name: custom-datasource
                 query: |2-
-                    1
+                    100
                   -
                       avg(node_memory_MemAvailable_bytes{instance="$instance",job="node"})
                     /
