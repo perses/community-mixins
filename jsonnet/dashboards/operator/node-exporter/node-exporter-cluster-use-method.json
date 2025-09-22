@@ -77,7 +77,7 @@
                       "kind": "PrometheusDatasource",
                       "name": "prometheus-datasource"
                     },
-                    "query": "  (\n      (\n          instance:node_cpu_utilisation:rate5m{instance=~\"$instance\",job=\"node\"}\n        *\n          instance:node_num_cpu:sum{instance=~\"$instance\",job=\"node\"}\n      )\n    !=\n      0\n  )\n/\n  scalar(sum(instance:node_num_cpu:sum{instance=~\"$instance\",job=\"node\"}))",
+                    "query": "      instance:node_cpu_utilisation:rate5m{instance=~\"$instance\",job=\"node\"}\n    *\n      instance:node_num_cpu:sum{instance=~\"$instance\",job=\"node\"}\n  !=\n    0\n/\n  scalar(sum(instance:node_num_cpu:sum{instance=~\"$instance\",job=\"node\"}))",
                     "seriesNameFormat": "{{instance}}"
                   }
                 }
@@ -121,7 +121,7 @@
                       "kind": "PrometheusDatasource",
                       "name": "prometheus-datasource"
                     },
-                    "query": "  (\n      instance:node_load1_per_cpu:ratio{instance=~\"$instance\",job=\"node\"}\n    /\n      scalar(count(instance:node_load1_per_cpu:ratio{instance=~\"$instance\",job=\"node\"}))\n  )\n!=\n  0",
+                    "query": "    instance:node_load1_per_cpu:ratio{instance=~\"$instance\",job=\"node\"}\n  /\n    scalar(count(instance:node_load1_per_cpu:ratio{instance=~\"$instance\",job=\"node\"}))\n!=\n  0",
                     "seriesNameFormat": "{{instance}}"
                   }
                 }
@@ -165,7 +165,7 @@
                       "kind": "PrometheusDatasource",
                       "name": "prometheus-datasource"
                     },
-                    "query": "  (\n      instance:node_memory_utilisation:ratio{instance=~\"$instance\",job=\"node\"}\n    /\n      scalar(count(instance:node_memory_utilisation:ratio{instance=~\"$instance\",job=\"node\"}))\n  )\n!=\n  0",
+                    "query": "    instance:node_memory_utilisation:ratio{instance=~\"$instance\",job=\"node\"}\n  /\n    scalar(count(instance:node_memory_utilisation:ratio{instance=~\"$instance\",job=\"node\"}))\n!=\n  0",
                     "seriesNameFormat": "{{instance}}"
                   }
                 }
@@ -357,7 +357,7 @@
                       "kind": "PrometheusDatasource",
                       "name": "prometheus-datasource"
                     },
-                    "query": "  (\n      instance_device:node_disk_io_time_seconds:rate5m{instance=~\"$instance\",job=\"node\"}\n    /\n      scalar(count(instance_device:node_disk_io_time_seconds:rate5m{instance=~\"$instance\",job=\"node\"}))\n  )\n!=\n  0",
+                    "query": "    instance_device:node_disk_io_time_seconds:rate5m{instance=~\"$instance\",job=\"node\"}\n  /\n    scalar(count(instance_device:node_disk_io_time_seconds:rate5m{instance=~\"$instance\",job=\"node\"}))\n!=\n  0",
                     "seriesNameFormat": "{{instance}}"
                   }
                 }
@@ -401,7 +401,7 @@
                       "kind": "PrometheusDatasource",
                       "name": "prometheus-datasource"
                     },
-                    "query": "  (\n      instance_device:node_disk_io_time_seconds:rate5m{instance=~\"$instance\",job=\"node\"}\n    /\n      scalar(count(instance_device:node_disk_io_time_seconds:rate5m{instance=~\"$instance\",job=\"node\"}))\n  )\n!=\n  0",
+                    "query": "    instance_device:node_disk_io_time_weighted_seconds:rate5m{instance=~\"$instance\",job=\"node\"}\n  /\n    scalar(\n      count(instance_device:node_disk_io_time_weighted_seconds:rate5m{instance=~\"$instance\",job=\"node\"})\n    )\n!=\n  0",
                     "seriesNameFormat": "{{instance}}"
                   }
                 }
@@ -445,7 +445,7 @@
                       "kind": "PrometheusDatasource",
                       "name": "prometheus-datasource"
                     },
-                    "query": "  sum without (device) (\n    max without (fstype, mountpoint) (\n        (\n            node_filesystem_size_bytes{fstype!=\"\",instance=~\"$instance\",job=\"node\",mountpoint!=\"\"}\n          -\n            node_filesystem_avail_bytes{fstype!=\"\",instance=~\"$instance\",job=\"node\",mountpoint!=\"\"}\n        )\n      !=\n        0\n    )\n  )\n/\n  scalar(\n    sum(\n      max without (fstype, mountpoint) (\n        node_filesystem_size_bytes{fstype!=\"\",instance=~\"$instance\",job=\"node\",mountpoint!=\"\"}\n      )\n    )\n  )",
+                    "query": "  sum without (device) (\n    max without (fstype, mountpoint) (\n          node_filesystem_size_bytes{fstype!=\"\",instance=~\"$instance\",job=\"node\",mountpoint!=\"\"}\n        -\n          node_filesystem_avail_bytes{fstype!=\"\",instance=~\"$instance\",job=\"node\",mountpoint!=\"\"}\n      !=\n        0\n    )\n  )\n/\n  scalar(\n    sum(\n      max without (fstype, mountpoint) (\n        node_filesystem_size_bytes{fstype!=\"\",instance=~\"$instance\",job=\"node\",mountpoint!=\"\"}\n      )\n    )\n  )",
                     "seriesNameFormat": "{{instance}}"
                   }
                 }

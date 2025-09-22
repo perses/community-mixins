@@ -53,18 +53,16 @@ spec:
                                 datasource:
                                     kind: PrometheusDatasource
                                     name: prometheus-datasource
-                                query: |-
-                                    (
-                                        (
-                                            1
-                                          -
-                                            sum without (mode) (
-                                              rate(node_cpu_seconds_total{instance="$instance",job="node",mode=~"idle|iowait|steal"}[$__rate_interval])
-                                            )
+                                query: |4-
+                                        1
+                                      -
+                                        sum without (mode) (
+                                          rate(
+                                            node_cpu_seconds_total{instance="$instance",job="node",mode=~"idle|iowait|steal"}[$__rate_interval]
+                                          )
                                         )
-                                      / ignoring (cpu) group_left ()
-                                        count without (cpu, mode) (node_cpu_seconds_total{instance="$instance",job="node",mode="idle"})
-                                    )
+                                    / ignoring (cpu) group_left ()
+                                      count without (cpu, mode) (node_cpu_seconds_total{instance="$instance",job="node",mode="idle"})
                                 seriesNameFormat: '{{device}} - CPU - Usage'
         "0_1":
             kind: Panel
@@ -202,13 +200,9 @@ spec:
                                 query: |4-
                                       100
                                     -
-                                      (
-                                            avg(node_memory_MemAvailable_bytes{instance="$instance",job="node"})
-                                          /
-                                            avg(node_memory_MemTotal_bytes{instance="$instance",job="node"})
-                                        *
-                                          100
-                                      )
+                                        avg(node_memory_MemAvailable_bytes{instance="$instance",job="node"})
+                                      /
+                                        avg(node_memory_MemTotal_bytes{instance="$instance",job="node"}) * 100
                                 seriesNameFormat: Memory - Usage
         "2_0":
             kind: Panel
@@ -302,7 +296,10 @@ spec:
                                 datasource:
                                     kind: PrometheusDatasource
                                     name: prometheus-datasource
-                                query: rate(node_network_receive_bytes_total{device!="lo",instance="$instance",job="node"}[$__rate_interval])
+                                query: |-
+                                    rate(
+                                      node_network_receive_bytes_total{device!="lo",instance="$instance",job="node"}[$__rate_interval]
+                                    )
                                 seriesNameFormat: '{{device}} - Network - Received'
         "3_1":
             kind: Panel
@@ -330,7 +327,10 @@ spec:
                                 datasource:
                                     kind: PrometheusDatasource
                                     name: prometheus-datasource
-                                query: rate(node_network_transmit_bytes_total{device!="lo",instance="$instance",job="node"}[$__rate_interval])
+                                query: |-
+                                    rate(
+                                      node_network_receive_bytes_total{device!="lo",instance="$instance",job="node"}[$__rate_interval]
+                                    )
                                 seriesNameFormat: '{{device}} - Network - Transmitted'
     layouts:
         - kind: Grid

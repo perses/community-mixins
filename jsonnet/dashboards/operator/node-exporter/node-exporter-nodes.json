@@ -78,7 +78,7 @@
                       "kind": "PrometheusDatasource",
                       "name": "prometheus-datasource"
                     },
-                    "query": "(\n    (\n        1\n      -\n        sum without (mode) (\n          rate(node_cpu_seconds_total{instance=\"$instance\",job=\"node\",mode=~\"idle|iowait|steal\"}[$__rate_interval])\n        )\n    )\n  / ignoring (cpu) group_left ()\n    count without (cpu, mode) (node_cpu_seconds_total{instance=\"$instance\",job=\"node\",mode=\"idle\"})\n)",
+                    "query": "    1\n  -\n    sum without (mode) (\n      rate(\n        node_cpu_seconds_total{instance=\"$instance\",job=\"node\",mode=~\"idle|iowait|steal\"}[$__rate_interval]\n      )\n    )\n/ ignoring (cpu) group_left ()\n  count without (cpu, mode) (node_cpu_seconds_total{instance=\"$instance\",job=\"node\",mode=\"idle\"})",
                     "seriesNameFormat": "{{device}} - CPU - Usage"
                   }
                 }
@@ -292,7 +292,7 @@
                       "kind": "PrometheusDatasource",
                       "name": "prometheus-datasource"
                     },
-                    "query": "  100\n-\n  (\n        avg(node_memory_MemAvailable_bytes{instance=\"$instance\",job=\"node\"})\n      /\n        avg(node_memory_MemTotal_bytes{instance=\"$instance\",job=\"node\"})\n    *\n      100\n  )",
+                    "query": "  100\n-\n    avg(node_memory_MemAvailable_bytes{instance=\"$instance\",job=\"node\"})\n  /\n    avg(node_memory_MemTotal_bytes{instance=\"$instance\",job=\"node\"}) * 100",
                     "seriesNameFormat": "Memory - Usage"
                   }
                 }
@@ -440,7 +440,7 @@
                       "kind": "PrometheusDatasource",
                       "name": "prometheus-datasource"
                     },
-                    "query": "rate(node_network_receive_bytes_total{device!=\"lo\",instance=\"$instance\",job=\"node\"}[$__rate_interval])",
+                    "query": "rate(\n  node_network_receive_bytes_total{device!=\"lo\",instance=\"$instance\",job=\"node\"}[$__rate_interval]\n)",
                     "seriesNameFormat": "{{device}} - Network - Received"
                   }
                 }
@@ -484,7 +484,7 @@
                       "kind": "PrometheusDatasource",
                       "name": "prometheus-datasource"
                     },
-                    "query": "rate(node_network_transmit_bytes_total{device!=\"lo\",instance=\"$instance\",job=\"node\"}[$__rate_interval])",
+                    "query": "rate(\n  node_network_receive_bytes_total{device!=\"lo\",instance=\"$instance\",job=\"node\"}[$__rate_interval]\n)",
                     "seriesNameFormat": "{{device}} - Network - Transmitted"
                   }
                 }

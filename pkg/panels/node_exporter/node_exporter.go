@@ -9,6 +9,7 @@ import (
 	gauge "github.com/perses/plugins/gaugechart/sdk/go"
 	"github.com/perses/plugins/prometheus/sdk/go/query"
 	timeSeriesPanel "github.com/perses/plugins/timeserieschart/sdk/go"
+	"github.com/prometheus/prometheus/model/labels"
 )
 
 // NodeCPUUsagePercentage creates a panel option for displaying the CPU usage percentage
@@ -28,7 +29,7 @@ import (
 //
 // Returns:
 //   - panelgroup.Option: A panel option that can be added to a panel group.
-func NodeCPUUsagePercentage(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
+func NodeCPUUsagePercentage(datasourceName string, labelMatchers ...*labels.Matcher) panelgroup.Option {
 	return panelgroup.AddPanel("CPU Usage",
 		panel.Description("Shows CPU utilization percentage across cluster nodes"),
 		timeSeriesPanel.Chart(
@@ -45,10 +46,10 @@ func NodeCPUUsagePercentage(datasourceName string, labelMatchers ...promql.Label
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchers(
-					"((1 - sum without (mode) (rate(node_cpu_seconds_total{job='node', mode=~'idle|iowait|steal', instance='$instance'}[$__rate_interval]))) / ignoring(cpu) group_left count without (cpu, mode) (node_cpu_seconds_total{job='node', mode='idle', instance='$instance'}))",
+				promql.SetLabelMatchersV2(
+					NodeExporterCommonPanelQueries["NodeExporterCPUUsagePercentage"],
 					labelMatchers,
-				),
+				).Pretty(0),
 				dashboards.AddQueryDataSource(datasourceName),
 				query.SeriesNameFormat("{{device}} - CPU - Usage"),
 			),
@@ -72,7 +73,7 @@ func NodeCPUUsagePercentage(datasourceName string, labelMatchers ...promql.Label
 //
 // Returns:
 //   - panelgroup.Option: The configured panel option.
-func ClusterNodeCPUUsagePercentage(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
+func ClusterNodeCPUUsagePercentage(datasourceName string, labelMatchers ...*labels.Matcher) panelgroup.Option {
 	return panelgroup.AddPanel("CPU Usage",
 		timeSeriesPanel.Chart(
 			timeSeriesPanel.WithYAxis(timeSeriesPanel.YAxis{
@@ -88,10 +89,10 @@ func ClusterNodeCPUUsagePercentage(datasourceName string, labelMatchers ...promq
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchers(
-					"((instance:node_cpu_utilisation:rate5m{job='node'} * instance:node_num_cpu:sum{job='node'}) != 0 ) / scalar(sum(instance:node_num_cpu:sum{job='node'}))",
+				promql.SetLabelMatchersV2(
+					NodeExporterCommonPanelQueries["NodeExporterClusterNodeCPUUsagePercentage"],
 					labelMatchers,
-				),
+				).Pretty(0),
 				dashboards.AddQueryDataSource(datasourceName),
 				query.SeriesNameFormat("{{instance}}"),
 			),
@@ -118,7 +119,7 @@ func ClusterNodeCPUUsagePercentage(datasourceName string, labelMatchers ...promq
 //
 // Returns:
 //   - panelgroup.Option: A panel option that can be added to a panel group.
-func ClusterNodeCPUSaturationPercentage(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
+func ClusterNodeCPUSaturationPercentage(datasourceName string, labelMatchers ...*labels.Matcher) panelgroup.Option {
 	return panelgroup.AddPanel("CPU Saturation (Load1 per CPU)",
 		panel.Description("Shows CPU saturation metrics across cluster nodes"),
 		timeSeriesPanel.Chart(
@@ -135,10 +136,10 @@ func ClusterNodeCPUSaturationPercentage(datasourceName string, labelMatchers ...
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchers(
-					"(instance:node_load1_per_cpu:ratio{job='node'} / scalar(count(instance:node_load1_per_cpu:ratio{job='node'})))  != 0",
+				promql.SetLabelMatchersV2(
+					NodeExporterCommonPanelQueries["NodeExporterClusterNodeCPUSaturationPercentage"],
 					labelMatchers,
-				),
+				).Pretty(0),
 				dashboards.AddQueryDataSource(datasourceName),
 				query.SeriesNameFormat("{{instance}}"),
 			),
@@ -161,7 +162,7 @@ func ClusterNodeCPUSaturationPercentage(datasourceName string, labelMatchers ...
 //
 // Returns:
 //   - panelgroup.Option: The configured panel option.
-func ClusterNodeMemoryUsagePercentage(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
+func ClusterNodeMemoryUsagePercentage(datasourceName string, labelMatchers ...*labels.Matcher) panelgroup.Option {
 	return panelgroup.AddPanel("Memory Utilisation",
 		panel.Description("Shows memory utilization percentage across cluster nodes"),
 		timeSeriesPanel.Chart(
@@ -178,10 +179,10 @@ func ClusterNodeMemoryUsagePercentage(datasourceName string, labelMatchers ...pr
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchers(
-					"(instance:node_memory_utilisation:ratio{job='node'} / scalar(count(instance:node_memory_utilisation:ratio{job='node'}))) != 0",
+				promql.SetLabelMatchersV2(
+					NodeExporterCommonPanelQueries["NodeExporterClusterNodeMemoryUsagePercentage"],
 					labelMatchers,
-				),
+				).Pretty(0),
 				dashboards.AddQueryDataSource(datasourceName),
 				query.SeriesNameFormat("{{instance}}"),
 			),
@@ -208,7 +209,7 @@ func ClusterNodeMemoryUsagePercentage(datasourceName string, labelMatchers ...pr
 //
 // Returns:
 //   - panelgroup.Option: A panel option that can be added to a panel group.
-func ClusterNodeMemorySaturationPercentage(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
+func ClusterNodeMemorySaturationPercentage(datasourceName string, labelMatchers ...*labels.Matcher) panelgroup.Option {
 	return panelgroup.AddPanel("Memory Saturation (Major Page Faults)",
 		panel.Description("Shows memory saturation through page fault metrics"),
 		timeSeriesPanel.Chart(
@@ -225,10 +226,10 @@ func ClusterNodeMemorySaturationPercentage(datasourceName string, labelMatchers 
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchers(
-					"instance:node_vmstat_pgmajfault:rate5m{job='node'}",
+				promql.SetLabelMatchersV2(
+					NodeExporterCommonPanelQueries["NodeExporterClusterNodeMemorySaturationPercentage"],
 					labelMatchers,
-				),
+				).Pretty(0),
 				dashboards.AddQueryDataSource(datasourceName),
 				query.SeriesNameFormat("{{instance}}"),
 			),
@@ -255,7 +256,7 @@ func ClusterNodeMemorySaturationPercentage(datasourceName string, labelMatchers 
 //
 // Returns:
 //   - panelgroup.Option: A panel option that can be added to a panel group.
-func ClusterNodeDiskUsagePercentage(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
+func ClusterNodeDiskUsagePercentage(datasourceName string, labelMatchers ...*labels.Matcher) panelgroup.Option {
 	return panelgroup.AddPanel("Disk IO Utilisation",
 		panel.Description("Shows disk I/O utilization across cluster nodes"),
 		timeSeriesPanel.Chart(
@@ -272,10 +273,10 @@ func ClusterNodeDiskUsagePercentage(datasourceName string, labelMatchers ...prom
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchers(
-					"(instance_device:node_disk_io_time_seconds:rate5m{job='node'} / scalar(count(instance_device:node_disk_io_time_seconds:rate5m{job='node'}))) != 0",
+				promql.SetLabelMatchersV2(
+					NodeExporterCommonPanelQueries["NodeExporterClusterNodeDiskUsagePercentage"],
 					labelMatchers,
-				),
+				).Pretty(0),
 				dashboards.AddQueryDataSource(datasourceName),
 				query.SeriesNameFormat("{{instance}}"),
 			),
@@ -286,12 +287,12 @@ func ClusterNodeDiskUsagePercentage(datasourceName string, labelMatchers ...prom
 // ClusterNodeDiskSaturationPercentage creates a panel option for displaying the disk I/O saturation
 // of cluster nodes.
 // The panel uses the following Prometheus metrics:
-// - instance_device:node_disk_io_time_seconds:rate5m: Rate of disk I/O time
+// - instance_device:node_disk_io_time_weighted_seconds:rate5m: The rate of weighted disk I/O time over a 5-minute interval.
 //
 // The panel shows:
 // - Disk I/O saturation per device
 // - Saturation patterns across nodes
-func ClusterNodeDiskSaturationPercentage(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
+func ClusterNodeDiskSaturationPercentage(datasourceName string, labelMatchers ...*labels.Matcher) panelgroup.Option {
 	return panelgroup.AddPanel("Disk IO Saturation",
 		panel.Description("Shows disk I/O saturation metrics"),
 		timeSeriesPanel.Chart(
@@ -308,10 +309,10 @@ func ClusterNodeDiskSaturationPercentage(datasourceName string, labelMatchers ..
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchers(
-					"(instance_device:node_disk_io_time_seconds:rate5m{job='node'} / scalar(count(instance_device:node_disk_io_time_seconds:rate5m{job='node'}))) != 0",
+				promql.SetLabelMatchersV2(
+					NodeExporterCommonPanelQueries["NodeExporterClusterNodeDiskSaturationPercentage"],
 					labelMatchers,
-				),
+				).Pretty(0),
 				dashboards.AddQueryDataSource(datasourceName),
 				query.SeriesNameFormat("{{instance}}"),
 			),
@@ -328,7 +329,7 @@ func ClusterNodeDiskSaturationPercentage(datasourceName string, labelMatchers ..
 // The panel shows:
 // - Disk space utilization percentage
 // - Available vs total space ratio
-func ClusterNodeDiskSpacePercentage(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
+func ClusterNodeDiskSpacePercentage(datasourceName string, labelMatchers ...*labels.Matcher) panelgroup.Option {
 	return panelgroup.AddPanel("Disk Space Utilisation",
 		panel.Description("Shows disk space utilization metrics"),
 		timeSeriesPanel.Chart(
@@ -345,10 +346,10 @@ func ClusterNodeDiskSpacePercentage(datasourceName string, labelMatchers ...prom
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchers(
-					"sum without (device) (max without (fstype, mountpoint) ((node_filesystem_size_bytes{job='node', fstype!='', mountpoint!=''} - node_filesystem_avail_bytes{job='node', fstype!='', mountpoint!=''}) != 0)) / scalar(sum(max without (fstype, mountpoint) (node_filesystem_size_bytes{job='node', fstype!='', mountpoint!=''})))",
+				promql.SetLabelMatchersV2(
+					NodeExporterCommonPanelQueries["NodeExporterClusterNodeDiskSpacePercentage"],
 					labelMatchers,
-				),
+				).Pretty(0),
 				dashboards.AddQueryDataSource(datasourceName),
 				query.SeriesNameFormat("{{instance}}"),
 			),
@@ -364,7 +365,7 @@ func ClusterNodeDiskSpacePercentage(datasourceName string, labelMatchers ...prom
 // The panel shows:
 // - Network packet drops per interface
 // - Drop rates across nodes
-func ClusterNodeNetworkSaturationBytes(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
+func ClusterNodeNetworkSaturationBytes(datasourceName string, labelMatchers ...*labels.Matcher) panelgroup.Option {
 	return panelgroup.AddPanel("Network Saturation (Drops Receive/Transmit)",
 		panel.Description("Shows network saturation through drop metrics"),
 		timeSeriesPanel.Chart(
@@ -381,10 +382,10 @@ func ClusterNodeNetworkSaturationBytes(datasourceName string, labelMatchers ...p
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchers(
-					"instance:node_network_receive_drop_excluding_lo:rate5m{job='node'} != 0",
+				promql.SetLabelMatchersV2(
+					NodeExporterCommonPanelQueries["NodeExporterClusterNodeNetworkSaturationBytes"],
 					labelMatchers,
-				),
+				).Pretty(0),
 				dashboards.AddQueryDataSource(datasourceName),
 				query.SeriesNameFormat("{{instance}} - Network - Received"),
 			),
@@ -401,7 +402,7 @@ func ClusterNodeNetworkSaturationBytes(datasourceName string, labelMatchers ...p
 // The panel shows:
 // - Network throughput per interface
 // - Receive and transmit rates
-func ClusterNodeNetworkUsageBytes(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
+func ClusterNodeNetworkUsageBytes(datasourceName string, labelMatchers ...*labels.Matcher) panelgroup.Option {
 	return panelgroup.AddPanel("Network Utilisation (Bytes Receive/Transmit)",
 		panel.Description("Shows network utilization in bytes"),
 		timeSeriesPanel.Chart(
@@ -418,20 +419,20 @@ func ClusterNodeNetworkUsageBytes(datasourceName string, labelMatchers ...promql
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchers(
-					"instance:node_network_receive_bytes_excluding_lo:rate5m{job='node'} != 0",
+				promql.SetLabelMatchersV2(
+					NodeExporterCommonPanelQueries["NodeExporterClusterNodeNetworkUsageBytesRecv"],
 					labelMatchers,
-				),
+				).Pretty(0),
 				dashboards.AddQueryDataSource(datasourceName),
 				query.SeriesNameFormat("{{instance}} - Network - Received"),
 			),
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchers(
-					"instance:node_network_transmit_bytes_excluding_lo:rate5m{job='node'} != 0",
+				promql.SetLabelMatchersV2(
+					NodeExporterCommonPanelQueries["NodeExporterClusterNodeNetworkUsageBytesTrams"],
 					labelMatchers,
-				),
+				).Pretty(0),
 				dashboards.AddQueryDataSource(datasourceName),
 				query.SeriesNameFormat("{{instance}} - Network - Transmitted"),
 			),
@@ -457,7 +458,7 @@ func ClusterNodeNetworkUsageBytes(datasourceName string, labelMatchers ...promql
 //
 // Returns:
 //   - panelgroup.Option: The configured panel group option.
-func NodeAverage(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
+func NodeAverage(datasourceName string, labelMatchers ...*labels.Matcher) panelgroup.Option {
 	return panelgroup.AddPanel("CPU Usage",
 		panel.Description("Shows CPU utilization metrics"),
 		timeSeriesPanel.Chart(
@@ -469,40 +470,40 @@ func NodeAverage(datasourceName string, labelMatchers ...promql.LabelMatcher) pa
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchers(
-					"node_load1{job='node', instance='$instance'}",
+				promql.SetLabelMatchersV2(
+					NodeExporterCommonPanelQueries["NodeExporterNodeAverageLoad1"],
 					labelMatchers,
-				),
+				).Pretty(0),
 				dashboards.AddQueryDataSource(datasourceName),
 				query.SeriesNameFormat("CPU - 1m Average"),
 			),
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchers(
-					"node_load5{job='node', instance='$instance'}",
+				promql.SetLabelMatchersV2(
+					NodeExporterCommonPanelQueries["NodeExporterNodeAverageLoad5"],
 					labelMatchers,
-				),
+				).Pretty(0),
 				dashboards.AddQueryDataSource(datasourceName),
 				query.SeriesNameFormat("CPU - 5m Average"),
 			),
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchers(
-					"node_load15{job='node', instance='$instance'}",
+				promql.SetLabelMatchersV2(
+					NodeExporterCommonPanelQueries["NodeExporterNodeAverageLoad15"],
 					labelMatchers,
-				),
+				).Pretty(0),
 				dashboards.AddQueryDataSource(datasourceName),
 				query.SeriesNameFormat("CPU - 15m Average"),
 			),
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchers(
-					"count(node_cpu_seconds_total{job='node', instance='$instance', mode='idle'})",
+				promql.SetLabelMatchersV2(
+					NodeExporterCommonPanelQueries["NodeExporterNodeAverageCountCPU"],
 					labelMatchers,
-				),
+				).Pretty(0),
 				dashboards.AddQueryDataSource(datasourceName),
 				query.SeriesNameFormat("CPU - Logical Cores"),
 			),
@@ -526,7 +527,7 @@ func NodeAverage(datasourceName string, labelMatchers ...promql.LabelMatcher) pa
 //
 // Returns:
 // - panelgroup.Option: The configured panel group option.
-func NodeMemoryUsageBytes(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
+func NodeMemoryUsageBytes(datasourceName string, labelMatchers ...*labels.Matcher) panelgroup.Option {
 	return panelgroup.AddPanel("Memory Usage",
 		panel.Description("Shows memory utilization metrics"),
 		timeSeriesPanel.Chart(
@@ -544,30 +545,30 @@ func NodeMemoryUsageBytes(datasourceName string, labelMatchers ...promql.LabelMa
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchers(
-					"node_memory_Buffers_bytes{job='node', instance='$instance'}",
+				promql.SetLabelMatchersV2(
+					NodeExporterCommonPanelQueries["NodeExporterNodeMemoryUsageBytesBuffers"],
 					labelMatchers,
-				),
+				).Pretty(0),
 				dashboards.AddQueryDataSource(datasourceName),
 				query.SeriesNameFormat("Memory - Buffers"),
 			),
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchers(
-					"node_memory_Cached_bytes{job='node', instance='$instance'}",
+				promql.SetLabelMatchersV2(
+					NodeExporterCommonPanelQueries["NodeExporterNodeMemoryUsageBytesCached"],
 					labelMatchers,
-				),
+				).Pretty(0),
 				dashboards.AddQueryDataSource(datasourceName),
 				query.SeriesNameFormat("Memory - Cached"),
 			),
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchers(
-					"node_memory_MemFree_bytes{job='node', instance='$instance'}",
+				promql.SetLabelMatchersV2(
+					NodeExporterCommonPanelQueries["NodeExporterNodeMemoryUsageBytesMemFree"],
 					labelMatchers,
-				),
+				).Pretty(0),
 				dashboards.AddQueryDataSource(datasourceName),
 				query.SeriesNameFormat("Memory - Free"),
 			),
@@ -590,7 +591,7 @@ func NodeMemoryUsageBytes(datasourceName string, labelMatchers ...promql.LabelMa
 //
 // Returns:
 // - panelgroup.Option: The panel option for the memory usage gauge chart.
-func NodeMemoryUsagePercentage(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
+func NodeMemoryUsagePercentage(datasourceName string, labelMatchers ...*labels.Matcher) panelgroup.Option {
 	return panelgroup.AddPanel("Memory Usage",
 		panel.Description("Shows memory utilization across nodes"),
 		gauge.Chart(
@@ -615,10 +616,10 @@ func NodeMemoryUsagePercentage(datasourceName string, labelMatchers ...promql.La
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchers(
-					"100 - (avg(node_memory_MemAvailable_bytes{job='node', instance='$instance'}) / avg(node_memory_MemTotal_bytes{job='node', instance='$instance'}) * 100)",
+				promql.SetLabelMatchersV2(
+					NodeExporterCommonPanelQueries["NodeExporterNodeMemoryUsagePercentage"],
 					labelMatchers,
-				),
+				).Pretty(0),
 				dashboards.AddQueryDataSource(datasourceName),
 				query.SeriesNameFormat("Memory - Usage"),
 			),
@@ -642,7 +643,7 @@ func NodeMemoryUsagePercentage(datasourceName string, labelMatchers ...promql.La
 //
 // Returns:
 //   - panelgroup.Option: The configured panel option.
-func NodeDiskIOBytes(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
+func NodeDiskIOBytes(datasourceName string, labelMatchers ...*labels.Matcher) panelgroup.Option {
 	return panelgroup.AddPanel("Disk I/O Bytes",
 		panel.Description("Shows disk I/O metrics in bytes"),
 		timeSeriesPanel.Chart(
@@ -659,20 +660,20 @@ func NodeDiskIOBytes(datasourceName string, labelMatchers ...promql.LabelMatcher
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchers(
-					"rate(node_disk_read_bytes_total{job='node', instance='$instance',device!=''}[$__rate_interval])",
+				promql.SetLabelMatchersV2(
+					NodeExporterCommonPanelQueries["NodeExporterNodeDiskIOBytesTotal"],
 					labelMatchers,
-				),
+				).Pretty(0),
 				dashboards.AddQueryDataSource(datasourceName),
 				query.SeriesNameFormat("{{device}} - Disk - Usage"),
 			),
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchers(
-					"rate(node_disk_io_time_seconds_total{job='node', instance='$instance',device!=''}[$__rate_interval])",
+				promql.SetLabelMatchersV2(
+					NodeExporterCommonPanelQueries["NodeExporterNodeDiskIOBytesTime"],
 					labelMatchers,
-				),
+				).Pretty(0),
 				dashboards.AddQueryDataSource(datasourceName),
 				query.SeriesNameFormat("{{device}} - Disk - Written"),
 			),
@@ -688,7 +689,7 @@ func NodeDiskIOBytes(datasourceName string, labelMatchers ...promql.LabelMatcher
 // The panel shows:
 // - I/O operation duration per device
 // - Time spent on disk operations
-func NodeDiskIOSeconds(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
+func NodeDiskIOSeconds(datasourceName string, labelMatchers ...*labels.Matcher) panelgroup.Option {
 	return panelgroup.AddPanel("Disk I/O Seconds",
 		panel.Description("Shows disk I/O duration metrics"),
 		timeSeriesPanel.Chart(
@@ -705,10 +706,10 @@ func NodeDiskIOSeconds(datasourceName string, labelMatchers ...promql.LabelMatch
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchers(
-					"rate(node_disk_io_time_seconds_total{job='node', instance='$instance',device!=''}[$__rate_interval])",
+				promql.SetLabelMatchersV2(
+					NodeExporterCommonPanelQueries["NodeExporterNodeDiskIOSeconds"],
 					labelMatchers,
-				),
+				).Pretty(0),
 				dashboards.AddQueryDataSource(datasourceName),
 				query.SeriesNameFormat("{{device}} - Disk - IO Time"),
 			),
@@ -732,7 +733,7 @@ func NodeDiskIOSeconds(datasourceName string, labelMatchers ...promql.LabelMatch
 //
 // Returns:
 //   - panelgroup.Option: The configured panel option.
-func NodeNetworkReceivedBytes(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
+func NodeNetworkReceivedBytes(datasourceName string, labelMatchers ...*labels.Matcher) panelgroup.Option {
 	return panelgroup.AddPanel("Network Received",
 		panel.Description("Shows network received bytes metrics"),
 		timeSeriesPanel.Chart(
@@ -749,10 +750,10 @@ func NodeNetworkReceivedBytes(datasourceName string, labelMatchers ...promql.Lab
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchers(
-					"rate(node_network_receive_bytes_total{job='node', instance='$instance',device!='lo'}[$__rate_interval])",
+				promql.SetLabelMatchersV2(
+					NodeExporterCommonPanelQueries["NodeExporterNodeNetworkReceivedBytes"],
 					labelMatchers,
-				),
+				).Pretty(0),
 				dashboards.AddQueryDataSource(datasourceName),
 				query.SeriesNameFormat("{{device}} - Network - Received"),
 			),
@@ -776,7 +777,7 @@ func NodeNetworkReceivedBytes(datasourceName string, labelMatchers ...promql.Lab
 //
 // Returns:
 //   - panelgroup.Option: A panel option that can be added to a panel group.
-func NodeNetworkTransmitedBytes(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
+func NodeNetworkTransmitedBytes(datasourceName string, labelMatchers ...*labels.Matcher) panelgroup.Option {
 	return panelgroup.AddPanel("Network Transmitted",
 		panel.Description("Shows network transmitted bytes metrics"),
 		timeSeriesPanel.Chart(
@@ -793,10 +794,10 @@ func NodeNetworkTransmitedBytes(datasourceName string, labelMatchers ...promql.L
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchers(
-					"rate(node_network_transmit_bytes_total{job='node', instance='$instance',device!='lo'}[$__rate_interval])",
+				promql.SetLabelMatchersV2(
+					NodeExporterCommonPanelQueries["NodeExporterNodeNetworkReceivedBytes"],
 					labelMatchers,
-				),
+				).Pretty(0),
 				dashboards.AddQueryDataSource(datasourceName),
 				query.SeriesNameFormat("{{device}} - Network - Transmitted"),
 			),
