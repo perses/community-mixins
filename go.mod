@@ -12,7 +12,7 @@ require (
 	github.com/perses/plugins/table v0.7.1
 	github.com/perses/plugins/timeserieschart v0.10.1
 	github.com/perses/promql-builder v0.1.1-0.20250701065948-b9977cb8da59
-	github.com/prometheus/prometheus v0.305.0
+	github.com/prometheus/prometheus v0.306.0
 	gopkg.in/yaml.v3 v3.0.1
 	k8s.io/apimachinery v0.34.1
 	sigs.k8s.io/yaml v1.6.0
