@@ -8,9 +8,10 @@ import (
 	panelgroup "github.com/perses/perses/go-sdk/panel-group"
 	"github.com/perses/plugins/prometheus/sdk/go/query"
 	timeSeriesPanel "github.com/perses/plugins/timeserieschart/sdk/go"
+	"github.com/prometheus/prometheus/model/labels"
 )
 
-func PushSize(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
+func PushSize(datasourceName string, labelMatchers ...*labels.Matcher) panelgroup.Option {
 	return panelgroup.AddPanel("Push Size",
 		panel.Description("Size of each xDS push."),
 		timeSeriesPanel.Chart(
@@ -33,10 +34,10 @@ func PushSize(datasourceName string, labelMatchers ...promql.LabelMatcher) panel
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchers(
-					"sum by (le) (rate(pilot_xds_config_size_bytes_bucket[1m]))",
+				promql.SetLabelMatchersV2(
+					IstioCommonPanelQueries["IstioPushSize"],
 					labelMatchers,
-				),
+				).Pretty(0),
 				dashboards.AddQueryDataSource(datasourceName),
 				query.SeriesNameFormat("{{le}}"),
 			),
@@ -44,7 +45,7 @@ func PushSize(datasourceName string, labelMatchers ...promql.LabelMatcher) panel
 	)
 }
 
-func PushTime(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
+func PushTime(datasourceName string, labelMatchers ...*labels.Matcher) panelgroup.Option {
 	return panelgroup.AddPanel("Push Time",
 		panel.Description("Count of active and pending proxies managed by each instance.\nPending is expected to converge to zero."),
 		timeSeriesPanel.Chart(
@@ -67,10 +68,10 @@ func PushTime(datasourceName string, labelMatchers ...promql.LabelMatcher) panel
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchers(
-					"sum by (le) (rate(pilot_xds_push_time_bucket[1m]))",
+				promql.SetLabelMatchersV2(
+					IstioCommonPanelQueries["IstioPushTime"],
 					labelMatchers,
-				),
+				).Pretty(0),
 				dashboards.AddQueryDataSource(datasourceName),
 				query.SeriesNameFormat("{{le}}"),
 			),
@@ -78,7 +79,7 @@ func PushTime(datasourceName string, labelMatchers ...promql.LabelMatcher) panel
 	)
 }
 
-func Connections(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
+func Connections(datasourceName string, labelMatchers ...*labels.Matcher) panelgroup.Option {
 	return panelgroup.AddPanel("Connections",
 		panel.Description("Total number of XDS connections."),
 		timeSeriesPanel.Chart(
@@ -102,20 +103,20 @@ func Connections(datasourceName string, labelMatchers ...promql.LabelMatcher) pa
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchers(
-					"sum(envoy_cluster_upstream_cx_active{cluster_name=\"xds-grpc\"})",
+				promql.SetLabelMatchersV2(
+					IstioCommonPanelQueries["IstioConnectionsClientReported"],
 					labelMatchers,
-				),
+				).Pretty(0),
 				dashboards.AddQueryDataSource(datasourceName),
 				query.SeriesNameFormat("Connections (client reported)"),
 			),
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchers(
-					"sum (pilot_xds)",
+				promql.SetLabelMatchersV2(
+					IstioCommonPanelQueries["IstioConnections"],
 					labelMatchers,
-				),
+				).Pretty(0),
 				dashboards.AddQueryDataSource(datasourceName),
 				query.SeriesNameFormat("Connections ( reported)"),
 			),
@@ -123,7 +124,7 @@ func Connections(datasourceName string, labelMatchers ...promql.LabelMatcher) pa
 	)
 }
 
-func CPUUsage(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
+func CPUUsage(datasourceName string, labelMatchers ...*labels.Matcher) panelgroup.Option {
 	return panelgroup.AddPanel("CPU Usage",
 		panel.Description("CPU usage of each running instance"),
 		timeSeriesPanel.Chart(
@@ -141,10 +142,10 @@ func CPUUsage(datasourceName string, labelMatchers ...promql.LabelMatcher) panel
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchers(
-					"sum by (pod) (irate(container_cpu_usage_seconds_total{container=\"discovery\",pod=~\"istiod-.*\"}[$__rate_interval]))",
+				promql.SetLabelMatchersV2(
+					IstioCommonPanelQueries["IstioCPUUsage"],
 					labelMatchers,
-				),
+				).Pretty(0),
 				dashboards.AddQueryDataSource(datasourceName),
 				query.SeriesNameFormat("Container ({{pod}})"),
 			),
@@ -152,7 +153,7 @@ func CPUUsage(datasourceName string, labelMatchers ...promql.LabelMatcher) panel
 	)
 }
 
-func Events(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
+func Events(datasourceName string, labelMatchers ...*labels.Matcher) panelgroup.Option {
 	return panelgroup.AddPanel("Events",
 		panel.Description("Events from Kubernetes API server."),
 		timeSeriesPanel.Chart(
@@ -177,30 +178,30 @@ func Events(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgr
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchers(
-					"sum by (type,event) (rate(pilot_k8s_reg_events[$__rate_interval]))",
+				promql.SetLabelMatchersV2(
+					IstioCommonPanelQueries["IstioEventsReg"],
 					labelMatchers,
-				),
+				).Pretty(0),
 				dashboards.AddQueryDataSource(datasourceName),
 				query.SeriesNameFormat("{{type}} {{event}}"),
 			),
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchers(
-					"sum by (type,event) (rate(pilot_k8s_cfg_events[$__rate_interval]))",
+				promql.SetLabelMatchersV2(
+					IstioCommonPanelQueries["IstioEventsCfg"],
 					labelMatchers,
-				),
+				).Pretty(0),
 				dashboards.AddQueryDataSource(datasourceName),
 				query.SeriesNameFormat("{{type}} {{event}}"),
 			),
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchers(
-					"sum by (type) (rate(pilot_push_triggers[$__rate_interval]))",
+				promql.SetLabelMatchersV2(
+					IstioCommonPanelQueries["IstioEventsPilot"],
 					labelMatchers,
-				),
+				).Pretty(0),
 				dashboards.AddQueryDataSource(datasourceName),
 				query.SeriesNameFormat("{{type}}"),
 			),
@@ -208,7 +209,7 @@ func Events(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgr
 	)
 }
 
-func Goroutines(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
+func Goroutines(datasourceName string, labelMatchers ...*labels.Matcher) panelgroup.Option {
 	return panelgroup.AddPanel("Goroutines",
 		panel.Description("Goroutine count for each running instance"),
 		timeSeriesPanel.Chart(
@@ -226,10 +227,10 @@ func Goroutines(datasourceName string, labelMatchers ...promql.LabelMatcher) pan
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchers(
-					"sum by (pod) (go_goroutines{app=\"istiod\"})",
+				promql.SetLabelMatchersV2(
+					IstioCommonPanelQueries["IstioGoroutines"],
 					labelMatchers,
-				),
+				).Pretty(0),
 				dashboards.AddQueryDataSource(datasourceName),
 				query.SeriesNameFormat("Goroutines ({{pod}})"),
 			),
@@ -237,7 +238,7 @@ func Goroutines(datasourceName string, labelMatchers ...promql.LabelMatcher) pan
 	)
 }
 
-func MemoryAllocations(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
+func MemoryAllocations(datasourceName string, labelMatchers ...*labels.Matcher) panelgroup.Option {
 	return panelgroup.AddPanel("Memory Allocations",
 		panel.Description("Details about memory allocations"),
 		timeSeriesPanel.Chart(
@@ -260,20 +261,20 @@ func MemoryAllocations(datasourceName string, labelMatchers ...promql.LabelMatch
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchers(
-					"sum by (pod) (rate(go_memstats_alloc_bytes_total{app=\"istiod\"}[$__rate_interval]))",
+				promql.SetLabelMatchersV2(
+					IstioCommonPanelQueries["IstioMemoryAllocationsBytesTotal"],
 					labelMatchers,
-				),
+				).Pretty(0),
 				dashboards.AddQueryDataSource(datasourceName),
 				query.SeriesNameFormat("Bytes ({{pod}})"),
 			),
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchers(
-					"sum by (pod) (rate(go_memstats_mallocs_total{app=\"istiod\"}[$__rate_interval]))",
+				promql.SetLabelMatchersV2(
+					IstioCommonPanelQueries["IstioMemoryAllocationsMallocsTotal"],
 					labelMatchers,
-				),
+				).Pretty(0),
 				dashboards.AddQueryDataSource(datasourceName),
 				query.SeriesNameFormat("Objects ({{pod}})"),
 			),
@@ -281,7 +282,7 @@ func MemoryAllocations(datasourceName string, labelMatchers ...promql.LabelMatch
 	)
 }
 
-func MemoryUsage(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
+func MemoryUsage(datasourceName string, labelMatchers ...*labels.Matcher) panelgroup.Option {
 	return panelgroup.AddPanel("Memory Usage",
 		panel.Description("Memory usage of each running instance"),
 		timeSeriesPanel.Chart(
@@ -304,40 +305,40 @@ func MemoryUsage(datasourceName string, labelMatchers ...promql.LabelMatcher) pa
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchers(
-					"sum by (pod) (container_memory_working_set_bytes{container=\"discovery\",pod=~\"istiod-.*\"})",
+				promql.SetLabelMatchersV2(
+					IstioCommonPanelQueries["IstioMemoryUsageWorkingSetBytes"],
 					labelMatchers,
-				),
+				).Pretty(0),
 				dashboards.AddQueryDataSource(datasourceName),
 				query.SeriesNameFormat("Container ({{pod}})"),
 			),
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchers(
-					"sum by (pod) (go_memstats_stack_inuse_bytes{app=\"istiod\"})",
+				promql.SetLabelMatchersV2(
+					IstioCommonPanelQueries["IstioMemoryUsageInuseBytes"],
 					labelMatchers,
-				),
+				).Pretty(0),
 				dashboards.AddQueryDataSource(datasourceName),
 				query.SeriesNameFormat("Stack ({{pod}})"),
 			),
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchers(
-					"sum by (pod) (go_memstats_heap_inuse_bytes{app=\"istiod\"})",
+				promql.SetLabelMatchersV2(
+					IstioCommonPanelQueries["IstioMemoryUsageHeapInuseBytes"],
 					labelMatchers,
-				),
+				).Pretty(0),
 				dashboards.AddQueryDataSource(datasourceName),
 				query.SeriesNameFormat("Heap (In Use) ({{pod}})"),
 			),
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchers(
-					"sum by (pod) (go_memstats_heap_alloc_bytes{app=\"istiod\"})",
+				promql.SetLabelMatchersV2(
+					IstioCommonPanelQueries["IstioMemoryUsageHeapAllocBytes"],
 					labelMatchers,
-				),
+				).Pretty(0),
 				dashboards.AddQueryDataSource(datasourceName),
 				query.SeriesNameFormat("Heap (Allocated) ({{pod}})"),
 			),
@@ -345,7 +346,7 @@ func MemoryUsage(datasourceName string, labelMatchers ...promql.LabelMatcher) pa
 	)
 }
 
-func PilotVersions(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
+func PilotVersions(datasourceName string, labelMatchers ...*labels.Matcher) panelgroup.Option {
 	return panelgroup.AddPanel("Pilot Versions",
 		panel.Description("Version number of each running instance."),
 		timeSeriesPanel.Chart(
@@ -369,10 +370,10 @@ func PilotVersions(datasourceName string, labelMatchers ...promql.LabelMatcher) 
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchers(
-					"sum by (tag) (istio_build{component=\"pilot\"})",
+				promql.SetLabelMatchersV2(
+					IstioCommonPanelQueries["IstioPilotVersions"],
 					labelMatchers,
-				),
+				).Pretty(0),
 				dashboards.AddQueryDataSource(datasourceName),
 				query.SeriesNameFormat("Version ({{tag}})"),
 			),
@@ -380,7 +381,7 @@ func PilotVersions(datasourceName string, labelMatchers ...promql.LabelMatcher) 
 	)
 }
 
-func PushErrors(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
+func PushErrors(datasourceName string, labelMatchers ...*labels.Matcher) panelgroup.Option {
 	return panelgroup.AddPanel("Push Errors",
 		panel.Description("Errors pushing to Envoy."),
 		timeSeriesPanel.Chart(
@@ -405,20 +406,20 @@ func PushErrors(datasourceName string, labelMatchers ...promql.LabelMatcher) pan
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchers(
-					"sum by (type) (pilot_total_xds_rejects)",
+				promql.SetLabelMatchersV2(
+					IstioCommonPanelQueries["IstioPushErrorsRejects"],
 					labelMatchers,
-				),
+				).Pretty(0),
 				dashboards.AddQueryDataSource(datasourceName),
 				query.SeriesNameFormat("Rejected: {{type}}"),
 			),
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchers(
-					"pilot_total_xds_internal_errors",
+				promql.SetLabelMatchersV2(
+					IstioCommonPanelQueries["IstioPushErrors"],
 					labelMatchers,
-				),
+				).Pretty(0),
 				dashboards.AddQueryDataSource(datasourceName),
 				query.SeriesNameFormat("Internal Error"),
 			),
@@ -426,7 +427,7 @@ func PushErrors(datasourceName string, labelMatchers ...promql.LabelMatcher) pan
 	)
 }
 
-func Injection(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
+func Injection(datasourceName string, labelMatchers ...*labels.Matcher) panelgroup.Option {
 	return panelgroup.AddPanel("Injection",
 		panel.Description("Webhook injection success/failure rate."),
 		timeSeriesPanel.Chart(
@@ -451,20 +452,20 @@ func Injection(datasourceName string, labelMatchers ...promql.LabelMatcher) pane
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchers(
-					"sum(rate(sidecar_injection_success_total[1m]))",
+				promql.SetLabelMatchersV2(
+					IstioCommonPanelQueries["IstioInjectionSucessTotal"],
 					labelMatchers,
-				),
+				).Pretty(0),
 				dashboards.AddQueryDataSource(datasourceName),
 				query.SeriesNameFormat("Success"),
 			),
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchers(
-					"sum(rate(sidecar_injection_failure_total[1m]))",
+				promql.SetLabelMatchersV2(
+					IstioCommonPanelQueries["IstioInjectionFailureTotal"],
 					labelMatchers,
-				),
+				).Pretty(0),
 				dashboards.AddQueryDataSource(datasourceName),
 				query.SeriesNameFormat("Failure"),
 			),
@@ -472,7 +473,7 @@ func Injection(datasourceName string, labelMatchers ...promql.LabelMatcher) pane
 	)
 }
 
-func Validation(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
+func Validation(datasourceName string, labelMatchers ...*labels.Matcher) panelgroup.Option {
 	return panelgroup.AddPanel("Validation",
 		panel.Description("Webhook validation success/failure rate."),
 		timeSeriesPanel.Chart(
@@ -497,20 +498,20 @@ func Validation(datasourceName string, labelMatchers ...promql.LabelMatcher) pan
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchers(
-					"sum(rate(galley_validation_passed[1m]))",
+				promql.SetLabelMatchersV2(
+					IstioCommonPanelQueries["IstioValidationPassed"],
 					labelMatchers,
-				),
+				).Pretty(0),
 				dashboards.AddQueryDataSource(datasourceName),
 				query.SeriesNameFormat("Success"),
 			),
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchers(
-					"sum(rate(galley_validation_failed[1m]))",
+				promql.SetLabelMatchersV2(
+					IstioCommonPanelQueries["IstioValidationFailed"],
 					labelMatchers,
-				),
+				).Pretty(0),
 				dashboards.AddQueryDataSource(datasourceName),
 				query.SeriesNameFormat("Failure"),
 			),
@@ -518,7 +519,7 @@ func Validation(datasourceName string, labelMatchers ...promql.LabelMatcher) pan
 	)
 }
 
-func XDSPushes(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
+func XDSPushes(datasourceName string, labelMatchers ...*labels.Matcher) panelgroup.Option {
 	return panelgroup.AddPanel("XDS Pushes",
 		panel.Description("Rate of XDS pushes by type."),
 		timeSeriesPanel.Chart(
@@ -543,10 +544,10 @@ func XDSPushes(datasourceName string, labelMatchers ...promql.LabelMatcher) pane
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchers(
-					"sum by (type) (irate(pilot_xds_pushes[$__rate_interval]))",
+				promql.SetLabelMatchersV2(
+					IstioCommonPanelQueries["IstioXDSPushes"],
 					labelMatchers,
-				),
+				).Pretty(0),
 				dashboards.AddQueryDataSource(datasourceName),
 				query.SeriesNameFormat("{{type}}"),
 			),

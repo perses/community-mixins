@@ -3,13 +3,13 @@ package istio
 import (
 	"github.com/perses/community-dashboards/pkg/dashboards"
 	panels "github.com/perses/community-dashboards/pkg/panels/istio"
-	"github.com/perses/community-dashboards/pkg/promql"
 	"github.com/perses/perses/go-sdk/dashboard"
 	panelgroup "github.com/perses/perses/go-sdk/panel-group"
 	listVar "github.com/perses/perses/go-sdk/variable/list-variable"
 	markdownPanel "github.com/perses/plugins/markdown/sdk/go"
 	labelValuesVar "github.com/perses/plugins/prometheus/sdk/go/variable/label-values"
 	promqlVar "github.com/perses/plugins/prometheus/sdk/go/variable/promql"
+	"github.com/prometheus/prometheus/model/labels"
 )
 
 // Helper function to create markdown header panels
@@ -33,7 +33,7 @@ func withWorkloadGeneralSection() dashboard.Option {
 	)
 }
 
-func withWorkloadGeneralIISection(datasource string, labelMatcher promql.LabelMatcher) dashboard.Option {
+func withWorkloadGeneralIISection(datasource string, labelMatcher *labels.Matcher) dashboard.Option {
 	return dashboard.AddPanelGroup("General (II)",
 		panelgroup.PanelsPerLine(3),
 		panelgroup.PanelHeight(4),
@@ -43,7 +43,7 @@ func withWorkloadGeneralIISection(datasource string, labelMatcher promql.LabelMa
 	)
 }
 
-func withWorkloadGeneralIIISection(datasource string, labelMatcher promql.LabelMatcher) dashboard.Option {
+func withWorkloadGeneralIIISection(datasource string, labelMatcher *labels.Matcher) dashboard.Option {
 	return dashboard.AddPanelGroup("General (III)",
 		panelgroup.PanelsPerLine(2),
 		panelgroup.PanelHeight(4),
@@ -64,7 +64,7 @@ func withWorkloadInboundWorkloadsSection() dashboard.Option {
 	)
 }
 
-func withWorkloadInboundWorkloadsIISection(datasource string, labelMatcher promql.LabelMatcher) dashboard.Option {
+func withWorkloadInboundWorkloadsIISection(datasource string, labelMatcher *labels.Matcher) dashboard.Option {
 	return dashboard.AddPanelGroup("Inbound Workloads",
 		panelgroup.PanelsPerLine(2),
 		panelgroup.PanelHeight(6),
@@ -73,7 +73,7 @@ func withWorkloadInboundWorkloadsIISection(datasource string, labelMatcher promq
 	)
 }
 
-func withWorkloadInboundWorkloadsIIISection(datasource string, labelMatcher promql.LabelMatcher) dashboard.Option {
+func withWorkloadInboundWorkloadsIIISection(datasource string, labelMatcher *labels.Matcher) dashboard.Option {
 	return dashboard.AddPanelGroup("Inbound Workloads (II)",
 		panelgroup.PanelsPerLine(3),
 		panelgroup.PanelHeight(6),
@@ -83,7 +83,7 @@ func withWorkloadInboundWorkloadsIIISection(datasource string, labelMatcher prom
 	)
 }
 
-func withWorkloadInboundWorkloadsIVSection(datasource string, labelMatcher promql.LabelMatcher) dashboard.Option {
+func withWorkloadInboundWorkloadsIVSection(datasource string, labelMatcher *labels.Matcher) dashboard.Option {
 	return dashboard.AddPanelGroup("Inbound Workloads (III)",
 		panelgroup.PanelsPerLine(2),
 		panelgroup.PanelHeight(6),
@@ -100,7 +100,7 @@ func withWorkloadOutboundServicesSection() dashboard.Option {
 	)
 }
 
-func withWorkloadOutboundServicesIISection(datasource string, labelMatcher promql.LabelMatcher) dashboard.Option {
+func withWorkloadOutboundServicesIISection(datasource string, labelMatcher *labels.Matcher) dashboard.Option {
 	return dashboard.AddPanelGroup("Outbound Services (II)",
 		panelgroup.PanelsPerLine(2),
 		panelgroup.PanelHeight(6),
@@ -109,7 +109,7 @@ func withWorkloadOutboundServicesIISection(datasource string, labelMatcher promq
 	)
 }
 
-func withWorkloadOutboundServicesIIISection(datasource string, labelMatcher promql.LabelMatcher) dashboard.Option {
+func withWorkloadOutboundServicesIIISection(datasource string, labelMatcher *labels.Matcher) dashboard.Option {
 	return dashboard.AddPanelGroup("Outbound Services (III)",
 		panelgroup.PanelsPerLine(3),
 		panelgroup.PanelHeight(6),
@@ -119,7 +119,7 @@ func withWorkloadOutboundServicesIIISection(datasource string, labelMatcher prom
 	)
 }
 
-func withWorkloadOutboundServicesIVSection(datasource string, labelMatcher promql.LabelMatcher) dashboard.Option {
+func withWorkloadOutboundServicesIVSection(datasource string, labelMatcher *labels.Matcher) dashboard.Option {
 	return dashboard.AddPanelGroup("Outbound Services (IV)",
 		panelgroup.PanelsPerLine(2),
 		panelgroup.PanelHeight(6),
@@ -129,7 +129,7 @@ func withWorkloadOutboundServicesIVSection(datasource string, labelMatcher promq
 }
 
 func BuildIstioWorkload(project string, datasource string, clusterLabelName string) dashboards.DashboardResult {
-	clusterLabelMatcher := dashboards.GetClusterLabelMatcher(clusterLabelName)
+	clusterLabelMatcher := dashboards.GetClusterLabelMatcherV2(clusterLabelName)
 	return dashboards.NewDashboardResult(
 		dashboard.New("istio-workload-dashboard",
 			dashboard.ProjectName(project),

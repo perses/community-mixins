@@ -156,7 +156,7 @@
                       "kind": "PrometheusDatasource",
                       "name": "prometheus-datasource"
                     },
-                    "query": "sum by (pod) (\n  irate(container_cpu_usage_seconds_total{container=\"istio-proxy\",pod=~\"ztunnel-.*\"}[$__rate_interval])\n)",
+                    "query": "sum by (pod) (\n  irate(\n    container_cpu_usage_seconds_total{container=\"istio-proxy\",pod=~\"ztunnel-.*\"}[$__rate_interval]\n  )\n)",
                     "seriesNameFormat": "Container ({{pod}})"
                   }
                 }
@@ -225,7 +225,7 @@
                       "kind": "PrometheusDatasource",
                       "name": "prometheus-datasource"
                     },
-                    "query": "-sum by (pod) (rate(istio_tcp_connections_closed_total{pod=~\"ztunnel-.*\"}[$__rate_interval]))",
+                    "query": "sum by (pod) (rate(istio_tcp_connections_closed_total{pod=~\"ztunnel-.*\"}[$__rate_interval]))",
                     "seriesNameFormat": "Closed ({{pod}})"
                   }
                 }

@@ -168,25 +168,23 @@ spec:
                 datasource:
                   kind: PrometheusDatasource
                   name: prometheus-datasource
-                query: |-
-                  (
-                      sum(
-                        irate(
-                          container_cpu_usage_seconds_total{container="istio-proxy",pod=~"istio-ingressgateway-.*"}[$__rate_interval]
-                        )
+                query: |2-
+                    sum(
+                      irate(
+                        container_cpu_usage_seconds_total{container="istio-proxy",pod=~"istio-ingressgateway-.*"}[$__rate_interval]
+                      )
+                    )
+                  /
+                      round(
+                        sum(
+                          irate(
+                            istio_requests_total{reporter="source",source_workload="istio-ingressgateway"}[$__rate_interval]
+                          )
+                        ),
+                        0.001
                       )
                     /
-                      (
-                          round(
-                            sum(
-                              irate(istio_requests_total{reporter="source",source_workload="istio-ingressgateway"}[$__rate_interval])
-                            ),
-                            0.001
-                          )
-                        /
-                          1000
-                      )
-                  )
+                      1000
                 seriesNameFormat: istio-ingressgateway
         - kind: TimeSeriesQuery
           spec:
@@ -197,17 +195,15 @@ spec:
                   kind: PrometheusDatasource
                   name: prometheus-datasource
                 query: |2-
-                    (
-                        sum(
-                          irate(
-                            container_cpu_usage_seconds_total{container="istio-proxy",namespace!="istio-system"}[$__rate_interval]
-                          )
+                      sum(
+                        irate(
+                          container_cpu_usage_seconds_total{container="istio-proxy",namespace!="istio-system"}[$__rate_interval]
                         )
-                      /
-                        (round(sum(irate(istio_requests_total[$__rate_interval])), 0.001) / 1000)
-                    )
+                      )
+                    /
+                      round(sum(irate(istio_requests_total[$__rate_interval])), 0.001) / 1000
                   /
-                    (sum(irate(istio_requests_total{source_workload="istio-ingressgateway"}[$__rate_interval])) > bool 10)
+                    sum(irate(istio_requests_total{source_workload="istio-ingressgateway"}[$__rate_interval])) > bool 10
                 seriesNameFormat: istio-proxy
     "1_1":
       kind: Panel
@@ -338,7 +334,9 @@ spec:
                   name: prometheus-datasource
                 query: |-
                   sum(
-                    irate(istio_response_bytes_sum{reporter="source",source_workload="istio-ingressgateway"}[$__rate_interval])
+                    irate(
+                      istio_response_bytes_sum{reporter="source",source_workload="istio-ingressgateway"}[$__rate_interval]
+                    )
                   )
                 seriesNameFormat: istio-ingressgateway
         - kind: TimeSeriesQuery

@@ -69,7 +69,7 @@
                       "kind": "PrometheusDatasource",
                       "name": "prometheus-datasource"
                     },
-                    "query": "(\n    sum(\n      irate(\n        container_cpu_usage_seconds_total{container=\"istio-proxy\",pod=~\"istio-ingressgateway-.*\"}[$__rate_interval]\n      )\n    )\n  /\n    (\n        round(\n          sum(\n            irate(istio_requests_total{reporter=\"source\",source_workload=\"istio-ingressgateway\"}[$__rate_interval])\n          ),\n          0.001\n        )\n      /\n        1000\n    )\n)",
+                    "query": "  sum(\n    irate(\n      container_cpu_usage_seconds_total{container=\"istio-proxy\",pod=~\"istio-ingressgateway-.*\"}[$__rate_interval]\n    )\n  )\n/\n    round(\n      sum(\n        irate(\n          istio_requests_total{reporter=\"source\",source_workload=\"istio-ingressgateway\"}[$__rate_interval]\n        )\n      ),\n      0.001\n    )\n  /\n    1000",
                     "seriesNameFormat": "istio-ingressgateway"
                   }
                 }
@@ -85,7 +85,7 @@
                       "kind": "PrometheusDatasource",
                       "name": "prometheus-datasource"
                     },
-                    "query": "  (\n      sum(\n        irate(\n          container_cpu_usage_seconds_total{container=\"istio-proxy\",namespace!=\"istio-system\"}[$__rate_interval]\n        )\n      )\n    /\n      (round(sum(irate(istio_requests_total[$__rate_interval])), 0.001) / 1000)\n  )\n/\n  (sum(irate(istio_requests_total{source_workload=\"istio-ingressgateway\"}[$__rate_interval])) \u003e bool 10)",
+                    "query": "    sum(\n      irate(\n        container_cpu_usage_seconds_total{container=\"istio-proxy\",namespace!=\"istio-system\"}[$__rate_interval]\n      )\n    )\n  /\n    round(sum(irate(istio_requests_total[$__rate_interval])), 0.001) / 1000\n/\n  sum(irate(istio_requests_total{source_workload=\"istio-ingressgateway\"}[$__rate_interval])) \u003e bool 10",
                     "seriesNameFormat": "istio-proxy"
                   }
                 }
@@ -261,7 +261,7 @@
                       "kind": "PrometheusDatasource",
                       "name": "prometheus-datasource"
                     },
-                    "query": "sum(\n  irate(istio_response_bytes_sum{reporter=\"source\",source_workload=\"istio-ingressgateway\"}[$__rate_interval])\n)",
+                    "query": "sum(\n  irate(\n    istio_response_bytes_sum{reporter=\"source\",source_workload=\"istio-ingressgateway\"}[$__rate_interval]\n  )\n)",
                     "seriesNameFormat": "istio-ingressgateway"
                   }
                 }

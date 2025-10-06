@@ -3,12 +3,12 @@ package istio
 import (
 	"github.com/perses/community-dashboards/pkg/dashboards"
 	panels "github.com/perses/community-dashboards/pkg/panels/istio"
-	"github.com/perses/community-dashboards/pkg/promql"
 	"github.com/perses/perses/go-sdk/dashboard"
 	panelgroup "github.com/perses/perses/go-sdk/panel-group"
+	"github.com/prometheus/prometheus/model/labels"
 )
 
-func withProcessGroup(datasource string, labelMatcher promql.LabelMatcher) dashboard.Option {
+func withProcessGroup(datasource string, labelMatcher *labels.Matcher) dashboard.Option {
 	return dashboard.AddPanelGroup("Process",
 		panelgroup.PanelsPerLine(3),
 		panelgroup.PanelHeight(8),
@@ -18,7 +18,7 @@ func withProcessGroup(datasource string, labelMatcher promql.LabelMatcher) dashb
 	)
 }
 
-func withNetworkGroup(datasource string, labelMatcher promql.LabelMatcher) dashboard.Option {
+func withNetworkGroup(datasource string, labelMatcher *labels.Matcher) dashboard.Option {
 	return dashboard.AddPanelGroup("Network",
 		panelgroup.PanelsPerLine(3),
 		panelgroup.PanelHeight(8),
@@ -28,7 +28,7 @@ func withNetworkGroup(datasource string, labelMatcher promql.LabelMatcher) dashb
 	)
 }
 
-func withOperationsGroup(datasource string, labelMatcher promql.LabelMatcher) dashboard.Option {
+func withOperationsGroup(datasource string, labelMatcher *labels.Matcher) dashboard.Option {
 	return dashboard.AddPanelGroup("Operations",
 		panelgroup.PanelsPerLine(3),
 		panelgroup.PanelHeight(8),
@@ -39,7 +39,7 @@ func withOperationsGroup(datasource string, labelMatcher promql.LabelMatcher) da
 }
 
 func BuildIstioZtunnel(project string, datasource string, clusterLabelName string) dashboards.DashboardResult {
-	emptyLabelMatcher := promql.LabelMatcher{}
+	emptyLabelMatcher := &labels.Matcher{}
 	return dashboards.NewDashboardResult(
 		dashboard.New("istio-ztunnel-dashboard",
 			dashboard.ProjectName(project),

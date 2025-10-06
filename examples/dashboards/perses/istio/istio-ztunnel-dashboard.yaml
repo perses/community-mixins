@@ -102,7 +102,9 @@ spec:
                                     name: prometheus-datasource
                                 query: |-
                                     sum by (pod) (
-                                      irate(container_cpu_usage_seconds_total{container="istio-proxy",pod=~"ztunnel-.*"}[$__rate_interval])
+                                      irate(
+                                        container_cpu_usage_seconds_total{container="istio-proxy",pod=~"ztunnel-.*"}[$__rate_interval]
+                                      )
                                     )
                                 seriesNameFormat: Container ({{pod}})
         "1_0":
@@ -146,7 +148,7 @@ spec:
                                 datasource:
                                     kind: PrometheusDatasource
                                     name: prometheus-datasource
-                                query: -sum by (pod) (rate(istio_tcp_connections_closed_total{pod=~"ztunnel-.*"}[$__rate_interval]))
+                                query: sum by (pod) (rate(istio_tcp_connections_closed_total{pod=~"ztunnel-.*"}[$__rate_interval]))
                                 seriesNameFormat: Closed ({{pod}})
         "1_1":
             kind: Panel

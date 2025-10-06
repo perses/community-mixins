@@ -10,9 +10,10 @@ import (
 	statPanel "github.com/perses/plugins/statchart/sdk/go"
 	tablePanel "github.com/perses/plugins/table/sdk/go"
 	timeSeriesPanel "github.com/perses/plugins/timeserieschart/sdk/go"
+	"github.com/prometheus/prometheus/model/labels"
 )
 
-func HTTPGRPCWorkloads(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
+func HTTPGRPCWorkloads(datasourceName string, labelMatchers ...*labels.Matcher) panelgroup.Option {
 	return panelgroup.AddPanel("HTTP/gRPC Workloads",
 		panel.Description("Request information for HTTP services"),
 		tablePanel.Table(
@@ -67,50 +68,50 @@ func HTTPGRPCWorkloads(datasourceName string, labelMatchers ...promql.LabelMatch
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchers(
-					"label_join(sum by (destination_workload,destination_workload_namespace,destination_service)(rate(istio_requests_total{reporter=~\"source|waypoint\"}[$__rate_interval])), \"destination_workload_var\", \".\", \"destination_workload\", \"destination_workload_namespace\")",
+				promql.SetLabelMatchersV2(
+					IstioCommonPanelQueries["IstioHTTPGRPCWorkloads"],
 					labelMatchers,
-				),
+				).Pretty(0),
 				dashboards.AddQueryDataSource(datasourceName),
 				query.SeriesNameFormat("{{ destination_workload}}.{{ destination_workload_namespace }}"),
 			),
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchers(
-					"label_join(histogram_quantile(0.5, sum by (le,destination_workload,destination_workload_namespace) (rate(istio_request_duration_milliseconds_bucket{reporter=~\"source|waypoint\"}[$__rate_interval]))), \"destination_workload_var\", \".\", \"destination_workload\", \"destination_workload_namespace\")",
+				promql.SetLabelMatchersV2(
+					IstioCommonPanelQueries["IstioHTTPGRPCWorkloads50"],
 					labelMatchers,
-				),
+				).Pretty(0),
 				dashboards.AddQueryDataSource(datasourceName),
 				query.SeriesNameFormat("{{ destination_workload}}.{{ destination_workload_namespace }}"),
 			),
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchers(
-					"label_join(histogram_quantile(0.9, sum by (le,destination_workload,destination_workload_namespace) (rate(istio_request_duration_milliseconds_bucket{reporter=~\"source|waypoint\"}[$__rate_interval]))), \"destination_workload_var\", \".\", \"destination_workload\", \"destination_workload_namespace\")",
+				promql.SetLabelMatchersV2(
+					IstioCommonPanelQueries["IstioHTTPGRPCWorkloads90"],
 					labelMatchers,
-				),
+				).Pretty(0),
 				dashboards.AddQueryDataSource(datasourceName),
 				query.SeriesNameFormat("{{ destination_workload}}.{{ destination_workload_namespace }}"),
 			),
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchers(
-					"label_join(histogram_quantile(0.99, sum by (le,destination_workload,destination_workload_namespace) (rate(istio_request_duration_milliseconds_bucket{reporter=~\"source|waypoint\"}[$__rate_interval]))), \"destination_workload_var\", \".\", \"destination_workload\", \"destination_workload_namespace\")",
+				promql.SetLabelMatchersV2(
+					IstioCommonPanelQueries["IstioHTTPGRPCWorkloads99"],
 					labelMatchers,
-				),
+				).Pretty(0),
 				dashboards.AddQueryDataSource(datasourceName),
 				query.SeriesNameFormat("{{ destination_workload}}.{{ destination_workload_namespace }}"),
 			),
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchers(
-					"label_join(sum by (destination_workload,destination_workload_namespace)(rate(istio_requests_total{reporter=~\"source|waypoint\",response_code!~\"5..\"}[$__rate_interval]))/sum by (destination_workload,destination_workload_namespace)(rate(istio_requests_total{reporter=~\"source|waypoint\"}[$__rate_interval])), \"destination_workload_var\", \".\", \"destination_workload\", \"destination_workload_namespace\")",
+				promql.SetLabelMatchersV2(
+					IstioCommonPanelQueries["IstioHTTPGRPCWorkloadsReqTotal"],
 					labelMatchers,
-				),
+				).Pretty(0),
 				dashboards.AddQueryDataSource(datasourceName),
 				query.SeriesNameFormat("{{ destination_workload}}.{{ destination_workload_namespace }}"),
 			),
@@ -118,7 +119,7 @@ func HTTPGRPCWorkloads(datasourceName string, labelMatchers ...promql.LabelMatch
 	)
 }
 
-func TCPServices(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
+func TCPServices(datasourceName string, labelMatchers ...*labels.Matcher) panelgroup.Option {
 	return panelgroup.AddPanel("TCP Workloads",
 		panel.Description("Bytes sent and recieived information for TCP services"),
 		tablePanel.Table(
@@ -161,20 +162,20 @@ func TCPServices(datasourceName string, labelMatchers ...promql.LabelMatcher) pa
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchers(
-					"label_join(sum by (destination_workload,destination_workload_namespace,destination_service) (rate(istio_tcp_received_bytes_total{reporter=~\"source|waypoint\"}[$__rate_interval])), \"destination_workload_var\", \".\", \"destination_workload\", \"destination_workload_namespace\")",
+				promql.SetLabelMatchersV2(
+					IstioCommonPanelQueries["IstioTCPServicesBytesRecv"],
 					labelMatchers,
-				),
+				).Pretty(0),
 				dashboards.AddQueryDataSource(datasourceName),
 				query.SeriesNameFormat("{{ destination_workload}}.{{ destination_workload_namespace }}"),
 			),
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchers(
-					"label_join(sum by (destination_workload,destination_workload_namespace,destination_service) (rate(istio_tcp_sent_bytes_total{reporter=~\"source|waypoint\"}[$__rate_interval])), \"destination_workload_var\", \".\", \"destination_workload\", \"destination_workload_namespace\")",
+				promql.SetLabelMatchersV2(
+					IstioCommonPanelQueries["IstioTCPServicesBytesSent"],
 					labelMatchers,
-				),
+				).Pretty(0),
 				dashboards.AddQueryDataSource(datasourceName),
 				query.SeriesNameFormat("{{ destination_workload}}.{{ destination_workload_namespace }}"),
 			),
@@ -182,7 +183,7 @@ func TCPServices(datasourceName string, labelMatchers ...promql.LabelMatcher) pa
 	)
 }
 
-func GlobalRequestVolume(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
+func GlobalRequestVolume(datasourceName string, labelMatchers ...*labels.Matcher) panelgroup.Option {
 	return panelgroup.AddPanel("Traffic Volume",
 		panel.Description("Total requests in the cluster"),
 		statPanel.Chart(
@@ -204,17 +205,17 @@ func GlobalRequestVolume(datasourceName string, labelMatchers ...promql.LabelMat
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchers(
-					"round(sum (rate(istio_requests_total{reporter=~\"source|waypoint\"}[$__rate_interval])), 0.01)",
+				promql.SetLabelMatchersV2(
+					IstioCommonPanelQueries["IstioGlobalRequestVolume"],
 					labelMatchers,
-				),
+				).Pretty(0),
 				dashboards.AddQueryDataSource(datasourceName),
 			),
 		),
 	)
 }
 
-func GlobalSuccessRate(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
+func GlobalSuccessRate(datasourceName string, labelMatchers ...*labels.Matcher) panelgroup.Option {
 	return panelgroup.AddPanel("Success Rate",
 		panel.Description("Total success rate of requests in the cluster"),
 		statPanel.Chart(
@@ -236,17 +237,17 @@ func GlobalSuccessRate(datasourceName string, labelMatchers ...promql.LabelMatch
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchers(
-					"sum(rate(istio_requests_total{reporter=~\"source|waypoint\",response_code!~\"5..\"}[$__rate_interval])) / sum(rate(istio_requests_total{reporter=~\"source|waypoint\"}[$__rate_interval]))",
+				promql.SetLabelMatchersV2(
+					IstioCommonPanelQueries["IstionGlobalSuccessRate"],
 					labelMatchers,
-				),
+				).Pretty(0),
 				dashboards.AddQueryDataSource(datasourceName),
 			),
 		),
 	)
 }
 
-func Global4xxRate(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
+func Global4xxRate(datasourceName string, labelMatchers ...*labels.Matcher) panelgroup.Option {
 	return panelgroup.AddPanel("4xxs",
 		panel.Description("Total 4xx requests in in the cluster"),
 		statPanel.Chart(
@@ -268,17 +269,17 @@ func Global4xxRate(datasourceName string, labelMatchers ...promql.LabelMatcher) 
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchers(
-					"round(sum(rate(istio_requests_total{reporter=~\"source|waypoint\",response_code=~\"4..\"}[$__rate_interval])), 0.01)or vector(0)",
+				promql.SetLabelMatchersV2(
+					IstioCommonPanelQueries["IstioGlobal4xxRate"],
 					labelMatchers,
-				),
+				).Pretty(0),
 				dashboards.AddQueryDataSource(datasourceName),
 			),
 		),
 	)
 }
 
-func Global5xxRate(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
+func Global5xxRate(datasourceName string, labelMatchers ...*labels.Matcher) panelgroup.Option {
 	return panelgroup.AddPanel("5xxs",
 		panel.Description("Total 5xx requests in in the cluster"),
 		statPanel.Chart(
@@ -300,17 +301,17 @@ func Global5xxRate(datasourceName string, labelMatchers ...promql.LabelMatcher) 
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchers(
-					"round(sum(rate(istio_requests_total{reporter=~\"source|waypoint\",response_code=~\"5..\"}[$__rate_interval])), 0.01)or vector(0)",
+				promql.SetLabelMatchersV2(
+					IstioCommonPanelQueries["IstioGlobal5xxRate"],
 					labelMatchers,
-				),
+				).Pretty(0),
 				dashboards.AddQueryDataSource(datasourceName),
 			),
 		),
 	)
 }
 
-func IstioComponentVersions(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
+func IstioComponentVersions(datasourceName string, labelMatchers ...*labels.Matcher) panelgroup.Option {
 	return panelgroup.AddPanel("Istio Component Versions",
 		panel.Description("Version number of each running instance"),
 		timeSeriesPanel.Chart(
@@ -327,10 +328,10 @@ func IstioComponentVersions(datasourceName string, labelMatchers ...promql.Label
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchers(
-					"sum by (component,tag) (istio_build)",
+				promql.SetLabelMatchersV2(
+					IstioCommonPanelQueries["IstioComponentVersions"],
 					labelMatchers,
-				),
+				).Pretty(0),
 				dashboards.AddQueryDataSource(datasourceName),
 				query.SeriesNameFormat("{{component}} ({{tag}})"),
 			),
