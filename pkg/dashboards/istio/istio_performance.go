@@ -3,12 +3,12 @@ package istio
 import (
 	"github.com/perses/community-dashboards/pkg/dashboards"
 	panels "github.com/perses/community-dashboards/pkg/panels/istio"
-	"github.com/perses/community-dashboards/pkg/promql"
 	"github.com/perses/perses/go-sdk/dashboard"
 	panelgroup "github.com/perses/perses/go-sdk/panel-group"
+	"github.com/prometheus/prometheus/model/labels"
 )
 
-func withPerformanceNotes(datasource string, labelMatcher promql.LabelMatcher) dashboard.Option {
+func withPerformanceNotes(datasource string, labelMatcher *labels.Matcher) dashboard.Option {
 	return dashboard.AddPanelGroup("Performance Dashboard Notes",
 		panelgroup.PanelsPerLine(1),
 		panelgroup.PanelHeight(6),
@@ -16,7 +16,7 @@ func withPerformanceNotes(datasource string, labelMatcher promql.LabelMatcher) d
 	)
 }
 
-func withVCPUUsage(datasource string, labelMatcher promql.LabelMatcher) dashboard.Option {
+func withVCPUUsage(datasource string, labelMatcher *labels.Matcher) dashboard.Option {
 	return dashboard.AddPanelGroup("vCPU Usage",
 		panelgroup.PanelsPerLine(2),
 		panelgroup.PanelHeight(8),
@@ -25,7 +25,7 @@ func withVCPUUsage(datasource string, labelMatcher promql.LabelMatcher) dashboar
 	)
 }
 
-func withMemoryAndDataRates(datasource string, labelMatcher promql.LabelMatcher) dashboard.Option {
+func withMemoryAndDataRates(datasource string, labelMatcher *labels.Matcher) dashboard.Option {
 	return dashboard.AddPanelGroup("Memory and Data Rates",
 		panelgroup.PanelsPerLine(2),
 		panelgroup.PanelHeight(8),
@@ -34,7 +34,7 @@ func withMemoryAndDataRates(datasource string, labelMatcher promql.LabelMatcher)
 	)
 }
 
-func withIstioComponentVersionsPerf(datasource string, labelMatcher promql.LabelMatcher) dashboard.Option {
+func withIstioComponentVersionsPerf(datasource string, labelMatcher *labels.Matcher) dashboard.Option {
 	return dashboard.AddPanelGroup("Istio Component Versions",
 		panelgroup.PanelsPerLine(1),
 		panelgroup.PanelHeight(8),
@@ -42,7 +42,7 @@ func withIstioComponentVersionsPerf(datasource string, labelMatcher promql.Label
 	)
 }
 
-func withProxyResourceUsage(datasource string, labelMatcher promql.LabelMatcher) dashboard.Option {
+func withProxyResourceUsage(datasource string, labelMatcher *labels.Matcher) dashboard.Option {
 	return dashboard.AddPanelGroup("Proxy Resource Usage",
 		panelgroup.PanelsPerLine(3),
 		panelgroup.PanelHeight(7),
@@ -52,7 +52,7 @@ func withProxyResourceUsage(datasource string, labelMatcher promql.LabelMatcher)
 	)
 }
 
-func withIstiodResourceUsage(datasource string, labelMatcher promql.LabelMatcher) dashboard.Option {
+func withIstiodResourceUsage(datasource string, labelMatcher *labels.Matcher) dashboard.Option {
 	return dashboard.AddPanelGroup("Istiod Resource Usage",
 		panelgroup.PanelsPerLine(4),
 		panelgroup.PanelHeight(7),
@@ -64,7 +64,7 @@ func withIstiodResourceUsage(datasource string, labelMatcher promql.LabelMatcher
 }
 
 func BuildIstioPerformance(project string, datasource string, clusterLabelName string) dashboards.DashboardResult {
-	emptyLabelMatcher := promql.LabelMatcher{}
+	emptyLabelMatcher := &labels.Matcher{}
 	return dashboards.NewDashboardResult(
 		dashboard.New("istio-performance",
 			dashboard.ProjectName(project),

@@ -62,6 +62,9 @@ Welcome to the **Perses Community Dashboards** repository! This project is desig
 - Istio Workload Dashboard
 - Istio Ztunnel Dashboard
 
+### OpenTelemetry Collector Dashboards
+- OpenTelemetry Collector
+
 ## Library Panels
 
 In addition to the community dashboards, this repository also offers a **library of reusable panels**. These panels can be used as building blocks for custom dashboard creation, enabling you to craft tailored setups to suit specific observability needs.

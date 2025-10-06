@@ -3,12 +3,12 @@ package istio
 import (
 	"github.com/perses/community-dashboards/pkg/dashboards"
 	panels "github.com/perses/community-dashboards/pkg/panels/istio"
-	"github.com/perses/community-dashboards/pkg/promql"
 	"github.com/perses/perses/go-sdk/dashboard"
 	panelgroup "github.com/perses/perses/go-sdk/panel-group"
 	listVar "github.com/perses/perses/go-sdk/variable/list-variable"
 	markdownPanel "github.com/perses/plugins/markdown/sdk/go"
 	promqlVar "github.com/perses/plugins/prometheus/sdk/go/variable/promql"
+	"github.com/prometheus/prometheus/model/labels"
 )
 
 // General section
@@ -24,7 +24,7 @@ func withGeneralSection() dashboard.Option {
 	)
 }
 
-func withGeneralSectionII(datasource string, labelMatcher promql.LabelMatcher) dashboard.Option {
+func withGeneralSectionII(datasource string, labelMatcher *labels.Matcher) dashboard.Option {
 	return dashboard.AddPanelGroup("General",
 		panelgroup.PanelsPerLine(2),
 		panelgroup.PanelHeight(4),
@@ -42,7 +42,7 @@ func withGeneralSectionII(datasource string, labelMatcher promql.LabelMatcher) d
 }
 
 // Client Workloads section
-func withClientWorkloadsSection(datasource string, labelMatcher promql.LabelMatcher) dashboard.Option {
+func withClientWorkloadsSection(datasource string, labelMatcher *labels.Matcher) dashboard.Option {
 	return dashboard.AddPanelGroup("Client Workloads",
 		panelgroup.PanelsPerLine(2),
 		panelgroup.PanelHeight(6),
@@ -58,7 +58,7 @@ func withClientWorkloadsSection(datasource string, labelMatcher promql.LabelMatc
 }
 
 // Client Workloads (II) section
-func withClientWorkloadsIISection(datasource string, labelMatcher promql.LabelMatcher) dashboard.Option {
+func withClientWorkloadsIISection(datasource string, labelMatcher *labels.Matcher) dashboard.Option {
 	return dashboard.AddPanelGroup("Client Workloads (II)",
 		panelgroup.PanelsPerLine(3),
 		panelgroup.PanelHeight(6),
@@ -69,7 +69,7 @@ func withClientWorkloadsIISection(datasource string, labelMatcher promql.LabelMa
 }
 
 // Client Workloads (III) section
-func withClientWorkloadsIIISection(datasource string, labelMatcher promql.LabelMatcher) dashboard.Option {
+func withClientWorkloadsIIISection(datasource string, labelMatcher *labels.Matcher) dashboard.Option {
 	return dashboard.AddPanelGroup("Client Workloads (III)",
 		panelgroup.PanelsPerLine(2),
 		panelgroup.PanelHeight(6),
@@ -79,7 +79,7 @@ func withClientWorkloadsIIISection(datasource string, labelMatcher promql.LabelM
 }
 
 // Service Workloads section
-func withServiceWorkloadsSection(datasource string, labelMatcher promql.LabelMatcher) dashboard.Option {
+func withServiceWorkloadsSection(datasource string, labelMatcher *labels.Matcher) dashboard.Option {
 	return dashboard.AddPanelGroup("Service Workloads",
 		panelgroup.PanelsPerLine(2),
 		panelgroup.PanelHeight(6),
@@ -95,7 +95,7 @@ func withServiceWorkloadsSection(datasource string, labelMatcher promql.LabelMat
 }
 
 // Service Workloads (II) section
-func withServiceWorkloadsIISection(datasource string, labelMatcher promql.LabelMatcher) dashboard.Option {
+func withServiceWorkloadsIISection(datasource string, labelMatcher *labels.Matcher) dashboard.Option {
 	return dashboard.AddPanelGroup("Service Workloads (II)",
 		panelgroup.PanelsPerLine(3),
 		panelgroup.PanelHeight(6),
@@ -106,7 +106,7 @@ func withServiceWorkloadsIISection(datasource string, labelMatcher promql.LabelM
 }
 
 // Service Workloads (III) section
-func withServiceWorkloadsIIISection(datasource string, labelMatcher promql.LabelMatcher) dashboard.Option {
+func withServiceWorkloadsIIISection(datasource string, labelMatcher *labels.Matcher) dashboard.Option {
 	return dashboard.AddPanelGroup("Service Workloads (III)",
 		panelgroup.PanelsPerLine(2),
 		panelgroup.PanelHeight(6),
@@ -116,7 +116,7 @@ func withServiceWorkloadsIIISection(datasource string, labelMatcher promql.Label
 }
 
 func BuildIstioService(project string, datasource string, clusterLabelName string) dashboards.DashboardResult {
-	clusterLabelMatcher := dashboards.GetClusterLabelMatcher(clusterLabelName)
+	clusterLabelMatcher := dashboards.GetClusterLabelMatcherV2(clusterLabelName)
 	return dashboards.NewDashboardResult(
 		dashboard.New("istio-service-dashboard",
 			dashboard.ProjectName(project),

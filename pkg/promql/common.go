@@ -22,6 +22,20 @@ func SumRate(metricName string, labelMatchers ...*labels.Matcher) parser.Expr {
 	)
 }
 
+func SumiRate(metricName string, labelMatchers ...*labels.Matcher) parser.Expr {
+	return promqlbuilder.Sum(
+		promqlbuilder.IRate(
+			matrix.New(
+				vector.New(
+					vector.WithMetricName(metricName),
+					vector.WithLabelMatchers(labelMatchers...),
+				),
+				matrix.WithRangeAsVariable("$__rate_interval"),
+			),
+		),
+	)
+}
+
 func SumByRate(metricName string, byLabels []string, labelMatchers ...*labels.Matcher) parser.Expr {
 	return promqlbuilder.Sum(
 		promqlbuilder.Rate(

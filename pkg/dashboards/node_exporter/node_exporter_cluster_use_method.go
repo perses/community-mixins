@@ -74,10 +74,6 @@ func BuildNodeExporterClusterUseMethod(project string, datasource string, cluste
 									{Name: "job", Type: labels.MatchEqual, Value: "node"},
 									{Name: "sysname", Type: labels.MatchNotEqual, Value: "Darwin"}},
 							).Pretty(0),
-							// promql.SetLabelMatchers(
-							// 	"node_uname_info{job='node', sysname!='Darwin'}",
-							// 	[]*labels.Matcher{clusterLabelMatcher},
-							// )
 						),
 					),
 					listVar.DisplayName("instance"),

@@ -3,12 +3,12 @@ package istio
 import (
 	"github.com/perses/community-dashboards/pkg/dashboards"
 	panels "github.com/perses/community-dashboards/pkg/panels/istio"
-	"github.com/perses/community-dashboards/pkg/promql"
 	"github.com/perses/perses/go-sdk/dashboard"
 	panelgroup "github.com/perses/perses/go-sdk/panel-group"
+	"github.com/prometheus/prometheus/model/labels"
 )
 
-func withMeshOverview(datasource string, labelMatcher promql.LabelMatcher) dashboard.Option {
+func withMeshOverview(datasource string, labelMatcher *labels.Matcher) dashboard.Option {
 	return dashboard.AddPanelGroup("Global Traffic",
 		panelgroup.PanelsPerLine(4),
 		panelgroup.PanelHeight(6),
@@ -19,7 +19,7 @@ func withMeshOverview(datasource string, labelMatcher promql.LabelMatcher) dashb
 	)
 }
 
-func withMeshWorkloads(datasource string, labelMatcher promql.LabelMatcher) dashboard.Option {
+func withMeshWorkloads(datasource string, labelMatcher *labels.Matcher) dashboard.Option {
 	return dashboard.AddPanelGroup("Global Traffic",
 		panelgroup.PanelsPerLine(1),
 		panelgroup.PanelHeight(16),
@@ -28,7 +28,7 @@ func withMeshWorkloads(datasource string, labelMatcher promql.LabelMatcher) dash
 	)
 }
 
-func withIstioComponentVersions(datasource string, labelMatcher promql.LabelMatcher) dashboard.Option {
+func withIstioComponentVersions(datasource string, labelMatcher *labels.Matcher) dashboard.Option {
 	return dashboard.AddPanelGroup("Istio Component Versions",
 		panelgroup.PanelsPerLine(1),
 		panelgroup.PanelHeight(8),
@@ -37,7 +37,7 @@ func withIstioComponentVersions(datasource string, labelMatcher promql.LabelMatc
 }
 
 func BuildIstioMesh(project string, datasource string, clusterLabelName string) dashboards.DashboardResult {
-	emptyLabelMatcher := promql.LabelMatcher{}
+	emptyLabelMatcher := &labels.Matcher{}
 	return dashboards.NewDashboardResult(
 		dashboard.New("istio-mesh",
 			dashboard.ProjectName(project),

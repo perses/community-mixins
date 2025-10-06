@@ -3,12 +3,12 @@ package istio
 import (
 	"github.com/perses/community-dashboards/pkg/dashboards"
 	panels "github.com/perses/community-dashboards/pkg/panels/istio"
-	"github.com/perses/community-dashboards/pkg/promql"
 	"github.com/perses/perses/go-sdk/dashboard"
 	panelgroup "github.com/perses/perses/go-sdk/panel-group"
+	"github.com/prometheus/prometheus/model/labels"
 )
 
-func withControlPlaneResources(datasource string, labelMatcher promql.LabelMatcher) dashboard.Option {
+func withControlPlaneResources(datasource string, labelMatcher *labels.Matcher) dashboard.Option {
 	return dashboard.AddPanelGroup("Resource Usage",
 		panelgroup.PanelsPerLine(4),
 		panelgroup.PanelHeight(10),
@@ -19,7 +19,7 @@ func withControlPlaneResources(datasource string, labelMatcher promql.LabelMatch
 	)
 }
 
-func withPushInformation(datasource string, labelMatcher promql.LabelMatcher) dashboard.Option {
+func withPushInformation(datasource string, labelMatcher *labels.Matcher) dashboard.Option {
 	return dashboard.AddPanelGroup("Push Information",
 		panelgroup.PanelsPerLine(3),
 		panelgroup.PanelHeight(10),
@@ -32,7 +32,7 @@ func withPushInformation(datasource string, labelMatcher promql.LabelMatcher) da
 	)
 }
 
-func withDeployedVersions(datasource string, labelMatcher promql.LabelMatcher) dashboard.Option {
+func withDeployedVersions(datasource string, labelMatcher *labels.Matcher) dashboard.Option {
 	return dashboard.AddPanelGroup("Deployed Versions",
 		panelgroup.PanelsPerLine(1),
 		panelgroup.PanelHeight(5),
@@ -40,7 +40,7 @@ func withDeployedVersions(datasource string, labelMatcher promql.LabelMatcher) d
 	)
 }
 
-func withWebhooks(datasource string, labelMatcher promql.LabelMatcher) dashboard.Option {
+func withWebhooks(datasource string, labelMatcher *labels.Matcher) dashboard.Option {
 	return dashboard.AddPanelGroup("Webhooks",
 		panelgroup.PanelsPerLine(2),
 		panelgroup.PanelHeight(8),
@@ -50,7 +50,7 @@ func withWebhooks(datasource string, labelMatcher promql.LabelMatcher) dashboard
 }
 
 func BuildIstioControlPlane(project string, datasource string, clusterLabelName string) dashboards.DashboardResult {
-	emptyLabelMatcher := promql.LabelMatcher{}
+	emptyLabelMatcher := &labels.Matcher{}
 	return dashboards.NewDashboardResult(
 		dashboard.New("istio-control-plane",
 			dashboard.ProjectName(project),

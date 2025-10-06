@@ -324,18 +324,16 @@ spec:
                   kind: PrometheusDatasource
                   name: prometheus-datasource
                 query: |2-
-                    (
-                        histogram_quantile(
-                          0.5,
-                          sum by (le) (
-                            irate(
-                              istio_request_duration_milliseconds_bucket{destination_workload=~"$workload",destination_workload_namespace=~"$namespace",reporter=~"$qrep"}[1m]
-                            )
+                      histogram_quantile(
+                        0.5,
+                        sum by (le) (
+                          irate(
+                            istio_request_duration_milliseconds_bucket{destination_workload=~"$workload",destination_workload_namespace=~"$namespace",reporter=~"$qrep"}[1m]
                           )
                         )
-                      /
-                        1000
-                    )
+                      )
+                    /
+                      1000
                   or
                     histogram_quantile(
                       0.5,
@@ -355,18 +353,16 @@ spec:
                   kind: PrometheusDatasource
                   name: prometheus-datasource
                 query: |2-
-                    (
-                        histogram_quantile(
-                          0.9,
-                          sum by (le) (
-                            irate(
-                              istio_request_duration_milliseconds_bucket{destination_workload=~"$workload",destination_workload_namespace=~"$namespace",reporter=~"$qrep"}[1m]
-                            )
+                      histogram_quantile(
+                        0.9,
+                        sum by (le) (
+                          irate(
+                            istio_request_duration_milliseconds_bucket{destination_workload=~"$workload",destination_workload_namespace=~"$namespace",reporter=~"$qrep"}[1m]
                           )
                         )
-                      /
-                        1000
-                    )
+                      )
+                    /
+                      1000
                   or
                     histogram_quantile(
                       0.9,
@@ -386,18 +382,16 @@ spec:
                   kind: PrometheusDatasource
                   name: prometheus-datasource
                 query: |2-
-                    (
-                        histogram_quantile(
-                          0.99,
-                          sum by (le) (
-                            irate(
-                              istio_request_duration_milliseconds_bucket{destination_workload=~"$workload",destination_workload_namespace=~"$namespace",reporter=~"$qrep"}[1m]
-                            )
+                      histogram_quantile(
+                        0.99,
+                        sum by (le) (
+                          irate(
+                            istio_request_duration_milliseconds_bucket{destination_workload=~"$workload",destination_workload_namespace=~"$namespace",reporter=~"$qrep"}[1m]
                           )
                         )
-                      /
-                        1000
-                    )
+                      )
+                    /
+                      1000
                   or
                     histogram_quantile(
                       0.99,
@@ -662,18 +656,16 @@ spec:
                   kind: PrometheusDatasource
                   name: prometheus-datasource
                 query: |2-
-                    (
-                        histogram_quantile(
-                          0.5,
-                          sum by (source_workload, source_workload_namespace, le) (
-                            irate(
-                              istio_request_duration_milliseconds_bucket{connection_security_policy="mutual_tls",destination_workload=~"$workload",destination_workload_namespace=~"$namespace",reporter=~"$qrep",source_workload=~"$srcwl",source_workload_namespace=~"$srcns"}[1m]
-                            )
+                      histogram_quantile(
+                        0.5,
+                        sum by (source_workload, source_workload_namespace, le) (
+                          irate(
+                            istio_request_duration_milliseconds_bucket{connection_security_policy="mutual_tls",destination_workload=~"$workload",destination_workload_namespace=~"$namespace",reporter=~"$qrep",source_workload=~"$srcwl",source_workload_namespace=~"$srcns"}[1m]
                           )
                         )
-                      /
-                        1000
-                    )
+                      )
+                    /
+                      1000
                   or
                     histogram_quantile(
                       0.5,
@@ -694,18 +686,16 @@ spec:
                   kind: PrometheusDatasource
                   name: prometheus-datasource
                 query: |2-
-                    (
-                        histogram_quantile(
-                          0.9,
-                          sum by (source_workload, source_workload_namespace, le) (
-                            irate(
-                              istio_request_duration_milliseconds_bucket{connection_security_policy="mutual_tls",destination_workload=~"$workload",destination_workload_namespace=~"$namespace",reporter=~"$qrep",source_workload=~"$srcwl",source_workload_namespace=~"$srcns"}[1m]
-                            )
+                      histogram_quantile(
+                        0.9,
+                        sum by (source_workload, source_workload_namespace, le) (
+                          irate(
+                            istio_request_duration_milliseconds_bucket{connection_security_policy="mutual_tls",destination_workload=~"$workload",destination_workload_namespace=~"$namespace",reporter=~"$qrep",source_workload=~"$srcwl",source_workload_namespace=~"$srcns"}[1m]
                           )
                         )
-                      /
-                        1000
-                    )
+                      )
+                    /
+                      1000
                   or
                     histogram_quantile(
                       0.9,
@@ -726,18 +716,16 @@ spec:
                   kind: PrometheusDatasource
                   name: prometheus-datasource
                 query: |2-
-                    (
-                        histogram_quantile(
-                          0.95,
-                          sum by (source_workload, source_workload_namespace, le) (
-                            irate(
-                              istio_request_duration_milliseconds_bucket{connection_security_policy="mutual_tls",destination_workload=~"$workload",destination_workload_namespace=~"$namespace",reporter=~"$qrep",source_workload=~"$srcwl",source_workload_namespace=~"$srcns"}[1m]
-                            )
+                      histogram_quantile(
+                        0.95,
+                        sum by (source_workload, source_workload_namespace, le) (
+                          irate(
+                            istio_request_duration_milliseconds_bucket{connection_security_policy="mutual_tls",destination_workload=~"$workload",destination_workload_namespace=~"$namespace",reporter=~"$qrep",source_workload=~"$srcwl",source_workload_namespace=~"$srcns"}[1m]
                           )
                         )
-                      /
-                        1000
-                    )
+                      )
+                    /
+                      1000
                   or
                     histogram_quantile(
                       0.95,
@@ -758,18 +746,16 @@ spec:
                   kind: PrometheusDatasource
                   name: prometheus-datasource
                 query: |2-
-                    (
-                        histogram_quantile(
-                          0.99,
-                          sum by (source_workload, source_workload_namespace, le) (
-                            irate(
-                              istio_request_duration_milliseconds_bucket{connection_security_policy="mutual_tls",destination_workload=~"$workload",destination_workload_namespace=~"$namespace",reporter=~"$qrep",source_workload=~"$srcwl",source_workload_namespace=~"$srcns"}[1m]
-                            )
+                      histogram_quantile(
+                        0.99,
+                        sum by (source_workload, source_workload_namespace, le) (
+                          irate(
+                            istio_request_duration_milliseconds_bucket{connection_security_policy="mutual_tls",destination_workload=~"$workload",destination_workload_namespace=~"$namespace",reporter=~"$qrep",source_workload=~"$srcwl",source_workload_namespace=~"$srcns"}[1m]
                           )
                         )
-                      /
-                        1000
-                    )
+                      )
+                    /
+                      1000
                   or
                     histogram_quantile(
                       0.99,
@@ -790,18 +776,16 @@ spec:
                   kind: PrometheusDatasource
                   name: prometheus-datasource
                 query: |2-
-                    (
-                        histogram_quantile(
-                          0.5,
-                          sum by (source_workload, source_workload_namespace, le) (
-                            irate(
-                              istio_request_duration_milliseconds_bucket{connection_security_policy!="mutual_tls",destination_workload=~"$workload",destination_workload_namespace=~"$namespace",reporter=~"$qrep",source_workload=~"$srcwl",source_workload_namespace=~"$srcns"}[1m]
-                            )
+                      histogram_quantile(
+                        0.5,
+                        sum by (source_workload, source_workload_namespace, le) (
+                          irate(
+                            istio_request_duration_milliseconds_bucket{connection_security_policy!="mutual_tls",destination_workload=~"$workload",destination_workload_namespace=~"$namespace",reporter=~"$qrep",source_workload=~"$srcwl",source_workload_namespace=~"$srcns"}[1m]
                           )
                         )
-                      /
-                        1000
-                    )
+                      )
+                    /
+                      1000
                   or
                     histogram_quantile(
                       0.5,
@@ -822,18 +806,16 @@ spec:
                   kind: PrometheusDatasource
                   name: prometheus-datasource
                 query: |2-
-                    (
-                        histogram_quantile(
-                          0.9,
-                          sum by (source_workload, source_workload_namespace, le) (
-                            irate(
-                              istio_request_duration_milliseconds_bucket{connection_security_policy!="mutual_tls",destination_workload=~"$workload",destination_workload_namespace=~"$namespace",reporter=~"$qrep",source_workload=~"$srcwl",source_workload_namespace=~"$srcns"}[1m]
-                            )
+                      histogram_quantile(
+                        0.9,
+                        sum by (source_workload, source_workload_namespace, le) (
+                          irate(
+                            istio_request_duration_milliseconds_bucket{connection_security_policy!="mutual_tls",destination_workload=~"$workload",destination_workload_namespace=~"$namespace",reporter=~"$qrep",source_workload=~"$srcwl",source_workload_namespace=~"$srcns"}[1m]
                           )
                         )
-                      /
-                        1000
-                    )
+                      )
+                    /
+                      1000
                   or
                     histogram_quantile(
                       0.9,
@@ -854,18 +836,16 @@ spec:
                   kind: PrometheusDatasource
                   name: prometheus-datasource
                 query: |2-
-                    (
-                        histogram_quantile(
-                          0.95,
-                          sum by (source_workload, source_workload_namespace, le) (
-                            irate(
-                              istio_request_duration_milliseconds_bucket{connection_security_policy!="mutual_tls",destination_workload=~"$workload",destination_workload_namespace=~"$namespace",reporter=~"$qrep",source_workload=~"$srcwl",source_workload_namespace=~"$srcns"}[1m]
-                            )
+                      histogram_quantile(
+                        0.95,
+                        sum by (source_workload, source_workload_namespace, le) (
+                          irate(
+                            istio_request_duration_milliseconds_bucket{connection_security_policy!="mutual_tls",destination_workload=~"$workload",destination_workload_namespace=~"$namespace",reporter=~"$qrep",source_workload=~"$srcwl",source_workload_namespace=~"$srcns"}[1m]
                           )
                         )
-                      /
-                        1000
-                    )
+                      )
+                    /
+                      1000
                   or
                     histogram_quantile(
                       0.95,
@@ -886,18 +866,16 @@ spec:
                   kind: PrometheusDatasource
                   name: prometheus-datasource
                 query: |2-
-                    (
-                        histogram_quantile(
-                          0.99,
-                          sum by (source_workload, source_workload_namespace, le) (
-                            irate(
-                              istio_request_duration_milliseconds_bucket{connection_security_policy!="mutual_tls",destination_workload=~"$workload",destination_workload_namespace=~"$namespace",reporter=~"$qrep",source_workload=~"$srcwl",source_workload_namespace=~"$srcns"}[1m]
-                            )
+                      histogram_quantile(
+                        0.99,
+                        sum by (source_workload, source_workload_namespace, le) (
+                          irate(
+                            istio_request_duration_milliseconds_bucket{connection_security_policy!="mutual_tls",destination_workload=~"$workload",destination_workload_namespace=~"$namespace",reporter=~"$qrep",source_workload=~"$srcwl",source_workload_namespace=~"$srcns"}[1m]
                           )
                         )
-                      /
-                        1000
-                    )
+                      )
+                    /
+                      1000
                   or
                     histogram_quantile(
                       0.99,
@@ -1550,18 +1528,16 @@ spec:
                   kind: PrometheusDatasource
                   name: prometheus-datasource
                 query: |2-
-                    (
-                        histogram_quantile(
-                          0.5,
-                          sum by (destination_service, le) (
-                            irate(
-                              istio_request_duration_milliseconds_bucket{connection_security_policy="mutual_tls",destination_service=~"$dstsvc",reporter="source",source_workload=~"$workload",source_workload_namespace=~"$namespace"}[1m]
-                            )
+                      histogram_quantile(
+                        0.5,
+                        sum by (destination_service, le) (
+                          irate(
+                            istio_request_duration_milliseconds_bucket{connection_security_policy="mutual_tls",destination_service=~"$dstsvc",reporter="source",source_workload=~"$workload",source_workload_namespace=~"$namespace"}[1m]
                           )
                         )
-                      /
-                        1000
-                    )
+                      )
+                    /
+                      1000
                   or
                     histogram_quantile(
                       0.5,
@@ -1581,18 +1557,16 @@ spec:
                   kind: PrometheusDatasource
                   name: prometheus-datasource
                 query: |2-
-                    (
-                        histogram_quantile(
-                          0.9,
-                          sum by (destination_service, le) (
-                            irate(
-                              istio_request_duration_milliseconds_bucket{connection_security_policy="mutual_tls",destination_service=~"$dstsvc",reporter="source",source_workload=~"$workload",source_workload_namespace=~"$namespace"}[1m]
-                            )
+                      histogram_quantile(
+                        0.9,
+                        sum by (destination_service, le) (
+                          irate(
+                            istio_request_duration_milliseconds_bucket{connection_security_policy="mutual_tls",destination_service=~"$dstsvc",reporter="source",source_workload=~"$workload",source_workload_namespace=~"$namespace"}[1m]
                           )
                         )
-                      /
-                        1000
-                    )
+                      )
+                    /
+                      1000
                   or
                     histogram_quantile(
                       0.9,
@@ -1612,18 +1586,16 @@ spec:
                   kind: PrometheusDatasource
                   name: prometheus-datasource
                 query: |2-
-                    (
-                        histogram_quantile(
-                          0.95,
-                          sum by (destination_service, le) (
-                            irate(
-                              istio_request_duration_milliseconds_bucket{connection_security_policy="mutual_tls",destination_service=~"$dstsvc",reporter="source",source_workload=~"$workload",source_workload_namespace=~"$namespace"}[1m]
-                            )
+                      histogram_quantile(
+                        0.95,
+                        sum by (destination_service, le) (
+                          irate(
+                            istio_request_duration_milliseconds_bucket{connection_security_policy="mutual_tls",destination_service=~"$dstsvc",reporter="source",source_workload=~"$workload",source_workload_namespace=~"$namespace"}[1m]
                           )
                         )
-                      /
-                        1000
-                    )
+                      )
+                    /
+                      1000
                   or
                     histogram_quantile(
                       0.95,
@@ -1643,18 +1615,16 @@ spec:
                   kind: PrometheusDatasource
                   name: prometheus-datasource
                 query: |2-
-                    (
-                        histogram_quantile(
-                          0.99,
-                          sum by (destination_service, le) (
-                            irate(
-                              istio_request_duration_milliseconds_bucket{connection_security_policy="mutual_tls",destination_service=~"$dstsvc",reporter="source",source_workload=~"$workload",source_workload_namespace=~"$namespace"}[1m]
-                            )
+                      histogram_quantile(
+                        0.99,
+                        sum by (destination_service, le) (
+                          irate(
+                            istio_request_duration_milliseconds_bucket{connection_security_policy="mutual_tls",destination_service=~"$dstsvc",reporter="source",source_workload=~"$workload",source_workload_namespace=~"$namespace"}[1m]
                           )
                         )
-                      /
-                        1000
-                    )
+                      )
+                    /
+                      1000
                   or
                     histogram_quantile(
                       0.99,
@@ -1674,18 +1644,16 @@ spec:
                   kind: PrometheusDatasource
                   name: prometheus-datasource
                 query: |2-
-                    (
-                        histogram_quantile(
-                          0.5,
-                          sum by (destination_service, le) (
-                            irate(
-                              istio_request_duration_milliseconds_bucket{connection_security_policy!="mutual_tls",destination_service=~"$dstsvc",reporter="source",source_workload=~"$workload",source_workload_namespace=~"$namespace"}[1m]
-                            )
+                      histogram_quantile(
+                        0.5,
+                        sum by (destination_service, le) (
+                          irate(
+                            istio_request_duration_milliseconds_bucket{connection_security_policy!="mutual_tls",destination_service=~"$dstsvc",reporter="source",source_workload=~"$workload",source_workload_namespace=~"$namespace"}[1m]
                           )
                         )
-                      /
-                        1000
-                    )
+                      )
+                    /
+                      1000
                   or
                     histogram_quantile(
                       0.5,
@@ -1705,18 +1673,16 @@ spec:
                   kind: PrometheusDatasource
                   name: prometheus-datasource
                 query: |2-
-                    (
-                        histogram_quantile(
-                          0.9,
-                          sum by (destination_service, le) (
-                            irate(
-                              istio_request_duration_milliseconds_bucket{connection_security_policy!="mutual_tls",destination_service=~"$dstsvc",reporter="source",source_workload=~"$workload",source_workload_namespace=~"$namespace"}[1m]
-                            )
+                      histogram_quantile(
+                        0.9,
+                        sum by (destination_service, le) (
+                          irate(
+                            istio_request_duration_milliseconds_bucket{connection_security_policy!="mutual_tls",destination_service=~"$dstsvc",reporter="source",source_workload=~"$workload",source_workload_namespace=~"$namespace"}[1m]
                           )
                         )
-                      /
-                        1000
-                    )
+                      )
+                    /
+                      1000
                   or
                     histogram_quantile(
                       0.9,
@@ -1736,18 +1702,16 @@ spec:
                   kind: PrometheusDatasource
                   name: prometheus-datasource
                 query: |2-
-                    (
-                        histogram_quantile(
-                          0.95,
-                          sum by (destination_service, le) (
-                            irate(
-                              istio_request_duration_milliseconds_bucket{connection_security_policy!="mutual_tls",destination_service=~"$dstsvc",reporter="source",source_workload=~"$workload",source_workload_namespace=~"$namespace"}[1m]
-                            )
+                      histogram_quantile(
+                        0.95,
+                        sum by (destination_service, le) (
+                          irate(
+                            istio_request_duration_milliseconds_bucket{connection_security_policy!="mutual_tls",destination_service=~"$dstsvc",reporter="source",source_workload=~"$workload",source_workload_namespace=~"$namespace"}[1m]
                           )
                         )
-                      /
-                        1000
-                    )
+                      )
+                    /
+                      1000
                   or
                     histogram_quantile(
                       0.95,
@@ -1767,18 +1731,16 @@ spec:
                   kind: PrometheusDatasource
                   name: prometheus-datasource
                 query: |2-
-                    (
-                        histogram_quantile(
-                          0.99,
-                          sum by (destination_service, le) (
-                            irate(
-                              istio_request_duration_milliseconds_bucket{connection_security_policy!="mutual_tls",destination_service=~"$dstsvc",reporter="source",source_workload=~"$workload",source_workload_namespace=~"$namespace"}[1m]
-                            )
+                      histogram_quantile(
+                        0.99,
+                        sum by (destination_service, le) (
+                          irate(
+                            istio_request_duration_milliseconds_bucket{connection_security_policy!="mutual_tls",destination_service=~"$dstsvc",reporter="source",source_workload=~"$workload",source_workload_namespace=~"$namespace"}[1m]
                           )
                         )
-                      /
-                        1000
-                    )
+                      )
+                    /
+                      1000
                   or
                     histogram_quantile(
                       0.99,
@@ -2167,7 +2129,7 @@ spec:
                   round(
                     sum by (destination_service) (
                       irate(
-                        istio_tcp_received_bytes_total{connection_security_policy!="mutual_tls",destination_service=~"$dstsvc",reporter="source",source_workload=~"$workload",source_workload_namespace=~"$namespace"}[1m]
+                        istio_tcp_received_bytes_total{connection_security_policy="mutual_tls",destination_service=~"$dstsvc",reporter="source",source_workload=~"$workload",source_workload_namespace=~"$namespace"}[1m]
                       )
                     ),
                     0.001

@@ -9,9 +9,10 @@ import (
 	markdownPanel "github.com/perses/plugins/markdown/sdk/go"
 	"github.com/perses/plugins/prometheus/sdk/go/query"
 	timeSeriesPanel "github.com/perses/plugins/timeserieschart/sdk/go"
+	"github.com/prometheus/prometheus/model/labels"
 )
 
-func PerformanceDashboardReadme(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
+func PerformanceDashboardReadme(datasourceName string, labelMatchers ...*labels.Matcher) panelgroup.Option {
 	return panelgroup.AddPanel("Performance Dashboard README",
 		markdownPanel.Markdown("Performance Dashboard Notes",
 			markdownPanel.Text(`The charts on this dashboard are intended to show Istio main components cost in terms of resources utilization under steady load.
@@ -26,7 +27,7 @@ func PerformanceDashboardReadme(datasourceName string, labelMatchers ...promql.L
 	)
 }
 
-func VCPUPer1kRPS(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
+func VCPUPer1kRPS(datasourceName string, labelMatchers ...*labels.Matcher) panelgroup.Option {
 	return panelgroup.AddPanel("vCPU / 1k rps",
 		timeSeriesPanel.Chart(
 			timeSeriesPanel.WithLegend(timeSeriesPanel.Legend{
@@ -47,20 +48,20 @@ func VCPUPer1kRPS(datasourceName string, labelMatchers ...promql.LabelMatcher) p
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchers(
-					"(sum(irate(container_cpu_usage_seconds_total{pod=~\"istio-ingressgateway-.*\",container=\"istio-proxy\"}[$__rate_interval])) / (round(sum(irate(istio_requests_total{source_workload=\"istio-ingressgateway\", reporter=\"source\"}[$__rate_interval])), 0.001)/1000))",
+				promql.SetLabelMatchersV2(
+					IstioCommonPanelQueries["IstioVCPUPer1kRPSIngressGateway"],
 					labelMatchers,
-				),
+				).Pretty(0),
 				dashboards.AddQueryDataSource(datasourceName),
 				query.SeriesNameFormat("istio-ingressgateway"),
 			),
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchers(
-					"(sum(irate(container_cpu_usage_seconds_total{namespace!=\"istio-system\",container=\"istio-proxy\"}[$__rate_interval]))/ (round(sum(irate(istio_requests_total[$__rate_interval])), 0.001)/1000))/ (sum(irate(istio_requests_total{source_workload=\"istio-ingressgateway\"}[$__rate_interval])) >bool 10)",
+				promql.SetLabelMatchersV2(
+					IstioCommonPanelQueries["IstioVCPUPer1kRPSProxy"],
 					labelMatchers,
-				),
+				).Pretty(0),
 				dashboards.AddQueryDataSource(datasourceName),
 				query.SeriesNameFormat("istio-proxy"),
 			),
@@ -68,7 +69,7 @@ func VCPUPer1kRPS(datasourceName string, labelMatchers ...promql.LabelMatcher) p
 	)
 }
 
-func VCPU(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
+func VCPU(datasourceName string, labelMatchers ...*labels.Matcher) panelgroup.Option {
 	return panelgroup.AddPanel("vCPU",
 		timeSeriesPanel.Chart(
 			timeSeriesPanel.WithLegend(timeSeriesPanel.Legend{
@@ -89,20 +90,20 @@ func VCPU(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgrou
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchers(
-					"sum(rate(container_cpu_usage_seconds_total{pod=~\"istio-ingressgateway-.*\",container=\"istio-proxy\"}[$__rate_interval]))",
+				promql.SetLabelMatchersV2(
+					IstioCommonPanelQueries["IstioVCPUIngressGateway"],
 					labelMatchers,
-				),
+				).Pretty(0),
 				dashboards.AddQueryDataSource(datasourceName),
 				query.SeriesNameFormat("istio-ingressgateway"),
 			),
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchers(
-					"sum(rate(container_cpu_usage_seconds_total{namespace!=\"istio-system\",container=\"istio-proxy\"}[$__rate_interval]))",
+				promql.SetLabelMatchersV2(
+					IstioCommonPanelQueries["IstioVCPUProxy"],
 					labelMatchers,
-				),
+				).Pretty(0),
 				dashboards.AddQueryDataSource(datasourceName),
 				query.SeriesNameFormat("istio-proxy"),
 			),
@@ -110,7 +111,7 @@ func VCPU(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgrou
 	)
 }
 
-func PerformanceMemoryUsage(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
+func PerformanceMemoryUsage(datasourceName string, labelMatchers ...*labels.Matcher) panelgroup.Option {
 	return panelgroup.AddPanel("Memory Usage",
 		timeSeriesPanel.Chart(
 			timeSeriesPanel.WithLegend(timeSeriesPanel.Legend{
@@ -131,20 +132,20 @@ func PerformanceMemoryUsage(datasourceName string, labelMatchers ...promql.Label
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchers(
-					"sum(container_memory_working_set_bytes{pod=~\"istio-ingressgateway-.*\"}) / count(container_memory_working_set_bytes{pod=~\"istio-ingressgateway-.*\",container!=\"POD\"})",
+				promql.SetLabelMatchersV2(
+					IstioCommonPanelQueries["IstioPerformanceMemoryUsageIngressGateway"],
 					labelMatchers,
-				),
+				).Pretty(0),
 				dashboards.AddQueryDataSource(datasourceName),
 				query.SeriesNameFormat("per istio-ingressgateway"),
 			),
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchers(
-					"sum(container_memory_working_set_bytes{namespace!=\"istio-system\",container=\"istio-proxy\"}) / count(container_memory_working_set_bytes{namespace!=\"istio-system\",container=\"istio-proxy\"})",
+				promql.SetLabelMatchersV2(
+					IstioCommonPanelQueries["IstioPerformanceMemoryUsageProxy"],
 					labelMatchers,
-				),
+				).Pretty(0),
 				dashboards.AddQueryDataSource(datasourceName),
 				query.SeriesNameFormat("per istio proxy"),
 			),
@@ -152,7 +153,7 @@ func PerformanceMemoryUsage(datasourceName string, labelMatchers ...promql.Label
 	)
 }
 
-func BytesTransferred(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
+func BytesTransferred(datasourceName string, labelMatchers ...*labels.Matcher) panelgroup.Option {
 	return panelgroup.AddPanel("Bytes transferred / sec",
 		timeSeriesPanel.Chart(
 			timeSeriesPanel.WithLegend(timeSeriesPanel.Legend{
@@ -173,20 +174,20 @@ func BytesTransferred(datasourceName string, labelMatchers ...promql.LabelMatche
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchers(
-					"sum(irate(istio_response_bytes_sum{source_workload=\"istio-ingressgateway\", reporter=\"source\"}[$__rate_interval]))",
+				promql.SetLabelMatchersV2(
+					IstioCommonPanelQueries["IstioBytesTransferredIngressGateway"],
 					labelMatchers,
-				),
+				).Pretty(0),
 				dashboards.AddQueryDataSource(datasourceName),
 				query.SeriesNameFormat("istio-ingressgateway"),
 			),
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchers(
-					"sum(irate(istio_response_bytes_sum{source_workload_namespace!=\"istio-system\", reporter=\"source\"}[$__rate_interval])) + sum(irate(istio_request_bytes_sum{source_workload_namespace!=\"istio-system\", reporter=\"source\"}[$__rate_interval]))",
+				promql.SetLabelMatchersV2(
+					IstioCommonPanelQueries["IstioBytesTransferredProxy"],
 					labelMatchers,
-				),
+				).Pretty(0),
 				dashboards.AddQueryDataSource(datasourceName),
 				query.SeriesNameFormat("istio-proxy"),
 			),
@@ -194,7 +195,7 @@ func BytesTransferred(datasourceName string, labelMatchers ...promql.LabelMatche
 	)
 }
 
-func IstioComponentsByVersion(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
+func IstioComponentsByVersion(datasourceName string, labelMatchers ...*labels.Matcher) panelgroup.Option {
 	return panelgroup.AddPanel("Istio Components by Version",
 		timeSeriesPanel.Chart(
 			timeSeriesPanel.WithLegend(timeSeriesPanel.Legend{
@@ -215,10 +216,10 @@ func IstioComponentsByVersion(datasourceName string, labelMatchers ...promql.Lab
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchers(
-					"sum(istio_build) by (component, tag)",
+				promql.SetLabelMatchersV2(
+					IstioCommonPanelQueries["IstioComponentsByVersion"],
 					labelMatchers,
-				),
+				).Pretty(0),
 				dashboards.AddQueryDataSource(datasourceName),
 				query.SeriesNameFormat("{{ component }}: {{ tag }}"),
 			),
@@ -226,7 +227,7 @@ func IstioComponentsByVersion(datasourceName string, labelMatchers ...promql.Lab
 	)
 }
 
-func ProxyMemory(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
+func ProxyMemory(datasourceName string, labelMatchers ...*labels.Matcher) panelgroup.Option {
 	return panelgroup.AddPanel("Memory",
 		timeSeriesPanel.Chart(
 			timeSeriesPanel.WithLegend(timeSeriesPanel.Legend{
@@ -247,10 +248,10 @@ func ProxyMemory(datasourceName string, labelMatchers ...promql.LabelMatcher) pa
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchers(
-					"sum(container_memory_working_set_bytes{container=\"istio-proxy\"})",
+				promql.SetLabelMatchersV2(
+					IstioCommonPanelQueries["IstioProxyMemory"],
 					labelMatchers,
-				),
+				).Pretty(0),
 				dashboards.AddQueryDataSource(datasourceName),
 				query.SeriesNameFormat("Total (k8s)"),
 			),
@@ -258,7 +259,7 @@ func ProxyMemory(datasourceName string, labelMatchers ...promql.LabelMatcher) pa
 	)
 }
 
-func ProxyVCPU(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
+func ProxyVCPU(datasourceName string, labelMatchers ...*labels.Matcher) panelgroup.Option {
 	return panelgroup.AddPanel("vCPU",
 		timeSeriesPanel.Chart(
 			timeSeriesPanel.WithLegend(timeSeriesPanel.Legend{
@@ -279,10 +280,10 @@ func ProxyVCPU(datasourceName string, labelMatchers ...promql.LabelMatcher) pane
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchers(
-					"sum(rate(container_cpu_usage_seconds_total{container=\"istio-proxy\"}[$__rate_interval]))",
+				promql.SetLabelMatchersV2(
+					IstioCommonPanelQueries["IstioProxyVCPU"],
 					labelMatchers,
-				),
+				).Pretty(0),
 				dashboards.AddQueryDataSource(datasourceName),
 				query.SeriesNameFormat("Total (k8s)"),
 			),
@@ -290,7 +291,7 @@ func ProxyVCPU(datasourceName string, labelMatchers ...promql.LabelMatcher) pane
 	)
 }
 
-func ProxyDisk(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
+func ProxyDisk(datasourceName string, labelMatchers ...*labels.Matcher) panelgroup.Option {
 	return panelgroup.AddPanel("Disk",
 		timeSeriesPanel.Chart(
 			timeSeriesPanel.WithLegend(timeSeriesPanel.Legend{
@@ -311,10 +312,10 @@ func ProxyDisk(datasourceName string, labelMatchers ...promql.LabelMatcher) pane
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchers(
-					"sum(container_fs_usage_bytes{container=\"istio-proxy\"})",
+				promql.SetLabelMatchersV2(
+					IstioCommonPanelQueries["IstioProxyDisk"],
 					labelMatchers,
-				),
+				).Pretty(0),
 				dashboards.AddQueryDataSource(datasourceName),
 				query.SeriesNameFormat("Total (k8s)"),
 			),
@@ -322,7 +323,7 @@ func ProxyDisk(datasourceName string, labelMatchers ...promql.LabelMatcher) pane
 	)
 }
 
-func IstiodMemory(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
+func IstiodMemory(datasourceName string, labelMatchers ...*labels.Matcher) panelgroup.Option {
 	return panelgroup.AddPanel("Memory",
 		timeSeriesPanel.Chart(
 			timeSeriesPanel.WithLegend(timeSeriesPanel.Legend{
@@ -343,90 +344,90 @@ func IstiodMemory(datasourceName string, labelMatchers ...promql.LabelMatcher) p
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchers(
-					"process_virtual_memory_bytes{app=\"istiod\"}",
+				promql.SetLabelMatchersV2(
+					IstioCommonPanelQueries["IstiodMemoryVirtual"],
 					labelMatchers,
-				),
+				).Pretty(0),
 				dashboards.AddQueryDataSource(datasourceName),
 				query.SeriesNameFormat("Virtual Memory"),
 			),
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchers(
-					"process_resident_memory_bytes{app=\"istiod\"}",
+				promql.SetLabelMatchersV2(
+					IstioCommonPanelQueries["IstiodMemoryResident"],
 					labelMatchers,
-				),
+				).Pretty(0),
 				dashboards.AddQueryDataSource(datasourceName),
 				query.SeriesNameFormat("Resident Memory"),
 			),
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchers(
-					"go_memstats_heap_sys_bytes{app=\"istiod\"}",
+				promql.SetLabelMatchersV2(
+					IstioCommonPanelQueries["IstiodMemoryGoMemStats"],
 					labelMatchers,
-				),
+				).Pretty(0),
 				dashboards.AddQueryDataSource(datasourceName),
 				query.SeriesNameFormat("heap sys"),
 			),
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchers(
-					"go_memstats_heap_alloc_bytes{app=\"istiod\"}",
+				promql.SetLabelMatchersV2(
+					IstioCommonPanelQueries["IstiodMemoryHeapAllocBytes"],
 					labelMatchers,
-				),
+				).Pretty(0),
 				dashboards.AddQueryDataSource(datasourceName),
 				query.SeriesNameFormat("heap alloc"),
 			),
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchers(
-					"go_memstats_alloc_bytes{app=\"istiod\"}",
+				promql.SetLabelMatchersV2(
+					IstioCommonPanelQueries["IstiodMemoryAllocBytes"],
 					labelMatchers,
-				),
+				).Pretty(0),
 				dashboards.AddQueryDataSource(datasourceName),
 				query.SeriesNameFormat("Alloc"),
 			),
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchers(
-					"go_memstats_heap_inuse_bytes{app=\"istiod\"}",
+				promql.SetLabelMatchersV2(
+					IstioCommonPanelQueries["IstiodMemoryInuseBytes"],
 					labelMatchers,
-				),
+				).Pretty(0),
 				dashboards.AddQueryDataSource(datasourceName),
 				query.SeriesNameFormat("Heap in-use"),
 			),
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchers(
-					"go_memstats_stack_inuse_bytes{app=\"istiod\"}",
+				promql.SetLabelMatchersV2(
+					IstioCommonPanelQueries["IstiodMemoryStackInuseBytes"],
 					labelMatchers,
-				),
+				).Pretty(0),
 				dashboards.AddQueryDataSource(datasourceName),
 				query.SeriesNameFormat("Stack in-use"),
 			),
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchers(
-					"sum(container_memory_working_set_bytes{container=~\"discovery|istio-proxy\", pod=~\"istiod-.*\"})",
+				promql.SetLabelMatchersV2(
+					IstioCommonPanelQueries["IstiodMemoryContainerTotal"],
 					labelMatchers,
-				),
+				).Pretty(0),
 				dashboards.AddQueryDataSource(datasourceName),
 				query.SeriesNameFormat("Total (k8s)"),
 			),
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchers(
-					"container_memory_working_set_bytes{container=~\"discovery|istio-proxy\", pod=~\"istiod-.*\"}",
+				promql.SetLabelMatchersV2(
+					IstioCommonPanelQueries["IstiodMemoryContainer"],
 					labelMatchers,
-				),
+				).Pretty(0),
 				dashboards.AddQueryDataSource(datasourceName),
 				query.SeriesNameFormat("{{ container }} (k8s)"),
 			),
@@ -434,7 +435,7 @@ func IstiodMemory(datasourceName string, labelMatchers ...promql.LabelMatcher) p
 	)
 }
 
-func IstiodVCPU(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
+func IstiodVCPU(datasourceName string, labelMatchers ...*labels.Matcher) panelgroup.Option {
 	return panelgroup.AddPanel("vCPU",
 		timeSeriesPanel.Chart(
 			timeSeriesPanel.WithLegend(timeSeriesPanel.Legend{
@@ -455,30 +456,30 @@ func IstiodVCPU(datasourceName string, labelMatchers ...promql.LabelMatcher) pan
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchers(
-					"sum(rate(container_cpu_usage_seconds_total{container=~\"discovery|istio-proxy\", pod=~\"istiod-.*\"}[$__rate_interval]))",
+				promql.SetLabelMatchersV2(
+					IstioCommonPanelQueries["IstiodVCPUTotal"],
 					labelMatchers,
-				),
+				).Pretty(0),
 				dashboards.AddQueryDataSource(datasourceName),
 				query.SeriesNameFormat("Total (k8s)"),
 			),
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchers(
-					"sum(rate(container_cpu_usage_seconds_total{container=~\"discovery|istio-proxy\", pod=~\"istiod-.*\"}[$__rate_interval])) by (container)",
+				promql.SetLabelMatchersV2(
+					IstioCommonPanelQueries["IstiodVCPUContainer"],
 					labelMatchers,
-				),
+				).Pretty(0),
 				dashboards.AddQueryDataSource(datasourceName),
 				query.SeriesNameFormat("{{ container }} (k8s)"),
 			),
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchers(
-					"irate(process_cpu_seconds_total{app=\"istiod\"}[$__rate_interval])",
+				promql.SetLabelMatchersV2(
+					IstioCommonPanelQueries["IstiodVCPUPilot"],
 					labelMatchers,
-				),
+				).Pretty(0),
 				dashboards.AddQueryDataSource(datasourceName),
 				query.SeriesNameFormat("pilot (self-reported)"),
 			),
@@ -486,7 +487,7 @@ func IstiodVCPU(datasourceName string, labelMatchers ...promql.LabelMatcher) pan
 	)
 }
 
-func IstiodDisk(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
+func IstiodDisk(datasourceName string, labelMatchers ...*labels.Matcher) panelgroup.Option {
 	return panelgroup.AddPanel("Disk",
 		timeSeriesPanel.Chart(
 			timeSeriesPanel.WithLegend(timeSeriesPanel.Legend{
@@ -507,20 +508,20 @@ func IstiodDisk(datasourceName string, labelMatchers ...promql.LabelMatcher) pan
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchers(
-					"process_open_fds{app=\"istiod\"}",
+				promql.SetLabelMatchersV2(
+					IstioCommonPanelQueries["IstiodDiskOpenfds"],
 					labelMatchers,
-				),
+				).Pretty(0),
 				dashboards.AddQueryDataSource(datasourceName),
 				query.SeriesNameFormat("Open FDs (pilot)"),
 			),
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchers(
-					"container_fs_usage_bytes{ container=~\"discovery|istio-proxy\", pod=~\"istiod-.*\"}",
+				promql.SetLabelMatchersV2(
+					IstioCommonPanelQueries["IstiodDiskContainerFSUsage"],
 					labelMatchers,
-				),
+				).Pretty(0),
 				dashboards.AddQueryDataSource(datasourceName),
 				query.SeriesNameFormat("{{ container }}"),
 			),
@@ -528,7 +529,7 @@ func IstiodDisk(datasourceName string, labelMatchers ...promql.LabelMatcher) pan
 	)
 }
 
-func IstiodGoroutines(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
+func IstiodGoroutines(datasourceName string, labelMatchers ...*labels.Matcher) panelgroup.Option {
 	return panelgroup.AddPanel("Goroutines",
 		timeSeriesPanel.Chart(
 			timeSeriesPanel.WithVisual(timeSeriesPanel.Visual{
@@ -545,10 +546,10 @@ func IstiodGoroutines(datasourceName string, labelMatchers ...promql.LabelMatche
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchers(
-					"go_goroutines{app=\"istiod\"}",
+				promql.SetLabelMatchersV2(
+					IstioCommonPanelQueries["IstiodGoroutines"],
 					labelMatchers,
-				),
+				).Pretty(0),
 				dashboards.AddQueryDataSource(datasourceName),
 				query.SeriesNameFormat("Number of Goroutines"),
 			),
