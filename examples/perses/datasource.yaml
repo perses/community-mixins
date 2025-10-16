@@ -1,10 +1,10 @@
 ---
 kind: GlobalDatasource
 metadata:
-  name: PrometheusDemo
+  name: prometheus-datasource
 spec:
   default: true
   plugin:
     kind: PrometheusDatasource
     spec:
-      directUrl: https://demo.promlabs.com
+      directUrl: https://prometheus.demo.prometheus.io

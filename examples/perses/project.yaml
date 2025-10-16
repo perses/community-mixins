@@ -1,6 +1,6 @@
 kind: Project
 metadata:
-  name: default
+  name: perses-dev
 spec:
   display:
-    name: "default"
+    name: "perses-dev"
