@@ -48,14 +48,19 @@ func NewRuleGroup(name, interval string, labels map[string]string, rules []monit
 
 // NewAlertingRule creates a new Rule object
 func NewAlertingRule(alertName string, expr parser.Expr, forTime string, labels map[string]string, annotations map[string]string) monitoringv1.Rule {
-	duration := monitoringv1.Duration(forTime)
-	return monitoringv1.Rule{
+	rule := monitoringv1.Rule{
 		Alert:       alertName,
 		Expr:        intstr.FromString(expr.Pretty(0)),
-		For:         &duration,
 		Labels:      labels,
 		Annotations: annotations,
 	}
+
+	if forTime != "" {
+		duration := monitoringv1.Duration(forTime)
+		rule.For = &duration
+	}
+
+	return rule
 }
 
 // NewRecordingRule creates a new Rule object
