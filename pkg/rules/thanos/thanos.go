@@ -9,7 +9,7 @@ import (
 	"github.com/perses/promql-builder/vector"
 	monitoringv1 "github.com/prometheus-operator/prometheus-operator/pkg/apis/monitoring/v1"
 
-	rulehelpers "github.com/perses/community-dashboards/pkg/rules"
+	rulehelpers "github.com/perses/community-mixins/pkg/rules"
 )
 
 // Runbook fragments

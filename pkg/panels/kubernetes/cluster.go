@@ -1,8 +1,8 @@
 package kubernetes
 
 import (
-	"github.com/perses/community-dashboards/pkg/dashboards"
-	"github.com/perses/community-dashboards/pkg/promql"
+	"github.com/perses/community-mixins/pkg/dashboards"
+	"github.com/perses/community-mixins/pkg/promql"
 	"github.com/perses/perses/go-sdk/panel"
 	panelgroup "github.com/perses/perses/go-sdk/panel-group"
 	"github.com/perses/plugins/prometheus/sdk/go/query"

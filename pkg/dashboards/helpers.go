@@ -1,7 +1,7 @@
 package dashboards
 
 import (
-	"github.com/perses/community-dashboards/pkg/promql"
+	"github.com/perses/community-mixins/pkg/promql"
 	commonSdk "github.com/perses/perses/go-sdk/common"
 	"github.com/perses/perses/go-sdk/dashboard"
 	listVar "github.com/perses/perses/go-sdk/variable/list-variable"

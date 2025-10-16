@@ -6,8 +6,8 @@ import (
 	"github.com/perses/plugins/prometheus/sdk/go/query"
 	"github.com/prometheus/prometheus/model/labels"
 
-	"github.com/perses/community-dashboards/pkg/dashboards"
-	"github.com/perses/community-dashboards/pkg/promql"
+	"github.com/perses/community-mixins/pkg/dashboards"
+	"github.com/perses/community-mixins/pkg/promql"
 
 	commonSdk "github.com/perses/perses/go-sdk/common"
 	timeSeriesPanel "github.com/perses/plugins/timeserieschart/sdk/go"

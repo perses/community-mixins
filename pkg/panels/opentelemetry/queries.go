@@ -1,7 +1,7 @@
 package opentelemetry
 
 import (
-	"github.com/perses/community-dashboards/pkg/promql"
+	"github.com/perses/community-mixins/pkg/promql"
 	promqlbuilder "github.com/perses/promql-builder"
 	"github.com/perses/promql-builder/label"
 	"github.com/prometheus/prometheus/promql/parser"

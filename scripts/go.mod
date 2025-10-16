@@ -1,4 +1,4 @@
-module github.com/perses/community-dashboards/tools
+module github.com/perses/community-mixins/tools
 
 go 1.24
 

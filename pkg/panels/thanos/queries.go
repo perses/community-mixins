@@ -1,14 +1,15 @@
 package thanos
 
 import (
-	"github.com/perses/community-dashboards/pkg/promql"
+	"maps"
+
+	"github.com/perses/community-mixins/pkg/promql"
 	promqlbuilder "github.com/perses/promql-builder"
 	"github.com/perses/promql-builder/label"
 	"github.com/perses/promql-builder/matrix"
 	"github.com/perses/promql-builder/vector"
 	"github.com/prometheus/prometheus/model/labels"
 	"github.com/prometheus/prometheus/promql/parser"
-	"maps"
 )
 
 var ThanosCommonPanelQueries = map[string]parser.Expr{

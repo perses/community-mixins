@@ -5,9 +5,9 @@ import (
 	panelgroup "github.com/perses/perses/go-sdk/panel-group"
 	"github.com/prometheus/prometheus/model/labels"
 
-	panelsGostats "github.com/perses/community-dashboards/pkg/panels/gostats"
-	panels "github.com/perses/community-dashboards/pkg/panels/thanos"
-	"github.com/perses/community-dashboards/pkg/promql"
+	panelsGostats "github.com/perses/community-mixins/pkg/panels/gostats"
+	panels "github.com/perses/community-mixins/pkg/panels/thanos"
+	"github.com/perses/community-mixins/pkg/promql"
 )
 
 func withThanosResourcesGroup(datasource string, labelMatcher *labels.Matcher) dashboard.Option {
