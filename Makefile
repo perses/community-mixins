@@ -50,6 +50,13 @@ build-dashboards:
 	@$(ENVVARS) $(GOCMD) run $(GOMAIN) --output-dir="./examples/dashboards/operator" --output="operator" --project="perses-dev" --datasource="prometheus-datasource"
 	@$(ENVVARS) $(GOCMD) run $(GOMAIN) --output-dir="./examples/dashboards/perses" --output="yaml" --project="perses-dev" --datasource="prometheus-datasource"
 
+.PHONY: build-rules
+build-rules:
+	@echo "Removing old rules"
+	@rm -rf ./examples/rules/
+	@echo "Building rules"
+	@$(ENVVARS) $(GOCMD) run $(GOMAIN) --output-rules-dir="./examples/rules/operator" --output-rules="operator"  --output-dir="./examples/dashboards/operator" --output="operator" --project="monitoring" --build-rules
+
 # Adding a new target for building and testing dashboards locally with configurable flags
 .PHONY: build-dashboards-local
 build-dashboards-local:

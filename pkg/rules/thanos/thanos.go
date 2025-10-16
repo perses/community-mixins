@@ -55,39 +55,73 @@ const (
 	runbookThanosNoRuleEvaluations                                 = "#thanosnoruleevaluations"
 )
 
-// BuildThanosRules builds the Thanos rules for the given namespace, dashboard URLs, runbook URL, labels, and annotations.
-func BuildThanosRules(
-	namespace,
-	componentDashboardURL,
-	compactDashboardURL,
-	queryDashboardURL,
-	receiveDashboardURL,
-	storeDashboardURL,
-	ruleDashboardURL,
-	runbookURL string,
-	labels map[string]string,
-	annotations map[string]string,
-) *monitoringv1.PrometheusRule {
+type ThanosRulesConfig struct {
+	RunbookURL                 string
+	ServiceLabelValue          string
+	AdditionalAlertLabels      map[string]string
+	AdditionalAlertAnnotations map[string]string
 
-	groups := []monitoringv1.RuleGroup{
-		ThanosComponentAbsentGroup(componentDashboardURL, runbookURL),
-		ThanosCompactGroup(compactDashboardURL, runbookURL),
-		ThanosQueryGroup(queryDashboardURL, runbookURL),
-		ThanosReceiveGroup(receiveDashboardURL, runbookURL),
-		ThanosStoreGroup(storeDashboardURL, runbookURL),
-		ThanosRuleGroup(ruleDashboardURL, runbookURL),
-	}
-
-	return rulehelpers.NewPrometheusRule(
-		"thanos-rules",
-		namespace,
-		labels,
-		annotations,
-		groups,
-	)
+	CompactDashboardURL string
+	QueryDashboardURL   string
+	ReceiveDashboardURL string
+	StoreDashboardURL   string
+	RuleDashboardURL    string
 }
 
-func ThanosComponentAbsentGroup(dashboardURL, runbookURL string) monitoringv1.RuleGroup {
+func NewThanosRulesConfig(
+	runbookURL string,
+	serviceLabelValue string,
+	additionalAlertLabels map[string]string,
+	additionalAlertAnnotations map[string]string,
+	compactDashboardURL string,
+	queryDashboardURL string,
+	receiveDashboardURL string,
+	storeDashboardURL string,
+	ruleDashboardURL string,
+) ThanosRulesConfig {
+	return ThanosRulesConfig{
+		RunbookURL:                 runbookURL,
+		ServiceLabelValue:          serviceLabelValue,
+		AdditionalAlertLabels:      additionalAlertLabels,
+		AdditionalAlertAnnotations: additionalAlertAnnotations,
+		CompactDashboardURL:        compactDashboardURL,
+		QueryDashboardURL:          queryDashboardURL,
+		ReceiveDashboardURL:        receiveDashboardURL,
+		StoreDashboardURL:          storeDashboardURL,
+		RuleDashboardURL:           ruleDashboardURL,
+	}
+}
+
+// BuildThanosRules builds the Thanos rules for the given namespace, dashboard URLs, runbook URL, labels, and annotations.
+func BuildThanosRules(
+	namespace string,
+	thanosRulesConfig ThanosRulesConfig,
+	labels map[string]string,
+	annotations map[string]string,
+) rulehelpers.RuleResult {
+
+	groups := []monitoringv1.RuleGroup{
+		thanosRulesConfig.ThanosComponentAbsentGroup(),
+		thanosRulesConfig.ThanosCompactGroup(),
+		thanosRulesConfig.ThanosQueryGroup(),
+		thanosRulesConfig.ThanosReceiveGroup(),
+		thanosRulesConfig.ThanosStoreGroup(),
+		thanosRulesConfig.ThanosRuleGroup(),
+	}
+
+	return rulehelpers.NewRuleResult(
+		rulehelpers.NewPrometheusRule(
+			"thanos-rules",
+			namespace,
+			labels,
+			annotations,
+			groups,
+		),
+		nil,
+	).Component("thanos")
+}
+
+func (t ThanosRulesConfig) ThanosComponentAbsentGroup() monitoringv1.RuleGroup {
 	rules := []monitoringv1.Rule{
 		rulehelpers.NewAlertingRule(
 			"ThanosCompactIsDown",
@@ -103,17 +137,23 @@ func ThanosComponentAbsentGroup(dashboardURL, runbookURL string) monitoringv1.Ru
 				),
 			),
 			"5m",
-			map[string]string{
-				"service":  "thanos",
-				"severity": "high",
-			},
-			rulehelpers.BuildAnnotations(
-				dashboardURL,
-				runbookURL,
-				runbookThanosCompactIsDown,
-				"ThanosCompact has disappeared from {{$labels.namespace}}. Prometheus target for the component cannot be discovered.",
-				"ThanosCompact has disappeared from {{$labels.namespace}}. Prometheus target for the component cannot be discovered.",
-				"Thanos component has disappeared from {{$labels.namespace}}.",
+			rulehelpers.MergeMaps(
+				map[string]string{
+					"service":  t.ServiceLabelValue,
+					"severity": "high",
+				},
+				t.AdditionalAlertLabels,
+			),
+			rulehelpers.MergeMaps(
+				rulehelpers.BuildAnnotations(
+					t.CompactDashboardURL,
+					t.RunbookURL,
+					runbookThanosCompactIsDown,
+					"ThanosCompact has disappeared from {{$labels.namespace}}. Prometheus target for the component cannot be discovered.",
+					"ThanosCompact has disappeared from {{$labels.namespace}}. Prometheus target for the component cannot be discovered.",
+					"Thanos component has disappeared from {{$labels.namespace}}.",
+				),
+				t.AdditionalAlertAnnotations,
 			),
 		),
 		rulehelpers.NewAlertingRule(
@@ -130,17 +170,23 @@ func ThanosComponentAbsentGroup(dashboardURL, runbookURL string) monitoringv1.Ru
 				),
 			),
 			"5m",
-			map[string]string{
-				"service":  "thanos",
-				"severity": "high",
-			},
-			rulehelpers.BuildAnnotations(
-				dashboardURL,
-				runbookURL,
-				runbookThanosQueryIsDown,
-				"ThanosQuery has disappeared from {{$labels.namespace}}. Prometheus target for the component cannot be discovered.",
-				"ThanosQuery has disappeared from {{$labels.namespace}}. Prometheus target for the component cannot be discovered.",
-				"Thanos component has disappeared from {{$labels.namespace}}.",
+			rulehelpers.MergeMaps(
+				map[string]string{
+					"service":  t.ServiceLabelValue,
+					"severity": "high",
+				},
+				t.AdditionalAlertLabels,
+			),
+			rulehelpers.MergeMaps(
+				rulehelpers.BuildAnnotations(
+					t.QueryDashboardURL,
+					t.RunbookURL,
+					runbookThanosQueryIsDown,
+					"ThanosQuery has disappeared from {{$labels.namespace}}. Prometheus target for the component cannot be discovered.",
+					"ThanosQuery has disappeared from {{$labels.namespace}}. Prometheus target for the component cannot be discovered.",
+					"Thanos component has disappeared from {{$labels.namespace}}.",
+				),
+				t.AdditionalAlertAnnotations,
 			),
 		),
 		rulehelpers.NewAlertingRule(
@@ -157,17 +203,23 @@ func ThanosComponentAbsentGroup(dashboardURL, runbookURL string) monitoringv1.Ru
 				),
 			),
 			"5m",
-			map[string]string{
-				"service":  "thanos",
-				"severity": "high",
-			},
-			rulehelpers.BuildAnnotations(
-				dashboardURL,
-				runbookURL,
-				runbookThanosReceiveIsDown,
-				"ThanosReceiveRouter has disappeared from {{$labels.namespace}}. Prometheus target for the component cannot be discovered.",
-				"ThanosReceiveRouter has disappeared from {{$labels.namespace}}. Prometheus target for the component cannot be discovered.",
-				"Thanos component has disappeared from {{$labels.namespace}}.",
+			rulehelpers.MergeMaps(
+				map[string]string{
+					"service":  t.ServiceLabelValue,
+					"severity": "high",
+				},
+				t.AdditionalAlertLabels,
+			),
+			rulehelpers.MergeMaps(
+				rulehelpers.BuildAnnotations(
+					t.ReceiveDashboardURL,
+					t.RunbookURL,
+					runbookThanosReceiveIsDown,
+					"ThanosReceiveRouter has disappeared from {{$labels.namespace}}. Prometheus target for the component cannot be discovered.",
+					"ThanosReceiveRouter has disappeared from {{$labels.namespace}}. Prometheus target for the component cannot be discovered.",
+					"Thanos component has disappeared from {{$labels.namespace}}.",
+				),
+				t.AdditionalAlertAnnotations,
 			),
 		),
 		rulehelpers.NewAlertingRule(
@@ -184,17 +236,23 @@ func ThanosComponentAbsentGroup(dashboardURL, runbookURL string) monitoringv1.Ru
 				),
 			),
 			"5m",
-			map[string]string{
-				"service":  "thanos",
-				"severity": "high",
-			},
-			rulehelpers.BuildAnnotations(
-				dashboardURL,
-				runbookURL,
-				runbookThanosReceiveIsDown,
-				"ThanosReceiveIngester has disappeared from {{$labels.namespace}}. Prometheus target for the component cannot be discovered.",
-				"ThanosReceiveIngester has disappeared from {{$labels.namespace}}. Prometheus target for the component cannot be discovered.",
-				"Thanos component has disappeared from {{$labels.namespace}}.",
+			rulehelpers.MergeMaps(
+				map[string]string{
+					"service":  t.ServiceLabelValue,
+					"severity": "high",
+				},
+				t.AdditionalAlertLabels,
+			),
+			rulehelpers.MergeMaps(
+				rulehelpers.BuildAnnotations(
+					t.ReceiveDashboardURL,
+					t.RunbookURL,
+					runbookThanosReceiveIsDown,
+					"ThanosReceiveIngester has disappeared from {{$labels.namespace}}. Prometheus target for the component cannot be discovered.",
+					"ThanosReceiveIngester has disappeared from {{$labels.namespace}}. Prometheus target for the component cannot be discovered.",
+					"Thanos component has disappeared from {{$labels.namespace}}.",
+				),
+				t.AdditionalAlertAnnotations,
 			),
 		),
 		rulehelpers.NewAlertingRule(
@@ -211,17 +269,23 @@ func ThanosComponentAbsentGroup(dashboardURL, runbookURL string) monitoringv1.Ru
 				),
 			),
 			"5m",
-			map[string]string{
-				"service":  "thanos",
-				"severity": "high",
-			},
-			rulehelpers.BuildAnnotations(
-				dashboardURL,
-				runbookURL,
-				runbookThanosRuleIsDown,
-				"ThanosRule has disappeared from {{$labels.namespace}}. Prometheus target for the component cannot be discovered.",
-				"ThanosRule has disappeared from {{$labels.namespace}}. Prometheus target for the component cannot be discovered.",
-				"Thanos component has disappeared from {{$labels.namespace}}.",
+			rulehelpers.MergeMaps(
+				map[string]string{
+					"service":  t.ServiceLabelValue,
+					"severity": "high",
+				},
+				t.AdditionalAlertLabels,
+			),
+			rulehelpers.MergeMaps(
+				rulehelpers.BuildAnnotations(
+					t.RuleDashboardURL,
+					t.RunbookURL,
+					runbookThanosRuleIsDown,
+					"ThanosRule has disappeared from {{$labels.namespace}}. Prometheus target for the component cannot be discovered.",
+					"ThanosRule has disappeared from {{$labels.namespace}}. Prometheus target for the component cannot be discovered.",
+					"Thanos component has disappeared from {{$labels.namespace}}.",
+				),
+				t.AdditionalAlertAnnotations,
 			),
 		),
 		rulehelpers.NewAlertingRule(
@@ -238,17 +302,23 @@ func ThanosComponentAbsentGroup(dashboardURL, runbookURL string) monitoringv1.Ru
 				),
 			),
 			"5m",
-			map[string]string{
-				"service":  "thanos",
-				"severity": "high",
-			},
-			rulehelpers.BuildAnnotations(
-				dashboardURL,
-				runbookURL,
-				runbookThanosStoreIsDown,
-				"ThanosStore has disappeared from {{$labels.namespace}}. Prometheus target for the component cannot be discovered.",
-				"ThanosStore has disappeared from {{$labels.namespace}}. Prometheus target for the component cannot be discovered.",
-				"Thanos component has disappeared from {{$labels.namespace}}.",
+			rulehelpers.MergeMaps(
+				map[string]string{
+					"service":  t.ServiceLabelValue,
+					"severity": "high",
+				},
+				t.AdditionalAlertLabels,
+			),
+			rulehelpers.MergeMaps(
+				rulehelpers.BuildAnnotations(
+					t.StoreDashboardURL,
+					t.RunbookURL,
+					runbookThanosStoreIsDown,
+					"ThanosStore has disappeared from {{$labels.namespace}}. Prometheus target for the component cannot be discovered.",
+					"ThanosStore has disappeared from {{$labels.namespace}}. Prometheus target for the component cannot be discovered.",
+					"Thanos component has disappeared from {{$labels.namespace}}.",
+				),
+				t.AdditionalAlertAnnotations,
 			),
 		),
 	}
@@ -256,7 +326,7 @@ func ThanosComponentAbsentGroup(dashboardURL, runbookURL string) monitoringv1.Ru
 	return rulehelpers.NewRuleGroup("thanos-component-absent", "", nil, rules)
 }
 
-func ThanosCompactGroup(dashboardURL, runbookURL string) monitoringv1.RuleGroup {
+func (t ThanosRulesConfig) ThanosCompactGroup() monitoringv1.RuleGroup {
 	rules := []monitoringv1.Rule{
 		rulehelpers.NewAlertingRule(
 			"ThanosCompactMultipleRunning",
@@ -272,17 +342,23 @@ func ThanosCompactGroup(dashboardURL, runbookURL string) monitoringv1.RuleGroup 
 				),
 			).By("namespace", "job"),
 			"5m",
-			map[string]string{
-				"service":  "thanos",
-				"severity": "medium",
-			},
-			rulehelpers.BuildAnnotations(
-				dashboardURL,
-				runbookURL,
-				runbookThanosCompactMultipleRunning,
-				"No more than one Thanos Compact instance should be running at once. There are {{$value}} in {{$labels.namespace}} instances running.",
-				"No more than one Thanos Compact instance should be running at once. There are {{$value}} in {{$labels.namespace}} instances running.",
-				"Thanos Compact has multiple instances running.",
+			rulehelpers.MergeMaps(
+				map[string]string{
+					"service":  t.ServiceLabelValue,
+					"severity": "medium",
+				},
+				t.AdditionalAlertLabels,
+			),
+			rulehelpers.MergeMaps(
+				rulehelpers.BuildAnnotations(
+					t.CompactDashboardURL,
+					t.RunbookURL,
+					runbookThanosCompactMultipleRunning,
+					"No more than one Thanos Compact instance should be running at once. There are {{$value}} in {{$labels.namespace}} instances running.",
+					"No more than one Thanos Compact instance should be running at once. There are {{$value}} in {{$labels.namespace}} instances running.",
+					"Thanos Compact has multiple instances running.",
+				),
+				t.AdditionalAlertAnnotations,
 			),
 		),
 		rulehelpers.NewAlertingRule(
@@ -297,17 +373,23 @@ func ThanosCompactGroup(dashboardURL, runbookURL string) monitoringv1.RuleGroup 
 				promqlbuilder.NewNumber(1),
 			),
 			"5m",
-			map[string]string{
-				"service":  "thanos",
-				"severity": "medium",
-			},
-			rulehelpers.BuildAnnotations(
-				dashboardURL,
-				runbookURL,
-				runbookThanosCompactHalted,
-				"Thanos Compact {{$labels.job}} in {{$labels.namespace}} has failed to run and now is halted.",
-				"Thanos Compact {{$labels.job}} in {{$labels.namespace}} has failed to run and now is halted.",
-				"Thanos Compact has failed to run and is now halted.",
+			rulehelpers.MergeMaps(
+				map[string]string{
+					"service":  t.ServiceLabelValue,
+					"severity": "medium",
+				},
+				t.AdditionalAlertLabels,
+			),
+			rulehelpers.MergeMaps(
+				rulehelpers.BuildAnnotations(
+					t.CompactDashboardURL,
+					t.RunbookURL,
+					runbookThanosCompactHalted,
+					"Thanos Compact {{$labels.job}} in {{$labels.namespace}} has failed to run and now is halted.",
+					"Thanos Compact {{$labels.job}} in {{$labels.namespace}} has failed to run and now is halted.",
+					"Thanos Compact has failed to run and is now halted.",
+				),
+				t.AdditionalAlertAnnotations,
 			),
 		),
 		rulehelpers.NewAlertingRule(
@@ -347,17 +429,23 @@ func ThanosCompactGroup(dashboardURL, runbookURL string) monitoringv1.RuleGroup 
 				promqlbuilder.NewNumber(5),
 			),
 			"15m",
-			map[string]string{
-				"service":  "thanos",
-				"severity": "medium",
-			},
-			rulehelpers.BuildAnnotations(
-				dashboardURL,
-				runbookURL,
-				runbookThanosCompactHighCompactionFailures,
-				"Thanos Compact {{$labels.job}} in {{$labels.namespace}} is failing to execute {{$value | humanize}}% of compactions.",
-				"Thanos Compact {{$labels.job}} in {{$labels.namespace}} is failing to execute {{$value | humanize}}% of compactions.",
-				"Thanos Compact is failing to execute compactions.",
+			rulehelpers.MergeMaps(
+				map[string]string{
+					"service":  t.ServiceLabelValue,
+					"severity": "medium",
+				},
+				t.AdditionalAlertLabels,
+			),
+			rulehelpers.MergeMaps(
+				rulehelpers.BuildAnnotations(
+					t.CompactDashboardURL,
+					t.RunbookURL,
+					runbookThanosCompactHighCompactionFailures,
+					"Thanos Compact {{$labels.job}} in {{$labels.namespace}} is failing to execute {{$value | humanize}}% of compactions.",
+					"Thanos Compact {{$labels.job}} in {{$labels.namespace}} is failing to execute {{$value | humanize}}% of compactions.",
+					"Thanos Compact is failing to execute compactions.",
+				),
+				t.AdditionalAlertAnnotations,
 			),
 		),
 		rulehelpers.NewAlertingRule(
@@ -397,17 +485,23 @@ func ThanosCompactGroup(dashboardURL, runbookURL string) monitoringv1.RuleGroup 
 				promqlbuilder.NewNumber(5),
 			),
 			"15m",
-			map[string]string{
-				"service":  "thanos",
-				"severity": "medium",
-			},
-			rulehelpers.BuildAnnotations(
-				dashboardURL,
-				runbookURL,
-				runbookThanosCompactBucketHighOperationFailures,
-				"Thanos Compact {{$labels.job}} in {{$labels.namespace}} Bucket is failing to execute {{$value | humanize}}% of operations.",
-				"Thanos Compact {{$labels.job}} in {{$labels.namespace}} Bucket is failing to execute {{$value | humanize}}% of operations.",
-				"Thanos Compact Bucket is having a high number of operation failures.",
+			rulehelpers.MergeMaps(
+				map[string]string{
+					"service":  t.ServiceLabelValue,
+					"severity": "medium",
+				},
+				t.AdditionalAlertLabels,
+			),
+			rulehelpers.MergeMaps(
+				rulehelpers.BuildAnnotations(
+					t.CompactDashboardURL,
+					t.RunbookURL,
+					runbookThanosCompactBucketHighOperationFailures,
+					"Thanos Compact {{$labels.job}} in {{$labels.namespace}} Bucket is failing to execute {{$value | humanize}}% of operations.",
+					"Thanos Compact {{$labels.job}} in {{$labels.namespace}} Bucket is failing to execute {{$value | humanize}}% of operations.",
+					"Thanos Compact Bucket is having a high number of operation failures.",
+				),
+				t.AdditionalAlertAnnotations,
 			),
 		),
 		rulehelpers.NewAlertingRule(
@@ -438,17 +532,23 @@ func ThanosCompactGroup(dashboardURL, runbookURL string) monitoringv1.RuleGroup 
 				promqlbuilder.NewNumber(24),
 			),
 			"5m",
-			map[string]string{
-				"service":  "thanos",
-				"severity": "medium",
-			},
-			rulehelpers.BuildAnnotations(
-				dashboardURL,
-				runbookURL,
-				runbookThanosCompactHasNotRun,
-				"Thanos Compact {{$labels.job}} in {{$labels.namespace}} has not uploaded anything for 24 hours.",
-				"Thanos Compact {{$labels.job}} in {{$labels.namespace}} has not uploaded anything for 24 hours.",
-				"Thanos Compact has not uploaded anything for last 24 hours.",
+			rulehelpers.MergeMaps(
+				map[string]string{
+					"service":  t.ServiceLabelValue,
+					"severity": "medium",
+				},
+				t.AdditionalAlertLabels,
+			),
+			rulehelpers.MergeMaps(
+				rulehelpers.BuildAnnotations(
+					t.CompactDashboardURL,
+					t.RunbookURL,
+					runbookThanosCompactHasNotRun,
+					"Thanos Compact {{$labels.job}} in {{$labels.namespace}} has not uploaded anything for 24 hours.",
+					"Thanos Compact {{$labels.job}} in {{$labels.namespace}} has not uploaded anything for 24 hours.",
+					"Thanos Compact has not uploaded anything for last 24 hours.",
+				),
+				t.AdditionalAlertAnnotations,
 			),
 		),
 	}
@@ -456,7 +556,7 @@ func ThanosCompactGroup(dashboardURL, runbookURL string) monitoringv1.RuleGroup 
 	return rulehelpers.NewRuleGroup("thanos-compact", "", nil, rules)
 }
 
-func ThanosQueryGroup(dashboardURL, runbookURL string) monitoringv1.RuleGroup {
+func (t ThanosRulesConfig) ThanosQueryGroup() monitoringv1.RuleGroup {
 	rules := []monitoringv1.Rule{
 		rulehelpers.NewAlertingRule(
 			"ThanosQueryHttpRequestQueryErrorRateHigh",
@@ -498,17 +598,23 @@ func ThanosQueryGroup(dashboardURL, runbookURL string) monitoringv1.RuleGroup {
 				promqlbuilder.NewNumber(5),
 			),
 			"5m",
-			map[string]string{
-				"service":  "thanos",
-				"severity": "high",
-			},
-			rulehelpers.BuildAnnotations(
-				dashboardURL,
-				runbookURL,
-				runbookThanosQueryHttpRequestQueryErrorRateHigh,
-				"Thanos Query {{$labels.job}} in {{$labels.namespace}} is failing to handle {{$value | humanize}}% of \"query\" requests.",
-				"Thanos Query {{$labels.job}} in {{$labels.namespace}} is failing to handle {{$value | humanize}}% of \"query\" requests.",
-				"Thanos Query is failing to handle requests.",
+			rulehelpers.MergeMaps(
+				map[string]string{
+					"service":  t.ServiceLabelValue,
+					"severity": "high",
+				},
+				t.AdditionalAlertLabels,
+			),
+			rulehelpers.MergeMaps(
+				rulehelpers.BuildAnnotations(
+					t.QueryDashboardURL,
+					t.RunbookURL,
+					runbookThanosQueryHttpRequestQueryErrorRateHigh,
+					"Thanos Query {{$labels.job}} in {{$labels.namespace}} is failing to handle {{$value | humanize}}% of \"query\" requests.",
+					"Thanos Query {{$labels.job}} in {{$labels.namespace}} is failing to handle {{$value | humanize}}% of \"query\" requests.",
+					"Thanos Query is failing to handle requests.",
+				),
+				t.AdditionalAlertAnnotations,
 			),
 		),
 		rulehelpers.NewAlertingRule(
@@ -549,17 +655,23 @@ func ThanosQueryGroup(dashboardURL, runbookURL string) monitoringv1.RuleGroup {
 				promqlbuilder.NewNumber(5),
 			),
 			"5m",
-			map[string]string{
-				"service":  "thanos",
-				"severity": "medium",
-			},
-			rulehelpers.BuildAnnotations(
-				dashboardURL,
-				runbookURL,
-				runbookThanosQueryGrpcServerErrorRate,
-				"Thanos Query {{$labels.job}} in {{$labels.namespace}} is failing to handle {{$value | humanize}}% of requests.",
-				"Thanos Query {{$labels.job}} in {{$labels.namespace}} is failing to handle {{$value | humanize}}% of requests.",
-				"Thanos Query is failing to handle requests.",
+			rulehelpers.MergeMaps(
+				map[string]string{
+					"service":  t.ServiceLabelValue,
+					"severity": "medium",
+				},
+				t.AdditionalAlertLabels,
+			),
+			rulehelpers.MergeMaps(
+				rulehelpers.BuildAnnotations(
+					t.QueryDashboardURL,
+					t.RunbookURL,
+					runbookThanosQueryGrpcServerErrorRate,
+					"Thanos Query {{$labels.job}} in {{$labels.namespace}} is failing to handle {{$value | humanize}}% of requests.",
+					"Thanos Query {{$labels.job}} in {{$labels.namespace}} is failing to handle {{$value | humanize}}% of requests.",
+					"Thanos Query is failing to handle requests.",
+				),
+				t.AdditionalAlertAnnotations,
 			),
 		),
 		rulehelpers.NewAlertingRule(
@@ -600,17 +712,23 @@ func ThanosQueryGroup(dashboardURL, runbookURL string) monitoringv1.RuleGroup {
 				promqlbuilder.NewNumber(5),
 			),
 			"5m",
-			map[string]string{
-				"service":  "thanos",
-				"severity": "medium",
-			},
-			rulehelpers.BuildAnnotations(
-				dashboardURL,
-				runbookURL,
-				runbookThanosQueryGrpcClientErrorRate,
-				"Thanos Query {{$labels.job}} in {{$labels.namespace}} is failing to send {{$value | humanize}}% of requests.",
-				"Thanos Query {{$labels.job}} in {{$labels.namespace}} is failing to send {{$value | humanize}}% of requests.",
-				"Thanos Query is failing to send requests.",
+			rulehelpers.MergeMaps(
+				map[string]string{
+					"service":  t.ServiceLabelValue,
+					"severity": "medium",
+				},
+				t.AdditionalAlertLabels,
+			),
+			rulehelpers.MergeMaps(
+				rulehelpers.BuildAnnotations(
+					t.QueryDashboardURL,
+					t.RunbookURL,
+					runbookThanosQueryGrpcClientErrorRate,
+					"Thanos Query {{$labels.job}} in {{$labels.namespace}} is failing to send {{$value | humanize}}% of requests.",
+					"Thanos Query {{$labels.job}} in {{$labels.namespace}} is failing to send {{$value | humanize}}% of requests.",
+					"Thanos Query is failing to send requests.",
+				),
+				t.AdditionalAlertAnnotations,
 			),
 		),
 		rulehelpers.NewAlertingRule(
@@ -650,17 +768,23 @@ func ThanosQueryGroup(dashboardURL, runbookURL string) monitoringv1.RuleGroup {
 				promqlbuilder.NewNumber(1),
 			),
 			"15m",
-			map[string]string{
-				"service":  "thanos",
-				"severity": "medium",
-			},
-			rulehelpers.BuildAnnotations(
-				dashboardURL,
-				runbookURL,
-				runbookThanosQueryHighDNSFailures,
-				"Thanos Query {{$labels.job}} in {{$labels.namespace}} have {{$value | humanize}}% of failing DNS queries for store endpoints.",
-				"Thanos Query {{$labels.job}} in {{$labels.namespace}} have {{$value | humanize}}% of failing DNS queries for store endpoints.",
-				"Thanos Query is having high number of DNS failures.",
+			rulehelpers.MergeMaps(
+				map[string]string{
+					"service":  t.ServiceLabelValue,
+					"severity": "medium",
+				},
+				t.AdditionalAlertLabels,
+			),
+			rulehelpers.MergeMaps(
+				rulehelpers.BuildAnnotations(
+					t.QueryDashboardURL,
+					t.RunbookURL,
+					runbookThanosQueryHighDNSFailures,
+					"Thanos Query {{$labels.job}} in {{$labels.namespace}} have {{$value | humanize}}% of failing DNS queries for store endpoints.",
+					"Thanos Query {{$labels.job}} in {{$labels.namespace}} have {{$value | humanize}}% of failing DNS queries for store endpoints.",
+					"Thanos Query is having high number of DNS failures.",
+				),
+				t.AdditionalAlertAnnotations,
 			),
 		),
 		rulehelpers.NewAlertingRule(
@@ -705,17 +829,23 @@ func ThanosQueryGroup(dashboardURL, runbookURL string) monitoringv1.RuleGroup {
 				),
 			),
 			"10m",
-			map[string]string{
-				"service":  "thanos",
-				"severity": "high",
-			},
-			rulehelpers.BuildAnnotations(
-				dashboardURL,
-				runbookURL,
-				runbookThanosQueryInstantLatencyHigh,
-				"Thanos Query {{$labels.job}} in {{$labels.namespace}} has a 99th percentile latency of {{$value}} seconds for instant queries.",
-				"Thanos Query {{$labels.job}} in {{$labels.namespace}} has a 99th percentile latency of {{$value}} seconds for instant queries.",
-				"Thanos Query has high latency for queries.",
+			rulehelpers.MergeMaps(
+				map[string]string{
+					"service":  t.ServiceLabelValue,
+					"severity": "high",
+				},
+				t.AdditionalAlertLabels,
+			),
+			rulehelpers.MergeMaps(
+				rulehelpers.BuildAnnotations(
+					t.QueryDashboardURL,
+					t.RunbookURL,
+					runbookThanosQueryInstantLatencyHigh,
+					"Thanos Query {{$labels.job}} in {{$labels.namespace}} has a 99th percentile latency of {{$value}} seconds for instant queries.",
+					"Thanos Query {{$labels.job}} in {{$labels.namespace}} has a 99th percentile latency of {{$value}} seconds for instant queries.",
+					"Thanos Query has high latency for queries.",
+				),
+				t.AdditionalAlertAnnotations,
 			),
 		),
 	}
@@ -723,7 +853,7 @@ func ThanosQueryGroup(dashboardURL, runbookURL string) monitoringv1.RuleGroup {
 	return rulehelpers.NewRuleGroup("thanos-query", "", nil, rules)
 }
 
-func ThanosReceiveGroup(dashboardURL, runbookURL string) monitoringv1.RuleGroup {
+func (t ThanosRulesConfig) ThanosReceiveGroup() monitoringv1.RuleGroup {
 	rules := []monitoringv1.Rule{
 		rulehelpers.NewAlertingRule(
 			"ThanosReceiveHttpRequestErrorRateHigh",
@@ -765,17 +895,23 @@ func ThanosReceiveGroup(dashboardURL, runbookURL string) monitoringv1.RuleGroup 
 				promqlbuilder.NewNumber(5),
 			),
 			"5m",
-			map[string]string{
-				"service":  "thanos",
-				"severity": "high",
-			},
-			rulehelpers.BuildAnnotations(
-				dashboardURL,
-				runbookURL,
-				runbookThanosReceiveHttpRequestErrorRateHigh,
-				"Thanos Receive {{$labels.job}} in {{$labels.namespace}} is failing to handle {{$value | humanize}}% of requests.",
-				"Thanos Receive {{$labels.job}} in {{$labels.namespace}} is failing to handle {{$value | humanize}}% of requests.",
-				"Thanos Receive is failing to handle requests.",
+			rulehelpers.MergeMaps(
+				map[string]string{
+					"service":  t.ServiceLabelValue,
+					"severity": "high",
+				},
+				t.AdditionalAlertLabels,
+			),
+			rulehelpers.MergeMaps(
+				rulehelpers.BuildAnnotations(
+					t.ReceiveDashboardURL,
+					t.RunbookURL,
+					runbookThanosReceiveHttpRequestErrorRateHigh,
+					"Thanos Receive {{$labels.job}} in {{$labels.namespace}} is failing to handle {{$value | humanize}}% of requests.",
+					"Thanos Receive {{$labels.job}} in {{$labels.namespace}} is failing to handle {{$value | humanize}}% of requests.",
+					"Thanos Receive is failing to handle requests.",
+				),
+				t.AdditionalAlertAnnotations,
 			),
 		),
 		rulehelpers.NewAlertingRule(
@@ -820,17 +956,23 @@ func ThanosReceiveGroup(dashboardURL, runbookURL string) monitoringv1.RuleGroup 
 				),
 			),
 			"10m",
-			map[string]string{
-				"service":  "thanos",
-				"severity": "high",
-			},
-			rulehelpers.BuildAnnotations(
-				dashboardURL,
-				runbookURL,
-				runbookThanosReceiveHttpRequestLatencyHigh,
-				"Thanos Receive {{$labels.job}} in {{$labels.namespace}} has a 99th percentile latency of {{ $value }} seconds for requests.",
-				"Thanos Receive {{$labels.job}} in {{$labels.namespace}} has a 99th percentile latency of {{ $value }} seconds for requests.",
-				"Thanos Receive has high HTTP requests latency.",
+			rulehelpers.MergeMaps(
+				map[string]string{
+					"service":  t.ServiceLabelValue,
+					"severity": "high",
+				},
+				t.AdditionalAlertLabels,
+			),
+			rulehelpers.MergeMaps(
+				rulehelpers.BuildAnnotations(
+					t.ReceiveDashboardURL,
+					t.RunbookURL,
+					runbookThanosReceiveHttpRequestLatencyHigh,
+					"Thanos Receive {{$labels.job}} in {{$labels.namespace}} has a 99th percentile latency of {{ $value }} seconds for requests.",
+					"Thanos Receive {{$labels.job}} in {{$labels.namespace}} has a 99th percentile latency of {{ $value }} seconds for requests.",
+					"Thanos Receive has high HTTP requests latency.",
+				),
+				t.AdditionalAlertAnnotations,
 			),
 		),
 		rulehelpers.NewAlertingRule(
@@ -904,17 +1046,23 @@ func ThanosReceiveGroup(dashboardURL, runbookURL string) monitoringv1.RuleGroup 
 				),
 			),
 			"5m",
-			map[string]string{
-				"service":  "thanos",
-				"severity": "medium",
-			},
-			rulehelpers.BuildAnnotations(
-				dashboardURL,
-				runbookURL,
-				runbookThanosReceiveHighReplicationFailures,
-				"Thanos Receive {{$labels.job}} in {{$labels.namespace}} is failing to replicate {{$value | humanize}}% of requests.",
-				"Thanos Receive {{$labels.job}} in {{$labels.namespace}} is failing to replicate {{$value | humanize}}% of requests.",
-				"Thanos Receive is having high number of replication failures.",
+			rulehelpers.MergeMaps(
+				map[string]string{
+					"service":  t.ServiceLabelValue,
+					"severity": "medium",
+				},
+				t.AdditionalAlertLabels,
+			),
+			rulehelpers.MergeMaps(
+				rulehelpers.BuildAnnotations(
+					t.ReceiveDashboardURL,
+					t.RunbookURL,
+					runbookThanosReceiveHighReplicationFailures,
+					"Thanos Receive {{$labels.job}} in {{$labels.namespace}} is failing to replicate {{$value | humanize}}% of requests.",
+					"Thanos Receive {{$labels.job}} in {{$labels.namespace}} is failing to replicate {{$value | humanize}}% of requests.",
+					"Thanos Receive is having high number of replication failures.",
+				),
+				t.AdditionalAlertAnnotations,
 			),
 		),
 		rulehelpers.NewAlertingRule(
@@ -955,17 +1103,23 @@ func ThanosReceiveGroup(dashboardURL, runbookURL string) monitoringv1.RuleGroup 
 				promqlbuilder.NewNumber(20),
 			),
 			"5m",
-			map[string]string{
-				"service":  "thanos",
-				"severity": "high",
-			},
-			rulehelpers.BuildAnnotations(
-				dashboardURL,
-				runbookURL,
-				runbookThanosReceiveHighForwardRequestFailures,
-				"Thanos Receive {{$labels.job}} in {{$labels.namespace}} is failing to forward {{$value | humanize}}% of requests.",
-				"Thanos Receive {{$labels.job}} in {{$labels.namespace}} is failing to forward {{$value | humanize}}% of requests.",
-				"Thanos Receive is failing to forward requests.",
+			rulehelpers.MergeMaps(
+				map[string]string{
+					"service":  t.ServiceLabelValue,
+					"severity": "high",
+				},
+				t.AdditionalAlertLabels,
+			),
+			rulehelpers.MergeMaps(
+				rulehelpers.BuildAnnotations(
+					t.ReceiveDashboardURL,
+					t.RunbookURL,
+					runbookThanosReceiveHighForwardRequestFailures,
+					"Thanos Receive {{$labels.job}} in {{$labels.namespace}} is failing to forward {{$value | humanize}}% of requests.",
+					"Thanos Receive {{$labels.job}} in {{$labels.namespace}} is failing to forward {{$value | humanize}}% of requests.",
+					"Thanos Receive is failing to forward requests.",
+				),
+				t.AdditionalAlertAnnotations,
 			),
 		),
 		rulehelpers.NewAlertingRule(
@@ -1002,17 +1156,23 @@ func ThanosReceiveGroup(dashboardURL, runbookURL string) monitoringv1.RuleGroup 
 				promqlbuilder.NewNumber(0),
 			),
 			"15m",
-			map[string]string{
-				"service":  "thanos",
-				"severity": "medium",
-			},
-			rulehelpers.BuildAnnotations(
-				dashboardURL,
-				runbookURL,
-				runbookThanosReceiveHighHashringFileRefreshFailures,
-				"Thanos Receive {{$labels.job}} in {{$labels.namespace}} is failing to refresh hashring file, {{$value | humanize}} of attempts failed.",
-				"Thanos Receive {{$labels.job}} in {{$labels.namespace}} is failing to refresh hashring file, {{$value | humanize}} of attempts failed.",
-				"Thanos Receive is failing to refresh hasring file.",
+			rulehelpers.MergeMaps(
+				map[string]string{
+					"service":  t.ServiceLabelValue,
+					"severity": "medium",
+				},
+				t.AdditionalAlertLabels,
+			),
+			rulehelpers.MergeMaps(
+				rulehelpers.BuildAnnotations(
+					t.ReceiveDashboardURL,
+					t.RunbookURL,
+					runbookThanosReceiveHighHashringFileRefreshFailures,
+					"Thanos Receive {{$labels.job}} in {{$labels.namespace}} is failing to refresh hashring file, {{$value | humanize}} of attempts failed.",
+					"Thanos Receive {{$labels.job}} in {{$labels.namespace}} is failing to refresh hashring file, {{$value | humanize}} of attempts failed.",
+					"Thanos Receive is failing to refresh hasring file.",
+				),
+				t.AdditionalAlertAnnotations,
 			),
 		),
 		rulehelpers.NewAlertingRule(
@@ -1029,17 +1189,23 @@ func ThanosReceiveGroup(dashboardURL, runbookURL string) monitoringv1.RuleGroup 
 				promqlbuilder.NewNumber(1),
 			),
 			"5m",
-			map[string]string{
-				"service":  "thanos",
-				"severity": "medium",
-			},
-			rulehelpers.BuildAnnotations(
-				dashboardURL,
-				runbookURL,
-				runbookThanosReceiveConfigReloadFailure,
-				"Thanos Receive {{$labels.job}} in {{$labels.namespace}} has not been able to reload hashring configurations.",
-				"Thanos Receive {{$labels.job}} in {{$labels.namespace}} has not been able to reload hashring configurations.",
-				"Thanos Receive is failing to reload hashring configurations.",
+			rulehelpers.MergeMaps(
+				map[string]string{
+					"service":  t.ServiceLabelValue,
+					"severity": "medium",
+				},
+				t.AdditionalAlertLabels,
+			),
+			rulehelpers.MergeMaps(
+				rulehelpers.BuildAnnotations(
+					t.ReceiveDashboardURL,
+					t.RunbookURL,
+					runbookThanosReceiveConfigReloadFailure,
+					"Thanos Receive {{$labels.job}} in {{$labels.namespace}} has not been able to reload hashring configurations.",
+					"Thanos Receive {{$labels.job}} in {{$labels.namespace}} has not been able to reload hashring configurations.",
+					"Thanos Receive is failing to reload hashring configurations.",
+				),
+				t.AdditionalAlertAnnotations,
 			),
 		),
 		rulehelpers.NewAlertingRule(
@@ -1072,17 +1238,23 @@ func ThanosReceiveGroup(dashboardURL, runbookURL string) monitoringv1.RuleGroup 
 				),
 			).On("namespace", "job", "instance"),
 			"3h",
-			map[string]string{
-				"service":  "thanos",
-				"severity": "high",
-			},
-			rulehelpers.BuildAnnotations(
-				dashboardURL,
-				runbookURL,
-				runbookThanosReceiveNoUpload,
-				"Thanos Receive {{$labels.instance}} in {{$labels.namespace}} has not uploaded latest data to object storage.",
-				"Thanos Receive {{$labels.instance}} in {{$labels.namespace}} has not uploaded latest data to object storage.",
-				"Thanos Receive has not uploaded latest data to object storage.",
+			rulehelpers.MergeMaps(
+				map[string]string{
+					"service":  t.ServiceLabelValue,
+					"severity": "high",
+				},
+				t.AdditionalAlertLabels,
+			),
+			rulehelpers.MergeMaps(
+				rulehelpers.BuildAnnotations(
+					t.ReceiveDashboardURL,
+					t.RunbookURL,
+					runbookThanosReceiveNoUpload,
+					"Thanos Receive {{$labels.instance}} in {{$labels.namespace}} has not uploaded latest data to object storage.",
+					"Thanos Receive {{$labels.instance}} in {{$labels.namespace}} has not uploaded latest data to object storage.",
+					"Thanos Receive has not uploaded latest data to object storage.",
+				),
+				t.AdditionalAlertAnnotations,
 			),
 		),
 		rulehelpers.NewAlertingRule(
@@ -1104,17 +1276,23 @@ func ThanosReceiveGroup(dashboardURL, runbookURL string) monitoringv1.RuleGroup 
 				promqlbuilder.NewNumber(0),
 			),
 			"5m",
-			map[string]string{
-				"service":  "thanos",
-				"severity": "medium",
-			},
-			rulehelpers.BuildAnnotations(
-				dashboardURL,
-				runbookURL,
-				runbookThanosReceiveLimitsConfigReloadFailure,
-				"Thanos Receive {{$labels.job}} in {{$labels.namespace}} has not been able to reload the limits configuration.",
-				"Thanos Receive {{$labels.job}} in {{$labels.namespace}} has not been able to reload the limits configuration.",
-				"Thanos Receive has not been able to reload the limits configuration.",
+			rulehelpers.MergeMaps(
+				map[string]string{
+					"service":  t.ServiceLabelValue,
+					"severity": "medium",
+				},
+				t.AdditionalAlertLabels,
+			),
+			rulehelpers.MergeMaps(
+				rulehelpers.BuildAnnotations(
+					t.ReceiveDashboardURL,
+					t.RunbookURL,
+					runbookThanosReceiveLimitsConfigReloadFailure,
+					"Thanos Receive {{$labels.job}} in {{$labels.namespace}} has not been able to reload the limits configuration.",
+					"Thanos Receive {{$labels.job}} in {{$labels.namespace}} has not been able to reload the limits configuration.",
+					"Thanos Receive has not been able to reload the limits configuration.",
+				),
+				t.AdditionalAlertAnnotations,
 			),
 		),
 		rulehelpers.NewAlertingRule(
@@ -1142,17 +1320,23 @@ func ThanosReceiveGroup(dashboardURL, runbookURL string) monitoringv1.RuleGroup 
 				promqlbuilder.NewNumber(20),
 			),
 			"5m",
-			map[string]string{
-				"service":  "thanos",
-				"severity": "medium",
-			},
-			rulehelpers.BuildAnnotations(
-				dashboardURL,
-				runbookURL,
-				runbookThanosReceiveLimitsHighMetaMonitoringQueriesFailureRate,
-				"Thanos Receive {{$labels.job}} in {{$labels.namespace}} is failing for {{$value | humanize}}% of meta monitoring queries.",
-				"Thanos Receive {{$labels.job}} in {{$labels.namespace}} is failing for {{$value | humanize}}% of meta monitoring queries.",
-				"Thanos Receive has not been able to update the number of head series.",
+			rulehelpers.MergeMaps(
+				map[string]string{
+					"service":  t.ServiceLabelValue,
+					"severity": "medium",
+				},
+				t.AdditionalAlertLabels,
+			),
+			rulehelpers.MergeMaps(
+				rulehelpers.BuildAnnotations(
+					t.ReceiveDashboardURL,
+					t.RunbookURL,
+					runbookThanosReceiveLimitsHighMetaMonitoringQueriesFailureRate,
+					"Thanos Receive {{$labels.job}} in {{$labels.namespace}} is failing for {{$value | humanize}}% of meta monitoring queries.",
+					"Thanos Receive {{$labels.job}} in {{$labels.namespace}} is failing for {{$value | humanize}}% of meta monitoring queries.",
+					"Thanos Receive has not been able to update the number of head series.",
+				),
+				t.AdditionalAlertAnnotations,
 			),
 		),
 		rulehelpers.NewAlertingRule(
@@ -1174,17 +1358,23 @@ func ThanosReceiveGroup(dashboardURL, runbookURL string) monitoringv1.RuleGroup 
 				promqlbuilder.NewNumber(0),
 			),
 			"5m",
-			map[string]string{
-				"service":  "thanos",
-				"severity": "medium",
-			},
-			rulehelpers.BuildAnnotations(
-				dashboardURL,
-				runbookURL,
-				runbookThanosReceiveTenantLimitedByHeadSeries,
-				"Thanos Receive tenant {{$labels.tenant}} in {{$labels.namespace}} is limited by head series.",
-				"Thanos Receive tenant {{$labels.tenant}} in {{$labels.namespace}} is limited by head series.",
-				"Thanos Receive tenant is limited by head series.",
+			rulehelpers.MergeMaps(
+				map[string]string{
+					"service":  t.ServiceLabelValue,
+					"severity": "medium",
+				},
+				t.AdditionalAlertLabels,
+			),
+			rulehelpers.MergeMaps(
+				rulehelpers.BuildAnnotations(
+					t.ReceiveDashboardURL,
+					t.RunbookURL,
+					runbookThanosReceiveTenantLimitedByHeadSeries,
+					"Thanos Receive tenant {{$labels.tenant}} in {{$labels.namespace}} is limited by head series.",
+					"Thanos Receive tenant {{$labels.tenant}} in {{$labels.namespace}} is limited by head series.",
+					"Thanos Receive tenant is limited by head series.",
+				),
+				t.AdditionalAlertAnnotations,
 			),
 		),
 	}
@@ -1192,7 +1382,7 @@ func ThanosReceiveGroup(dashboardURL, runbookURL string) monitoringv1.RuleGroup 
 	return rulehelpers.NewRuleGroup("thanos-receive", "", nil, rules)
 }
 
-func ThanosStoreGroup(dashboardURL, runbookURL string) monitoringv1.RuleGroup {
+func (t ThanosRulesConfig) ThanosStoreGroup() monitoringv1.RuleGroup {
 	rules := []monitoringv1.Rule{
 		rulehelpers.NewAlertingRule(
 			"ThanosStoreGrpcErrorRate",
@@ -1232,17 +1422,23 @@ func ThanosStoreGroup(dashboardURL, runbookURL string) monitoringv1.RuleGroup {
 				promqlbuilder.NewNumber(5),
 			),
 			"5m",
-			map[string]string{
-				"service":  "thanos",
-				"severity": "medium",
-			},
-			rulehelpers.BuildAnnotations(
-				dashboardURL,
-				runbookURL,
-				runbookThanosStoreGrpcErrorRate,
-				"Thanos Store {{$labels.job}} in {{$labels.namespace}} is failing to handle {{$value | humanize}}% of requests.",
-				"Thanos Store {{$labels.job}} in {{$labels.namespace}} is failing to handle {{$value | humanize}}% of requests.",
-				"Thanos Store is failing to handle gRPC requests.",
+			rulehelpers.MergeMaps(
+				map[string]string{
+					"service":  t.ServiceLabelValue,
+					"severity": "medium",
+				},
+				t.AdditionalAlertLabels,
+			),
+			rulehelpers.MergeMaps(
+				rulehelpers.BuildAnnotations(
+					t.StoreDashboardURL,
+					t.RunbookURL,
+					runbookThanosStoreGrpcErrorRate,
+					"Thanos Store {{$labels.job}} in {{$labels.namespace}} is failing to handle {{$value | humanize}}% of requests.",
+					"Thanos Store {{$labels.job}} in {{$labels.namespace}} is failing to handle {{$value | humanize}}% of requests.",
+					"Thanos Store is failing to handle gRPC requests.",
+				),
+				t.AdditionalAlertAnnotations,
 			),
 		),
 		rulehelpers.NewAlertingRule(
@@ -1282,17 +1478,23 @@ func ThanosStoreGroup(dashboardURL, runbookURL string) monitoringv1.RuleGroup {
 				promqlbuilder.NewNumber(5),
 			),
 			"15m",
-			map[string]string{
-				"service":  "thanos",
-				"severity": "medium",
-			},
-			rulehelpers.BuildAnnotations(
-				dashboardURL,
-				runbookURL,
-				runbookThanosStoreBucketHighOperationFailures,
-				"Thanos Store {{$labels.job}} in {{$labels.namespace}} Bucket is failing to execute {{$value | humanize}}% of operations.",
-				"Thanos Store {{$labels.job}} in {{$labels.namespace}} Bucket is failing to execute {{$value | humanize}}% of operations.",
-				"Thanos Store Bucket is failing to execute operations.",
+			rulehelpers.MergeMaps(
+				map[string]string{
+					"service":  t.ServiceLabelValue,
+					"severity": "medium",
+				},
+				t.AdditionalAlertLabels,
+			),
+			rulehelpers.MergeMaps(
+				rulehelpers.BuildAnnotations(
+					t.StoreDashboardURL,
+					t.RunbookURL,
+					runbookThanosStoreBucketHighOperationFailures,
+					"Thanos Store {{$labels.job}} in {{$labels.namespace}} Bucket is failing to execute {{$value | humanize}}% of operations.",
+					"Thanos Store {{$labels.job}} in {{$labels.namespace}} Bucket is failing to execute {{$value | humanize}}% of operations.",
+					"Thanos Store Bucket is failing to execute operations.",
+				),
+				t.AdditionalAlertAnnotations,
 			),
 		),
 		rulehelpers.NewAlertingRule(
@@ -1335,17 +1537,23 @@ func ThanosStoreGroup(dashboardURL, runbookURL string) monitoringv1.RuleGroup {
 				),
 			),
 			"10m",
-			map[string]string{
-				"service":  "thanos",
-				"severity": "medium",
-			},
-			rulehelpers.BuildAnnotations(
-				dashboardURL,
-				runbookURL,
-				runbookThanosStoreObjstoreOperationLatencyHigh,
-				"Thanos Store {{$labels.job}} in {{$labels.namespace}} Bucket has a 99th percentile latency of {{$value}} seconds for the bucket operations.",
-				"Thanos Store {{$labels.job}} in {{$labels.namespace}} Bucket has a 99th percentile latency of {{$value}} seconds for the bucket operations.",
-				"Thanos Store is having high latency for bucket operations.",
+			rulehelpers.MergeMaps(
+				map[string]string{
+					"service":  t.ServiceLabelValue,
+					"severity": "medium",
+				},
+				t.AdditionalAlertLabels,
+			),
+			rulehelpers.MergeMaps(
+				rulehelpers.BuildAnnotations(
+					t.StoreDashboardURL,
+					t.RunbookURL,
+					runbookThanosStoreObjstoreOperationLatencyHigh,
+					"Thanos Store {{$labels.job}} in {{$labels.namespace}} Bucket has a 99th percentile latency of {{$value}} seconds for the bucket operations.",
+					"Thanos Store {{$labels.job}} in {{$labels.namespace}} Bucket has a 99th percentile latency of {{$value}} seconds for the bucket operations.",
+					"Thanos Store is having high latency for bucket operations.",
+				),
+				t.AdditionalAlertAnnotations,
 			),
 		),
 	}
@@ -1353,7 +1561,7 @@ func ThanosStoreGroup(dashboardURL, runbookURL string) monitoringv1.RuleGroup {
 	return rulehelpers.NewRuleGroup("thanos-store", "", nil, rules)
 }
 
-func ThanosRuleGroup(dashboardURL, runbookURL string) monitoringv1.RuleGroup {
+func (t ThanosRulesConfig) ThanosRuleGroup() monitoringv1.RuleGroup {
 	rules := []monitoringv1.Rule{
 		rulehelpers.NewAlertingRule(
 			"ThanosRuleQueueIsDroppingAlerts",
@@ -1374,17 +1582,23 @@ func ThanosRuleGroup(dashboardURL, runbookURL string) monitoringv1.RuleGroup {
 				promqlbuilder.NewNumber(0),
 			),
 			"5m",
-			map[string]string{
-				"service":  "thanos",
-				"severity": "high",
-			},
-			rulehelpers.BuildAnnotations(
-				dashboardURL,
-				runbookURL,
-				runbookThanosRuleQueueIsDroppingAlerts,
-				"Thanos Rule {{$labels.instance}} in {{$labels.namespace}} is failing to queue rulehelpers.",
-				"Thanos Rule {{$labels.instance}} in {{$labels.namespace}} is failing to queue rulehelpers.",
-				"Thanos Rule is failing to queue rulehelpers.",
+			rulehelpers.MergeMaps(
+				map[string]string{
+					"service":  t.ServiceLabelValue,
+					"severity": "high",
+				},
+				t.AdditionalAlertLabels,
+			),
+			rulehelpers.MergeMaps(
+				rulehelpers.BuildAnnotations(
+					t.RuleDashboardURL,
+					t.RunbookURL,
+					runbookThanosRuleQueueIsDroppingAlerts,
+					"Thanos Rule {{$labels.instance}} in {{$labels.namespace}} is failing to queue rulehelpers.",
+					"Thanos Rule {{$labels.instance}} in {{$labels.namespace}} is failing to queue rulehelpers.",
+					"Thanos Rule is failing to queue rulehelpers.",
+				),
+				t.AdditionalAlertAnnotations,
 			),
 		),
 		rulehelpers.NewAlertingRule(
@@ -1406,17 +1620,23 @@ func ThanosRuleGroup(dashboardURL, runbookURL string) monitoringv1.RuleGroup {
 				promqlbuilder.NewNumber(0),
 			),
 			"5m",
-			map[string]string{
-				"service":  "thanos",
-				"severity": "high",
-			},
-			rulehelpers.BuildAnnotations(
-				dashboardURL,
-				runbookURL,
-				runbookThanosRuleSenderIsFailingAlerts,
-				"Thanos Rule {{$labels.instance}} in {{$labels.namespace}} is failing to send alerts to alertmanager.",
-				"Thanos Rule {{$labels.instance}} in {{$labels.namespace}} is failing to send alerts to alertmanager.",
-				"Thanos Rule is failing to send alerts to alertmanager.",
+			rulehelpers.MergeMaps(
+				map[string]string{
+					"service":  t.ServiceLabelValue,
+					"severity": "high",
+				},
+				t.AdditionalAlertLabels,
+			),
+			rulehelpers.MergeMaps(
+				rulehelpers.BuildAnnotations(
+					t.RuleDashboardURL,
+					t.RunbookURL,
+					runbookThanosRuleSenderIsFailingAlerts,
+					"Thanos Rule {{$labels.instance}} in {{$labels.namespace}} is failing to send alerts to alertmanager.",
+					"Thanos Rule {{$labels.instance}} in {{$labels.namespace}} is failing to send alerts to alertmanager.",
+					"Thanos Rule is failing to send alerts to alertmanager.",
+				),
+				t.AdditionalAlertAnnotations,
 			),
 		),
 		rulehelpers.NewAlertingRule(
@@ -1456,17 +1676,23 @@ func ThanosRuleGroup(dashboardURL, runbookURL string) monitoringv1.RuleGroup {
 				promqlbuilder.NewNumber(5),
 			),
 			"5m",
-			map[string]string{
-				"service":  "thanos",
-				"severity": "high",
-			},
-			rulehelpers.BuildAnnotations(
-				dashboardURL,
-				runbookURL,
-				runbookThanosRuleHighRuleEvaluationFailures,
-				"Thanos Rule {{$labels.instance}} in {{$labels.namespace}} is failing to evaluate rules.",
-				"Thanos Rule {{$labels.instance}} in {{$labels.namespace}} is failing to evaluate rules.",
-				"Thanos Rule is failing to evaluate rules.",
+			rulehelpers.MergeMaps(
+				map[string]string{
+					"service":  t.ServiceLabelValue,
+					"severity": "high",
+				},
+				t.AdditionalAlertLabels,
+			),
+			rulehelpers.MergeMaps(
+				rulehelpers.BuildAnnotations(
+					t.RuleDashboardURL,
+					t.RunbookURL,
+					runbookThanosRuleHighRuleEvaluationFailures,
+					"Thanos Rule {{$labels.instance}} in {{$labels.namespace}} is failing to evaluate rules.",
+					"Thanos Rule {{$labels.instance}} in {{$labels.namespace}} is failing to evaluate rules.",
+					"Thanos Rule is failing to evaluate rules.",
+				),
+				t.AdditionalAlertAnnotations,
 			),
 		),
 		rulehelpers.NewAlertingRule(
@@ -1488,17 +1714,23 @@ func ThanosRuleGroup(dashboardURL, runbookURL string) monitoringv1.RuleGroup {
 				promqlbuilder.NewNumber(0),
 			),
 			"15m",
-			map[string]string{
-				"service":  "thanos",
-				"severity": "high",
-			},
-			rulehelpers.BuildAnnotations(
-				dashboardURL,
-				runbookURL,
-				runbookThanosRuleHighRuleEvaluationWarnings,
-				"Thanos Rule {{$labels.instance}} in {{$labels.namespace}} has high number of evaluation warnings.",
-				"Thanos Rule {{$labels.instance}} in {{$labels.namespace}} has high number of evaluation warnings.",
-				"Thanos Rule has high number of evaluation warnings.",
+			rulehelpers.MergeMaps(
+				map[string]string{
+					"service":  t.ServiceLabelValue,
+					"severity": "high",
+				},
+				t.AdditionalAlertLabels,
+			),
+			rulehelpers.MergeMaps(
+				rulehelpers.BuildAnnotations(
+					t.RuleDashboardURL,
+					t.RunbookURL,
+					runbookThanosRuleHighRuleEvaluationWarnings,
+					"Thanos Rule {{$labels.instance}} in {{$labels.namespace}} has high number of evaluation warnings.",
+					"Thanos Rule {{$labels.instance}} in {{$labels.namespace}} has high number of evaluation warnings.",
+					"Thanos Rule has high number of evaluation warnings.",
+				),
+				t.AdditionalAlertAnnotations,
 			),
 		),
 		rulehelpers.NewAlertingRule(
@@ -1522,17 +1754,23 @@ func ThanosRuleGroup(dashboardURL, runbookURL string) monitoringv1.RuleGroup {
 				).By("namespace", "job", "instance", "rule_group"),
 			),
 			"5m",
-			map[string]string{
-				"service":  "thanos",
-				"severity": "medium",
-			},
-			rulehelpers.BuildAnnotations(
-				dashboardURL,
-				runbookURL,
-				runbookThanosRuleRuleEvaluationLatencyHigh,
-				"Thanos Rule {{$labels.instance}} in {{$labels.namespace}} has higher evaluation latency than interval for {{$labels.rule_group}}.",
-				"Thanos Rule {{$labels.instance}} in {{$labels.namespace}} has higher evaluation latency than interval for {{$labels.rule_group}}.",
-				"Thanos Rule has high rule evaluation latency.",
+			rulehelpers.MergeMaps(
+				map[string]string{
+					"service":  t.ServiceLabelValue,
+					"severity": "medium",
+				},
+				t.AdditionalAlertLabels,
+			),
+			rulehelpers.MergeMaps(
+				rulehelpers.BuildAnnotations(
+					t.RuleDashboardURL,
+					t.RunbookURL,
+					runbookThanosRuleRuleEvaluationLatencyHigh,
+					"Thanos Rule {{$labels.instance}} in {{$labels.namespace}} has higher evaluation latency than interval for {{$labels.rule_group}}.",
+					"Thanos Rule {{$labels.instance}} in {{$labels.namespace}} has higher evaluation latency than interval for {{$labels.rule_group}}.",
+					"Thanos Rule has high rule evaluation latency.",
+				),
+				t.AdditionalAlertAnnotations,
 			),
 		),
 		rulehelpers.NewAlertingRule(
@@ -1573,17 +1811,23 @@ func ThanosRuleGroup(dashboardURL, runbookURL string) monitoringv1.RuleGroup {
 				promqlbuilder.NewNumber(5),
 			),
 			"5m",
-			map[string]string{
-				"service":  "thanos",
-				"severity": "medium",
-			},
-			rulehelpers.BuildAnnotations(
-				dashboardURL,
-				runbookURL,
-				runbookThanosRuleGrpcErrorRate,
-				"Thanos Rule {{$labels.job}} in {{$labels.namespace}} is failing to handle {{$value | humanize}}% of requests.",
-				"Thanos Rule {{$labels.job}} in {{$labels.namespace}} is failing to handle {{$value | humanize}}% of requests.",
-				"Thanos Rule is failing to handle grpc requests.",
+			rulehelpers.MergeMaps(
+				map[string]string{
+					"service":  t.ServiceLabelValue,
+					"severity": "medium",
+				},
+				t.AdditionalAlertLabels,
+			),
+			rulehelpers.MergeMaps(
+				rulehelpers.BuildAnnotations(
+					t.RuleDashboardURL,
+					t.RunbookURL,
+					runbookThanosRuleGrpcErrorRate,
+					"Thanos Rule {{$labels.job}} in {{$labels.namespace}} is failing to handle {{$value | humanize}}% of requests.",
+					"Thanos Rule {{$labels.job}} in {{$labels.namespace}} is failing to handle {{$value | humanize}}% of requests.",
+					"Thanos Rule is failing to handle grpc requests.",
+				),
+				t.AdditionalAlertAnnotations,
 			),
 		),
 		rulehelpers.NewAlertingRule(
@@ -1600,17 +1844,23 @@ func ThanosRuleGroup(dashboardURL, runbookURL string) monitoringv1.RuleGroup {
 				promqlbuilder.NewNumber(1),
 			),
 			"5m",
-			map[string]string{
-				"service":  "thanos",
-				"severity": "high",
-			},
-			rulehelpers.BuildAnnotations(
-				dashboardURL,
-				runbookURL,
-				runbookThanosRuleConfigReloadFailure,
-				"Thanos Rule {{$labels.job}} in {{$labels.namespace}} has not been able to reload its configuration.",
-				"Thanos Rule {{$labels.job}} in {{$labels.namespace}} has not been able to reload its configuration.",
-				"Thanos Rule has not been able to reload configuration.",
+			rulehelpers.MergeMaps(
+				map[string]string{
+					"service":  t.ServiceLabelValue,
+					"severity": "high",
+				},
+				t.AdditionalAlertLabels,
+			),
+			rulehelpers.MergeMaps(
+				rulehelpers.BuildAnnotations(
+					t.RuleDashboardURL,
+					t.RunbookURL,
+					runbookThanosRuleConfigReloadFailure,
+					"Thanos Rule {{$labels.job}} in {{$labels.namespace}} has not been able to reload its configuration.",
+					"Thanos Rule {{$labels.job}} in {{$labels.namespace}} has not been able to reload its configuration.",
+					"Thanos Rule has not been able to reload configuration.",
+				),
+				t.AdditionalAlertAnnotations,
 			),
 		),
 		rulehelpers.NewAlertingRule(
@@ -1650,17 +1900,23 @@ func ThanosRuleGroup(dashboardURL, runbookURL string) monitoringv1.RuleGroup {
 				promqlbuilder.NewNumber(1),
 			),
 			"15m",
-			map[string]string{
-				"service":  "thanos",
-				"severity": "medium",
-			},
-			rulehelpers.BuildAnnotations(
-				dashboardURL,
-				runbookURL,
-				runbookThanosRuleQueryHighDNSFailures,
-				"Thanos Rule {{$labels.job}} in {{$labels.namespace}} has {{$value | humanize}}% of failing DNS queries for query endpoints.",
-				"Thanos Rule {{$labels.job}} in {{$labels.namespace}} has {{$value | humanize}}% of failing DNS queries for query endpoints.",
-				"Thanos Rule is having high number of DNS failures.",
+			rulehelpers.MergeMaps(
+				map[string]string{
+					"service":  t.ServiceLabelValue,
+					"severity": "medium",
+				},
+				t.AdditionalAlertLabels,
+			),
+			rulehelpers.MergeMaps(
+				rulehelpers.BuildAnnotations(
+					t.RuleDashboardURL,
+					t.RunbookURL,
+					runbookThanosRuleQueryHighDNSFailures,
+					"Thanos Rule {{$labels.job}} in {{$labels.namespace}} has {{$value | humanize}}% of failing DNS queries for query endpoints.",
+					"Thanos Rule {{$labels.job}} in {{$labels.namespace}} has {{$value | humanize}}% of failing DNS queries for query endpoints.",
+					"Thanos Rule is having high number of DNS failures.",
+				),
+				t.AdditionalAlertAnnotations,
 			),
 		),
 		rulehelpers.NewAlertingRule(
@@ -1700,17 +1956,23 @@ func ThanosRuleGroup(dashboardURL, runbookURL string) monitoringv1.RuleGroup {
 				promqlbuilder.NewNumber(1),
 			),
 			"15m",
-			map[string]string{
-				"service":  "thanos",
-				"severity": "medium",
-			},
-			rulehelpers.BuildAnnotations(
-				dashboardURL,
-				runbookURL,
-				runbookThanosRuleAlertmanagerHighDNSFailures,
-				"Thanos Rule {{$labels.instance}} in {{$labels.namespace}} has {{$value | humanize}}% of failing DNS queries for Alertmanager endpoints.",
-				"Thanos Rule {{$labels.instance}} in {{$labels.namespace}} has {{$value | humanize}}% of failing DNS queries for Alertmanager endpoints.",
-				"Thanos Rule is having high number of DNS failures.",
+			rulehelpers.MergeMaps(
+				map[string]string{
+					"service":  t.ServiceLabelValue,
+					"severity": "medium",
+				},
+				t.AdditionalAlertLabels,
+			),
+			rulehelpers.MergeMaps(
+				rulehelpers.BuildAnnotations(
+					t.RuleDashboardURL,
+					t.RunbookURL,
+					runbookThanosRuleAlertmanagerHighDNSFailures,
+					"Thanos Rule {{$labels.instance}} in {{$labels.namespace}} has {{$value | humanize}}% of failing DNS queries for Alertmanager endpoints.",
+					"Thanos Rule {{$labels.instance}} in {{$labels.namespace}} has {{$value | humanize}}% of failing DNS queries for Alertmanager endpoints.",
+					"Thanos Rule is having high number of DNS failures.",
+				),
+				t.AdditionalAlertAnnotations,
 			),
 		),
 		rulehelpers.NewAlertingRule(
@@ -1740,17 +2002,23 @@ func ThanosRuleGroup(dashboardURL, runbookURL string) monitoringv1.RuleGroup {
 				),
 			),
 			"5m",
-			map[string]string{
-				"service":  "thanos",
-				"severity": "high",
-			},
-			rulehelpers.BuildAnnotations(
-				dashboardURL,
-				runbookURL,
-				runbookThanosRuleNoEvaluationFor10Intervals,
-				"Thanos Rule {{$labels.job}} in {{$labels.namespace}} has rule groups that did not evaluate for at least 10x of their expected interval.",
-				"Thanos Rule {{$labels.job}} in {{$labels.namespace}} has rule groups that did not evaluate for at least 10x of their expected interval.",
-				"Thanos Rule has rule groups that did not evaluate for 10 intervals.",
+			rulehelpers.MergeMaps(
+				map[string]string{
+					"service":  t.ServiceLabelValue,
+					"severity": "high",
+				},
+				t.AdditionalAlertLabels,
+			),
+			rulehelpers.MergeMaps(
+				rulehelpers.BuildAnnotations(
+					t.RuleDashboardURL,
+					t.RunbookURL,
+					runbookThanosRuleNoEvaluationFor10Intervals,
+					"Thanos Rule {{$labels.job}} in {{$labels.namespace}} has rule groups that did not evaluate for at least 10x of their expected interval.",
+					"Thanos Rule {{$labels.job}} in {{$labels.namespace}} has rule groups that did not evaluate for at least 10x of their expected interval.",
+					"Thanos Rule has rule groups that did not evaluate for 10 intervals.",
+				),
+				t.AdditionalAlertAnnotations,
 			),
 		),
 		rulehelpers.NewAlertingRule(
@@ -1785,17 +2053,23 @@ func ThanosRuleGroup(dashboardURL, runbookURL string) monitoringv1.RuleGroup {
 				),
 			),
 			"5m",
-			map[string]string{
-				"service":  "thanos",
-				"severity": "critical",
-			},
-			rulehelpers.BuildAnnotations(
-				dashboardURL,
-				runbookURL,
-				runbookThanosNoRuleEvaluations,
-				"Thanos Rule {{$labels.instance}} in {{$labels.namespace}} did not perform any rule evaluations in the past 10 minutes.",
-				"Thanos Rule {{$labels.instance}} in {{$labels.namespace}} did not perform any rule evaluations in the past 10 minutes.",
-				"Thanos Rule did not perform any rule evaluations.",
+			rulehelpers.MergeMaps(
+				map[string]string{
+					"service":  t.ServiceLabelValue,
+					"severity": "critical",
+				},
+				t.AdditionalAlertLabels,
+			),
+			rulehelpers.MergeMaps(
+				rulehelpers.BuildAnnotations(
+					t.RuleDashboardURL,
+					t.RunbookURL,
+					runbookThanosNoRuleEvaluations,
+					"Thanos Rule {{$labels.instance}} in {{$labels.namespace}} did not perform any rule evaluations in the past 10 minutes.",
+					"Thanos Rule {{$labels.instance}} in {{$labels.namespace}} did not perform any rule evaluations in the past 10 minutes.",
+					"Thanos Rule did not perform any rule evaluations.",
+				),
+				t.AdditionalAlertAnnotations,
 			),
 		),
 	}

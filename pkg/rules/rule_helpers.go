@@ -85,3 +85,14 @@ func BuildAnnotations(dashboardURL, runbookURL, runbookFragment, description, me
 
 	return annotations
 }
+
+// MergeMaps merges two maps
+func MergeMaps(maps ...map[string]string) map[string]string {
+	result := make(map[string]string)
+	for _, m := range maps {
+		for k, v := range m {
+			result[k] = v
+		}
+	}
+	return result
+}
