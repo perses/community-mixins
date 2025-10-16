@@ -23,6 +23,7 @@ import (
 	"github.com/perses/community-mixins/pkg/dashboards/tempo"
 	"github.com/perses/community-mixins/pkg/dashboards/thanos"
 	"github.com/perses/community-mixins/pkg/rules"
+	blackboxrules "github.com/perses/community-mixins/pkg/rules/blackbox"
 	thanosrules "github.com/perses/community-mixins/pkg/rules/thanos"
 )
 
@@ -73,6 +74,23 @@ func main() {
 			),
 		)
 
+		ruleWriter.Add(
+			blackboxrules.BuildBlackboxRules(
+				project,
+				blackboxrules.NewBlackboxRulesConfig(
+					map[string]string{},
+					map[string]string{},
+					"https://demo.perses.dev/projects/perses/dashboards/blackboxexporter",
+				),
+				map[string]string{
+					"app.kubernetes.io/component": "blackbox-exporter",
+					"app.kubernetes.io/name":      "blackbox-exporter-rules",
+					"app.kubernetes.io/part-of":   "blackbox-exporter",
+					"app.kubernetes.io/version":   "main",
+				},
+				map[string]string{},
+			),
+		)
 		ruleWriter.Write()
 	} else {
 		dashboardWriter := dashboards.NewDashboardWriter()

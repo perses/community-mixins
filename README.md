@@ -70,6 +70,7 @@ This repo also offers Prometheus Operator format recording rules and alerts alon
 ## Overview of Available PrometheusRules
 
 - Thanos
+- Blackbox Exporter
 
 ## Library Panels
 
