@@ -9,9 +9,9 @@ import (
 	"github.com/perses/promql-builder/vector"
 	"github.com/prometheus/prometheus/model/labels"
 
-	"github.com/perses/community-dashboards/pkg/dashboards"
-	panels "github.com/perses/community-dashboards/pkg/panels/thanos"
-	"github.com/perses/community-dashboards/pkg/promql"
+	"github.com/perses/community-mixins/pkg/dashboards"
+	panels "github.com/perses/community-mixins/pkg/panels/thanos"
+	"github.com/perses/community-mixins/pkg/promql"
 )
 
 func withThanosReceiveRemoteWriteGroup(datasource string, labelMatcher *labels.Matcher) dashboard.Option {

@@ -1,6 +1,8 @@
-# Perses Community Dashboards
+# Perses Community Mixins
 
-Welcome to the **Perses Community Dashboards** repository! This project is designed to provide Prometheus mixins tailored for the Perses platform. Developed with the **Perses Go SDK**, these dashboards are modular, reusable, and simple to integrate into various observability setups.
+Welcome to the **Perses Community Mixins** repository! This project is designed to provide Prometheus mixins tailored for the Perses platform. Developed with the **Perses Go SDK**, these dashboards are modular, reusable, and simple to integrate into various observability setups.
+
+This repo also offers Prometheus Operator format recording rules and alerts alongside these dashboards, also maintained in Go as a complete mixin solution!
 
 > **Note:** These dashboards are compatible with Perses version 0.52.0 and onwards.
 
@@ -65,9 +67,13 @@ Welcome to the **Perses Community Dashboards** repository! This project is desig
 ### OpenTelemetry Collector Dashboards
 - OpenTelemetry Collector
 
+## Overview of Available PrometheusRules
+
+- Thanos
+
 ## Library Panels
 
-In addition to the community dashboards, this repository also offers a **library of reusable panels**. These panels can be used as building blocks for custom dashboard creation, enabling you to craft tailored setups to suit specific observability needs.
+In addition to the Community Mixins, this repository also offers a **library of reusable panels**. These panels can be used as building blocks for custom dashboard creation, enabling you to craft tailored setups to suit specific observability needs.
 
 ## Rendering Dashboards
 
@@ -78,6 +84,14 @@ make build-dashboards
 ```
 
 The generated dashboard files will be stored as **YAML files** in the `examples/dashboards/` directory by default and split by component (both in native Perses and Perses Operator format). You can then import these files into your Perses instances.
+
+## Rendering PrometheusRules
+
+To render and generate the PrometheusRule objects, run the following command:
+
+```bash
+make build-rules
+```
 
 ## Local Development Guide
 

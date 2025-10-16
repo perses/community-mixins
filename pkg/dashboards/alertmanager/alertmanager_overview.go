@@ -1,9 +1,9 @@
 package alertmanager
 
 import (
-	"github.com/perses/community-dashboards/pkg/dashboards"
-	panels "github.com/perses/community-dashboards/pkg/panels/alertmanager"
-	"github.com/perses/community-dashboards/pkg/promql"
+	"github.com/perses/community-mixins/pkg/dashboards"
+	panels "github.com/perses/community-mixins/pkg/panels/alertmanager"
+	"github.com/perses/community-mixins/pkg/promql"
 	"github.com/perses/perses/go-sdk/dashboard"
 	panelgroup "github.com/perses/perses/go-sdk/panel-group"
 	listVar "github.com/perses/perses/go-sdk/variable/list-variable"

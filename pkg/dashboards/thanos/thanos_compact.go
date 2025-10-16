@@ -7,8 +7,8 @@ import (
 	labelValuesVar "github.com/perses/plugins/prometheus/sdk/go/variable/label-values"
 	"github.com/prometheus/prometheus/model/labels"
 
-	"github.com/perses/community-dashboards/pkg/dashboards"
-	panels "github.com/perses/community-dashboards/pkg/panels/thanos"
+	"github.com/perses/community-mixins/pkg/dashboards"
+	panels "github.com/perses/community-mixins/pkg/panels/thanos"
 )
 
 func withThanosCompactTODOGroup(datasource string, labelMatcher *labels.Matcher) dashboard.Option {

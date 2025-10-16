@@ -1,10 +1,10 @@
 package prometheus
 
 import (
-	"github.com/perses/community-dashboards/pkg/dashboards"
-	panelsGostats "github.com/perses/community-dashboards/pkg/panels/gostats"
-	panels "github.com/perses/community-dashboards/pkg/panels/prometheus"
-	"github.com/perses/community-dashboards/pkg/promql"
+	"github.com/perses/community-mixins/pkg/dashboards"
+	panelsGostats "github.com/perses/community-mixins/pkg/panels/gostats"
+	panels "github.com/perses/community-mixins/pkg/panels/prometheus"
+	"github.com/perses/community-mixins/pkg/promql"
 	"github.com/perses/perses/go-sdk/dashboard"
 	panelgroup "github.com/perses/perses/go-sdk/panel-group"
 	"github.com/perses/promql-builder/vector"

@@ -1,14 +1,14 @@
 package tempo
 
 import (
-	panels "github.com/perses/community-dashboards/pkg/panels/tempo"
+	panels "github.com/perses/community-mixins/pkg/panels/tempo"
 	"github.com/perses/perses/go-sdk/dashboard"
 	panelgroup "github.com/perses/perses/go-sdk/panel-group"
 	listVar "github.com/perses/perses/go-sdk/variable/list-variable"
 	labelValuesVar "github.com/perses/plugins/prometheus/sdk/go/variable/label-values"
 
-	"github.com/perses/community-dashboards/pkg/dashboards"
-	"github.com/perses/community-dashboards/pkg/promql"
+	"github.com/perses/community-mixins/pkg/dashboards"
+	"github.com/perses/community-mixins/pkg/promql"
 )
 
 func withTenantInfo(datasource string, labelMatcher promql.LabelMatcher) dashboard.Option {
