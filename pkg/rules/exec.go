@@ -19,11 +19,6 @@ const (
 	OperatorJSONOutput = "operator-json"
 )
 
-func init() {
-	flag.String("output-rules", YAMLOutput, "output format of the exec")
-	flag.String("output-rules-dir", "./built", "output directory of the exec")
-}
-
 func executeRuleBuilder(rule *monitoringv1.PrometheusRule, outputFormat string, outputDir string, errWriter io.Writer) {
 	var err error
 	var output []byte
@@ -66,6 +61,10 @@ func executeRuleBuilder(rule *monitoringv1.PrometheusRule, outputFormat string, 
 func NewExec() Exec {
 	output := flag.Lookup("output-rules").Value.String()
 	outputDir := flag.Lookup("output-rules-dir").Value.String()
+
+	if output == "" || outputDir == "" {
+		panic("output-rules and output-rules-dir flags are required for generating rules")
+	}
 
 	return Exec{
 		outputFormat: output,

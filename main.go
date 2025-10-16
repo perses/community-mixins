@@ -38,6 +38,13 @@ func main() {
 	flag.StringVar(&datasource, "datasource", "", "The datasource name")
 	flag.StringVar(&clusterLabelName, "cluster-label-name", "", "The cluster label name")
 	flag.BoolVar(&buildRules, "build-rules", false, "Whether to build rules")
+
+	flag.String("output-rules", rules.YAMLOutput, "output format of the rule exec")
+	flag.String("output-rules-dir", "./built/rules", "output directory of the rule exec")
+
+	flag.String("output", dashboards.YAMLOutput, "output format of the dashboard exec")
+	flag.String("output-dir", "./built", "output directory of the dashboard exec")
+
 	flag.Parse()
 
 	if buildRules {

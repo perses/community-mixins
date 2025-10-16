@@ -55,7 +55,7 @@ build-rules:
 	@echo "Removing old rules"
 	@rm -rf ./examples/rules/
 	@echo "Building rules"
-	@$(ENVVARS) $(GOCMD) run $(GOMAIN) --output-rules-dir="./examples/rules/operator" --output-rules="operator"  --output-dir="./examples/dashboards/operator" --output="operator" --project="monitoring" --build-rules
+	@$(ENVVARS) $(GOCMD) run $(GOMAIN) --output-rules-dir="./examples/rules/operator" --output-rules="operator"  --project="monitoring" --build-rules
 
 # Adding a new target for building and testing dashboards locally with configurable flags
 .PHONY: build-dashboards-local
