@@ -23,11 +23,6 @@ const (
 	OperatorJSONOutput = "operator-json"
 )
 
-func init() {
-	flag.String("output", YAMLOutput, "output format of the exec")
-	flag.String("output-dir", "./built", "output directory of the exec")
-}
-
 func executeDashboardBuilder(builder dashboard.Builder, outputFormat string, outputDir string, errWriter io.Writer) {
 	var err error
 	var output []byte
@@ -98,6 +93,10 @@ func builderToOperatorResource(builder dashboard.Builder) runtime.Object {
 func NewExec() Exec {
 	output := flag.Lookup("output").Value.String()
 	outputDir := flag.Lookup("output-dir").Value.String()
+
+	if output == "" || outputDir == "" {
+		panic("output and output-dir flags are required for generating dashboards")
+	}
 
 	return Exec{
 		outputFormat: output,

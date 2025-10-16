@@ -1,0 +1,87 @@
+package rules
+
+import (
+	"encoding/json"
+	"flag"
+	"fmt"
+	"io"
+	"os"
+	"path"
+
+	monitoringv1 "github.com/prometheus-operator/prometheus-operator/pkg/apis/monitoring/v1"
+	k8syaml "sigs.k8s.io/yaml"
+)
+
+const (
+	JSONOutput         = "json"
+	YAMLOutput         = "yaml"
+	OperatorOutput     = "operator"
+	OperatorJSONOutput = "operator-json"
+)
+
+func executeRuleBuilder(rule *monitoringv1.PrometheusRule, outputFormat string, outputDir string, errWriter io.Writer) {
+	var err error
+	var output []byte
+	var ext string
+
+	switch outputFormat {
+	case OperatorOutput:
+		output, err = k8syaml.Marshal(rule)
+		ext = YAMLOutput
+	case OperatorJSONOutput:
+		output, err = json.MarshalIndent(rule, "", "  ")
+		ext = JSONOutput
+	default:
+		err = fmt.Errorf("--output must be %q or %q", OperatorOutput, OperatorJSONOutput)
+	}
+
+	if err != nil {
+		if _, ferr := fmt.Fprint(errWriter, err); ferr != nil {
+			panic(fmt.Errorf("failed to write err: %w", err))
+		}
+		os.Exit(-1)
+	}
+
+	// create output directory if not exists
+	_, err = os.Stat(outputDir)
+	if err != nil && !os.IsNotExist(err) {
+		if _, ferr := fmt.Fprint(errWriter, err); ferr != nil {
+			panic(fmt.Errorf("failed to write err: %w", err))
+		}
+		os.Exit(-1)
+	}
+
+	if err != nil && os.IsNotExist(err) {
+		_ = os.MkdirAll(outputDir, os.ModePerm)
+	}
+
+	_ = os.WriteFile(fmt.Sprintf("%s/%s.%s", outputDir, rule.Name, ext), output, os.ModePerm)
+}
+
+func NewExec() Exec {
+	output := flag.Lookup("output-rules").Value.String()
+	outputDir := flag.Lookup("output-rules-dir").Value.String()
+
+	if output == "" || outputDir == "" {
+		panic("output-rules and output-rules-dir flags are required for generating rules")
+	}
+
+	return Exec{
+		outputFormat: output,
+		outputDir:    outputDir,
+	}
+}
+
+type Exec struct {
+	outputFormat string
+	outputDir    string
+}
+
+// BuildDashboard is a helper to print the result of a dashboard builder in stdout and errors to stderr
+func (b *Exec) BuildRule(dr RuleResult) {
+	if dr.err != nil {
+		fmt.Fprint(os.Stderr, dr.err)
+		os.Exit(-1)
+	}
+	executeRuleBuilder(dr.rule, b.outputFormat, path.Join(b.outputDir, dr.component), os.Stdout)
+}
