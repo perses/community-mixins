@@ -155,7 +155,7 @@ spec:
               display: line
               lineWidth: 1
               palette:
-                mode: ""
+                mode: auto
             yAxis:
               format:
                 unit: decimal
@@ -221,7 +221,7 @@ spec:
               display: line
               lineWidth: 1
               palette:
-                mode: ""
+                mode: auto
             yAxis:
               format:
                 unit: decimal
@@ -272,7 +272,7 @@ spec:
               display: line
               lineWidth: 1
               palette:
-                mode: ""
+                mode: auto
             yAxis:
               format:
                 unit: bytes
@@ -319,7 +319,7 @@ spec:
               display: line
               lineWidth: 1
               palette:
-                mode: ""
+                mode: auto
             yAxis:
               format:
                 unit: bytes/sec
@@ -376,7 +376,7 @@ spec:
               display: line
               lineWidth: 1
               palette:
-                mode: ""
+                mode: auto
             yAxis:
               format:
                 unit: decimal
@@ -407,7 +407,7 @@ spec:
               display: line
               lineWidth: 1
               palette:
-                mode: ""
+                mode: auto
             yAxis:
               format:
                 unit: bytes
@@ -438,7 +438,7 @@ spec:
               display: line
               lineWidth: 1
               palette:
-                mode: ""
+                mode: auto
             yAxis:
               format:
                 unit: decimal
@@ -469,7 +469,7 @@ spec:
               display: line
               lineWidth: 1
               palette:
-                mode: ""
+                mode: auto
             yAxis:
               format:
                 unit: bytes
@@ -500,7 +500,7 @@ spec:
               display: line
               lineWidth: 1
               palette:
-                mode: ""
+                mode: auto
             yAxis:
               format:
                 unit: bytes
@@ -611,7 +611,7 @@ spec:
               display: line
               lineWidth: 1
               palette:
-                mode: ""
+                mode: auto
             yAxis:
               format:
                 unit: decimal
@@ -672,7 +672,7 @@ spec:
               display: line
               lineWidth: 1
               palette:
-                mode: ""
+                mode: auto
             yAxis:
               format:
                 unit: bytes
@@ -710,7 +710,7 @@ spec:
               display: line
               lineWidth: 1
               palette:
-                mode: ""
+                mode: auto
             yAxis:
               format:
                 unit: decimal

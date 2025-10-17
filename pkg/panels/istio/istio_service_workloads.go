@@ -26,6 +26,7 @@ func IncomingRequestsByService(datasourceName string, labelMatchers ...*labels.M
 				ConnectNulls: false,
 				LineWidth:    1,
 				AreaOpacity:  0,
+				Palette:      timeSeriesPanel.Palette{Mode: timeSeriesPanel.AutoMode},
 			}),
 		),
 		panel.AddQuery(
@@ -68,6 +69,7 @@ func IncomingSuccessRateByService(datasourceName string, labelMatchers ...*label
 				ConnectNulls: false,
 				LineWidth:    1,
 				AreaOpacity:  0.1,
+				Palette:      timeSeriesPanel.Palette{Mode: timeSeriesPanel.AutoMode},
 			}),
 		),
 		panel.AddQuery(
@@ -109,6 +111,7 @@ func IncomingRequestDurationByService(datasourceName string, labelMatchers ...*l
 				ConnectNulls: false,
 				LineWidth:    1,
 				AreaOpacity:  0.1,
+				Palette:      timeSeriesPanel.Palette{Mode: timeSeriesPanel.AutoMode},
 			}),
 		),
 		// mTLS P50, P90, P95, P99
@@ -212,6 +215,7 @@ func IncomingRequestSizeByService(datasourceName string, labelMatchers ...*label
 				ConnectNulls: false,
 				LineWidth:    1,
 				AreaOpacity:  0.1,
+				Palette:      timeSeriesPanel.Palette{Mode: timeSeriesPanel.AutoMode},
 			}),
 		),
 		// mTLS P50, P90, P95, P99
@@ -315,6 +319,7 @@ func ResponseSizeByService(datasourceName string, labelMatchers ...*labels.Match
 				ConnectNulls: false,
 				LineWidth:    1,
 				AreaOpacity:  0.1,
+				Palette:      timeSeriesPanel.Palette{Mode: timeSeriesPanel.AutoMode},
 			}),
 		),
 		// mTLS P50, P90, P95, P99
@@ -418,6 +423,7 @@ func BytesReceivedFromTCPService(datasourceName string, labelMatchers ...*labels
 				ConnectNulls: false,
 				LineWidth:    1,
 				AreaOpacity:  0.1,
+				Palette:      timeSeriesPanel.Palette{Mode: timeSeriesPanel.AutoMode},
 			}),
 		),
 		panel.AddQuery(
@@ -459,6 +465,7 @@ func BytesSentToTCPService(datasourceName string, labelMatchers ...*labels.Match
 				ConnectNulls: false,
 				LineWidth:    1,
 				AreaOpacity:  0.1,
+				Palette:      timeSeriesPanel.Palette{Mode: timeSeriesPanel.AutoMode},
 			}),
 		),
 		panel.AddQuery(

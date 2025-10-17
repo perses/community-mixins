@@ -653,7 +653,7 @@ spec:
               display: line
               lineWidth: 1
               palette:
-                mode: ""
+                mode: auto
             yAxis: {}
         queries:
         - kind: TimeSeriesQuery
@@ -710,7 +710,7 @@ spec:
               display: line
               lineWidth: 1
               palette:
-                mode: ""
+                mode: auto
             yAxis:
               format:
                 unit: percent-decimal
@@ -776,7 +776,7 @@ spec:
               display: line
               lineWidth: 1
               palette:
-                mode: ""
+                mode: auto
             yAxis:
               format:
                 unit: seconds
@@ -1037,7 +1037,7 @@ spec:
               display: line
               lineWidth: 1
               palette:
-                mode: ""
+                mode: auto
             yAxis:
               format:
                 unit: bytes
@@ -1210,7 +1210,7 @@ spec:
               display: line
               lineWidth: 1
               palette:
-                mode: ""
+                mode: auto
             yAxis:
               format:
                 unit: bytes
@@ -1383,7 +1383,7 @@ spec:
               display: line
               lineWidth: 1
               palette:
-                mode: ""
+                mode: auto
             yAxis:
               format:
                 unit: bytes/sec
@@ -1441,7 +1441,7 @@ spec:
               display: line
               lineWidth: 1
               palette:
-                mode: ""
+                mode: auto
             yAxis:
               format:
                 unit: bytes/sec
@@ -1510,7 +1510,7 @@ spec:
               display: line
               lineWidth: 1
               palette:
-                mode: ""
+                mode: auto
             yAxis: {}
         queries:
         - kind: TimeSeriesQuery
@@ -1567,7 +1567,7 @@ spec:
               display: line
               lineWidth: 1
               palette:
-                mode: ""
+                mode: auto
             yAxis:
               format:
                 unit: percent-decimal
@@ -1630,7 +1630,7 @@ spec:
               display: line
               lineWidth: 1
               palette:
-                mode: ""
+                mode: auto
             yAxis:
               format:
                 unit: seconds
@@ -1891,7 +1891,7 @@ spec:
               display: line
               lineWidth: 1
               palette:
-                mode: ""
+                mode: auto
             yAxis:
               format:
                 unit: bytes
@@ -2064,7 +2064,7 @@ spec:
               display: line
               lineWidth: 1
               palette:
-                mode: ""
+                mode: auto
             yAxis:
               format:
                 unit: bytes
@@ -2237,7 +2237,7 @@ spec:
               display: line
               lineWidth: 1
               palette:
-                mode: ""
+                mode: auto
             yAxis:
               format:
                 unit: bytes/sec
@@ -2295,7 +2295,7 @@ spec:
               display: line
               lineWidth: 1
               palette:
-                mode: ""
+                mode: auto
             yAxis:
               format:
                 unit: bytes/sec

@@ -517,6 +517,7 @@ func IncomingRequestsByClient(datasourceName string, labelMatchers ...*labels.Ma
 				ConnectNulls: false,
 				LineWidth:    1,
 				AreaOpacity:  0,
+				Palette:      timeSeriesPanel.Palette{Mode: timeSeriesPanel.AutoMode},
 			}),
 		),
 		panel.AddQuery(
@@ -559,6 +560,7 @@ func IncomingSuccessRateByClient(datasourceName string, labelMatchers ...*labels
 				ConnectNulls: false,
 				LineWidth:    1,
 				AreaOpacity:  0.1,
+				Palette:      timeSeriesPanel.Palette{Mode: timeSeriesPanel.AutoMode},
 			}),
 		),
 		panel.AddQuery(

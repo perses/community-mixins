@@ -324,6 +324,7 @@ func IstioComponentVersions(datasourceName string, labelMatchers ...*labels.Matc
 				ConnectNulls: false,
 				LineWidth:    1,
 				AreaOpacity:  0.1,
+				Palette:      timeSeriesPanel.Palette{Mode: timeSeriesPanel.AutoMode},
 			}),
 		),
 		panel.AddQuery(

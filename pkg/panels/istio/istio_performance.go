@@ -39,6 +39,7 @@ func VCPUPer1kRPS(datasourceName string, labelMatchers ...*labels.Matcher) panel
 				ConnectNulls: false,
 				LineWidth:    1,
 				AreaOpacity:  0.1,
+				Palette:      timeSeriesPanel.Palette{Mode: timeSeriesPanel.AutoMode},
 			}),
 			timeSeriesPanel.WithYAxis(timeSeriesPanel.YAxis{
 				Format: &commonSdk.Format{
@@ -81,6 +82,7 @@ func VCPU(datasourceName string, labelMatchers ...*labels.Matcher) panelgroup.Op
 				ConnectNulls: false,
 				LineWidth:    1,
 				AreaOpacity:  0.1,
+				Palette:      timeSeriesPanel.Palette{Mode: timeSeriesPanel.AutoMode},
 			}),
 			timeSeriesPanel.WithYAxis(timeSeriesPanel.YAxis{
 				Format: &commonSdk.Format{
@@ -123,6 +125,7 @@ func PerformanceMemoryUsage(datasourceName string, labelMatchers ...*labels.Matc
 				ConnectNulls: false,
 				LineWidth:    1,
 				AreaOpacity:  0.1,
+				Palette:      timeSeriesPanel.Palette{Mode: timeSeriesPanel.AutoMode},
 			}),
 			timeSeriesPanel.WithYAxis(timeSeriesPanel.YAxis{
 				Format: &commonSdk.Format{
@@ -165,6 +168,7 @@ func BytesTransferred(datasourceName string, labelMatchers ...*labels.Matcher) p
 				ConnectNulls: false,
 				LineWidth:    1,
 				AreaOpacity:  0.1,
+				Palette:      timeSeriesPanel.Palette{Mode: timeSeriesPanel.AutoMode},
 			}),
 			timeSeriesPanel.WithYAxis(timeSeriesPanel.YAxis{
 				Format: &commonSdk.Format{
@@ -207,6 +211,7 @@ func IstioComponentsByVersion(datasourceName string, labelMatchers ...*labels.Ma
 				ConnectNulls: false,
 				LineWidth:    1,
 				AreaOpacity:  0.1,
+				Palette:      timeSeriesPanel.Palette{Mode: timeSeriesPanel.AutoMode},
 			}),
 			timeSeriesPanel.WithYAxis(timeSeriesPanel.YAxis{
 				Format: &commonSdk.Format{
@@ -239,6 +244,7 @@ func ProxyMemory(datasourceName string, labelMatchers ...*labels.Matcher) panelg
 				ConnectNulls: false,
 				LineWidth:    1,
 				AreaOpacity:  0.1,
+				Palette:      timeSeriesPanel.Palette{Mode: timeSeriesPanel.AutoMode},
 			}),
 			timeSeriesPanel.WithYAxis(timeSeriesPanel.YAxis{
 				Format: &commonSdk.Format{
@@ -271,6 +277,7 @@ func ProxyVCPU(datasourceName string, labelMatchers ...*labels.Matcher) panelgro
 				ConnectNulls: false,
 				LineWidth:    1,
 				AreaOpacity:  0.1,
+				Palette:      timeSeriesPanel.Palette{Mode: timeSeriesPanel.AutoMode},
 			}),
 			timeSeriesPanel.WithYAxis(timeSeriesPanel.YAxis{
 				Format: &commonSdk.Format{
@@ -303,6 +310,7 @@ func ProxyDisk(datasourceName string, labelMatchers ...*labels.Matcher) panelgro
 				ConnectNulls: false,
 				LineWidth:    1,
 				AreaOpacity:  0.1,
+				Palette:      timeSeriesPanel.Palette{Mode: timeSeriesPanel.AutoMode},
 			}),
 			timeSeriesPanel.WithYAxis(timeSeriesPanel.YAxis{
 				Format: &commonSdk.Format{
@@ -335,6 +343,7 @@ func IstiodMemory(datasourceName string, labelMatchers ...*labels.Matcher) panel
 				ConnectNulls: false,
 				LineWidth:    1,
 				AreaOpacity:  0.1,
+				Palette:      timeSeriesPanel.Palette{Mode: timeSeriesPanel.AutoMode},
 			}),
 			timeSeriesPanel.WithYAxis(timeSeriesPanel.YAxis{
 				Format: &commonSdk.Format{
@@ -447,6 +456,7 @@ func IstiodVCPU(datasourceName string, labelMatchers ...*labels.Matcher) panelgr
 				ConnectNulls: false,
 				LineWidth:    1,
 				AreaOpacity:  0.1,
+				Palette:      timeSeriesPanel.Palette{Mode: timeSeriesPanel.AutoMode},
 			}),
 			timeSeriesPanel.WithYAxis(timeSeriesPanel.YAxis{
 				Format: &commonSdk.Format{
@@ -499,6 +509,7 @@ func IstiodDisk(datasourceName string, labelMatchers ...*labels.Matcher) panelgr
 				ConnectNulls: false,
 				LineWidth:    1,
 				AreaOpacity:  0.1,
+				Palette:      timeSeriesPanel.Palette{Mode: timeSeriesPanel.AutoMode},
 			}),
 			timeSeriesPanel.WithYAxis(timeSeriesPanel.YAxis{
 				Format: &commonSdk.Format{
@@ -537,6 +548,7 @@ func IstiodGoroutines(datasourceName string, labelMatchers ...*labels.Matcher) p
 				ConnectNulls: false,
 				LineWidth:    1,
 				AreaOpacity:  0.1,
+				Palette:      timeSeriesPanel.Palette{Mode: timeSeriesPanel.AutoMode},
 			}),
 			timeSeriesPanel.WithYAxis(timeSeriesPanel.YAxis{
 				Format: &commonSdk.Format{

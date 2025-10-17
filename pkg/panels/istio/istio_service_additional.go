@@ -29,6 +29,7 @@ func IncomingRequestDurationByClient(datasourceName string, labelMatchers ...*la
 				ConnectNulls: false,
 				LineWidth:    1,
 				AreaOpacity:  0.1,
+				Palette:      timeSeriesPanel.Palette{Mode: timeSeriesPanel.AutoMode},
 			}),
 		),
 		// mTLS P50, P90, P95, P99
@@ -132,6 +133,7 @@ func IncomingRequestSizeByClient(datasourceName string, labelMatchers ...*labels
 				ConnectNulls: false,
 				LineWidth:    1,
 				AreaOpacity:  0.1,
+				Palette:      timeSeriesPanel.Palette{Mode: timeSeriesPanel.AutoMode},
 			}),
 		),
 		// mTLS P50, P90, P95, P99
@@ -235,6 +237,7 @@ func ResponseSizeByClient(datasourceName string, labelMatchers ...*labels.Matche
 				ConnectNulls: false,
 				LineWidth:    1,
 				AreaOpacity:  0.1,
+				Palette:      timeSeriesPanel.Palette{Mode: timeSeriesPanel.AutoMode},
 			}),
 		),
 		// mTLS P50, P90, P95, P99
@@ -338,6 +341,7 @@ func BytesReceivedFromTCPClient(datasourceName string, labelMatchers ...*labels.
 				ConnectNulls: false,
 				LineWidth:    1,
 				AreaOpacity:  0.1,
+				Palette:      timeSeriesPanel.Palette{Mode: timeSeriesPanel.AutoMode},
 			}),
 		),
 		panel.AddQuery(
@@ -379,6 +383,7 @@ func BytesSentToTCPClient(datasourceName string, labelMatchers ...*labels.Matche
 				ConnectNulls: false,
 				LineWidth:    1,
 				AreaOpacity:  0.1,
+				Palette:      timeSeriesPanel.Palette{Mode: timeSeriesPanel.AutoMode},
 			}),
 		),
 		panel.AddQuery(

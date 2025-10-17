@@ -370,6 +370,8 @@ spec:
                             display: line
                             lineWidth: 1
                             areaOpacity: 0.1
+                            palette:
+                                mode: auto
                 queries:
                     - kind: TimeSeriesQuery
                       spec:

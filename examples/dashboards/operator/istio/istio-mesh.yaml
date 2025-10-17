@@ -441,7 +441,7 @@ spec:
               display: line
               lineWidth: 1
               palette:
-                mode: ""
+                mode: auto
         queries:
         - kind: TimeSeriesQuery
           spec:
