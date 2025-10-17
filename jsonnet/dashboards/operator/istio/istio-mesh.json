@@ -465,7 +465,7 @@
                 "lineWidth": 1,
                 "areaOpacity": 0.1,
                 "palette": {
-                  "mode": ""
+                  "mode": "auto"
                 }
               }
             }
