@@ -4,28 +4,28 @@ import "github.com/perses/community-mixins/pkg/rules/rule-sdk/rulegroup"
 
 func Name(name string) Option {
 	return func(builder *Builder) error {
-		builder.ObjectMeta.Name = name
+		builder.Name = name
 		return nil
 	}
 }
 
 func Namespace(namespace string) Option {
 	return func(builder *Builder) error {
-		builder.ObjectMeta.Namespace = namespace
+		builder.Namespace = namespace
 		return nil
 	}
 }
 
 func Labels(labels map[string]string) Option {
 	return func(builder *Builder) error {
-		builder.ObjectMeta.Labels = labels
+		builder.Labels = labels
 		return nil
 	}
 }
 
 func Annotations(annotations map[string]string) Option {
 	return func(builder *Builder) error {
-		builder.ObjectMeta.Annotations = annotations
+		builder.Annotations = annotations
 		return nil
 	}
 }
