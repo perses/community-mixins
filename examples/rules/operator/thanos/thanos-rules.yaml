@@ -10,8 +10,7 @@ metadata:
   namespace: monitoring
 spec:
   groups:
-  - interval: ""
-    name: thanos-component-absent
+  - name: thanos-component-absent
     rules:
     - alert: ThanosCompactIsDown
       annotations:
@@ -97,8 +96,7 @@ spec:
       labels:
         service: thanos
         severity: high
-  - interval: ""
-    name: thanos-compact
+  - name: thanos-compact
     rules:
     - alert: ThanosCompactMultipleRunning
       annotations:
@@ -199,8 +197,7 @@ spec:
       labels:
         service: thanos
         severity: medium
-  - interval: ""
-    name: thanos-query
+  - name: thanos-query
     rules:
     - alert: ThanosQueryHttpRequestQueryErrorRateHigh
       annotations:
@@ -322,8 +319,7 @@ spec:
       labels:
         service: thanos
         severity: high
-  - interval: ""
-    name: thanos-receive
+  - name: thanos-receive
     rules:
     - alert: ThanosReceiveHttpRequestErrorRateHigh
       annotations:
@@ -558,8 +554,7 @@ spec:
       labels:
         service: thanos
         severity: medium
-  - interval: ""
-    name: thanos-store
+  - name: thanos-store
     rules:
     - alert: ThanosStoreGrpcErrorRate
       annotations:
@@ -637,8 +632,7 @@ spec:
       labels:
         service: thanos
         severity: medium
-  - interval: ""
-    name: thanos-rule
+  - name: thanos-rule
     rules:
     - alert: ThanosRuleQueueIsDroppingAlerts
       annotations:
