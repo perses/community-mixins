@@ -13,3 +13,11 @@ database:
 provisioning:
   folders:
     - /etc/perses/resources
+
+frontend:
+  explorer:
+    enable: true
+
+ephemeral_dashboard:
+  enable: true
+  cleanup_interval: 1h
