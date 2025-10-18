@@ -53,17 +53,6 @@ func main() {
 		ruleWriter.Add(
 			thanosrules.BuildThanosRules(
 				project,
-				thanosrules.NewThanosRulesConfig(
-					"https://github.com/thanos-io/thanos/blob/main/mixin/runbook.md",
-					"thanos",
-					map[string]string{},
-					map[string]string{},
-					"https://demo.perses.dev/projects/perses/dashboards/thanoscompact",
-					"https://demo.perses.dev/projects/perses/dashboards/thanosquery",
-					"https://demo.perses.dev/projects/perses/dashboards/thanosreceive",
-					"https://demo.perses.dev/projects/perses/dashboards/thanosstore",
-					"https://demo.perses.dev/projects/perses/dashboards/thanosrule",
-				),
 				map[string]string{
 					"app.kubernetes.io/component": "thanos",
 					"app.kubernetes.io/name":      "thanos-rules",
@@ -71,17 +60,19 @@ func main() {
 					"app.kubernetes.io/version":   "main",
 				},
 				map[string]string{},
+				thanosrules.WithRunbookURL("https://github.com/thanos-io/thanos/blob/main/mixin/runbook.md"),
+				thanosrules.WithServiceLabelValue("thanos"),
+				thanosrules.WithCompactDashboardURL("https://demo.perses.dev/projects/perses/dashboards/thanoscompact"),
+				thanosrules.WithQueryDashboardURL("https://demo.perses.dev/projects/perses/dashboards/thanosquery"),
+				thanosrules.WithReceiveDashboardURL("https://demo.perses.dev/projects/perses/dashboards/thanosreceive"),
+				thanosrules.WithStoreDashboardURL("https://demo.perses.dev/projects/perses/dashboards/thanosstore"),
+				thanosrules.WithRuleDashboardURL("https://demo.perses.dev/projects/perses/dashboards/thanosrule"),
 			),
 		)
 
 		ruleWriter.Add(
 			blackboxrules.BuildBlackboxRules(
 				project,
-				blackboxrules.NewBlackboxRulesConfig(
-					map[string]string{},
-					map[string]string{},
-					"https://demo.perses.dev/projects/perses/dashboards/blackboxexporter",
-				),
 				map[string]string{
 					"app.kubernetes.io/component": "blackbox-exporter",
 					"app.kubernetes.io/name":      "blackbox-exporter-rules",
@@ -89,6 +80,7 @@ func main() {
 					"app.kubernetes.io/version":   "main",
 				},
 				map[string]string{},
+				blackboxrules.WithDashboardURL("https://demo.perses.dev/projects/perses/dashboards/blackboxexporter"),
 			),
 		)
 		ruleWriter.Write()

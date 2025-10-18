@@ -142,7 +142,7 @@ define require_clean_work_tree
 endef
 
 .PHONY: generate
-generate: tidy deps fmt build-dashboards jsonnet-resources
+generate: tidy deps fmt build-dashboards build-rules jsonnet-resources
 	$(call require_clean_work_tree,'all generated files should be committed, run make generate and commit changes.')
 
 $(TOOLS_BIN_DIR):

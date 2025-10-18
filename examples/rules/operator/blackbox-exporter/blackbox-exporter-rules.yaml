@@ -10,8 +10,7 @@ metadata:
   namespace: monitoring
 spec:
   groups:
-  - interval: ""
-    name: blackbox-exporter.rules
+  - name: blackbox-exporter.rules
     rules:
     - alert: BlackboxProbeFailed
       annotations:
