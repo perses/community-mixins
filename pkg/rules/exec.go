@@ -19,12 +19,22 @@ const (
 	OperatorJSONOutput = "operator-json"
 )
 
+type Groups struct {
+	Groups []monitoringv1.RuleGroup `json:"groups,omitempty"`
+}
+
 func executeRuleBuilder(rule *monitoringv1.PrometheusRule, outputFormat string, outputDir string, errWriter io.Writer) {
 	var err error
 	var output []byte
 	var ext string
 
 	switch outputFormat {
+	case YAMLOutput:
+		output, err = k8syaml.Marshal(Groups{Groups: rule.Spec.Groups})
+		ext = YAMLOutput
+	case JSONOutput:
+		output, err = json.MarshalIndent(Groups{Groups: rule.Spec.Groups}, "", "  ")
+		ext = JSONOutput
 	case OperatorOutput:
 		output, err = k8syaml.Marshal(rule)
 		ext = YAMLOutput
@@ -32,7 +42,7 @@ func executeRuleBuilder(rule *monitoringv1.PrometheusRule, outputFormat string, 
 		output, err = json.MarshalIndent(rule, "", "  ")
 		ext = JSONOutput
 	default:
-		err = fmt.Errorf("--output must be %q or %q", OperatorOutput, OperatorJSONOutput)
+		err = fmt.Errorf("--output must be %q, %q, %q or %q", YAMLOutput, JSONOutput, OperatorOutput, OperatorJSONOutput)
 	}
 
 	if err != nil {
