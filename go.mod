@@ -11,7 +11,7 @@ require (
 	github.com/perses/plugins/statchart v0.10.0
 	github.com/perses/plugins/table v0.7.1
 	github.com/perses/plugins/timeserieschart v0.11.0
-	github.com/perses/promql-builder v0.1.1-0.20250923084910-b1d1cb4c7805
+	github.com/perses/promql-builder v0.2.0
 	github.com/prometheus-operator/prometheus-operator/pkg/apis/monitoring v0.85.0
 	github.com/prometheus/prometheus v0.306.0
 	gopkg.in/yaml.v3 v3.0.1
@@ -20,7 +20,7 @@ require (
 )
 
 require (
-	go.yaml.in/yaml/v2 v2.4.2 // indirect
+	go.yaml.in/yaml/v2 v2.4.3 // indirect
 	sigs.k8s.io/structured-merge-diff/v6 v6.3.0 // indirect
 )
 
@@ -39,7 +39,7 @@ require (
 	github.com/go-logr/logr v1.4.3 // indirect
 	github.com/gogo/protobuf v1.3.2 // indirect
 	github.com/google/cel-go v0.26.1 // indirect
-	github.com/grafana/regexp v0.0.0-20240518133315-a468a5bfb3bc // indirect
+	github.com/grafana/regexp v0.0.0-20250905093917-f7b3be9d1853 // indirect
 	github.com/jpillora/backoff v1.0.0 // indirect
 	github.com/json-iterator/go v1.1.12 // indirect
 	github.com/labstack/echo/v4 v4.13.4 // indirect
@@ -55,8 +55,8 @@ require (
 	github.com/perses/common v0.28.0 // indirect
 	github.com/prometheus/client_golang v1.23.2 // indirect
 	github.com/prometheus/client_model v0.6.2 // indirect
-	github.com/prometheus/common v0.66.1 // indirect
-	github.com/prometheus/procfs v0.16.1 // indirect
+	github.com/prometheus/common v0.67.1 // indirect
+	github.com/prometheus/procfs v0.17.0 // indirect
 	github.com/shopspring/decimal v1.4.0 // indirect
 	github.com/sirupsen/logrus v1.9.3 // indirect
 	github.com/stoewer/go-strcase v1.3.1 // indirect
@@ -68,13 +68,13 @@ require (
 	go.uber.org/atomic v1.11.0 // indirect
 	golang.org/x/crypto v0.42.0 // indirect
 	golang.org/x/exp v0.0.0-20250819193227-8b4c13bb791b
-	golang.org/x/net v0.43.0 // indirect
+	golang.org/x/net v0.44.0 // indirect
 	golang.org/x/oauth2 v0.31.0 // indirect
 	golang.org/x/sys v0.36.0 // indirect
 	golang.org/x/text v0.29.0 // indirect
 	google.golang.org/genproto/googleapis/api v0.0.0-20250721164621-a45f3dfb1074 // indirect
 	google.golang.org/genproto/googleapis/rpc v0.0.0-20250728155136-f173205681a0 // indirect
-	google.golang.org/protobuf v1.36.8 // indirect
+	google.golang.org/protobuf v1.36.10 // indirect
 	gopkg.in/inf.v0 v0.9.1 // indirect
 	k8s.io/api v0.34.1 // indirect
 	k8s.io/klog/v2 v2.130.1 // indirect
