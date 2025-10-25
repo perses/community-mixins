@@ -51,7 +51,25 @@ func main() {
 	if buildRules {
 		ruleWriter := rules.NewRuleWriter()
 
-		ruleWriter.Add(thanosrules.BuildThanosRulesDefault(project))
+		ruleWriter.Add(
+			thanosrules.BuildThanosRules(
+				project,
+				map[string]string{
+					"app.kubernetes.io/component": "thanos",
+					"app.kubernetes.io/name":      "thanos-rules",
+					"app.kubernetes.io/part-of":   "thanos",
+					"app.kubernetes.io/version":   "main",
+				},
+				map[string]string{},
+				thanosrules.WithRunbookURL("https://github.com/thanos-io/thanos/blob/main/mixin/runbook.md"),
+				thanosrules.WithServiceLabelValue("thanos"),
+				thanosrules.WithCompactDashboardURL("https://demo.perses.dev/projects/perses/dashboards/thanoscompact"),
+				thanosrules.WithQueryDashboardURL("https://demo.perses.dev/projects/perses/dashboards/thanosquery"),
+				thanosrules.WithReceiveDashboardURL("https://demo.perses.dev/projects/perses/dashboards/thanosreceive"),
+				thanosrules.WithStoreDashboardURL("https://demo.perses.dev/projects/perses/dashboards/thanosstore"),
+				thanosrules.WithRuleDashboardURL("https://demo.perses.dev/projects/perses/dashboards/thanosrule"),
+			),
+		)
 		ruleWriter.Add(blackboxrules.BuildBlackboxRulesDefault(project))
 		ruleWriter.Write()
 
