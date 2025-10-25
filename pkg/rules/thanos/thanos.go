@@ -16,7 +16,6 @@ import (
 	"github.com/perses/community-mixins/pkg/rules/rule-sdk/rulegroup"
 )
 
-
 // Runbook fragments
 const (
 	runbookThanosCompactIsDown                                     = "#thanoscompactisdown"
