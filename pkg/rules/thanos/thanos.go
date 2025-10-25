@@ -8,12 +8,14 @@ import (
 	"github.com/perses/promql-builder/matrix"
 	"github.com/perses/promql-builder/vector"
 
+	"github.com/perses/community-mixins/pkg/rules"
 	rulehelpers "github.com/perses/community-mixins/pkg/rules"
 	"github.com/perses/community-mixins/pkg/rules/rule-sdk/alerting"
 	"github.com/perses/community-mixins/pkg/rules/rule-sdk/common"
 	"github.com/perses/community-mixins/pkg/rules/rule-sdk/promtheusrule"
 	"github.com/perses/community-mixins/pkg/rules/rule-sdk/rulegroup"
 )
+
 
 // Runbook fragments
 const (
@@ -2362,4 +2364,28 @@ func (t ThanosRulesConfig) ThanosRuleGroup() []rulegroup.Option {
 			),
 		),
 	}
+}
+
+// BuildThanosRulesDefault builds the Thanos rules with default configuration.
+func BuildThanosRulesDefault(project string) rules.RuleResult {
+	labels := map[string]string{
+		"app.kubernetes.io/component": "thanos",
+		"app.kubernetes.io/name":      "thanos-rules",
+		"app.kubernetes.io/part-of":   "thanos",
+		"app.kubernetes.io/version":   "main",
+	}
+
+	annotations := map[string]string{}
+
+	options := []ThanosRulesConfigOption{
+		WithRunbookURL("https://github.com/thanos-io/thanos/blob/main/mixin/runbook.md"),
+		WithServiceLabelValue("thanos"),
+		WithCompactDashboardURL("https://demo.perses.dev/projects/perses/dashboards/thanoscompact"),
+		WithQueryDashboardURL("https://demo.perses.dev/projects/perses/dashboards/thanosquery"),
+		WithReceiveDashboardURL("https://demo.perses.dev/projects/perses/dashboards/thanosreceive"),
+		WithStoreDashboardURL("https://demo.perses.dev/projects/perses/dashboards/thanosstore"),
+		WithRuleDashboardURL("https://demo.perses.dev/projects/perses/dashboards/thanosrule"),
+	}
+	return BuildThanosRules(project, labels, annotations, options...)
+
 }

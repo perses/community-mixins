@@ -74,6 +74,21 @@ func BuildBlackboxRules(
 	).Component("blackbox-exporter")
 }
 
+// BuildBlackboxRulesDefault builds the Blackbox Exporter rules with default configuration.
+func BuildBlackboxRulesDefault(project string) rulehelpers.RuleResult {
+	labels := map[string]string{
+		"app.kubernetes.io/component": "blackbox-exporter",
+		"app.kubernetes.io/name":      "blackbox-exporter-rules",
+		"app.kubernetes.io/part-of":   "blackbox-exporter",
+		"app.kubernetes.io/version":   "main",
+	}
+	annotations := map[string]string{}
+	options := []BlackboxRulesConfigOption{
+		WithDashboardURL("https://demo.perses.dev/projects/perses/dashboards/blackboxexporter"),
+	}
+	return BuildBlackboxRules(project, labels, annotations, options...)
+}
+
 func (b BlackboxRulesConfig) BlackboxExporterRuleGroupOptions() []rulegroup.Option {
 	return []rulegroup.Option{
 		rulegroup.AddRule[alerting.Option](
