@@ -32,7 +32,7 @@ func MemoryUsage(datasourceName string, seriesNameToUse string, labelMatchers ..
 				ConnectNulls: false,
 				LineWidth:    0.25,
 				AreaOpacity:  0.5,
-				Palette:      timeSeriesPanel.Palette{Mode: timeSeriesPanel.AutoMode},
+				Palette:      &timeSeriesPanel.Palette{Mode: timeSeriesPanel.AutoMode},
 			}),
 		),
 		panel.AddQuery(
@@ -127,7 +127,7 @@ func Goroutines(datasourceName string, seriesNameToUse string, labelMatchers ...
 				ConnectNulls: false,
 				LineWidth:    0.25,
 				AreaOpacity:  0.5,
-				Palette:      timeSeriesPanel.Palette{Mode: timeSeriesPanel.AutoMode},
+				Palette:      &timeSeriesPanel.Palette{Mode: timeSeriesPanel.AutoMode},
 			}),
 		),
 		panel.AddQuery(
@@ -162,7 +162,7 @@ func GarbageCollectionPauseTimeQuantiles(datasourceName string, seriesNameToUse 
 				ConnectNulls: false,
 				LineWidth:    0.25,
 				AreaOpacity:  0.5,
-				Palette:      timeSeriesPanel.Palette{Mode: timeSeriesPanel.AutoMode},
+				Palette:      &timeSeriesPanel.Palette{Mode: timeSeriesPanel.AutoMode},
 			}),
 		),
 		panel.AddQuery(
@@ -197,7 +197,7 @@ func CPUUsage(datasourceName string, seriesNameToUse string, labelMatchers ...*l
 				ConnectNulls: false,
 				LineWidth:    0.25,
 				AreaOpacity:  0.5,
-				Palette:      timeSeriesPanel.Palette{Mode: timeSeriesPanel.AutoMode},
+				Palette:      &timeSeriesPanel.Palette{Mode: timeSeriesPanel.AutoMode},
 			}),
 		),
 		panel.AddQuery(

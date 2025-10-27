@@ -62,7 +62,7 @@ func APIServerErrorBudget(datasourceName string, labelMatchers ...promql.LabelMa
 				ConnectNulls: false,
 				LineWidth:    0.25,
 				AreaOpacity:  0.75,
-				Palette:      timeSeriesPanel.Palette{Mode: timeSeriesPanel.AutoMode},
+				Palette:      &timeSeriesPanel.Palette{Mode: timeSeriesPanel.AutoMode},
 			}),
 		),
 		panel.AddQuery(
@@ -121,7 +121,7 @@ func APIServerReadSLIRequests(datasourceName string, labelMatchers ...promql.Lab
 				LineWidth:    0.25,
 				AreaOpacity:  1,
 				Stack:        timeSeriesPanel.AllStack,
-				Palette:      timeSeriesPanel.Palette{Mode: timeSeriesPanel.AutoMode},
+				Palette:      &timeSeriesPanel.Palette{Mode: timeSeriesPanel.AutoMode},
 			}),
 		),
 		panel.AddQuery(
@@ -156,7 +156,7 @@ func APIServerReadSLIErrors(datasourceName string, labelMatchers ...promql.Label
 				ConnectNulls: false,
 				LineWidth:    0.25,
 				AreaOpacity:  0.75,
-				Palette:      timeSeriesPanel.Palette{Mode: timeSeriesPanel.AutoMode},
+				Palette:      &timeSeriesPanel.Palette{Mode: timeSeriesPanel.AutoMode},
 			}),
 		),
 		panel.AddQuery(
@@ -190,7 +190,7 @@ func APIServerReadSLIDuration(datasourceName string, labelMatchers ...promql.Lab
 				ConnectNulls: false,
 				LineWidth:    0.25,
 				AreaOpacity:  0.5,
-				Palette:      timeSeriesPanel.Palette{Mode: timeSeriesPanel.AutoMode},
+				Palette:      &timeSeriesPanel.Palette{Mode: timeSeriesPanel.AutoMode},
 			}),
 		),
 		panel.AddQuery(
@@ -249,7 +249,7 @@ func APIServerWriteSLIRequests(datasourceName string, labelMatchers ...promql.La
 				LineWidth:    0.25,
 				AreaOpacity:  1,
 				Stack:        timeSeriesPanel.AllStack,
-				Palette:      timeSeriesPanel.Palette{Mode: timeSeriesPanel.AutoMode},
+				Palette:      &timeSeriesPanel.Palette{Mode: timeSeriesPanel.AutoMode},
 			}),
 		),
 		panel.AddQuery(
@@ -284,7 +284,7 @@ func APIServerWriteSLIErrors(datasourceName string, labelMatchers ...promql.Labe
 				ConnectNulls: false,
 				LineWidth:    0.25,
 				AreaOpacity:  0.75,
-				Palette:      timeSeriesPanel.Palette{Mode: timeSeriesPanel.AutoMode},
+				Palette:      &timeSeriesPanel.Palette{Mode: timeSeriesPanel.AutoMode},
 			}),
 		),
 		panel.AddQuery(
@@ -318,7 +318,7 @@ func APIServerWriteSLIDuration(datasourceName string, labelMatchers ...promql.La
 				ConnectNulls: false,
 				LineWidth:    0.25,
 				AreaOpacity:  0.5,
-				Palette:      timeSeriesPanel.Palette{Mode: timeSeriesPanel.AutoMode},
+				Palette:      &timeSeriesPanel.Palette{Mode: timeSeriesPanel.AutoMode},
 			}),
 		),
 		panel.AddQuery(
@@ -353,7 +353,7 @@ func APIServerWorkQueueAddRate(datasourceName string, labelMatchers ...promql.La
 				ConnectNulls: false,
 				LineWidth:    0.25,
 				AreaOpacity:  1,
-				Palette:      timeSeriesPanel.Palette{Mode: timeSeriesPanel.AutoMode},
+				Palette:      &timeSeriesPanel.Palette{Mode: timeSeriesPanel.AutoMode},
 			}),
 		),
 		panel.AddQuery(
@@ -388,7 +388,7 @@ func APIServerWorkQueueDepth(datasourceName string, labelMatchers ...promql.Labe
 				ConnectNulls: false,
 				LineWidth:    0.25,
 				AreaOpacity:  1,
-				Palette:      timeSeriesPanel.Palette{Mode: timeSeriesPanel.AutoMode},
+				Palette:      &timeSeriesPanel.Palette{Mode: timeSeriesPanel.AutoMode},
 			}),
 		),
 		panel.AddQuery(
@@ -423,7 +423,7 @@ func APIServerWorkQueueLatency(datasourceName string, labelMatchers ...promql.La
 				ConnectNulls: false,
 				LineWidth:    0.25,
 				AreaOpacity:  0.5,
-				Palette:      timeSeriesPanel.Palette{Mode: timeSeriesPanel.AutoMode},
+				Palette:      &timeSeriesPanel.Palette{Mode: timeSeriesPanel.AutoMode},
 			}),
 		),
 		panel.AddQuery(

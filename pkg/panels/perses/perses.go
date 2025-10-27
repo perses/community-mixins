@@ -76,7 +76,7 @@ func HTTPRequestsLatencyPanel(datasourceName string, labelMatchers ...*labels.Ma
 				ConnectNulls: false,
 				LineWidth:    0.25,
 				AreaOpacity:  0.5,
-				Palette:      timeSeriesPanel.Palette{Mode: timeSeriesPanel.AutoMode},
+				Palette:      &timeSeriesPanel.Palette{Mode: timeSeriesPanel.AutoMode},
 			}),
 		),
 		panel.AddQuery(
@@ -111,7 +111,7 @@ func HTTPRequestsRatePanel(datasourceName string, labelMatchers ...*labels.Match
 				LineWidth:    0.25,
 				AreaOpacity:  0.5,
 				Stack:        timeSeriesPanel.AllStack,
-				Palette:      timeSeriesPanel.Palette{Mode: timeSeriesPanel.AutoMode},
+				Palette:      &timeSeriesPanel.Palette{Mode: timeSeriesPanel.AutoMode},
 			}),
 		),
 		panel.AddQuery(
@@ -152,7 +152,7 @@ func HTTPErrorPercentagePanel(datasourceName string, labelMatchers ...*labels.Ma
 					LineWidth:    0.25,
 					AreaOpacity:  0.5,
 					Stack:        timeSeriesPanel.AllStack,
-					Palette:      timeSeriesPanel.Palette{Mode: timeSeriesPanel.AutoMode},
+					Palette:      &timeSeriesPanel.Palette{Mode: timeSeriesPanel.AutoMode},
 				},
 			),
 		),
@@ -188,7 +188,7 @@ func FileDescriptors(datasourceName string, labelMatchers ...*labels.Matcher) pa
 				ConnectNulls: false,
 				LineWidth:    0.25,
 				AreaOpacity:  0.5,
-				Palette:      timeSeriesPanel.Palette{Mode: timeSeriesPanel.AutoMode},
+				Palette:      &timeSeriesPanel.Palette{Mode: timeSeriesPanel.AutoMode},
 			}),
 		),
 		panel.AddQuery(
@@ -233,7 +233,7 @@ func PluginSchemaLoadAttempts(datasourceName string, labelMatchers ...*labels.Ma
 				ConnectNulls: false,
 				LineWidth:    0.25,
 				AreaOpacity:  0.5,
-				Palette:      timeSeriesPanel.Palette{Mode: timeSeriesPanel.AutoMode},
+				Palette:      &timeSeriesPanel.Palette{Mode: timeSeriesPanel.AutoMode},
 			}),
 		),
 		panel.AddQuery(

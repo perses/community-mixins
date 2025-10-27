@@ -31,7 +31,7 @@ func WritesGatewayQPS(datasourceName string, labelMatchers ...promql.LabelMatche
 				LineWidth:    0.25,
 				AreaOpacity:  1,
 				Stack:        timeSeriesPanel.AllStack,
-				Palette:      timeSeriesPanel.Palette{Mode: timeSeriesPanel.AutoMode},
+				Palette:      &timeSeriesPanel.Palette{Mode: timeSeriesPanel.AutoMode},
 			}),
 		),
 		panel.AddQuery(
@@ -66,7 +66,7 @@ func WritesGatewayLatency(datasourceName string, labelMatchers ...promql.LabelMa
 				ConnectNulls: false,
 				LineWidth:    0.25,
 				AreaOpacity:  0.5,
-				Palette:      timeSeriesPanel.Palette{Mode: timeSeriesPanel.AutoMode},
+				Palette:      &timeSeriesPanel.Palette{Mode: timeSeriesPanel.AutoMode},
 			}),
 		),
 		panel.AddQuery(
@@ -122,7 +122,7 @@ func WritesEnvoyProxyQPS(datasourceName string, labelMatchers ...promql.LabelMat
 				LineWidth:    0.25,
 				AreaOpacity:  1,
 				Stack:        timeSeriesPanel.AllStack,
-				Palette:      timeSeriesPanel.Palette{Mode: timeSeriesPanel.AutoMode},
+				Palette:      &timeSeriesPanel.Palette{Mode: timeSeriesPanel.AutoMode},
 			}),
 		),
 		panel.AddQuery(
@@ -184,7 +184,7 @@ func WritesDistributorSpansSecond(datasourceName string, labelMatchers ...promql
 				ConnectNulls: false,
 				LineWidth:    0.25,
 				AreaOpacity:  1,
-				Palette:      timeSeriesPanel.Palette{Mode: timeSeriesPanel.AutoMode},
+				Palette:      &timeSeriesPanel.Palette{Mode: timeSeriesPanel.AutoMode},
 			}),
 		),
 		panel.AddQuery(
@@ -228,7 +228,7 @@ func WritesDistributorBytesPerSecond(datasourceName string, labelMatchers ...pro
 				ConnectNulls: false,
 				LineWidth:    0.25,
 				AreaOpacity:  1,
-				Palette:      timeSeriesPanel.Palette{Mode: timeSeriesPanel.AutoMode},
+				Palette:      &timeSeriesPanel.Palette{Mode: timeSeriesPanel.AutoMode},
 			}),
 		),
 		panel.AddQuery(
@@ -263,7 +263,7 @@ func WritesDistributorLatency(datasourceName string, labelMatchers ...promql.Lab
 				ConnectNulls: false,
 				LineWidth:    0.25,
 				AreaOpacity:  0.5,
-				Palette:      timeSeriesPanel.Palette{Mode: timeSeriesPanel.AutoMode},
+				Palette:      &timeSeriesPanel.Palette{Mode: timeSeriesPanel.AutoMode},
 			}),
 		),
 		panel.AddQuery(
@@ -318,7 +318,7 @@ func WritesDistributorKafkaAppendRecords(datasourceName string, labelMatchers ..
 				ConnectNulls: false,
 				LineWidth:    0.25,
 				AreaOpacity:  1,
-				Palette:      timeSeriesPanel.Palette{Mode: timeSeriesPanel.AutoMode},
+				Palette:      &timeSeriesPanel.Palette{Mode: timeSeriesPanel.AutoMode},
 			}),
 		),
 		panel.AddQuery(
@@ -353,7 +353,7 @@ func WritesDistributorKafkaAppendFail(datasourceName string, labelMatchers ...pr
 				ConnectNulls: false,
 				LineWidth:    0.25,
 				AreaOpacity:  1,
-				Palette:      timeSeriesPanel.Palette{Mode: timeSeriesPanel.AutoMode},
+				Palette:      &timeSeriesPanel.Palette{Mode: timeSeriesPanel.AutoMode},
 			}),
 		),
 		panel.AddQuery(
@@ -388,7 +388,7 @@ func WritesDistributorKafkaWrite(datasourceName string, labelMatchers ...promql.
 				ConnectNulls: false,
 				LineWidth:    0.25,
 				AreaOpacity:  1,
-				Palette:      timeSeriesPanel.Palette{Mode: timeSeriesPanel.AutoMode},
+				Palette:      &timeSeriesPanel.Palette{Mode: timeSeriesPanel.AutoMode},
 			}),
 		),
 		panel.AddQuery(
@@ -423,7 +423,7 @@ func WritesDistributorKafkaWriteLatency(datasourceName string, labelMatchers ...
 				ConnectNulls: false,
 				LineWidth:    0.25,
 				AreaOpacity:  0.5,
-				Palette:      timeSeriesPanel.Palette{Mode: timeSeriesPanel.AutoMode},
+				Palette:      &timeSeriesPanel.Palette{Mode: timeSeriesPanel.AutoMode},
 			}),
 		),
 		panel.AddQuery(
@@ -479,7 +479,7 @@ func WritesIngesterQPS(datasourceName string, labelMatchers ...promql.LabelMatch
 				LineWidth:    0.25,
 				AreaOpacity:  1,
 				Stack:        timeSeriesPanel.AllStack,
-				Palette:      timeSeriesPanel.Palette{Mode: timeSeriesPanel.AutoMode},
+				Palette:      &timeSeriesPanel.Palette{Mode: timeSeriesPanel.AutoMode},
 			}),
 		),
 		panel.AddQuery(
@@ -514,7 +514,7 @@ func WritesIngesterLatency(datasourceName string, labelMatchers ...promql.LabelM
 				ConnectNulls: false,
 				LineWidth:    0.25,
 				AreaOpacity:  0.5,
-				Palette:      timeSeriesPanel.Palette{Mode: timeSeriesPanel.AutoMode},
+				Palette:      &timeSeriesPanel.Palette{Mode: timeSeriesPanel.AutoMode},
 			}),
 		),
 		panel.AddQuery(
@@ -570,7 +570,7 @@ func WritesMemcachedIngesterQPS(datasourceName string, labelMatchers ...promql.L
 				LineWidth:    0.25,
 				AreaOpacity:  1,
 				Stack:        timeSeriesPanel.AllStack,
-				Palette:      timeSeriesPanel.Palette{Mode: timeSeriesPanel.AutoMode},
+				Palette:      &timeSeriesPanel.Palette{Mode: timeSeriesPanel.AutoMode},
 			}),
 		),
 		panel.AddQuery(
@@ -605,7 +605,7 @@ func WritesMemcachedIngesterLatency(datasourceName string, labelMatchers ...prom
 				ConnectNulls: false,
 				LineWidth:    0.25,
 				AreaOpacity:  0.5,
-				Palette:      timeSeriesPanel.Palette{Mode: timeSeriesPanel.AutoMode},
+				Palette:      &timeSeriesPanel.Palette{Mode: timeSeriesPanel.AutoMode},
 			}),
 		),
 		panel.AddQuery(
@@ -661,7 +661,7 @@ func WritesBackendIngesterQPS(datasourceName string, labelMatchers ...promql.Lab
 				LineWidth:    0.25,
 				AreaOpacity:  1,
 				Stack:        timeSeriesPanel.AllStack,
-				Palette:      timeSeriesPanel.Palette{Mode: timeSeriesPanel.AutoMode},
+				Palette:      &timeSeriesPanel.Palette{Mode: timeSeriesPanel.AutoMode},
 			}),
 		),
 		panel.AddQuery(
@@ -696,7 +696,7 @@ func WritesBackendIngesterLatency(datasourceName string, labelMatchers ...promql
 				ConnectNulls: false,
 				LineWidth:    0.25,
 				AreaOpacity:  0.5,
-				Palette:      timeSeriesPanel.Palette{Mode: timeSeriesPanel.AutoMode},
+				Palette:      &timeSeriesPanel.Palette{Mode: timeSeriesPanel.AutoMode},
 			}),
 		),
 		panel.AddQuery(
@@ -752,7 +752,7 @@ func WritesMemcachedCompactorQPS(datasourceName string, labelMatchers ...promql.
 				LineWidth:    0.25,
 				AreaOpacity:  1,
 				Stack:        timeSeriesPanel.AllStack,
-				Palette:      timeSeriesPanel.Palette{Mode: timeSeriesPanel.AutoMode},
+				Palette:      &timeSeriesPanel.Palette{Mode: timeSeriesPanel.AutoMode},
 			}),
 		),
 		panel.AddQuery(
@@ -787,7 +787,7 @@ func WritesMemcachedCompactorLatency(datasourceName string, labelMatchers ...pro
 				ConnectNulls: false,
 				LineWidth:    0.25,
 				AreaOpacity:  0.5,
-				Palette:      timeSeriesPanel.Palette{Mode: timeSeriesPanel.AutoMode},
+				Palette:      &timeSeriesPanel.Palette{Mode: timeSeriesPanel.AutoMode},
 			}),
 		),
 		panel.AddQuery(
@@ -843,7 +843,7 @@ func WritesBackendCompactorQPS(datasourceName string, labelMatchers ...promql.La
 				LineWidth:    0.25,
 				AreaOpacity:  1,
 				Stack:        timeSeriesPanel.AllStack,
-				Palette:      timeSeriesPanel.Palette{Mode: timeSeriesPanel.AutoMode},
+				Palette:      &timeSeriesPanel.Palette{Mode: timeSeriesPanel.AutoMode},
 			}),
 		),
 		panel.AddQuery(
@@ -878,7 +878,7 @@ func WritesBackendCompactorLatency(datasourceName string, labelMatchers ...promq
 				ConnectNulls: false,
 				LineWidth:    0.25,
 				AreaOpacity:  0.5,
-				Palette:      timeSeriesPanel.Palette{Mode: timeSeriesPanel.AutoMode},
+				Palette:      &timeSeriesPanel.Palette{Mode: timeSeriesPanel.AutoMode},
 			}),
 		),
 		panel.AddQuery(

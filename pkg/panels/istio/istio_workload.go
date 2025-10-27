@@ -29,7 +29,7 @@ func IncomingRequestVolume(datasourceName string, labelMatchers ...*labels.Match
 				ConnectNulls: false,
 				LineWidth:    0.25,
 				AreaOpacity:  0.5,
-				Palette:      timeSeriesPanel.Palette{Mode: timeSeriesPanel.AutoMode},
+				Palette:      &timeSeriesPanel.Palette{Mode: timeSeriesPanel.AutoMode},
 			}),
 		),
 		panel.AddQuery(
@@ -79,7 +79,7 @@ func IncomingSuccessRate(datasourceName string, labelMatchers ...*labels.Matcher
 				ConnectNulls: false,
 				LineWidth:    0.25,
 				AreaOpacity:  0.5,
-				Palette:      timeSeriesPanel.Palette{Mode: timeSeriesPanel.AutoMode},
+				Palette:      &timeSeriesPanel.Palette{Mode: timeSeriesPanel.AutoMode},
 			}),
 		),
 		panel.AddQuery(
@@ -123,7 +123,7 @@ func IncomingRequestDuration(datasourceName string, labelMatchers ...*labels.Mat
 				ConnectNulls: false,
 				LineWidth:    0.25,
 				AreaOpacity:  0.5,
-				Palette:      timeSeriesPanel.Palette{Mode: timeSeriesPanel.AutoMode},
+				Palette:      &timeSeriesPanel.Palette{Mode: timeSeriesPanel.AutoMode},
 			}),
 		),
 		panel.AddQuery(
@@ -225,7 +225,7 @@ func OutgoingRequestVolume(datasourceName string, labelMatchers ...*labels.Match
 				ConnectNulls: false,
 				LineWidth:    1,
 				AreaOpacity:  0,
-				Palette:      timeSeriesPanel.Palette{Mode: timeSeriesPanel.AutoMode},
+				Palette:      &timeSeriesPanel.Palette{Mode: timeSeriesPanel.AutoMode},
 			}),
 		),
 		panel.AddQuery(
@@ -271,7 +271,7 @@ func OutgoingSuccessRate(datasourceName string, labelMatchers ...*labels.Matcher
 				ConnectNulls: false,
 				LineWidth:    1,
 				AreaOpacity:  0,
-				Palette:      timeSeriesPanel.Palette{Mode: timeSeriesPanel.AutoMode},
+				Palette:      &timeSeriesPanel.Palette{Mode: timeSeriesPanel.AutoMode},
 			}),
 		),
 		panel.AddQuery(
@@ -313,7 +313,7 @@ func OutgoingRequestDuration(datasourceName string, labelMatchers ...*labels.Mat
 				ConnectNulls: false,
 				LineWidth:    1,
 				AreaOpacity:  0,
-				Palette:      timeSeriesPanel.Palette{Mode: timeSeriesPanel.AutoMode},
+				Palette:      &timeSeriesPanel.Palette{Mode: timeSeriesPanel.AutoMode},
 			}),
 		),
 		panel.AddQuery(
@@ -415,7 +415,7 @@ func OutgoingRequestSize(datasourceName string, labelMatchers ...*labels.Matcher
 				ConnectNulls: false,
 				LineWidth:    1,
 				AreaOpacity:  0,
-				Palette:      timeSeriesPanel.Palette{Mode: timeSeriesPanel.AutoMode},
+				Palette:      &timeSeriesPanel.Palette{Mode: timeSeriesPanel.AutoMode},
 			}),
 		),
 		panel.AddQuery(
@@ -516,7 +516,7 @@ func OutgoingResponseSize(datasourceName string, labelMatchers ...*labels.Matche
 				ConnectNulls: false,
 				LineWidth:    1,
 				AreaOpacity:  0,
-				Palette:      timeSeriesPanel.Palette{Mode: timeSeriesPanel.AutoMode},
+				Palette:      &timeSeriesPanel.Palette{Mode: timeSeriesPanel.AutoMode},
 			}),
 		),
 		panel.AddQuery(
@@ -620,7 +620,7 @@ func TCPBytesReceived(datasourceName string, labelMatchers ...*labels.Matcher) p
 				ConnectNulls: false,
 				LineWidth:    0.25,
 				AreaOpacity:  0.5,
-				Palette:      timeSeriesPanel.Palette{Mode: timeSeriesPanel.AutoMode},
+				Palette:      &timeSeriesPanel.Palette{Mode: timeSeriesPanel.AutoMode},
 			}),
 		),
 		panel.AddQuery(
@@ -664,7 +664,7 @@ func TCPBytesSent(datasourceName string, labelMatchers ...*labels.Matcher) panel
 				ConnectNulls: false,
 				LineWidth:    0.25,
 				AreaOpacity:  0.5,
-				Palette:      timeSeriesPanel.Palette{Mode: timeSeriesPanel.AutoMode},
+				Palette:      &timeSeriesPanel.Palette{Mode: timeSeriesPanel.AutoMode},
 			}),
 		),
 		panel.AddQuery(

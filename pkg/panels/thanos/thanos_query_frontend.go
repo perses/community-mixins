@@ -32,7 +32,7 @@ func QueryFrontendRequestRate(datasourceName string, labelMatchers ...*labels.Ma
 				LineWidth:    0.25,
 				AreaOpacity:  1,
 				Stack:        timeSeriesPanel.AllStack,
-				Palette:      timeSeriesPanel.Palette{Mode: timeSeriesPanel.AutoMode},
+				Palette:      &timeSeriesPanel.Palette{Mode: timeSeriesPanel.AutoMode},
 			}),
 		),
 		panel.AddQuery(
@@ -67,7 +67,7 @@ func QueryFrontendQueryRate(datasourceName string, labelMatchers ...*labels.Matc
 				LineWidth:    0.25,
 				AreaOpacity:  1,
 				Stack:        timeSeriesPanel.AllStack,
-				Palette:      timeSeriesPanel.Palette{Mode: timeSeriesPanel.AutoMode},
+				Palette:      &timeSeriesPanel.Palette{Mode: timeSeriesPanel.AutoMode},
 			}),
 		),
 		panel.AddQuery(
@@ -102,7 +102,7 @@ func QueryFrontendErrors(datasourceName string, labelMatchers ...*labels.Matcher
 				LineWidth:    0.25,
 				AreaOpacity:  1,
 				Stack:        timeSeriesPanel.AllStack,
-				Palette:      timeSeriesPanel.Palette{Mode: timeSeriesPanel.AutoMode},
+				Palette:      &timeSeriesPanel.Palette{Mode: timeSeriesPanel.AutoMode},
 			}),
 		),
 		panel.AddQuery(
@@ -136,7 +136,7 @@ func QueryFrontendDurations(datasourceName string, labelMatchers ...*labels.Matc
 				ConnectNulls: false,
 				LineWidth:    0.25,
 				AreaOpacity:  0.5,
-				Palette:      timeSeriesPanel.Palette{Mode: timeSeriesPanel.AutoMode},
+				Palette:      &timeSeriesPanel.Palette{Mode: timeSeriesPanel.AutoMode},
 			}),
 		),
 		panel.AddQuery(
@@ -191,7 +191,7 @@ func QueryFrontendCacheRequestRate(datasourceName string, labelMatchers ...*labe
 				LineWidth:    0.25,
 				AreaOpacity:  1,
 				Stack:        timeSeriesPanel.AllStack,
-				Palette:      timeSeriesPanel.Palette{Mode: timeSeriesPanel.AutoMode},
+				Palette:      &timeSeriesPanel.Palette{Mode: timeSeriesPanel.AutoMode},
 			}),
 		),
 		panel.AddQuery(
@@ -226,7 +226,7 @@ func QueryFrontendCacheHitRate(datasourceName string, labelMatchers ...*labels.M
 				LineWidth:    0.25,
 				AreaOpacity:  1,
 				Stack:        timeSeriesPanel.AllStack,
-				Palette:      timeSeriesPanel.Palette{Mode: timeSeriesPanel.AutoMode},
+				Palette:      &timeSeriesPanel.Palette{Mode: timeSeriesPanel.AutoMode},
 			}),
 		),
 		panel.AddQuery(
@@ -261,7 +261,7 @@ func QueryFrontendCacheMissRate(datasourceName string, labelMatchers ...*labels.
 				LineWidth:    0.25,
 				AreaOpacity:  1,
 				Stack:        timeSeriesPanel.AllStack,
-				Palette:      timeSeriesPanel.Palette{Mode: timeSeriesPanel.AutoMode},
+				Palette:      &timeSeriesPanel.Palette{Mode: timeSeriesPanel.AutoMode},
 			}),
 		),
 		panel.AddQuery(
@@ -296,7 +296,7 @@ func QueryFrontendFetchedKeyRate(datasourceName string, labelMatchers ...*labels
 				LineWidth:    0.25,
 				AreaOpacity:  1,
 				Stack:        timeSeriesPanel.AllStack,
-				Palette:      timeSeriesPanel.Palette{Mode: timeSeriesPanel.AutoMode},
+				Palette:      &timeSeriesPanel.Palette{Mode: timeSeriesPanel.AutoMode},
 			}),
 		),
 		panel.AddQuery(

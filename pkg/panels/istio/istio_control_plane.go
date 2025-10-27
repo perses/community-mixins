@@ -29,7 +29,7 @@ func PushSize(datasourceName string, labelMatchers ...*labels.Matcher) panelgrou
 				ConnectNulls: false,
 				LineWidth:    0.25,
 				AreaOpacity:  0.5,
-				Palette:      timeSeriesPanel.Palette{Mode: timeSeriesPanel.AutoMode},
+				Palette:      &timeSeriesPanel.Palette{Mode: timeSeriesPanel.AutoMode},
 			}),
 		),
 		panel.AddQuery(
@@ -63,7 +63,7 @@ func PushTime(datasourceName string, labelMatchers ...*labels.Matcher) panelgrou
 				ConnectNulls: false,
 				LineWidth:    0.25,
 				AreaOpacity:  0.5,
-				Palette:      timeSeriesPanel.Palette{Mode: timeSeriesPanel.AutoMode},
+				Palette:      &timeSeriesPanel.Palette{Mode: timeSeriesPanel.AutoMode},
 			}),
 		),
 		panel.AddQuery(
@@ -98,7 +98,7 @@ func Connections(datasourceName string, labelMatchers ...*labels.Matcher) panelg
 				ConnectNulls: false,
 				LineWidth:    0.25,
 				AreaOpacity:  0.5,
-				Palette:      timeSeriesPanel.Palette{Mode: timeSeriesPanel.AutoMode},
+				Palette:      &timeSeriesPanel.Palette{Mode: timeSeriesPanel.AutoMode},
 			}),
 		),
 		panel.AddQuery(
@@ -173,7 +173,7 @@ func Events(datasourceName string, labelMatchers ...*labels.Matcher) panelgroup.
 				LineWidth:    0.25,
 				AreaOpacity:  0.5,
 				Stack:        timeSeriesPanel.AllStack,
-				Palette:      timeSeriesPanel.Palette{Mode: timeSeriesPanel.AutoMode},
+				Palette:      &timeSeriesPanel.Palette{Mode: timeSeriesPanel.AutoMode},
 			}),
 		),
 		panel.AddQuery(
@@ -365,7 +365,7 @@ func PilotVersions(datasourceName string, labelMatchers ...*labels.Matcher) pane
 				ConnectNulls: false,
 				LineWidth:    0.25,
 				AreaOpacity:  0.5,
-				Palette:      timeSeriesPanel.Palette{Mode: timeSeriesPanel.AutoMode},
+				Palette:      &timeSeriesPanel.Palette{Mode: timeSeriesPanel.AutoMode},
 			}),
 		),
 		panel.AddQuery(
@@ -401,7 +401,7 @@ func PushErrors(datasourceName string, labelMatchers ...*labels.Matcher) panelgr
 				LineWidth:    0.25,
 				AreaOpacity:  0.5,
 				Stack:        timeSeriesPanel.AllStack,
-				Palette:      timeSeriesPanel.Palette{Mode: timeSeriesPanel.AutoMode},
+				Palette:      &timeSeriesPanel.Palette{Mode: timeSeriesPanel.AutoMode},
 			}),
 		),
 		panel.AddQuery(
@@ -447,7 +447,7 @@ func Injection(datasourceName string, labelMatchers ...*labels.Matcher) panelgro
 				LineWidth:    0.25,
 				AreaOpacity:  0.5,
 				Stack:        timeSeriesPanel.AllStack,
-				Palette:      timeSeriesPanel.Palette{Mode: timeSeriesPanel.AutoMode},
+				Palette:      &timeSeriesPanel.Palette{Mode: timeSeriesPanel.AutoMode},
 			}),
 		),
 		panel.AddQuery(
@@ -493,7 +493,7 @@ func Validation(datasourceName string, labelMatchers ...*labels.Matcher) panelgr
 				LineWidth:    0.25,
 				AreaOpacity:  0.5,
 				Stack:        timeSeriesPanel.AllStack,
-				Palette:      timeSeriesPanel.Palette{Mode: timeSeriesPanel.AutoMode},
+				Palette:      &timeSeriesPanel.Palette{Mode: timeSeriesPanel.AutoMode},
 			}),
 		),
 		panel.AddQuery(
@@ -539,7 +539,7 @@ func XDSPushes(datasourceName string, labelMatchers ...*labels.Matcher) panelgro
 				LineWidth:    0.25,
 				AreaOpacity:  0.5,
 				Stack:        timeSeriesPanel.AllStack,
-				Palette:      timeSeriesPanel.Palette{Mode: timeSeriesPanel.AutoMode},
+				Palette:      &timeSeriesPanel.Palette{Mode: timeSeriesPanel.AutoMode},
 			}),
 		),
 		panel.AddQuery(

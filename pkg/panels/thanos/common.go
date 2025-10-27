@@ -32,7 +32,7 @@ func BucketOperationRate(datasourceName string, labelMatchers ...*labels.Matcher
 				LineWidth:    0.25,
 				AreaOpacity:  1,
 				Stack:        timeSeriesPanel.AllStack,
-				Palette:      timeSeriesPanel.Palette{Mode: timeSeriesPanel.AutoMode},
+				Palette:      &timeSeriesPanel.Palette{Mode: timeSeriesPanel.AutoMode},
 			}),
 		),
 		panel.AddQuery(
@@ -67,7 +67,7 @@ func BucketOperationErrors(datasourceName string, labelMatchers ...*labels.Match
 				LineWidth:    0.25,
 				AreaOpacity:  1,
 				Stack:        timeSeriesPanel.AllStack,
-				Palette:      timeSeriesPanel.Palette{Mode: timeSeriesPanel.AutoMode},
+				Palette:      &timeSeriesPanel.Palette{Mode: timeSeriesPanel.AutoMode},
 			}),
 		),
 		panel.AddQuery(
@@ -101,7 +101,7 @@ func BucketOperationDurations(datasourceName string, labelMatchers ...*labels.Ma
 				ConnectNulls: false,
 				LineWidth:    0.25,
 				AreaOpacity:  0.5,
-				Palette:      timeSeriesPanel.Palette{Mode: timeSeriesPanel.AutoMode},
+				Palette:      &timeSeriesPanel.Palette{Mode: timeSeriesPanel.AutoMode},
 			}),
 		),
 		panel.AddQuery(
@@ -156,7 +156,7 @@ func ReadGRPCUnaryRate(datasourceName string, labelMatchers ...*labels.Matcher) 
 				LineWidth:    0.25,
 				AreaOpacity:  1,
 				Stack:        timeSeriesPanel.AllStack,
-				Palette:      timeSeriesPanel.Palette{Mode: timeSeriesPanel.AutoMode},
+				Palette:      &timeSeriesPanel.Palette{Mode: timeSeriesPanel.AutoMode},
 			}),
 		),
 		panel.AddQuery(
@@ -191,7 +191,7 @@ func ReadGRPCUnaryErrors(datasourceName string, labelMatchers ...*labels.Matcher
 				LineWidth:    0.25,
 				AreaOpacity:  1,
 				Stack:        timeSeriesPanel.AllStack,
-				Palette:      timeSeriesPanel.Palette{Mode: timeSeriesPanel.AutoMode},
+				Palette:      &timeSeriesPanel.Palette{Mode: timeSeriesPanel.AutoMode},
 			}),
 		),
 		panel.AddQuery(
@@ -225,7 +225,7 @@ func ReadGPRCUnaryDurations(datasourceName string, labelMatchers ...*labels.Matc
 				ConnectNulls: false,
 				LineWidth:    0.25,
 				AreaOpacity:  0.5,
-				Palette:      timeSeriesPanel.Palette{Mode: timeSeriesPanel.AutoMode},
+				Palette:      &timeSeriesPanel.Palette{Mode: timeSeriesPanel.AutoMode},
 			}),
 		),
 		panel.AddQuery(
@@ -280,7 +280,7 @@ func ReadGRPCStreamRate(datasourceName string, labelMatchers ...*labels.Matcher)
 				LineWidth:    0.25,
 				AreaOpacity:  1,
 				Stack:        timeSeriesPanel.AllStack,
-				Palette:      timeSeriesPanel.Palette{Mode: timeSeriesPanel.AutoMode},
+				Palette:      &timeSeriesPanel.Palette{Mode: timeSeriesPanel.AutoMode},
 			}),
 		),
 		panel.AddQuery(
@@ -315,7 +315,7 @@ func ReadGRPCStreamErrors(datasourceName string, labelMatchers ...*labels.Matche
 				LineWidth:    0.25,
 				AreaOpacity:  1,
 				Stack:        timeSeriesPanel.AllStack,
-				Palette:      timeSeriesPanel.Palette{Mode: timeSeriesPanel.AutoMode},
+				Palette:      &timeSeriesPanel.Palette{Mode: timeSeriesPanel.AutoMode},
 			}),
 		),
 		panel.AddQuery(
@@ -349,7 +349,7 @@ func ReadGPRCStreamDurations(datasourceName string, labelMatchers ...*labels.Mat
 				ConnectNulls: false,
 				LineWidth:    0.25,
 				AreaOpacity:  0.5,
-				Palette:      timeSeriesPanel.Palette{Mode: timeSeriesPanel.AutoMode},
+				Palette:      &timeSeriesPanel.Palette{Mode: timeSeriesPanel.AutoMode},
 			}),
 		),
 		panel.AddQuery(

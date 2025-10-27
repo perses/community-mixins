@@ -12,7 +12,7 @@ import (
 
 var (
 	BytesPerSecondsUnit    = string(commonSdk.BytesPerSecondsUnit)
-	BytesUnit              = string(commonSdk.BytesUnit)
+	BytesUnit              = string(commonSdk.BinaryBytesUnit)
 	CountsPerSecondsUnit   = string(commonSdk.CountsPerSecondsUnit)
 	DecimalUnit            = string(commonSdk.DecimalUnit)
 	MilliSecondsUnit       = string(commonSdk.MilliSecondsUnit)

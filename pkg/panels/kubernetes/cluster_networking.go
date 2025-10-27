@@ -31,7 +31,7 @@ func ClusterTCPRetransmitRate(datasourceName string, labelMatchers ...promql.Lab
 				ConnectNulls: false,
 				LineWidth:    0.25,
 				AreaOpacity:  0.75,
-				Palette:      timeSeriesPanel.Palette{Mode: timeSeriesPanel.AutoMode},
+				Palette:      &timeSeriesPanel.Palette{Mode: timeSeriesPanel.AutoMode},
 			}),
 		),
 		panel.AddQuery(
@@ -66,7 +66,7 @@ func ClusterTCPSYNRetransmitRate(datasourceName string, labelMatchers ...promql.
 				ConnectNulls: false,
 				LineWidth:    0.25,
 				AreaOpacity:  0.75,
-				Palette:      timeSeriesPanel.Palette{Mode: timeSeriesPanel.AutoMode},
+				Palette:      &timeSeriesPanel.Palette{Mode: timeSeriesPanel.AutoMode},
 			}),
 		),
 		panel.AddQuery(

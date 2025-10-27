@@ -30,7 +30,7 @@ func IncomingRequestSizeBySource(datasourceName string, labelMatchers ...*labels
 				ConnectNulls: false,
 				LineWidth:    1,
 				AreaOpacity:  0.1,
-				Palette:      timeSeriesPanel.Palette{Mode: timeSeriesPanel.AutoMode},
+				Palette:      &timeSeriesPanel.Palette{Mode: timeSeriesPanel.AutoMode},
 			}),
 		),
 		panel.AddQuery(
@@ -144,7 +144,7 @@ func IncomingResponseSizeBySource(datasourceName string, labelMatchers ...*label
 				ConnectNulls: false,
 				LineWidth:    1,
 				AreaOpacity:  0.1,
-				Palette:      timeSeriesPanel.Palette{Mode: timeSeriesPanel.AutoMode},
+				Palette:      &timeSeriesPanel.Palette{Mode: timeSeriesPanel.AutoMode},
 			}),
 		),
 		panel.AddQuery(
@@ -248,7 +248,7 @@ func InboundTCPBytesReceived(datasourceName string, labelMatchers ...*labels.Mat
 				ConnectNulls: false,
 				LineWidth:    1,
 				AreaOpacity:  0.1,
-				Palette:      timeSeriesPanel.Palette{Mode: timeSeriesPanel.AutoMode},
+				Palette:      &timeSeriesPanel.Palette{Mode: timeSeriesPanel.AutoMode},
 			}),
 		),
 		panel.AddQuery(
@@ -292,7 +292,7 @@ func InboundTCPBytesSent(datasourceName string, labelMatchers ...*labels.Matcher
 				ConnectNulls: false,
 				LineWidth:    1,
 				AreaOpacity:  0.1,
-				Palette:      timeSeriesPanel.Palette{Mode: timeSeriesPanel.AutoMode},
+				Palette:      &timeSeriesPanel.Palette{Mode: timeSeriesPanel.AutoMode},
 			}),
 		),
 		panel.AddQuery(

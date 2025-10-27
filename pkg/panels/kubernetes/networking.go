@@ -176,7 +176,7 @@ func KubernetesReceiveBandwidth(granularity, datasourceName string, labelMatcher
 				ConnectNulls: false,
 				LineWidth:    0.25,
 				AreaOpacity:  0.75,
-				Palette:      timeSeriesPanel.Palette{Mode: timeSeriesPanel.AutoMode},
+				Palette:      &timeSeriesPanel.Palette{Mode: timeSeriesPanel.AutoMode},
 			}),
 		),
 	}
@@ -351,7 +351,7 @@ func KubernetesTransmitBandwidth(granularity, datasourceName string, labelMatche
 				ConnectNulls: false,
 				LineWidth:    0.25,
 				AreaOpacity:  0.75,
-				Palette:      timeSeriesPanel.Palette{Mode: timeSeriesPanel.AutoMode},
+				Palette:      &timeSeriesPanel.Palette{Mode: timeSeriesPanel.AutoMode},
 			}),
 		),
 	}
@@ -446,7 +446,7 @@ func KubernetesAvgContainerBandwidthTransmitted(granularity, datasourceName stri
 				ConnectNulls: false,
 				LineWidth:    0.25,
 				AreaOpacity:  0.75,
-				Palette:      timeSeriesPanel.Palette{Mode: timeSeriesPanel.AutoMode},
+				Palette:      &timeSeriesPanel.Palette{Mode: timeSeriesPanel.AutoMode},
 			}),
 		),
 	}
@@ -540,7 +540,7 @@ func KubernetesAvgContainerBandwidthReceived(granularity, datasourceName string,
 				ConnectNulls: false,
 				LineWidth:    0.25,
 				AreaOpacity:  0.75,
-				Palette:      timeSeriesPanel.Palette{Mode: timeSeriesPanel.AutoMode},
+				Palette:      &timeSeriesPanel.Palette{Mode: timeSeriesPanel.AutoMode},
 			}),
 		),
 	}
@@ -714,7 +714,7 @@ func KubernetesReceivedPackets(granularity, datasourceName string, labelMatchers
 				ConnectNulls: false,
 				LineWidth:    0.25,
 				AreaOpacity:  0.75,
-				Palette:      timeSeriesPanel.Palette{Mode: timeSeriesPanel.AutoMode},
+				Palette:      &timeSeriesPanel.Palette{Mode: timeSeriesPanel.AutoMode},
 			}),
 		),
 	}
@@ -888,7 +888,7 @@ func KubernetesReceivedPacketsDropped(granularity, datasourceName string, labelM
 				ConnectNulls: false,
 				LineWidth:    0.25,
 				AreaOpacity:  0.75,
-				Palette:      timeSeriesPanel.Palette{Mode: timeSeriesPanel.AutoMode},
+				Palette:      &timeSeriesPanel.Palette{Mode: timeSeriesPanel.AutoMode},
 			}),
 		),
 	}
@@ -1062,7 +1062,7 @@ func KubernetesTransmittedPackets(granularity, datasourceName string, labelMatch
 				ConnectNulls: false,
 				LineWidth:    0.25,
 				AreaOpacity:  0.75,
-				Palette:      timeSeriesPanel.Palette{Mode: timeSeriesPanel.AutoMode},
+				Palette:      &timeSeriesPanel.Palette{Mode: timeSeriesPanel.AutoMode},
 			}),
 		),
 	}
@@ -1236,7 +1236,7 @@ func KubernetesTransmittedPacketsDropped(granularity, datasourceName string, lab
 				ConnectNulls: false,
 				LineWidth:    0.25,
 				AreaOpacity:  0.75,
-				Palette:      timeSeriesPanel.Palette{Mode: timeSeriesPanel.AutoMode},
+				Palette:      &timeSeriesPanel.Palette{Mode: timeSeriesPanel.AutoMode},
 			}),
 		),
 	}
@@ -1340,7 +1340,7 @@ func KubernetesCurrentRateOfBytesReceived(granularity, datasourceName string, la
 				ConnectNulls: false,
 				LineWidth:    0.25,
 				AreaOpacity:  0.75,
-				Palette:      timeSeriesPanel.Palette{Mode: timeSeriesPanel.AutoMode},
+				Palette:      &timeSeriesPanel.Palette{Mode: timeSeriesPanel.AutoMode},
 			}),
 		),
 	}
@@ -1444,7 +1444,7 @@ func KubernetesCurrentRateOfBytesTransmitted(granularity, datasourceName string,
 				ConnectNulls: false,
 				LineWidth:    0.25,
 				AreaOpacity:  0.75,
-				Palette:      timeSeriesPanel.Palette{Mode: timeSeriesPanel.AutoMode},
+				Palette:      &timeSeriesPanel.Palette{Mode: timeSeriesPanel.AutoMode},
 			}),
 		),
 	}
@@ -1507,7 +1507,7 @@ func KubernetesAverageRateOfBytesReceived(granularity, datasourceName string, la
 				ConnectNulls: false,
 				LineWidth:    0.25,
 				AreaOpacity:  0.75,
-				Palette:      timeSeriesPanel.Palette{Mode: timeSeriesPanel.AutoMode},
+				Palette:      &timeSeriesPanel.Palette{Mode: timeSeriesPanel.AutoMode},
 			}),
 		),
 	}
@@ -1570,7 +1570,7 @@ func KubernetesAverageRateOfBytesTransmitted(granularity, datasourceName string,
 				ConnectNulls: false,
 				LineWidth:    0.25,
 				AreaOpacity:  0.75,
-				Palette:      timeSeriesPanel.Palette{Mode: timeSeriesPanel.AutoMode},
+				Palette:      &timeSeriesPanel.Palette{Mode: timeSeriesPanel.AutoMode},
 			}),
 		),
 	}

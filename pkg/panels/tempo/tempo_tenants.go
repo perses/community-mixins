@@ -52,7 +52,7 @@ func TenantDistributorBytes(datasourceName string, labelMatchers ...promql.Label
 				ConnectNulls: false,
 				LineWidth:    0.25,
 				AreaOpacity:  1,
-				Palette:      timeSeriesPanel.Palette{Mode: timeSeriesPanel.AutoMode},
+				Palette:      &timeSeriesPanel.Palette{Mode: timeSeriesPanel.AutoMode},
 			}),
 		),
 		panel.AddQuery(
@@ -107,7 +107,7 @@ func TenantDistributorSpan(datasourceName string, labelMatchers ...promql.LabelM
 				ConnectNulls: false,
 				LineWidth:    0.25,
 				AreaOpacity:  1,
-				Palette:      timeSeriesPanel.Palette{Mode: timeSeriesPanel.AutoMode},
+				Palette:      &timeSeriesPanel.Palette{Mode: timeSeriesPanel.AutoMode},
 			}),
 		),
 		panel.AddQuery(
@@ -152,7 +152,7 @@ func TenantLiveTraces(datasourceName string, labelMatchers ...promql.LabelMatche
 				ConnectNulls: false,
 				LineWidth:    0.25,
 				AreaOpacity:  1,
-				Palette:      timeSeriesPanel.Palette{Mode: timeSeriesPanel.AutoMode},
+				Palette:      &timeSeriesPanel.Palette{Mode: timeSeriesPanel.AutoMode},
 			}),
 		),
 		panel.AddQuery(
@@ -207,7 +207,7 @@ func TenantQueriesID(datasourceName string, labelMatchers ...promql.LabelMatcher
 				ConnectNulls: false,
 				LineWidth:    0.25,
 				AreaOpacity:  1,
-				Palette:      timeSeriesPanel.Palette{Mode: timeSeriesPanel.AutoMode},
+				Palette:      &timeSeriesPanel.Palette{Mode: timeSeriesPanel.AutoMode},
 			}),
 		),
 		panel.AddQuery(
@@ -242,7 +242,7 @@ func TenantQueriesSearch(datasourceName string, labelMatchers ...promql.LabelMat
 				ConnectNulls: false,
 				LineWidth:    0.25,
 				AreaOpacity:  1,
-				Palette:      timeSeriesPanel.Palette{Mode: timeSeriesPanel.AutoMode},
+				Palette:      &timeSeriesPanel.Palette{Mode: timeSeriesPanel.AutoMode},
 			}),
 		),
 		panel.AddQuery(
@@ -277,7 +277,7 @@ func TenantBlockslistLength(datasourceName string, labelMatchers ...promql.Label
 				ConnectNulls: false,
 				LineWidth:    0.25,
 				AreaOpacity:  1,
-				Palette:      timeSeriesPanel.Palette{Mode: timeSeriesPanel.AutoMode},
+				Palette:      &timeSeriesPanel.Palette{Mode: timeSeriesPanel.AutoMode},
 			}),
 		),
 		panel.AddQuery(
@@ -312,7 +312,7 @@ func TenantOutstandingCompactions(datasourceName string, labelMatchers ...promql
 				ConnectNulls: false,
 				LineWidth:    0.25,
 				AreaOpacity:  1,
-				Palette:      timeSeriesPanel.Palette{Mode: timeSeriesPanel.AutoMode},
+				Palette:      &timeSeriesPanel.Palette{Mode: timeSeriesPanel.AutoMode},
 			}),
 		),
 		panel.AddQuery(
@@ -346,7 +346,7 @@ func TenantMetricGeneratorBytes(datasourceName string, labelMatchers ...promql.L
 				ConnectNulls: false,
 				LineWidth:    0.25,
 				AreaOpacity:  1,
-				Palette:      timeSeriesPanel.Palette{Mode: timeSeriesPanel.AutoMode},
+				Palette:      &timeSeriesPanel.Palette{Mode: timeSeriesPanel.AutoMode},
 			}),
 		),
 		panel.AddQuery(
@@ -381,7 +381,7 @@ func TenantMetricGeneratorActiveSeries(datasourceName string, labelMatchers ...p
 				ConnectNulls: false,
 				LineWidth:    0.25,
 				AreaOpacity:  1,
-				Palette:      timeSeriesPanel.Palette{Mode: timeSeriesPanel.AutoMode},
+				Palette:      &timeSeriesPanel.Palette{Mode: timeSeriesPanel.AutoMode},
 			}),
 		),
 		panel.AddQuery(

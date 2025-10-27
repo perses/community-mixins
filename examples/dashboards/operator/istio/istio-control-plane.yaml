@@ -163,8 +163,6 @@ spec:
               areaOpacity: 0.1
               display: line
               lineWidth: 1
-              palette:
-                mode: ""
             yAxis:
               format:
                 unit: bytes
@@ -228,8 +226,6 @@ spec:
               areaOpacity: 0.1
               display: line
               lineWidth: 1
-              palette:
-                mode: ""
             yAxis:
               format:
                 unit: bytes/sec
@@ -273,8 +269,6 @@ spec:
               areaOpacity: 0.1
               display: line
               lineWidth: 1
-              palette:
-                mode: ""
         queries:
         - kind: TimeSeriesQuery
           spec:
@@ -308,8 +302,6 @@ spec:
               areaOpacity: 0.1
               display: line
               lineWidth: 1
-              palette:
-                mode: ""
         queries:
         - kind: TimeSeriesQuery
           spec:
