@@ -4,7 +4,7 @@ Welcome to the **Perses Community Mixins** repository! This project is designed 
 
 This repo also offers Prometheus Operator format recording rules and alerts alongside these dashboards, also maintained in Go as a complete mixin solution!
 
-> **Note:** These dashboards are compatible with Perses version 0.52.0 and onwards.
+> **Note:** These dashboards are compatible with Perses version v0.53.0-beta.0 and onwards.
 
 ## Overview of Available Dashboards
 

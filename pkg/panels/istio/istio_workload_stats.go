@@ -88,7 +88,7 @@ func RequestDurationChart(datasourceName string, labelMatchers ...*labels.Matche
 				ConnectNulls: false,
 				LineWidth:    1,
 				AreaOpacity:  0.1,
-				Palette:      timeSeriesPanel.Palette{Mode: timeSeriesPanel.AutoMode},
+				Palette:      &timeSeriesPanel.Palette{Mode: timeSeriesPanel.AutoMode},
 			}),
 		),
 		panel.AddQuery(

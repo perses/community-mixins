@@ -53,7 +53,7 @@ func RulesSyncRate(datasourceName string, labelMatchers ...promql.LabelMatcher) 
 				ConnectNulls: false,
 				LineWidth:    0.25,
 				AreaOpacity:  1,
-				Palette:      timeSeriesPanel.Palette{Mode: timeSeriesPanel.AutoMode},
+				Palette:      &timeSeriesPanel.Palette{Mode: timeSeriesPanel.AutoMode},
 			}),
 		),
 		panel.AddQuery(
@@ -88,7 +88,7 @@ func RulesSyncLatency(datasourceName string, labelMatchers ...promql.LabelMatche
 				ConnectNulls: false,
 				LineWidth:    0.25,
 				AreaOpacity:  0.5,
-				Palette:      timeSeriesPanel.Palette{Mode: timeSeriesPanel.AutoMode},
+				Palette:      &timeSeriesPanel.Palette{Mode: timeSeriesPanel.AutoMode},
 			}),
 		),
 		panel.AddQuery(
@@ -123,7 +123,7 @@ func NetworkProgrammingRate(datasourceName string, labelMatchers ...promql.Label
 				ConnectNulls: false,
 				LineWidth:    0.25,
 				AreaOpacity:  1,
-				Palette:      timeSeriesPanel.Palette{Mode: timeSeriesPanel.AutoMode},
+				Palette:      &timeSeriesPanel.Palette{Mode: timeSeriesPanel.AutoMode},
 			}),
 		),
 		panel.AddQuery(
@@ -158,7 +158,7 @@ func NetworkProgrammingLatency(datasourceName string, labelMatchers ...promql.La
 				ConnectNulls: false,
 				LineWidth:    0.25,
 				AreaOpacity:  0.5,
-				Palette:      timeSeriesPanel.Palette{Mode: timeSeriesPanel.AutoMode},
+				Palette:      &timeSeriesPanel.Palette{Mode: timeSeriesPanel.AutoMode},
 			}),
 		),
 		panel.AddQuery(

@@ -699,10 +699,7 @@
               "yAxis": {},
               "visual": {
                 "display": "line",
-                "lineWidth": 1,
-                "palette": {
-                  "mode": ""
-                }
+                "lineWidth": 1
               }
             }
           },
@@ -764,10 +761,7 @@
               "visual": {
                 "display": "line",
                 "lineWidth": 1,
-                "areaOpacity": 0.1,
-                "palette": {
-                  "mode": ""
-                }
+                "areaOpacity": 0.1
               }
             }
           },
@@ -828,10 +822,7 @@
               "visual": {
                 "display": "line",
                 "lineWidth": 1,
-                "areaOpacity": 0.1,
-                "palette": {
-                  "mode": ""
-                }
+                "areaOpacity": 0.1
               }
             }
           },
@@ -988,10 +979,7 @@
               "visual": {
                 "display": "line",
                 "lineWidth": 1,
-                "areaOpacity": 0.1,
-                "palette": {
-                  "mode": ""
-                }
+                "areaOpacity": 0.1
               }
             }
           },
@@ -1148,10 +1136,7 @@
               "visual": {
                 "display": "line",
                 "lineWidth": 1,
-                "areaOpacity": 0.1,
-                "palette": {
-                  "mode": ""
-                }
+                "areaOpacity": 0.1
               }
             }
           },
@@ -1308,10 +1293,7 @@
               "visual": {
                 "display": "line",
                 "lineWidth": 1,
-                "areaOpacity": 0.1,
-                "palette": {
-                  "mode": ""
-                }
+                "areaOpacity": 0.1
               }
             }
           },
@@ -1372,10 +1354,7 @@
               "visual": {
                 "display": "line",
                 "lineWidth": 1,
-                "areaOpacity": 0.1,
-                "palette": {
-                  "mode": ""
-                }
+                "areaOpacity": 0.1
               }
             }
           },
@@ -1445,10 +1424,7 @@
               "yAxis": {},
               "visual": {
                 "display": "line",
-                "lineWidth": 1,
-                "palette": {
-                  "mode": ""
-                }
+                "lineWidth": 1
               }
             }
           },
@@ -1510,10 +1486,7 @@
               "visual": {
                 "display": "line",
                 "lineWidth": 1,
-                "areaOpacity": 0.1,
-                "palette": {
-                  "mode": ""
-                }
+                "areaOpacity": 0.1
               }
             }
           },
@@ -1574,10 +1547,7 @@
               "visual": {
                 "display": "line",
                 "lineWidth": 1,
-                "areaOpacity": 0.1,
-                "palette": {
-                  "mode": ""
-                }
+                "areaOpacity": 0.1
               }
             }
           },
@@ -1734,10 +1704,7 @@
               "visual": {
                 "display": "line",
                 "lineWidth": 1,
-                "areaOpacity": 0.1,
-                "palette": {
-                  "mode": ""
-                }
+                "areaOpacity": 0.1
               }
             }
           },
@@ -1894,10 +1861,7 @@
               "visual": {
                 "display": "line",
                 "lineWidth": 1,
-                "areaOpacity": 0.1,
-                "palette": {
-                  "mode": ""
-                }
+                "areaOpacity": 0.1
               }
             }
           },
@@ -2054,10 +2018,7 @@
               "visual": {
                 "display": "line",
                 "lineWidth": 1,
-                "areaOpacity": 0.1,
-                "palette": {
-                  "mode": ""
-                }
+                "areaOpacity": 0.1
               }
             }
           },
@@ -2118,10 +2079,7 @@
               "visual": {
                 "display": "line",
                 "lineWidth": 1,
-                "areaOpacity": 0.1,
-                "palette": {
-                  "mode": ""
-                }
+                "areaOpacity": 0.1
               }
             }
           },

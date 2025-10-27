@@ -37,10 +37,7 @@
               "visual": {
                 "display": "line",
                 "lineWidth": 1,
-                "areaOpacity": 0.1,
-                "palette": {
-                  "mode": ""
-                }
+                "areaOpacity": 0.1
               }
             }
           },
@@ -90,10 +87,7 @@
               "visual": {
                 "display": "line",
                 "lineWidth": 1,
-                "areaOpacity": 0.1,
-                "palette": {
-                  "mode": ""
-                }
+                "areaOpacity": 0.1
               }
             }
           },
@@ -138,10 +132,7 @@
               "visual": {
                 "display": "line",
                 "lineWidth": 1,
-                "areaOpacity": 0.1,
-                "palette": {
-                  "mode": ""
-                }
+                "areaOpacity": 0.1
               }
             }
           },
@@ -191,10 +182,7 @@
               "visual": {
                 "display": "line",
                 "lineWidth": 1,
-                "areaOpacity": 0.1,
-                "palette": {
-                  "mode": ""
-                }
+                "areaOpacity": 0.1
               }
             }
           },
@@ -260,10 +248,7 @@
               "visual": {
                 "display": "line",
                 "lineWidth": 1,
-                "areaOpacity": 0.1,
-                "palette": {
-                  "mode": ""
-                }
+                "areaOpacity": 0.1
               }
             }
           },
@@ -324,10 +309,7 @@
               "visual": {
                 "display": "line",
                 "lineWidth": 1,
-                "areaOpacity": 0.1,
-                "palette": {
-                  "mode": ""
-                }
+                "areaOpacity": 0.1
               }
             }
           },
@@ -372,10 +354,7 @@
               "visual": {
                 "display": "line",
                 "lineWidth": 1,
-                "areaOpacity": 0.1,
-                "palette": {
-                  "mode": ""
-                }
+                "areaOpacity": 0.1
               }
             }
           },
@@ -416,9 +395,6 @@
                 "display": "bar",
                 "lineWidth": 1,
                 "areaOpacity": 1,
-                "palette": {
-                  "mode": ""
-                },
                 "stack": "all"
               }
             }
@@ -464,10 +440,7 @@
               "visual": {
                 "display": "line",
                 "lineWidth": 1,
-                "areaOpacity": 0.1,
-                "palette": {
-                  "mode": ""
-                }
+                "areaOpacity": 0.1
               }
             }
           },

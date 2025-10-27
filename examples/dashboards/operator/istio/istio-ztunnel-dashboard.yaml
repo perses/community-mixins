@@ -102,8 +102,6 @@ spec:
               areaOpacity: 0.1
               display: line
               lineWidth: 1
-              palette:
-                mode: ""
         queries:
         - kind: TimeSeriesQuery
           spec:
@@ -134,8 +132,6 @@ spec:
               areaOpacity: 0.1
               display: line
               lineWidth: 1
-              palette:
-                mode: ""
             yAxis:
               format:
                 unit: bytes
@@ -169,8 +165,6 @@ spec:
               areaOpacity: 0.1
               display: line
               lineWidth: 1
-              palette:
-                mode: ""
         queries:
         - kind: TimeSeriesQuery
           spec:
@@ -206,8 +200,6 @@ spec:
               areaOpacity: 0.1
               display: line
               lineWidth: 1
-              palette:
-                mode: ""
             yAxis:
               format:
                 unit: counts/sec
@@ -251,8 +243,6 @@ spec:
               areaOpacity: 0.1
               display: line
               lineWidth: 1
-              palette:
-                mode: ""
             yAxis:
               format:
                 unit: bytes/sec
@@ -296,8 +286,6 @@ spec:
               areaOpacity: 0.1
               display: line
               lineWidth: 1
-              palette:
-                mode: ""
         queries:
         - kind: TimeSeriesQuery
           spec:
@@ -330,8 +318,6 @@ spec:
               areaOpacity: 0.1
               display: line
               lineWidth: 1
-              palette:
-                mode: ""
         queries:
         - kind: TimeSeriesQuery
           spec:
@@ -358,8 +344,6 @@ spec:
               areaOpacity: 1
               display: bar
               lineWidth: 1
-              palette:
-                mode: ""
               stack: all
         queries:
         - kind: TimeSeriesQuery
@@ -393,8 +377,6 @@ spec:
               areaOpacity: 0.1
               display: line
               lineWidth: 1
-              palette:
-                mode: ""
         queries:
         - kind: TimeSeriesQuery
           spec:
