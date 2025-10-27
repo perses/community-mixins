@@ -94,10 +94,6 @@ func NewExec() Exec {
 	output := flag.Lookup("output").Value.String()
 	outputDir := flag.Lookup("output-dir").Value.String()
 
-	if output == "" || outputDir == "" {
-		panic("output and output-dir flags are required for generating dashboards")
-	}
-
 	return Exec{
 		outputFormat: output,
 		outputDir:    outputDir,
