@@ -1,16 +1,16 @@
 module github.com/perses/community-mixins
 
-go 1.25.0
+go 1.25.1
 
 require (
-	github.com/perses/perses v0.52.0
+	github.com/perses/perses v0.53.0-beta.0
 	github.com/perses/perses-operator v0.2.0
 	github.com/perses/plugins/gaugechart v0.10.0
 	github.com/perses/plugins/markdown v0.10.0
 	github.com/perses/plugins/prometheus v0.54.0
 	github.com/perses/plugins/statchart v0.10.0
 	github.com/perses/plugins/table v0.7.1
-	github.com/perses/plugins/timeserieschart v0.11.0
+	github.com/perses/plugins/timeserieschart v0.11.1
 	github.com/perses/promql-builder v0.2.0
 	github.com/prometheus-operator/prometheus-operator/pkg/apis/monitoring v0.86.1
 	github.com/prometheus/prometheus v0.307.1
@@ -63,11 +63,11 @@ require (
 	github.com/valyala/bytebufferpool v1.0.0 // indirect
 	github.com/valyala/fasttemplate v1.2.2 // indirect
 	github.com/x448/float16 v0.8.4 // indirect
-	github.com/zitadel/oidc/v3 v3.44.0 // indirect
+	github.com/zitadel/oidc/v3 v3.45.0 // indirect
 	github.com/zitadel/schema v1.3.1 // indirect
 	go.uber.org/atomic v1.11.0 // indirect
 	golang.org/x/crypto v0.42.0 // indirect
-	golang.org/x/exp v0.0.0-20250819193227-8b4c13bb791b
+	golang.org/x/exp v0.0.0-20250911091902-df9299821621
 	golang.org/x/net v0.44.0 // indirect
 	golang.org/x/oauth2 v0.31.0 // indirect
 	golang.org/x/sys v0.36.0 // indirect
