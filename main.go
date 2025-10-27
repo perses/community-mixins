@@ -50,6 +50,7 @@ func main() {
 
 	if buildRules {
 		ruleWriter := rules.NewRuleWriter()
+
 		ruleWriter.Add(
 			thanosrules.BuildThanosRules(
 				project,
@@ -69,21 +70,9 @@ func main() {
 				thanosrules.WithRuleDashboardURL("https://demo.perses.dev/projects/perses/dashboards/thanosrule"),
 			),
 		)
-
-		ruleWriter.Add(
-			blackboxrules.BuildBlackboxRules(
-				project,
-				map[string]string{
-					"app.kubernetes.io/component": "blackbox-exporter",
-					"app.kubernetes.io/name":      "blackbox-exporter-rules",
-					"app.kubernetes.io/part-of":   "blackbox-exporter",
-					"app.kubernetes.io/version":   "main",
-				},
-				map[string]string{},
-				blackboxrules.WithDashboardURL("https://demo.perses.dev/projects/perses/dashboards/blackboxexporter"),
-			),
-		)
+		ruleWriter.Add(blackboxrules.BuildBlackboxRulesDefault(project))
 		ruleWriter.Write()
+
 	} else {
 		dashboardWriter := dashboards.NewDashboardWriter()
 
