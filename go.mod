@@ -13,7 +13,7 @@ require (
 	github.com/perses/plugins/timeserieschart v0.11.1
 	github.com/perses/promql-builder v0.2.0
 	github.com/prometheus-operator/prometheus-operator/pkg/apis/monitoring v0.86.1
-	github.com/prometheus/prometheus v0.307.2
+	github.com/prometheus/prometheus v0.307.3
 	gopkg.in/yaml.v3 v3.0.1
 	k8s.io/apimachinery v0.34.1
 	sigs.k8s.io/yaml v1.6.0
