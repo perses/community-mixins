@@ -25,6 +25,7 @@ import (
 	"github.com/perses/community-mixins/pkg/rules"
 	blackboxrules "github.com/perses/community-mixins/pkg/rules/blackbox"
 	thanosrules "github.com/perses/community-mixins/pkg/rules/thanos"
+	thanosoperatorrules "github.com/perses/community-mixins/pkg/rules/thanos-operator"
 )
 
 var (
@@ -70,9 +71,24 @@ func main() {
 				thanosrules.WithRuleDashboardURL("https://demo.perses.dev/projects/perses/dashboards/thanosrule"),
 			),
 		)
+		ruleWriter.Add(
+			thanosoperatorrules.BuildThanosOperatorRules(
+				project,
+				map[string]string{
+					"app.kubernetes.io/component": "thanos-operator",
+					"app.kubernetes.io/name":      "thanos-operator-rules",
+					"app.kubernetes.io/part-of":   "thanos-operator",
+					"app.kubernetes.io/version":   "main",
+				},
+				map[string]string{},
+				thanosoperatorrules.WithRunbookURL("https://github.com/thanos-community/thanos-operator/blob/main/mixin/runbook.md"),
+				thanosoperatorrules.WithDashboardURL("https://demo.perses.dev/projects/perses/dashboards/thanosoperator"),
+				thanosoperatorrules.WithServiceLabelValue("thanos-operator"),
+			),
+		)
 		ruleWriter.Add(blackboxrules.BuildBlackboxRulesDefault(project))
-		ruleWriter.Write()
 
+		ruleWriter.Write()
 	} else {
 		dashboardWriter := dashboards.NewDashboardWriter()
 
