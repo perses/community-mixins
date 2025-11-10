@@ -3,11 +3,11 @@ module github.com/perses/community-mixins
 go 1.25.1
 
 require (
-	github.com/perses/perses v0.53.0-beta.0
+	github.com/perses/perses v0.53.0-beta.1
 	github.com/perses/perses-operator v0.2.0
 	github.com/perses/plugins/gaugechart v0.10.0
 	github.com/perses/plugins/markdown v0.10.0
-	github.com/perses/plugins/prometheus v0.54.0
+	github.com/perses/plugins/prometheus v0.55.0
 	github.com/perses/plugins/statchart v0.10.0
 	github.com/perses/plugins/table v0.7.1
 	github.com/perses/plugins/timeserieschart v0.11.1
@@ -35,7 +35,7 @@ require (
 	github.com/dennwc/varint v1.0.0 // indirect
 	github.com/fsnotify/fsnotify v1.9.0 // indirect
 	github.com/fxamacker/cbor/v2 v2.9.0 // indirect
-	github.com/go-jose/go-jose/v4 v4.1.2 // indirect
+	github.com/go-jose/go-jose/v4 v4.1.3 // indirect
 	github.com/go-logr/logr v1.4.3 // indirect
 	github.com/gogo/protobuf v1.3.2 // indirect
 	github.com/google/cel-go v0.26.1 // indirect
@@ -67,7 +67,7 @@ require (
 	github.com/zitadel/schema v1.3.1 // indirect
 	go.uber.org/atomic v1.11.0 // indirect
 	golang.org/x/crypto v0.43.0 // indirect
-	golang.org/x/exp v0.0.0-20250911091902-df9299821621
+	golang.org/x/exp v0.0.0-20251009144603-d2f985daa21b
 	golang.org/x/net v0.46.0 // indirect
 	golang.org/x/oauth2 v0.32.0 // indirect
 	golang.org/x/sys v0.37.0 // indirect
