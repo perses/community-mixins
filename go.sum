@@ -152,8 +152,8 @@ github.com/perses/perses v0.53.0-beta.2 h1:V0izhurDe5E7SAFOugiIXdl1s1iLM+J+HNICA
 github.com/perses/perses v0.53.0-beta.2/go.mod h1:3ZJmqS7EDfbNZLTAVPGHxRDVssYSYTIYRDCult7IMSc=
 github.com/perses/perses-operator v0.2.0 h1:gIhKUWca8ncaxyvOk2USaGfQ32eNcXzjDN97UlQAP0M=
 github.com/perses/perses-operator v0.2.0/go.mod h1:91gFy0XicXrWSYSr4ChkMp16GSOkeXjKdkXlfEECw5g=
-github.com/perses/plugins/gaugechart v0.10.0 h1:EkfIpZ2Npa26CWxrl3yfv8aCNxLUMPeXZ5CO5EnCn98=
-github.com/perses/plugins/gaugechart v0.10.0/go.mod h1:6ObjtNBS1T3QZMM7fR0AvmLqBE0Whl81Ou3cF+6ygmU=
+github.com/perses/plugins/gaugechart v0.11.0 h1:CiaIh6mLgGY1UzPGxKgtM6WVObJGo4CJI21SK2NKNT0=
+github.com/perses/plugins/gaugechart v0.11.0/go.mod h1:cKW0IoHbTZ+91xBGTpnDMEqW9nz+KwUAGuBqlJKDgNg=
 github.com/perses/plugins/markdown v0.10.0 h1:pFCIvg6LZpXayNFKvtkMjPh2FZ3bM/VSbsbuufnB1u4=
 github.com/perses/plugins/markdown v0.10.0/go.mod h1:rgZQ5XJLuf/rmmgXrUxyqR2wLCrbXTcnpvn+nDzxOBA=
 github.com/perses/plugins/prometheus v0.55.0 h1:2k6GsKFKpZDLPjU4jwY0nUqKUzT9Ao7HWTFpannKndU=
