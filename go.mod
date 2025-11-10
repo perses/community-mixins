@@ -8,7 +8,7 @@ require (
 	github.com/perses/plugins/gaugechart v0.10.0
 	github.com/perses/plugins/markdown v0.10.0
 	github.com/perses/plugins/prometheus v0.55.0
-	github.com/perses/plugins/statchart v0.10.0
+	github.com/perses/plugins/statchart v0.11.0
 	github.com/perses/plugins/table v0.7.1
 	github.com/perses/plugins/timeserieschart v0.11.1
 	github.com/perses/promql-builder v0.2.1-0.20251110140620-19229f7152d4
