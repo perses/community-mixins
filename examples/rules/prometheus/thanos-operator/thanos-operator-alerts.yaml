@@ -1,0 +1,588 @@
+groups:
+- interval: 30s
+  name: thanos-operator.general
+  rules:
+  - alert: ThanosOperatorDown
+    annotations:
+      dashboard: https://demo.perses.dev/projects/perses/dashboards/thanosoperator
+      description: The Thanos Operator has been down for more than 5 minutes. No reconciliation
+        is happening.
+      message: Thanos resources are not being reconciled. Configuration changes will
+        not be applied.
+      runbook: https://github.com/thanos-community/thanos-operator/blob/main/mixin/runbook.md#thanosoperatordown
+      summary: Thanos Operator is down
+    expr: up{job="thanos-operator-controller-manager-metrics-service"} == 0
+    for: 5m
+    labels:
+      component: thanos-operator
+      service: thanos-operator
+      severity: critical
+  - alert: ThanosOperatorHighReconcileErrorRate
+    annotations:
+      dashboard: https://demo.perses.dev/projects/perses/dashboards/thanosoperator
+      description: Controller {{ $labels.controller }} has an error rate of {{ $value
+        | humanizePercentage }} over the last 10 minutes.
+      message: Resources managed by this controller may not be correctly configured
+        or updated.
+      runbook: https://github.com/thanos-community/thanos-operator/blob/main/mixin/runbook.md#thanosoperatorhighreconcileerrorrate
+      summary: High reconciliation error rate for {{ $labels.controller }}
+    expr: |2-
+          sum by (controller) (
+            rate(
+              controller_runtime_reconcile_errors_total{job="thanos-operator-controller-manager-metrics-service"}[5m]
+            )
+          )
+        /
+          sum by (controller) (
+            rate(
+              controller_runtime_reconcile_total{job="thanos-operator-controller-manager-metrics-service"}[5m]
+            )
+          )
+      >
+        0.1
+    for: 10m
+    labels:
+      component: thanos-operator
+      controller: '{{ $labels.controller }}'
+      service: thanos-operator
+      severity: warning
+  - alert: ThanosOperatorReconcileStuck
+    annotations:
+      dashboard: https://demo.perses.dev/projects/perses/dashboards/thanosoperator
+      description: Workqueue for {{ $labels.name }} has items but no reconciliations
+        are happening.
+      message: Changes to Thanos resources are not being processed.
+      runbook: https://github.com/thanos-community/thanos-operator/blob/main/mixin/runbook.md#thanosoperatorreconcilestuck
+      summary: Controller {{ $labels.name }} appears stuck
+    expr: |2-
+          rate(
+            controller_runtime_reconcile_total{job="thanos-operator-controller-manager-metrics-service"}[10m]
+          )
+        ==
+          0
+      and on (controller, job)
+        workqueue_depth{job="thanos-operator-controller-manager-metrics-service"} > 0
+    for: 15m
+    labels:
+      component: thanos-operator
+      controller: '{{ $labels.controller }}'
+      service: thanos-operator
+      severity: warning
+  - alert: ThanosOperatorWorkQueueGrowth
+    annotations:
+      dashboard: https://demo.perses.dev/projects/perses/dashboards/thanosoperator
+      description: Workqueue depth for {{ $labels.name }} is {{ $value }}, indicating
+        the controller cannot keep up with events.
+      message: Reconciliation is falling behind. Configuration updates may be delayed.
+      runbook: https://github.com/thanos-community/thanos-operator/blob/main/mixin/runbook.md#thanosoperatorworkqueuegrowth
+      summary: Controller workqueue {{ $labels.name }} is growing
+    expr: workqueue_depth{job="thanos-operator-controller-manager-metrics-service"}
+      > 100
+    for: 15m
+    labels:
+      component: thanos-operator
+      controller: '{{ $labels.controller }}'
+      service: thanos-operator
+      severity: warning
+  - alert: ThanosOperatorSlowReconciliation
+    annotations:
+      dashboard: https://demo.perses.dev/projects/perses/dashboards/thanosoperator
+      description: P99 reconciliation time for {{ $labels.controller }} is {{ $value
+        | humanizeDuration }}
+      message: Configuration changes are taking longer than expected to apply.
+      runbook: https://github.com/thanos-community/thanos-operator/blob/main/mixin/runbook.md#thanosoperatorslowreconciliation
+      summary: Slow reconciliation for {{ $labels.controller }}
+    expr: |2-
+        histogram_quantile(
+          0.99,
+          rate(
+            controller_runtime_reconcile_time_seconds_bucket{job="thanos-operator-controller-manager-metrics-service"}[10m]
+          )
+        )
+      >
+        60
+    for: 10m
+    labels:
+      component: thanos-operator
+      controller: '{{ $labels.controller }}'
+      service: thanos-operator
+      severity: warning
+- interval: 30s
+  name: thanos-operator.query
+  rules:
+  - alert: ThanosQueryNoEndpointsConfigured
+    annotations:
+      dashboard: https://demo.perses.dev/projects/perses/dashboards/thanosoperator
+      description: ThanosQuery resource {{ $labels.namespace }}/{{ $labels.resource
+        }} has no store endpoints configured.
+      message: Query component cannot retrieve data from any stores. Queries will
+        return no results.
+      runbook: https://github.com/thanos-community/thanos-operator/blob/main/mixin/runbook.md#thanosquerynoendpointsconfigured
+      summary: ThanosQuery {{ $labels.namespace }}/{{ $labels.resource }} has no endpoints
+        configured
+    expr: |2-
+        thanos_operator_query_endpoints_configured{job="thanos-operator-controller-manager-metrics-service"}
+      ==
+        0
+    for: 10m
+    labels:
+      component: thanos-query
+      service: thanos-operator
+      severity: warning
+  - alert: ThanosQueryReconcileErrors
+    annotations:
+      dashboard: https://demo.perses.dev/projects/perses/dashboards/thanosoperator
+      description: ThanosQuery controller has {{ $value | humanize }} errors/sec
+      message: ThanosQuery resources may not be properly configured or updated.
+      runbook: https://github.com/thanos-community/thanos-operator/blob/main/mixin/runbook.md#thanosqueryreconcileerrors
+      summary: ThanosQuery controller experiencing reconciliation errors
+    expr: |2-
+        rate(
+          controller_runtime_reconcile_errors_total{controller="thanosquery",job="thanos-operator-controller-manager-metrics-service"}[10m]
+        )
+      >
+        0
+    for: 15m
+    labels:
+      component: thanos-query
+      service: thanos-operator
+      severity: warning
+  - alert: ThanosQueryServiceWatchReconcileStorm
+    annotations:
+      dashboard: https://demo.perses.dev/projects/perses/dashboards/thanosoperator
+      description: ThanosQuery {{ $labels.namespace }}/{{ $labels.resource }} is reconciling
+        {{ $value | humanize }} times/sec due to service events.
+      message: Excessive reconciliations may indicate service churn or configuration
+        issues.
+      runbook: https://github.com/thanos-community/thanos-operator/blob/main/mixin/runbook.md#thanosqueryservicewatchreconcilestorm
+      summary: High service watch reconciliation rate for ThanosQuery {{ $labels.namespace
+        }}/{{ $labels.resource }}
+    expr: |2-
+        rate(
+          thanos_operator_query_service_event_reconciliations_total{job="thanos-operator-controller-manager-metrics-service"}[5m]
+        )
+      >
+        2
+    for: 10m
+    labels:
+      component: thanos-query
+      service: thanos-operator
+      severity: warning
+- interval: 30s
+  name: thanos-operator.receive
+  rules:
+  - alert: ThanosReceiveNoHashringsConfigured
+    annotations:
+      dashboard: https://demo.perses.dev/projects/perses/dashboards/thanosoperator
+      description: ThanosReceive resource {{ $labels.namespace }}/{{ $labels.resource
+        }} has no hashrings configured.
+      message: Receive component cannot accept remote write data without hashring
+        configuration.
+      runbook: https://github.com/thanos-community/thanos-operator/blob/main/mixin/runbook.md#thanosreceivenohashringsconfigured
+      summary: ThanosReceive {{ $labels.namespace }}/{{ $labels.resource }} has no
+        hashrings configured
+    expr: |2-
+        thanos_operator_receive_hashrings_configured{job="thanos-operator-controller-manager-metrics-service"}
+      ==
+        0
+    for: 10m
+    labels:
+      component: thanos-receive
+      service: thanos-operator
+      severity: warning
+  - alert: ThanosReceiveHashringNoEndpoints
+    annotations:
+      dashboard: https://demo.perses.dev/projects/perses/dashboards/thanosoperator
+      description: Hashring {{ $labels.hashring }} for ThanosReceive {{ $labels.namespace
+        }}/{{ $labels.resource }} has no endpoints configured.
+      message: Data cannot be distributed to this hashring. Remote write data may
+        be lost or rejected.
+      runbook: https://github.com/thanos-community/thanos-operator/blob/main/mixin/runbook.md#thanosreceivehashringnoendpoints
+      summary: ThanosReceive hashring {{ $labels.hashring }} has no endpoints
+    expr: |2-
+        thanos_operator_receive_hashring_endpoints_configured{job="thanos-operator-controller-manager-metrics-service"}
+      ==
+        0
+    for: 10m
+    labels:
+      component: thanos-receive
+      service: thanos-operator
+      severity: critical
+  - alert: ThanosReceiveHashringConfigurationChange
+    annotations:
+      dashboard: https://demo.perses.dev/projects/perses/dashboards/thanosoperator
+      description: The hashring configuration for ThanosReceive {{ $labels.namespace
+        }}/{{ $labels.resource }} has changed.
+      message: Data distribution pattern has changed. This may cause temporary inconsistencies.
+      runbook: https://github.com/thanos-community/thanos-operator/blob/main/mixin/runbook.md#thanosreceivehashringconfigurationchange
+      summary: ThanosReceive {{ $labels.namespace }}/{{ $labels.resource }} hashring
+        configuration changed
+    expr: |2-
+        abs(
+          delta(
+            thanos_operator_receive_hashring_hash{job="thanos-operator-controller-manager-metrics-service"}[5m]
+          )
+        )
+      >
+        0
+    for: 0m
+    labels:
+      component: thanos-receive
+      service: thanos-operator
+      severity: info
+  - alert: ThanosReceiveReconcileErrors
+    annotations:
+      dashboard: https://demo.perses.dev/projects/perses/dashboards/thanosoperator
+      description: ThanosReceive controller has {{ $value | humanize }} errors/sec
+      message: ThanosReceive resources may not be properly configured or updated.
+      runbook: https://github.com/thanos-community/thanos-operator/blob/main/mixin/runbook.md#thanosreceivereconcileerrors
+      summary: ThanosReceive controller experiencing reconciliation errors
+    expr: |2-
+        rate(
+          controller_runtime_reconcile_errors_total{controller="thanosreceive",job="thanos-operator-controller-manager-metrics-service"}[10m]
+        )
+      >
+        0
+    for: 15m
+    labels:
+      component: thanos-receive
+      service: thanos-operator
+      severity: warning
+  - alert: ThanosReceiveEndpointReconcileStorm
+    annotations:
+      dashboard: https://demo.perses.dev/projects/perses/dashboards/thanosoperator
+      description: ThanosReceive {{ $labels.namespace }}/{{ $labels.resource }} is
+        reconciling {{ $value | humanize }} times/sec due to endpoint events.
+      message: Excessive reconciliations may indicate endpoint churn or configuration
+        issues.
+      runbook: https://github.com/thanos-community/thanos-operator/blob/main/mixin/runbook.md#thanosreceiveendpointreconcilestorm
+      summary: High endpoint watch reconciliation rate for ThanosReceive {{ $labels.namespace
+        }}/{{ $labels.resource }}
+    expr: |2-
+        rate(
+          thanos_operator_receive_endpoint_event_reconciliations_total{job="thanos-operator-controller-manager-metrics-service"}[5m]
+        )
+      >
+        2
+    for: 10m
+    labels:
+      component: thanos-receive
+      service: thanos-operator
+      severity: warning
+- interval: 30s
+  name: thanos-operator.ruler
+  rules:
+  - alert: ThanosRulerNoQueryEndpointsConfigured
+    annotations:
+      dashboard: https://demo.perses.dev/projects/perses/dashboards/thanosoperator
+      description: ThanosRuler resource {{ $labels.namespace }}/{{ $labels.resource
+        }} has no query endpoints configured.
+      message: Ruler cannot query data for rule evaluation. Recording and alerting
+        rules will not work.
+      runbook: https://github.com/thanos-community/thanos-operator/blob/main/mixin/runbook.md#thanosrulernoqueryendpointsconfigured
+      summary: ThanosRuler {{ $labels.namespace }}/{{ $labels.resource }} has no query
+        endpoints configured
+    expr: |2-
+        thanos_operator_ruler_query_endpoints_configured{job="thanos-operator-controller-manager-metrics-service"}
+      ==
+        0
+    for: 10m
+    labels:
+      component: thanos-ruler
+      service: thanos-operator
+      severity: warning
+  - alert: ThanosRulerNoRulesConfigured
+    annotations:
+      dashboard: https://demo.perses.dev/projects/perses/dashboards/thanosoperator
+      description: No PrometheusRules found for ThanosRuler {{ $labels.namespace }}/{{
+        $labels.resource }}.
+      message: No rules are being evaluated. This may be expected if no rules have
+        been defined yet.
+      runbook: https://github.com/thanos-community/thanos-operator/blob/main/mixin/runbook.md#thanosrulernorulesconfigured
+      summary: ThanosRuler {{ $labels.namespace }}/{{ $labels.resource }} has no PrometheusRules
+    expr: thanos_operator_ruler_promrules_found{job="thanos-operator-controller-manager-metrics-service"}
+      == 0
+    for: 10m
+    labels:
+      component: thanos-ruler
+      service: thanos-operator
+      severity: info
+  - alert: ThanosRulerConfigMapCreationFailures
+    annotations:
+      dashboard: https://demo.perses.dev/projects/perses/dashboards/thanosoperator
+      description: ThanosRuler controller is failing to create ConfigMaps for {{ $labels.namespace
+        }}/{{ $labels.resource }}.
+      message: PrometheusRules cannot be loaded into the Ruler. Rules will not be
+        evaluated.
+      runbook: https://github.com/thanos-community/thanos-operator/blob/main/mixin/runbook.md#thanosrulerconfigmapcreationfailures
+      summary: ThanosRuler {{ $labels.namespace }}/{{ $labels.resource }} failing
+        to create ConfigMaps
+    expr: |2-
+        rate(
+          thanos_operator_ruler_cfgmaps_creation_failures_total{job="thanos-operator-controller-manager-metrics-service"}[5m]
+        )
+      >
+        0
+    for: 5m
+    labels:
+      component: thanos-ruler
+      service: thanos-operator
+      severity: critical
+  - alert: ThanosRulerHighConfigMapCreationRate
+    annotations:
+      dashboard: https://demo.perses.dev/projects/perses/dashboards/thanosoperator
+      description: ThanosRuler {{ $labels.namespace }}/{{ $labels.resource }} is creating
+        ConfigMaps at {{ $value | humanize }}/sec.
+      message: Excessive ConfigMap updates may indicate rule churn and cause unnecessary
+        Ruler reloads.
+      runbook: https://github.com/thanos-community/thanos-operator/blob/main/mixin/runbook.md#thanosrulerhighconfigmapcreationrate
+      summary: High ConfigMap creation rate for ThanosRuler {{ $labels.namespace }}/{{
+        $labels.resource }}
+    expr: |2-
+        rate(
+          thanos_operator_ruler_cfgmaps_created_total{job="thanos-operator-controller-manager-metrics-service"}[5m]
+        )
+      >
+        1
+    for: 15m
+    labels:
+      component: thanos-ruler
+      service: thanos-operator
+      severity: warning
+  - alert: ThanosRulerReconcileErrors
+    annotations:
+      dashboard: https://demo.perses.dev/projects/perses/dashboards/thanosoperator
+      description: ThanosRuler controller has {{ $value | humanize }} errors/sec
+      message: ThanosRuler resources may not be properly configured or updated.
+      runbook: https://github.com/thanos-community/thanos-operator/blob/main/mixin/runbook.md#thanosrulerreconcileerrors
+      summary: ThanosRuler controller experiencing reconciliation errors
+    expr: |2-
+        rate(
+          controller_runtime_reconcile_errors_total{controller="thanosruler",job="thanos-operator-controller-manager-metrics-service"}[10m]
+        )
+      >
+        0
+    for: 15m
+    labels:
+      component: thanos-ruler
+      service: thanos-operator
+      severity: warning
+  - alert: ThanosRulerWatchReconcileStorm
+    annotations:
+      dashboard: https://demo.perses.dev/projects/perses/dashboards/thanosoperator
+      description: ThanosRuler {{ $labels.namespace }}/{{ $labels.resource }} is experiencing
+        high reconciliation rate.
+      message: Excessive reconciliations may indicate resource churn or configuration
+        issues.
+      runbook: https://github.com/thanos-community/thanos-operator/blob/main/mixin/runbook.md#thanosrulerwatchreconcilestorm
+      summary: High watch reconciliation rate for ThanosRuler {{ $labels.namespace
+        }}/{{ $labels.resource }}
+    expr: |2-
+            rate(
+              thanos_operator_ruler_service_event_reconciliations_total{job="thanos-operator-controller-manager-metrics-service"}[5m]
+            )
+          >
+            2
+        or
+            rate(
+              thanos_operator_ruler_cfgmap_event_reconciliations_total{job="thanos-operator-controller-manager-metrics-service"}[5m]
+            )
+          >
+            2
+      or
+          rate(
+            thanos_operator_ruler_promrule_event_reconciliations_total{job="thanos-operator-controller-manager-metrics-service"}[5m]
+          )
+        >
+          2
+    for: 10m
+    labels:
+      component: thanos-ruler
+      service: thanos-operator
+      severity: warning
+- interval: 30s
+  name: thanos-operator.store
+  rules:
+  - alert: ThanosStoreNoShardsConfigured
+    annotations:
+      dashboard: https://demo.perses.dev/projects/perses/dashboards/thanosoperator
+      description: ThanosStore resource {{ $labels.namespace }}/{{ $labels.resource
+        }} has 0 shards configured.
+      message: This may be expected for single-instance stores. For sharded deployments,
+        data queries may fail.
+      runbook: https://github.com/thanos-community/thanos-operator/blob/main/mixin/runbook.md#thanosstenoreshardsconfigured
+      summary: ThanosStore {{ $labels.namespace }}/{{ $labels.resource }} has no shards
+        configured
+    expr: |2-
+        thanos_operator_store_shards_configured{job="thanos-operator-controller-manager-metrics-service"}
+      ==
+        0
+    for: 10m
+    labels:
+      component: thanos-store
+      service: thanos-operator
+      severity: info
+  - alert: ThanosStoreShardCreationFailures
+    annotations:
+      dashboard: https://demo.perses.dev/projects/perses/dashboards/thanosoperator
+      description: ThanosStore controller is failing to create/update shards for {{
+        $labels.namespace }}/{{ $labels.resource }}.
+      message: Store shards cannot be created. Historical data queries may be incomplete
+        or fail.
+      runbook: https://github.com/thanos-community/thanos-operator/blob/main/mixin/runbook.md#thanosstoreshardcreationfailures
+      summary: ThanosStore {{ $labels.namespace }}/{{ $labels.resource }} shard creation/update
+        failures
+    expr: |2-
+        rate(
+          thanos_operator_store_shards_creation_update_failures_total{job="thanos-operator-controller-manager-metrics-service"}[5m]
+        )
+      >
+        0
+    for: 5m
+    labels:
+      component: thanos-store
+      service: thanos-operator
+      severity: critical
+  - alert: ThanosStoreReconcileErrors
+    annotations:
+      dashboard: https://demo.perses.dev/projects/perses/dashboards/thanosoperator
+      description: ThanosStore controller has {{ $value | humanize }} errors/sec
+      message: ThanosStore resources may not be properly configured or updated.
+      runbook: https://github.com/thanos-community/thanos-operator/blob/main/mixin/runbook.md#thanosstorereconcileerrors
+      summary: ThanosStore controller experiencing reconciliation errors
+    expr: |2-
+        rate(
+          controller_runtime_reconcile_errors_total{controller="thanosstore",job="thanos-operator-controller-manager-metrics-service"}[10m]
+        )
+      >
+        0
+    for: 15m
+    labels:
+      component: thanos-store
+      service: thanos-operator
+      severity: warning
+- interval: 30s
+  name: thanos-operator.compact
+  rules:
+  - alert: ThanosCompactNoShardsConfigured
+    annotations:
+      dashboard: https://demo.perses.dev/projects/perses/dashboards/thanosoperator
+      description: ThanosCompact resource {{ $labels.namespace }}/{{ $labels.resource
+        }} has 0 shards configured.
+      message: This may be expected for single-instance compactors. For sharded deployments,
+        compaction may not work.
+      runbook: https://github.com/thanos-community/thanos-operator/blob/main/mixin/runbook.md#thanoscompactnoshardsconfigured
+      summary: ThanosCompact {{ $labels.namespace }}/{{ $labels.resource }} has no
+        shards configured
+    expr: |2-
+        thanos_operator_compact_shards_configured{job="thanos-operator-controller-manager-metrics-service"}
+      ==
+        0
+    for: 10m
+    labels:
+      component: thanos-compact
+      service: thanos-operator
+      severity: info
+  - alert: ThanosCompactShardCreationFailures
+    annotations:
+      dashboard: https://demo.perses.dev/projects/perses/dashboards/thanosoperator
+      description: ThanosCompact controller is failing to create/update shards for
+        {{ $labels.namespace }}/{{ $labels.resource }}.
+      message: Compactor shards cannot be created. Data compaction will not occur,
+        leading to increased storage costs and slower queries.
+      runbook: https://github.com/thanos-community/thanos-operator/blob/main/mixin/runbook.md#thanoscompactshardcreationfailures
+      summary: ThanosCompact {{ $labels.namespace }}/{{ $labels.resource }} shard
+        creation/update failures
+    expr: |2-
+        rate(
+          thanos_operator_compact_shards_creation_update_failures_total{job="thanos-operator-controller-manager-metrics-service"}[5m]
+        )
+      >
+        0
+    for: 5m
+    labels:
+      component: thanos-compact
+      service: thanos-operator
+      severity: critical
+  - alert: ThanosCompactReconcileErrors
+    annotations:
+      dashboard: https://demo.perses.dev/projects/perses/dashboards/thanosoperator
+      description: ThanosCompact controller has {{ $value | humanize }} errors/sec
+      message: ThanosCompact resources may not be properly configured or updated.
+      runbook: https://github.com/thanos-community/thanos-operator/blob/main/mixin/runbook.md#thanoscompactreconcileerrors
+      summary: ThanosCompact controller experiencing reconciliation errors
+    expr: |2-
+        rate(
+          controller_runtime_reconcile_errors_total{controller="thanoscompact",job="thanos-operator-controller-manager-metrics-service"}[10m]
+        )
+      >
+        0
+    for: 15m
+    labels:
+      component: thanos-compact
+      service: thanos-operator
+      severity: warning
+- interval: 30s
+  name: thanos-operator.paused
+  rules:
+  - alert: ThanosResourcePausedForLong
+    annotations:
+      dashboard: https://demo.perses.dev/projects/perses/dashboards/thanosoperator
+      description: '{{ $labels.component }} resource {{ $labels.namespace }}/{{ $labels.resource
+        }} has been in paused state for over 24 hours.'
+      message: No reconciliation is happening for this resource. Configuration changes
+        are not being applied.
+      runbook: https://github.com/thanos-community/thanos-operator/blob/main/mixin/runbook.md#thanosresourcepausedforlong
+      summary: Thanos resource {{ $labels.namespace }}/{{ $labels.resource }} has
+        been paused for 24+ hours
+    expr: thanos_operator_paused{job="thanos-operator-controller-manager-metrics-service"}
+      == 1
+    for: 24h
+    labels:
+      component: '{{ $labels.component }}'
+      controller: '{{ $labels.controller }}'
+      service: thanos-operator
+      severity: info
+- interval: 30s
+  name: thanos-operator.workqueue
+  rules:
+  - alert: ThanosOperatorHighWorkqueueRetries
+    annotations:
+      dashboard: https://demo.perses.dev/projects/perses/dashboards/thanosoperator
+      description: Workqueue {{ $labels.name }} has {{ $value | humanize }} retries/sec.
+      message: Items are being retried frequently, indicating persistent errors or
+        resource issues.
+      runbook: https://github.com/thanos-community/thanos-operator/blob/main/mixin/runbook.md#thanosoperatorhighworkqueueretries
+      summary: High retry rate for workqueue {{ $labels.name }}
+    expr: rate(workqueue_retries_total{job="thanos-operator-controller-manager-metrics-service"}[10m])
+      > 0.5
+    for: 15m
+    labels:
+      component: thanos-operator
+      controller: '{{ $labels.controller }}'
+      service: thanos-operator
+      severity: warning
+  - alert: ThanosOperatorLongWorkqueueLatency
+    annotations:
+      dashboard: https://demo.perses.dev/projects/perses/dashboards/thanosoperator
+      description: P99 queue wait time for {{ $labels.name }} is {{ $value | humanizeDuration
+        }}.
+      message: Items are waiting too long in queue before processing. Reconciliation
+        is delayed.
+      runbook: https://github.com/thanos-community/thanos-operator/blob/main/mixin/runbook.md#thanosoperatorlongworkqueuelatency
+      summary: High queue latency for workqueue {{ $labels.name }}
+    expr: |2-
+        histogram_quantile(
+          0.99,
+          rate(
+            workqueue_queue_duration_seconds_bucket{job="thanos-operator-controller-manager-metrics-service"}[10m]
+          )
+        )
+      >
+        60
+    for: 10m
+    labels:
+      component: thanos-operator
+      controller: '{{ $labels.controller }}'
+      service: thanos-operator
+      severity: warning

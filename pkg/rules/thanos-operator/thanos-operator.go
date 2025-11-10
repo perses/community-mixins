@@ -48,9 +48,12 @@ const (
 )
 
 type ThanosOperatorRulesConfig struct {
-	RunbookURL                 string
-	DashboardURL               string
-	ServiceLabelValue          string
+	RunbookURL   string
+	DashboardURL string
+
+	ServiceLabelValue      string
+	MetricsServiceSelector string
+
 	AdditionalAlertLabels      map[string]string
 	AdditionalAlertAnnotations map[string]string
 }
@@ -60,6 +63,15 @@ type ThanosOperatorRulesConfigOption func(*ThanosOperatorRulesConfig)
 func WithRunbookURL(runbookURL string) ThanosOperatorRulesConfigOption {
 	return func(config *ThanosOperatorRulesConfig) {
 		config.RunbookURL = runbookURL
+	}
+}
+
+func WithMetricsServiceSelector(metricsServiceSelector string) ThanosOperatorRulesConfigOption {
+	return func(config *ThanosOperatorRulesConfig) {
+		if metricsServiceSelector == "" {
+			metricsServiceSelector = "thanos-operator-controller-manager-metrics-service"
+		}
+		config.MetricsServiceSelector = metricsServiceSelector
 	}
 }
 
@@ -94,7 +106,10 @@ func BuildThanosOperatorRules(
 	annotations map[string]string,
 	options ...ThanosOperatorRulesConfigOption,
 ) rulehelpers.RuleResult {
-	config := ThanosOperatorRulesConfig{}
+	config := ThanosOperatorRulesConfig{
+		MetricsServiceSelector: "thanos-operator-controller-manager-metrics-service",
+	}
+
 	for _, option := range options {
 		option(&config)
 	}
@@ -158,7 +173,7 @@ func (t ThanosOperatorRulesConfig) ThanosOperatorGeneralGroup() []rulegroup.Opti
 					vector.New(
 						vector.WithMetricName("up"),
 						vector.WithLabelMatchers(
-							label.New("job").Equal("thanos-operator-controller-manager-metrics-service"),
+							label.New("job").Equal(t.MetricsServiceSelector),
 						),
 					),
 					promqlbuilder.NewNumber(0),
@@ -200,7 +215,7 @@ func (t ThanosOperatorRulesConfig) ThanosOperatorGeneralGroup() []rulegroup.Opti
 									vector.New(
 										vector.WithMetricName("controller_runtime_reconcile_errors_total"),
 										vector.WithLabelMatchers(
-											label.New("job").Equal("thanos-operator-controller-manager-metrics-service"),
+											label.New("job").Equal(t.MetricsServiceSelector),
 										),
 									),
 									matrix.WithRange(5*time.Minute),
@@ -213,7 +228,7 @@ func (t ThanosOperatorRulesConfig) ThanosOperatorGeneralGroup() []rulegroup.Opti
 									vector.New(
 										vector.WithMetricName("controller_runtime_reconcile_total"),
 										vector.WithLabelMatchers(
-											label.New("job").Equal("thanos-operator-controller-manager-metrics-service"),
+											label.New("job").Equal(t.MetricsServiceSelector),
 										),
 									),
 									matrix.WithRange(5*time.Minute),
@@ -260,7 +275,7 @@ func (t ThanosOperatorRulesConfig) ThanosOperatorGeneralGroup() []rulegroup.Opti
 								vector.New(
 									vector.WithMetricName("controller_runtime_reconcile_total"),
 									vector.WithLabelMatchers(
-										label.New("job").Equal("thanos-operator-controller-manager-metrics-service"),
+										label.New("job").Equal(t.MetricsServiceSelector),
 									),
 								),
 								matrix.WithRange(10*time.Minute),
@@ -272,7 +287,7 @@ func (t ThanosOperatorRulesConfig) ThanosOperatorGeneralGroup() []rulegroup.Opti
 						vector.New(
 							vector.WithMetricName("workqueue_depth"),
 							vector.WithLabelMatchers(
-								label.New("job").Equal("thanos-operator-controller-manager-metrics-service"),
+								label.New("job").Equal(t.MetricsServiceSelector),
 							),
 						),
 						promqlbuilder.NewNumber(0),
@@ -312,7 +327,7 @@ func (t ThanosOperatorRulesConfig) ThanosOperatorGeneralGroup() []rulegroup.Opti
 					vector.New(
 						vector.WithMetricName("workqueue_depth"),
 						vector.WithLabelMatchers(
-							label.New("job").Equal("thanos-operator-controller-manager-metrics-service"),
+							label.New("job").Equal(t.MetricsServiceSelector),
 						),
 					),
 					promqlbuilder.NewNumber(100),
@@ -355,7 +370,7 @@ func (t ThanosOperatorRulesConfig) ThanosOperatorGeneralGroup() []rulegroup.Opti
 								vector.New(
 									vector.WithMetricName("controller_runtime_reconcile_time_seconds_bucket"),
 									vector.WithLabelMatchers(
-										label.New("job").Equal("thanos-operator-controller-manager-metrics-service"),
+										label.New("job").Equal(t.MetricsServiceSelector),
 									),
 								),
 								matrix.WithRange(10*time.Minute),
@@ -404,7 +419,7 @@ func (t ThanosOperatorRulesConfig) ThanosOperatorQueryGroup() []rulegroup.Option
 					vector.New(
 						vector.WithMetricName("thanos_operator_query_endpoints_configured"),
 						vector.WithLabelMatchers(
-							label.New("job").Equal("thanos-operator-controller-manager-metrics-service"),
+							label.New("job").Equal(t.MetricsServiceSelector),
 						),
 					),
 					promqlbuilder.NewNumber(0),
@@ -445,7 +460,7 @@ func (t ThanosOperatorRulesConfig) ThanosOperatorQueryGroup() []rulegroup.Option
 								vector.WithMetricName("controller_runtime_reconcile_errors_total"),
 								vector.WithLabelMatchers(
 									label.New("controller").Equal("thanosquery"),
-									label.New("job").Equal("thanos-operator-controller-manager-metrics-service"),
+									label.New("job").Equal(t.MetricsServiceSelector),
 								),
 							),
 							matrix.WithRange(10*time.Minute),
@@ -488,7 +503,7 @@ func (t ThanosOperatorRulesConfig) ThanosOperatorQueryGroup() []rulegroup.Option
 							vector.New(
 								vector.WithMetricName("thanos_operator_query_service_event_reconciliations_total"),
 								vector.WithLabelMatchers(
-									label.New("job").Equal("thanos-operator-controller-manager-metrics-service"),
+									label.New("job").Equal(t.MetricsServiceSelector),
 								),
 							),
 							matrix.WithRange(5*time.Minute),
@@ -535,7 +550,7 @@ func (t ThanosOperatorRulesConfig) ThanosOperatorReceiveGroup() []rulegroup.Opti
 					vector.New(
 						vector.WithMetricName("thanos_operator_receive_hashrings_configured"),
 						vector.WithLabelMatchers(
-							label.New("job").Equal("thanos-operator-controller-manager-metrics-service"),
+							label.New("job").Equal(t.MetricsServiceSelector),
 						),
 					),
 					promqlbuilder.NewNumber(0),
@@ -573,7 +588,7 @@ func (t ThanosOperatorRulesConfig) ThanosOperatorReceiveGroup() []rulegroup.Opti
 					vector.New(
 						vector.WithMetricName("thanos_operator_receive_hashring_endpoints_configured"),
 						vector.WithLabelMatchers(
-							label.New("job").Equal("thanos-operator-controller-manager-metrics-service"),
+							label.New("job").Equal(t.MetricsServiceSelector),
 						),
 					),
 					promqlbuilder.NewNumber(0),
@@ -614,7 +629,7 @@ func (t ThanosOperatorRulesConfig) ThanosOperatorReceiveGroup() []rulegroup.Opti
 								vector.New(
 									vector.WithMetricName("thanos_operator_receive_hashring_hash"),
 									vector.WithLabelMatchers(
-										label.New("job").Equal("thanos-operator-controller-manager-metrics-service"),
+										label.New("job").Equal(t.MetricsServiceSelector),
 									),
 								),
 								matrix.WithRange(5*time.Minute),
@@ -658,7 +673,7 @@ func (t ThanosOperatorRulesConfig) ThanosOperatorReceiveGroup() []rulegroup.Opti
 							vector.New(
 								vector.WithMetricName("controller_runtime_reconcile_errors_total"),
 								vector.WithLabelMatchers(
-									label.New("job").Equal("thanos-operator-controller-manager-metrics-service"),
+									label.New("job").Equal(t.MetricsServiceSelector),
 									label.New("controller").Equal("thanosreceive"),
 								),
 							),
@@ -702,7 +717,7 @@ func (t ThanosOperatorRulesConfig) ThanosOperatorReceiveGroup() []rulegroup.Opti
 							vector.New(
 								vector.WithMetricName("thanos_operator_receive_endpoint_event_reconciliations_total"),
 								vector.WithLabelMatchers(
-									label.New("job").Equal("thanos-operator-controller-manager-metrics-service"),
+									label.New("job").Equal(t.MetricsServiceSelector),
 								),
 							),
 							matrix.WithRange(5*time.Minute),
@@ -749,7 +764,7 @@ func (t ThanosOperatorRulesConfig) ThanosOperatorRulerGroup() []rulegroup.Option
 					vector.New(
 						vector.WithMetricName("thanos_operator_ruler_query_endpoints_configured"),
 						vector.WithLabelMatchers(
-							label.New("job").Equal("thanos-operator-controller-manager-metrics-service"),
+							label.New("job").Equal(t.MetricsServiceSelector),
 						),
 					),
 					promqlbuilder.NewNumber(0),
@@ -787,7 +802,7 @@ func (t ThanosOperatorRulesConfig) ThanosOperatorRulerGroup() []rulegroup.Option
 					vector.New(
 						vector.WithMetricName("thanos_operator_ruler_promrules_found"),
 						vector.WithLabelMatchers(
-							label.New("job").Equal("thanos-operator-controller-manager-metrics-service"),
+							label.New("job").Equal(t.MetricsServiceSelector),
 						),
 					),
 					promqlbuilder.NewNumber(0),
@@ -827,7 +842,7 @@ func (t ThanosOperatorRulesConfig) ThanosOperatorRulerGroup() []rulegroup.Option
 							vector.New(
 								vector.WithMetricName("thanos_operator_ruler_cfgmaps_creation_failures_total"),
 								vector.WithLabelMatchers(
-									label.New("job").Equal("thanos-operator-controller-manager-metrics-service"),
+									label.New("job").Equal(t.MetricsServiceSelector),
 								),
 							),
 							matrix.WithRange(5*time.Minute),
@@ -870,7 +885,7 @@ func (t ThanosOperatorRulesConfig) ThanosOperatorRulerGroup() []rulegroup.Option
 							vector.New(
 								vector.WithMetricName("thanos_operator_ruler_cfgmaps_created_total"),
 								vector.WithLabelMatchers(
-									label.New("job").Equal("thanos-operator-controller-manager-metrics-service"),
+									label.New("job").Equal(t.MetricsServiceSelector),
 								),
 							),
 							matrix.WithRange(5*time.Minute),
@@ -914,7 +929,7 @@ func (t ThanosOperatorRulesConfig) ThanosOperatorRulerGroup() []rulegroup.Option
 								vector.WithMetricName("controller_runtime_reconcile_errors_total"),
 								vector.WithLabelMatchers(
 									label.New("controller").Equal("thanosruler"),
-									label.New("job").Equal("thanos-operator-controller-manager-metrics-service"),
+									label.New("job").Equal(t.MetricsServiceSelector),
 								),
 							),
 							matrix.WithRange(10*time.Minute),
@@ -959,7 +974,7 @@ func (t ThanosOperatorRulesConfig) ThanosOperatorRulerGroup() []rulegroup.Option
 									vector.New(
 										vector.WithMetricName("thanos_operator_ruler_service_event_reconciliations_total"),
 										vector.WithLabelMatchers(
-											label.New("job").Equal("thanos-operator-controller-manager-metrics-service"),
+											label.New("job").Equal(t.MetricsServiceSelector),
 										),
 									),
 									matrix.WithRange(5*time.Minute),
@@ -973,7 +988,7 @@ func (t ThanosOperatorRulesConfig) ThanosOperatorRulerGroup() []rulegroup.Option
 									vector.New(
 										vector.WithMetricName("thanos_operator_ruler_cfgmap_event_reconciliations_total"),
 										vector.WithLabelMatchers(
-											label.New("job").Equal("thanos-operator-controller-manager-metrics-service"),
+											label.New("job").Equal(t.MetricsServiceSelector),
 										),
 									),
 									matrix.WithRange(5*time.Minute),
@@ -988,7 +1003,7 @@ func (t ThanosOperatorRulesConfig) ThanosOperatorRulerGroup() []rulegroup.Option
 								vector.New(
 									vector.WithMetricName("thanos_operator_ruler_promrule_event_reconciliations_total"),
 									vector.WithLabelMatchers(
-										label.New("job").Equal("thanos-operator-controller-manager-metrics-service"),
+										label.New("job").Equal(t.MetricsServiceSelector),
 									),
 								),
 								matrix.WithRange(5*time.Minute),
@@ -1036,7 +1051,7 @@ func (t ThanosOperatorRulesConfig) ThanosOperatorStoreGroup() []rulegroup.Option
 					vector.New(
 						vector.WithMetricName("thanos_operator_store_shards_configured"),
 						vector.WithLabelMatchers(
-							label.New("job").Equal("thanos-operator-controller-manager-metrics-service"),
+							label.New("job").Equal(t.MetricsServiceSelector),
 						),
 					),
 					promqlbuilder.NewNumber(0),
@@ -1076,7 +1091,7 @@ func (t ThanosOperatorRulesConfig) ThanosOperatorStoreGroup() []rulegroup.Option
 							vector.New(
 								vector.WithMetricName("thanos_operator_store_shards_creation_update_failures_total"),
 								vector.WithLabelMatchers(
-									label.New("job").Equal("thanos-operator-controller-manager-metrics-service"),
+									label.New("job").Equal(t.MetricsServiceSelector),
 								),
 							),
 							matrix.WithRange(5*time.Minute),
@@ -1120,7 +1135,7 @@ func (t ThanosOperatorRulesConfig) ThanosOperatorStoreGroup() []rulegroup.Option
 								vector.WithMetricName("controller_runtime_reconcile_errors_total"),
 								vector.WithLabelMatchers(
 									label.New("controller").Equal("thanosstore"),
-									label.New("job").Equal("thanos-operator-controller-manager-metrics-service"),
+									label.New("job").Equal(t.MetricsServiceSelector),
 								),
 							),
 							matrix.WithRange(10*time.Minute),
@@ -1167,7 +1182,7 @@ func (t ThanosOperatorRulesConfig) ThanosOperatorCompactGroup() []rulegroup.Opti
 					vector.New(
 						vector.WithMetricName("thanos_operator_compact_shards_configured"),
 						vector.WithLabelMatchers(
-							label.New("job").Equal("thanos-operator-controller-manager-metrics-service"),
+							label.New("job").Equal(t.MetricsServiceSelector),
 						),
 					),
 					promqlbuilder.NewNumber(0),
@@ -1207,7 +1222,7 @@ func (t ThanosOperatorRulesConfig) ThanosOperatorCompactGroup() []rulegroup.Opti
 							vector.New(
 								vector.WithMetricName("thanos_operator_compact_shards_creation_update_failures_total"),
 								vector.WithLabelMatchers(
-									label.New("job").Equal("thanos-operator-controller-manager-metrics-service"),
+									label.New("job").Equal(t.MetricsServiceSelector),
 								),
 							),
 							matrix.WithRange(5*time.Minute),
@@ -1251,7 +1266,7 @@ func (t ThanosOperatorRulesConfig) ThanosOperatorCompactGroup() []rulegroup.Opti
 								vector.WithMetricName("controller_runtime_reconcile_errors_total"),
 								vector.WithLabelMatchers(
 									label.New("controller").Equal("thanoscompact"),
-									label.New("job").Equal("thanos-operator-controller-manager-metrics-service"),
+									label.New("job").Equal(t.MetricsServiceSelector),
 								),
 							),
 							matrix.WithRange(10*time.Minute),
@@ -1298,7 +1313,7 @@ func (t ThanosOperatorRulesConfig) ThanosOperatorPausedGroup() []rulegroup.Optio
 					vector.New(
 						vector.WithMetricName("thanos_operator_paused"),
 						vector.WithLabelMatchers(
-							label.New("job").Equal("thanos-operator-controller-manager-metrics-service"),
+							label.New("job").Equal(t.MetricsServiceSelector),
 						),
 					),
 					promqlbuilder.NewNumber(1),
@@ -1345,7 +1360,7 @@ func (t ThanosOperatorRulesConfig) ThanosOperatorWorkqueueGroup() []rulegroup.Op
 							vector.New(
 								vector.WithMetricName("workqueue_retries_total"),
 								vector.WithLabelMatchers(
-									label.New("job").Equal("thanos-operator-controller-manager-metrics-service"),
+									label.New("job").Equal(t.MetricsServiceSelector),
 								),
 							),
 							matrix.WithRange(10*time.Minute),
@@ -1391,7 +1406,7 @@ func (t ThanosOperatorRulesConfig) ThanosOperatorWorkqueueGroup() []rulegroup.Op
 								vector.New(
 									vector.WithMetricName("workqueue_queue_duration_seconds_bucket"),
 									vector.WithLabelMatchers(
-										label.New("job").Equal("thanos-operator-controller-manager-metrics-service"),
+										label.New("job").Equal(t.MetricsServiceSelector),
 									),
 								),
 								matrix.WithRange(10*time.Minute),
