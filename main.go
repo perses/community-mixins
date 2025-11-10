@@ -23,6 +23,7 @@ import (
 	"github.com/perses/community-mixins/pkg/dashboards/tempo"
 	"github.com/perses/community-mixins/pkg/dashboards/thanos"
 	"github.com/perses/community-mixins/pkg/rules"
+	alertmanagerrules "github.com/perses/community-mixins/pkg/rules/alertmanager"
 	blackboxrules "github.com/perses/community-mixins/pkg/rules/blackbox"
 	thanosrules "github.com/perses/community-mixins/pkg/rules/thanos"
 	thanosoperatorrules "github.com/perses/community-mixins/pkg/rules/thanos-operator"
@@ -86,6 +87,19 @@ func main() {
 				thanosoperatorrules.WithServiceLabelValue("thanos-operator"),
 			),
 		)
+		ruleWriter.Add(alertmanagerrules.BuildAlertmanagerRules(
+			project,
+			map[string]string{
+				"app.kubernetes.io/component": "alertmanager",
+				"app.kubernetes.io/name":      "alertmanager-rules",
+				"app.kubernetes.io/part-of":   "alertmanager",
+				"app.kubernetes.io/version":   "main",
+			},
+			map[string]string{},
+			alertmanagerrules.WithRunbookURL("https://github.com/prometheus/alertmanager/blob/main/doc/alertmanager-mixin/README.md"),
+			alertmanagerrules.WithDashboardURL("https://demo.perses.dev/projects/perses/dashboards/alertmanager"),
+			alertmanagerrules.WithServiceLabelValue("alertmanager"),
+		))
 		ruleWriter.Add(blackboxrules.BuildBlackboxRulesDefault(project))
 
 		ruleWriter.Write()
