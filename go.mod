@@ -3,7 +3,7 @@ module github.com/perses/community-mixins
 go 1.25.1
 
 require (
-	github.com/perses/perses v0.53.0-beta.1
+	github.com/perses/perses v0.53.0-beta.2
 	github.com/perses/perses-operator v0.2.0
 	github.com/perses/plugins/gaugechart v0.10.0
 	github.com/perses/plugins/markdown v0.10.0
