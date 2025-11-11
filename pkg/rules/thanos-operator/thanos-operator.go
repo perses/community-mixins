@@ -99,13 +99,13 @@ func WithAdditionalAlertAnnotations(additionalAlertAnnotations map[string]string
 	}
 }
 
-// BuildThanosOperatorRules builds the Thanos Operator rules
-func BuildThanosOperatorRules(
+// NewThanosOperatorRulesBuilder creates a new Thanos Operator rules builder.
+func NewThanosOperatorRulesBuilder(
 	namespace string,
 	labels map[string]string,
 	annotations map[string]string,
 	options ...ThanosOperatorRulesConfigOption,
-) rulehelpers.RuleResult {
+) (promtheusrule.Builder, error) {
 	config := ThanosOperatorRulesConfig{
 		MetricsServiceSelector: "thanos-operator-controller-manager-metrics-service",
 	}
@@ -153,6 +153,17 @@ func BuildThanosOperatorRules(
 		),
 	)
 
+	return promRule, err
+}
+
+// BuildThanosOperatorRules builds the Thanos Operator rules
+func BuildThanosOperatorRules(
+	namespace string,
+	labels map[string]string,
+	annotations map[string]string,
+	options ...ThanosOperatorRulesConfigOption,
+) rulehelpers.RuleResult {
+	promRule, err := NewThanosOperatorRulesBuilder(namespace, labels, annotations, options...)
 	if err != nil {
 		return rulehelpers.NewRuleResult(nil, err).Component("thanos-operator")
 	}
@@ -166,7 +177,7 @@ func BuildThanosOperatorRules(
 func (t ThanosOperatorRulesConfig) ThanosOperatorGeneralGroup() []rulegroup.Option {
 	return []rulegroup.Option{
 		rulegroup.Interval("30s"),
-		rulegroup.AddRule[alerting.Option](
+		rulegroup.AddRule(
 			"ThanosOperatorDown",
 			alerting.Expr(
 				promqlbuilder.Eqlc(
@@ -204,7 +215,7 @@ func (t ThanosOperatorRulesConfig) ThanosOperatorGeneralGroup() []rulegroup.Opti
 				),
 			),
 		),
-		rulegroup.AddRule[alerting.Option](
+		rulegroup.AddRule(
 			"ThanosOperatorHighReconcileErrorRate",
 			alerting.Expr(
 				promqlbuilder.Gtr(
@@ -265,7 +276,7 @@ func (t ThanosOperatorRulesConfig) ThanosOperatorGeneralGroup() []rulegroup.Opti
 				),
 			),
 		),
-		rulegroup.AddRule[alerting.Option](
+		rulegroup.AddRule(
 			"ThanosOperatorReconcileStuck",
 			alerting.Expr(
 				promqlbuilder.And(
@@ -320,7 +331,7 @@ func (t ThanosOperatorRulesConfig) ThanosOperatorGeneralGroup() []rulegroup.Opti
 				),
 			),
 		),
-		rulegroup.AddRule[alerting.Option](
+		rulegroup.AddRule(
 			"ThanosOperatorWorkQueueGrowth",
 			alerting.Expr(
 				promqlbuilder.Gtr(
@@ -359,7 +370,7 @@ func (t ThanosOperatorRulesConfig) ThanosOperatorGeneralGroup() []rulegroup.Opti
 				),
 			),
 		),
-		rulegroup.AddRule[alerting.Option](
+		rulegroup.AddRule(
 			"ThanosOperatorSlowReconciliation",
 			alerting.Expr(
 				promqlbuilder.Gtr(
@@ -412,7 +423,7 @@ func (t ThanosOperatorRulesConfig) ThanosOperatorGeneralGroup() []rulegroup.Opti
 func (t ThanosOperatorRulesConfig) ThanosOperatorQueryGroup() []rulegroup.Option {
 	return []rulegroup.Option{
 		rulegroup.Interval("30s"),
-		rulegroup.AddRule[alerting.Option](
+		rulegroup.AddRule(
 			"ThanosQueryNoEndpointsConfigured",
 			alerting.Expr(
 				promqlbuilder.Eqlc(
@@ -450,7 +461,7 @@ func (t ThanosOperatorRulesConfig) ThanosOperatorQueryGroup() []rulegroup.Option
 				),
 			),
 		),
-		rulegroup.AddRule[alerting.Option](
+		rulegroup.AddRule(
 			"ThanosQueryReconcileErrors",
 			alerting.Expr(
 				promqlbuilder.Gtr(
@@ -494,7 +505,7 @@ func (t ThanosOperatorRulesConfig) ThanosOperatorQueryGroup() []rulegroup.Option
 				),
 			),
 		),
-		rulegroup.AddRule[alerting.Option](
+		rulegroup.AddRule(
 			"ThanosQueryServiceWatchReconcileStorm",
 			alerting.Expr(
 				promqlbuilder.Gtr(
@@ -543,7 +554,7 @@ func (t ThanosOperatorRulesConfig) ThanosOperatorQueryGroup() []rulegroup.Option
 func (t ThanosOperatorRulesConfig) ThanosOperatorReceiveGroup() []rulegroup.Option {
 	return []rulegroup.Option{
 		rulegroup.Interval("30s"),
-		rulegroup.AddRule[alerting.Option](
+		rulegroup.AddRule(
 			"ThanosReceiveNoHashringsConfigured",
 			alerting.Expr(
 				promqlbuilder.Eqlc(
@@ -581,7 +592,7 @@ func (t ThanosOperatorRulesConfig) ThanosOperatorReceiveGroup() []rulegroup.Opti
 				),
 			),
 		),
-		rulegroup.AddRule[alerting.Option](
+		rulegroup.AddRule(
 			"ThanosReceiveHashringNoEndpoints",
 			alerting.Expr(
 				promqlbuilder.Eqlc(
@@ -619,7 +630,7 @@ func (t ThanosOperatorRulesConfig) ThanosOperatorReceiveGroup() []rulegroup.Opti
 				),
 			),
 		),
-		rulegroup.AddRule[alerting.Option](
+		rulegroup.AddRule(
 			"ThanosReceiveHashringConfigurationChange",
 			alerting.Expr(
 				promqlbuilder.Gtr(
@@ -664,7 +675,7 @@ func (t ThanosOperatorRulesConfig) ThanosOperatorReceiveGroup() []rulegroup.Opti
 				),
 			),
 		),
-		rulegroup.AddRule[alerting.Option](
+		rulegroup.AddRule(
 			"ThanosReceiveReconcileErrors",
 			alerting.Expr(
 				promqlbuilder.Gtr(
@@ -708,7 +719,7 @@ func (t ThanosOperatorRulesConfig) ThanosOperatorReceiveGroup() []rulegroup.Opti
 				),
 			),
 		),
-		rulegroup.AddRule[alerting.Option](
+		rulegroup.AddRule(
 			"ThanosReceiveEndpointReconcileStorm",
 			alerting.Expr(
 				promqlbuilder.Gtr(
@@ -757,7 +768,7 @@ func (t ThanosOperatorRulesConfig) ThanosOperatorReceiveGroup() []rulegroup.Opti
 func (t ThanosOperatorRulesConfig) ThanosOperatorRulerGroup() []rulegroup.Option {
 	return []rulegroup.Option{
 		rulegroup.Interval("30s"),
-		rulegroup.AddRule[alerting.Option](
+		rulegroup.AddRule(
 			"ThanosRulerNoQueryEndpointsConfigured",
 			alerting.Expr(
 				promqlbuilder.Eqlc(
@@ -795,7 +806,7 @@ func (t ThanosOperatorRulesConfig) ThanosOperatorRulerGroup() []rulegroup.Option
 				),
 			),
 		),
-		rulegroup.AddRule[alerting.Option](
+		rulegroup.AddRule(
 			"ThanosRulerNoRulesConfigured",
 			alerting.Expr(
 				promqlbuilder.Eqlc(
@@ -833,7 +844,7 @@ func (t ThanosOperatorRulesConfig) ThanosOperatorRulerGroup() []rulegroup.Option
 				),
 			),
 		),
-		rulegroup.AddRule[alerting.Option](
+		rulegroup.AddRule(
 			"ThanosRulerConfigMapCreationFailures",
 			alerting.Expr(
 				promqlbuilder.Gtr(
@@ -876,7 +887,7 @@ func (t ThanosOperatorRulesConfig) ThanosOperatorRulerGroup() []rulegroup.Option
 				),
 			),
 		),
-		rulegroup.AddRule[alerting.Option](
+		rulegroup.AddRule(
 			"ThanosRulerHighConfigMapCreationRate",
 			alerting.Expr(
 				promqlbuilder.Gtr(
@@ -919,7 +930,7 @@ func (t ThanosOperatorRulesConfig) ThanosOperatorRulerGroup() []rulegroup.Option
 				),
 			),
 		),
-		rulegroup.AddRule[alerting.Option](
+		rulegroup.AddRule(
 			"ThanosRulerReconcileErrors",
 			alerting.Expr(
 				promqlbuilder.Gtr(
@@ -963,7 +974,7 @@ func (t ThanosOperatorRulesConfig) ThanosOperatorRulerGroup() []rulegroup.Option
 				),
 			),
 		),
-		rulegroup.AddRule[alerting.Option](
+		rulegroup.AddRule(
 			"ThanosRulerWatchReconcileStorm",
 			alerting.Expr(
 				promqlbuilder.Or(
@@ -1044,7 +1055,7 @@ func (t ThanosOperatorRulesConfig) ThanosOperatorRulerGroup() []rulegroup.Option
 func (t ThanosOperatorRulesConfig) ThanosOperatorStoreGroup() []rulegroup.Option {
 	return []rulegroup.Option{
 		rulegroup.Interval("30s"),
-		rulegroup.AddRule[alerting.Option](
+		rulegroup.AddRule(
 			"ThanosStoreNoShardsConfigured",
 			alerting.Expr(
 				promqlbuilder.Eqlc(
@@ -1082,7 +1093,7 @@ func (t ThanosOperatorRulesConfig) ThanosOperatorStoreGroup() []rulegroup.Option
 				),
 			),
 		),
-		rulegroup.AddRule[alerting.Option](
+		rulegroup.AddRule(
 			"ThanosStoreShardCreationFailures",
 			alerting.Expr(
 				promqlbuilder.Gtr(
@@ -1125,7 +1136,7 @@ func (t ThanosOperatorRulesConfig) ThanosOperatorStoreGroup() []rulegroup.Option
 				),
 			),
 		),
-		rulegroup.AddRule[alerting.Option](
+		rulegroup.AddRule(
 			"ThanosStoreReconcileErrors",
 			alerting.Expr(
 				promqlbuilder.Gtr(
@@ -1175,7 +1186,7 @@ func (t ThanosOperatorRulesConfig) ThanosOperatorStoreGroup() []rulegroup.Option
 func (t ThanosOperatorRulesConfig) ThanosOperatorCompactGroup() []rulegroup.Option {
 	return []rulegroup.Option{
 		rulegroup.Interval("30s"),
-		rulegroup.AddRule[alerting.Option](
+		rulegroup.AddRule(
 			"ThanosCompactNoShardsConfigured",
 			alerting.Expr(
 				promqlbuilder.Eqlc(
@@ -1213,7 +1224,7 @@ func (t ThanosOperatorRulesConfig) ThanosOperatorCompactGroup() []rulegroup.Opti
 				),
 			),
 		),
-		rulegroup.AddRule[alerting.Option](
+		rulegroup.AddRule(
 			"ThanosCompactShardCreationFailures",
 			alerting.Expr(
 				promqlbuilder.Gtr(
@@ -1256,7 +1267,7 @@ func (t ThanosOperatorRulesConfig) ThanosOperatorCompactGroup() []rulegroup.Opti
 				),
 			),
 		),
-		rulegroup.AddRule[alerting.Option](
+		rulegroup.AddRule(
 			"ThanosCompactReconcileErrors",
 			alerting.Expr(
 				promqlbuilder.Gtr(
@@ -1306,7 +1317,7 @@ func (t ThanosOperatorRulesConfig) ThanosOperatorCompactGroup() []rulegroup.Opti
 func (t ThanosOperatorRulesConfig) ThanosOperatorPausedGroup() []rulegroup.Option {
 	return []rulegroup.Option{
 		rulegroup.Interval("30s"),
-		rulegroup.AddRule[alerting.Option](
+		rulegroup.AddRule(
 			"ThanosResourcePausedForLong",
 			alerting.Expr(
 				promqlbuilder.Eqlc(
@@ -1351,7 +1362,7 @@ func (t ThanosOperatorRulesConfig) ThanosOperatorPausedGroup() []rulegroup.Optio
 func (t ThanosOperatorRulesConfig) ThanosOperatorWorkqueueGroup() []rulegroup.Option {
 	return []rulegroup.Option{
 		rulegroup.Interval("30s"),
-		rulegroup.AddRule[alerting.Option](
+		rulegroup.AddRule(
 			"ThanosOperatorHighWorkqueueRetries",
 			alerting.Expr(
 				promqlbuilder.Gtr(
@@ -1395,7 +1406,7 @@ func (t ThanosOperatorRulesConfig) ThanosOperatorWorkqueueGroup() []rulegroup.Op
 				),
 			),
 		),
-		rulegroup.AddRule[alerting.Option](
+		rulegroup.AddRule(
 			"ThanosOperatorLongWorkqueueLatency",
 			alerting.Expr(
 				promqlbuilder.Gtr(

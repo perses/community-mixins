@@ -99,13 +99,13 @@ func WithDashboardURL(dashboardURL string) AlertmanagerRulesConfigOption {
 	}
 }
 
-// BuildAlertmanagerRules builds the Alertmanager rules for the given namespace, dashboard URLs, runbook URL, labels, and annotations.
-func BuildAlertmanagerRules(
+// NewAlertmanagerRulesBuilder creates a new Alertmanager rules builder.
+func NewAlertmanagerRulesBuilder(
 	namespace string,
 	labels map[string]string,
 	annotations map[string]string,
 	options ...AlertmanagerRulesConfigOption,
-) rulehelpers.RuleResult {
+) (promtheusrule.Builder, error) {
 	alertmanagerRulesConfig := AlertmanagerRulesConfig{
 		AlertmanagerServiceSelector:    "alertmanager",
 		CriticalIntegrationSelector:    ".*",
@@ -126,6 +126,17 @@ func BuildAlertmanagerRules(
 		),
 	)
 
+	return promRule, err
+}
+
+// BuildAlertmanagerRules builds the Alertmanager rules for the given namespace, dashboard URLs, runbook URL, labels, and annotations.
+func BuildAlertmanagerRules(
+	namespace string,
+	labels map[string]string,
+	annotations map[string]string,
+	options ...AlertmanagerRulesConfigOption,
+) rulehelpers.RuleResult {
+	promRule, err := NewAlertmanagerRulesBuilder(namespace, labels, annotations, options...)
 	if err != nil {
 		return rulehelpers.NewRuleResult(nil, err).Component("alertmanager")
 	}
@@ -138,7 +149,7 @@ func BuildAlertmanagerRules(
 
 func (a AlertmanagerRulesConfig) AlertmanagerRulesGroup() []rulegroup.Option {
 	return []rulegroup.Option{
-		rulegroup.AddRule[alerting.Option](
+		rulegroup.AddRule(
 			"AlertmanagerFailedReload",
 			alerting.Expr(
 				promqlbuilder.Eqlc(
@@ -180,7 +191,7 @@ func (a AlertmanagerRulesConfig) AlertmanagerRulesGroup() []rulegroup.Option {
 				),
 			),
 		),
-		rulegroup.AddRule[alerting.Option](
+		rulegroup.AddRule(
 			"AlertmanagerMembersInconsistent",
 			alerting.Expr(
 				promqlbuilder.Lss(
@@ -234,7 +245,7 @@ func (a AlertmanagerRulesConfig) AlertmanagerRulesGroup() []rulegroup.Option {
 				),
 			),
 		),
-		rulegroup.AddRule[alerting.Option](
+		rulegroup.AddRule(
 			"AlertmanagerFailedToSendAlerts",
 			alerting.Expr(
 				promqlbuilder.Gtr(
@@ -289,7 +300,7 @@ func (a AlertmanagerRulesConfig) AlertmanagerRulesGroup() []rulegroup.Option {
 				),
 			),
 		),
-		rulegroup.AddRule[alerting.Option](
+		rulegroup.AddRule(
 			"AlertmanagerClusterFailedToSendAlerts",
 			alerting.Expr(
 				promqlbuilder.Gtr(
@@ -348,7 +359,7 @@ func (a AlertmanagerRulesConfig) AlertmanagerRulesGroup() []rulegroup.Option {
 				),
 			),
 		),
-		rulegroup.AddRule[alerting.Option](
+		rulegroup.AddRule(
 			"AlertmanagerClusterFailedToSendAlerts",
 			alerting.Expr(
 				promqlbuilder.Gtr(
@@ -407,7 +418,7 @@ func (a AlertmanagerRulesConfig) AlertmanagerRulesGroup() []rulegroup.Option {
 				),
 			),
 		),
-		rulegroup.AddRule[alerting.Option](
+		rulegroup.AddRule(
 			"AlertmanagerConfigInconsistent",
 			alerting.Expr(
 				promqlbuilder.Neq(
@@ -449,7 +460,7 @@ func (a AlertmanagerRulesConfig) AlertmanagerRulesGroup() []rulegroup.Option {
 				),
 			),
 		),
-		rulegroup.AddRule[alerting.Option](
+		rulegroup.AddRule(
 			"AlertmanagerClusterDown",
 			alerting.Expr(
 				promqlbuilder.Gte(
@@ -506,7 +517,7 @@ func (a AlertmanagerRulesConfig) AlertmanagerRulesGroup() []rulegroup.Option {
 				),
 			),
 		),
-		rulegroup.AddRule[alerting.Option](
+		rulegroup.AddRule(
 			"AlertmanagerClusterCrashlooping",
 			alerting.Expr(
 				promqlbuilder.Gte(
