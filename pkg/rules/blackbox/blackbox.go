@@ -15,10 +15,21 @@ import (
 	"github.com/perses/community-mixins/pkg/rules/rule-sdk/rulegroup"
 )
 
+// Runbook fragments
+const (
+	runbookBlackboxProbeFailed                  = "#blackboxprobefailed"
+	runbookBlackboxLowUptime30d                 = "#blackboxlowuptime30d"
+	runbookBlackboxSslCertificateWillExpireSoon = "#blackboxsslcertificatewillexpiresoon"
+)
+
 type BlackboxRulesConfig struct {
+	DashboardURL string
+	RunbookURL   string
+
+	BlackboxExporterServiceSelector string
+
 	AdditionalAlertLabels      map[string]string
 	AdditionalAlertAnnotations map[string]string
-	DashboardURL               string
 }
 
 type BlackboxRulesConfigOption func(*BlackboxRulesConfig)
@@ -41,14 +52,31 @@ func WithDashboardURL(dashboardURL string) BlackboxRulesConfigOption {
 	}
 }
 
-// BuildBlackboxRules builds blackbox exporter rules
-func BuildBlackboxRules(
+func WithRunbookURL(runbookURL string) BlackboxRulesConfigOption {
+	return func(blackboxRulesConfig *BlackboxRulesConfig) {
+		blackboxRulesConfig.RunbookURL = runbookURL
+	}
+}
+
+func WithBlackboxExporterServiceSelector(blackboxExporterServiceSelector string) BlackboxRulesConfigOption {
+	return func(blackboxRulesConfig *BlackboxRulesConfig) {
+		if blackboxExporterServiceSelector == "" {
+			blackboxExporterServiceSelector = "blackbox-exporter"
+		}
+		blackboxRulesConfig.BlackboxExporterServiceSelector = blackboxExporterServiceSelector
+	}
+}
+
+// NewBlackboxRulesBuilder creates a new Blackbox rules builder.
+func NewBlackboxRulesBuilder(
 	namespace string,
 	labels map[string]string,
 	annotations map[string]string,
 	options ...BlackboxRulesConfigOption,
-) rulehelpers.RuleResult {
-	blackboxRulesConfig := BlackboxRulesConfig{}
+) (promtheusrule.Builder, error) {
+	blackboxRulesConfig := BlackboxRulesConfig{
+		BlackboxExporterServiceSelector: "blackbox-exporter",
+	}
 	for _, option := range options {
 		option(&blackboxRulesConfig)
 	}
@@ -64,6 +92,17 @@ func BuildBlackboxRules(
 		),
 	)
 
+	return promRule, err
+}
+
+// BuildBlackboxRules builds blackbox exporter rules
+func BuildBlackboxRules(
+	namespace string,
+	labels map[string]string,
+	annotations map[string]string,
+	options ...BlackboxRulesConfigOption,
+) rulehelpers.RuleResult {
+	promRule, err := NewBlackboxRulesBuilder(namespace, labels, annotations, options...)
 	if err != nil {
 		return rulehelpers.NewRuleResult(nil, err).Component("blackbox-exporter")
 	}
@@ -91,14 +130,14 @@ func BuildBlackboxRulesDefault(project string) rulehelpers.RuleResult {
 
 func (b BlackboxRulesConfig) BlackboxExporterRuleGroupOptions() []rulegroup.Option {
 	return []rulegroup.Option{
-		rulegroup.AddRule[alerting.Option](
+		rulegroup.AddRule(
 			"BlackboxProbeFailed",
 			alerting.Expr(
 				promqlbuilder.Eqlc(
 					vector.New(
 						vector.WithMetricName("probe_success"),
 						vector.WithLabelMatchers(
-							label.New("job").Equal("blackbox-exporter"),
+							label.New("job").Equal(b.BlackboxExporterServiceSelector),
 						),
 					),
 					promqlbuilder.NewNumber(0),
@@ -115,16 +154,19 @@ func (b BlackboxRulesConfig) BlackboxExporterRuleGroupOptions() []rulegroup.Opti
 			),
 			alerting.Annotations(
 				common.MergeMaps(
-					map[string]string{
-						"summary":       "Probe has failed for the past 1m interval.",
-						"description":   "The probe failed for the instance {{ $labels.instance }}.",
-						"dashboard_url": b.DashboardURL + "?var-instance={{ $labels.instance }}",
-					},
+					common.BuildAnnotations(
+						b.DashboardURL,
+						b.RunbookURL,
+						runbookBlackboxProbeFailed,
+						"The probe failed for the instance {{ $labels.instance }}.",
+						"The probe failed for the instance {{ $labels.instance }}.",
+						"Probe has failed for the past 1m interval.",
+					),
 					b.AdditionalAlertAnnotations,
 				),
 			),
 		),
-		rulegroup.AddRule[alerting.Option](
+		rulegroup.AddRule(
 			"BlackboxLowUptime30d",
 			alerting.Expr(
 				promqlbuilder.Lss(
@@ -134,7 +176,7 @@ func (b BlackboxRulesConfig) BlackboxExporterRuleGroupOptions() []rulegroup.Opti
 								vector.New(
 									vector.WithMetricName("probe_success"),
 									vector.WithLabelMatchers(
-										label.New("job").Equal("blackbox-exporter"),
+										label.New("job").Equal(b.BlackboxExporterServiceSelector),
 									),
 								),
 								matrix.WithRange(30*24*time.Hour),
@@ -155,16 +197,19 @@ func (b BlackboxRulesConfig) BlackboxExporterRuleGroupOptions() []rulegroup.Opti
 			),
 			alerting.Annotations(
 				common.MergeMaps(
-					map[string]string{
-						"summary":       "Probe uptime is lower than 99.9% for the last 30 days.",
-						"description":   "The probe has a lower uptime than 99.9% the last 30 days for the instance {{ $labels.instance }}.",
-						"dashboard_url": b.DashboardURL + "?var-instance={{ $labels.instance }}",
-					},
+					common.BuildAnnotations(
+						b.DashboardURL,
+						b.RunbookURL,
+						runbookBlackboxLowUptime30d,
+						"The probe has a lower uptime than 99.9% the last 30 days for the instance {{ $labels.instance }}.",
+						"The probe has a lower uptime than 99.9% the last 30 days for the instance {{ $labels.instance }}.",
+						"Probe uptime is lower than 99.9% for the last 30 days.",
+					),
 					b.AdditionalAlertAnnotations,
 				),
 			),
 		),
-		rulegroup.AddRule[alerting.Option](
+		rulegroup.AddRule(
 			"BlackboxSslCertificateWillExpireSoon",
 			alerting.Expr(
 				promqlbuilder.Lss(
@@ -172,7 +217,7 @@ func (b BlackboxRulesConfig) BlackboxExporterRuleGroupOptions() []rulegroup.Opti
 						vector.New(
 							vector.WithMetricName("probe_ssl_earliest_cert_expiry"),
 							vector.WithLabelMatchers(
-								label.New("job").Equal("blackbox-exporter"),
+								label.New("job").Equal(b.BlackboxExporterServiceSelector),
 							),
 						),
 						promqlbuilder.Time(),
@@ -196,11 +241,14 @@ func (b BlackboxRulesConfig) BlackboxExporterRuleGroupOptions() []rulegroup.Opti
 			),
 			alerting.Annotations(
 				common.MergeMaps(
-					map[string]string{
-						"summary":       "SSL certificate will expire soon.",
-						"description":   "The SSL certificate of the instance {{ $labels.instance }} is expiring within 21 days.\nActual time left: {{ $value | humanizeDuration }}.",
-						"dashboard_url": b.DashboardURL + "?var-instance={{ $labels.instance }}",
-					},
+					common.BuildAnnotations(
+						b.DashboardURL,
+						b.RunbookURL,
+						runbookBlackboxSslCertificateWillExpireSoon,
+						"The SSL certificate of the instance {{ $labels.instance }} is expiring within 21 days.\nActual time left: {{ $value | humanizeDuration }}.",
+						"The SSL certificate of the instance {{ $labels.instance }} is expiring within 21 days.\nActual time left: {{ $value | humanizeDuration }}.",
+						"SSL certificate will expire soon.",
+					),
 					b.AdditionalAlertAnnotations,
 				),
 			),

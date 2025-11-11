@@ -59,16 +59,23 @@ const (
 )
 
 type ThanosRulesConfig struct {
-	RunbookURL                 string
-	ServiceLabelValue          string
-	AdditionalAlertLabels      map[string]string
-	AdditionalAlertAnnotations map[string]string
-
+	RunbookURL          string
 	CompactDashboardURL string
 	QueryDashboardURL   string
 	ReceiveDashboardURL string
 	StoreDashboardURL   string
 	RuleDashboardURL    string
+
+	ServiceLabelValue              string
+	ReceiveRouterServiceSelector   string
+	ReceiveIngesterServiceSelector string
+	RulerServiceSelector           string
+	StoreServiceSelector           string
+	CompactServiceSelector         string
+	QueryServiceSelector           string
+
+	AdditionalAlertLabels      map[string]string
+	AdditionalAlertAnnotations map[string]string
 }
 
 type ThanosRulesConfigOption func(*ThanosRulesConfig)
@@ -82,6 +89,60 @@ func WithRunbookURL(runbookURL string) ThanosRulesConfigOption {
 func WithServiceLabelValue(serviceLabelValue string) ThanosRulesConfigOption {
 	return func(thanosRulesConfig *ThanosRulesConfig) {
 		thanosRulesConfig.ServiceLabelValue = serviceLabelValue
+	}
+}
+
+func WithReceiveRouterServiceSelector(receiveRouterServiceSelector string) ThanosRulesConfigOption {
+	return func(thanosRulesConfig *ThanosRulesConfig) {
+		if receiveRouterServiceSelector == "" {
+			receiveRouterServiceSelector = "thanos-receive-router.*"
+		}
+		thanosRulesConfig.ReceiveRouterServiceSelector = receiveRouterServiceSelector
+	}
+}
+
+func WithReceiveIngesterServiceSelector(receiveIngesterServiceSelector string) ThanosRulesConfigOption {
+	return func(thanosRulesConfig *ThanosRulesConfig) {
+		if receiveIngesterServiceSelector == "" {
+			receiveIngesterServiceSelector = "thanos-receive-ingester.*"
+		}
+		thanosRulesConfig.ReceiveIngesterServiceSelector = receiveIngesterServiceSelector
+	}
+}
+
+func WithRulerServiceSelector(rulerServiceSelector string) ThanosRulesConfigOption {
+	return func(thanosRulesConfig *ThanosRulesConfig) {
+		if rulerServiceSelector == "" {
+			rulerServiceSelector = "thanos-ruler.*"
+		}
+		thanosRulesConfig.RulerServiceSelector = rulerServiceSelector
+	}
+}
+
+func WithStoreServiceSelector(storeServiceSelector string) ThanosRulesConfigOption {
+	return func(thanosRulesConfig *ThanosRulesConfig) {
+		if storeServiceSelector == "" {
+			storeServiceSelector = "thanos-store.*"
+		}
+		thanosRulesConfig.StoreServiceSelector = storeServiceSelector
+	}
+}
+
+func WithCompactServiceSelector(compactServiceSelector string) ThanosRulesConfigOption {
+	return func(thanosRulesConfig *ThanosRulesConfig) {
+		if compactServiceSelector == "" {
+			compactServiceSelector = "thanos-compact.*"
+		}
+		thanosRulesConfig.CompactServiceSelector = compactServiceSelector
+	}
+}
+
+func WithQueryServiceSelector(queryServiceSelector string) ThanosRulesConfigOption {
+	return func(thanosRulesConfig *ThanosRulesConfig) {
+		if queryServiceSelector == "" {
+			queryServiceSelector = "thanos-query.*"
+		}
+		thanosRulesConfig.QueryServiceSelector = queryServiceSelector
 	}
 }
 
@@ -127,14 +188,21 @@ func WithRuleDashboardURL(ruleDashboardURL string) ThanosRulesConfigOption {
 	}
 }
 
-// BuildThanosRules builds the Thanos rules for the given namespace, dashboard URLs, runbook URL, labels, and annotations.
-func BuildThanosRules(
+// NewThanosRulesBuilder creates a new Thanos rules builder.
+func NewThanosRulesBuilder(
 	namespace string,
 	labels map[string]string,
 	annotations map[string]string,
 	options ...ThanosRulesConfigOption,
-) rulehelpers.RuleResult {
-	thanosRulesConfig := ThanosRulesConfig{}
+) (promtheusrule.Builder, error) {
+	thanosRulesConfig := ThanosRulesConfig{
+		ReceiveRouterServiceSelector:   "thanos-receive-router.*",
+		ReceiveIngesterServiceSelector: "thanos-receive-ingester.*",
+		RulerServiceSelector:           "thanos-ruler.*",
+		StoreServiceSelector:           "thanos-store.*",
+		CompactServiceSelector:         "thanos-compact.*",
+		QueryServiceSelector:           "thanos-query.*",
+	}
 	for _, option := range options {
 		option(&thanosRulesConfig)
 	}
@@ -170,6 +238,17 @@ func BuildThanosRules(
 		),
 	)
 
+	return promRule, err
+}
+
+// BuildThanosRules builds the Thanos rules for the given namespace, dashboard URLs, runbook URL, labels, and annotations.
+func BuildThanosRules(
+	namespace string,
+	labels map[string]string,
+	annotations map[string]string,
+	options ...ThanosRulesConfigOption,
+) rulehelpers.RuleResult {
+	promRule, err := NewThanosRulesBuilder(namespace, labels, annotations, options...)
 	if err != nil {
 		return rulehelpers.NewRuleResult(nil, err).Component("thanos")
 	}
@@ -182,7 +261,7 @@ func BuildThanosRules(
 
 func (t ThanosRulesConfig) ThanosComponentAbsentGroup() []rulegroup.Option {
 	return []rulegroup.Option{
-		rulegroup.AddRule[alerting.Option](
+		rulegroup.AddRule(
 			"ThanosCompactIsDown",
 			alerting.Expr(
 				promqlbuilder.Absent(
@@ -190,7 +269,7 @@ func (t ThanosRulesConfig) ThanosComponentAbsentGroup() []rulegroup.Option {
 						vector.New(
 							vector.WithMetricName("up"),
 							vector.WithLabelMatchers(
-								label.New("job").EqualRegexp("thanos-compact.*"),
+								label.New("job").EqualRegexp(t.CompactServiceSelector),
 							),
 						),
 						promqlbuilder.NewNumber(1),
@@ -221,7 +300,7 @@ func (t ThanosRulesConfig) ThanosComponentAbsentGroup() []rulegroup.Option {
 				),
 			),
 		),
-		rulegroup.AddRule[alerting.Option](
+		rulegroup.AddRule(
 			"ThanosQueryIsDown",
 			alerting.Expr(
 				promqlbuilder.Absent(
@@ -229,7 +308,7 @@ func (t ThanosRulesConfig) ThanosComponentAbsentGroup() []rulegroup.Option {
 						vector.New(
 							vector.WithMetricName("up"),
 							vector.WithLabelMatchers(
-								label.New("job").EqualRegexp("thanos-query.*"),
+								label.New("job").EqualRegexp(t.QueryServiceSelector),
 							),
 						),
 						promqlbuilder.NewNumber(1),
@@ -260,7 +339,7 @@ func (t ThanosRulesConfig) ThanosComponentAbsentGroup() []rulegroup.Option {
 				),
 			),
 		),
-		rulegroup.AddRule[alerting.Option](
+		rulegroup.AddRule(
 			"ThanosReceiveRouterIsDown",
 			alerting.Expr(
 				promqlbuilder.Absent(
@@ -268,7 +347,7 @@ func (t ThanosRulesConfig) ThanosComponentAbsentGroup() []rulegroup.Option {
 						vector.New(
 							vector.WithMetricName("up"),
 							vector.WithLabelMatchers(
-								label.New("job").EqualRegexp("thanos-receive-router.*"),
+								label.New("job").EqualRegexp(t.ReceiveRouterServiceSelector),
 							),
 						),
 						promqlbuilder.NewNumber(1),
@@ -299,7 +378,7 @@ func (t ThanosRulesConfig) ThanosComponentAbsentGroup() []rulegroup.Option {
 				),
 			),
 		),
-		rulegroup.AddRule[alerting.Option](
+		rulegroup.AddRule(
 			"ThanosReceiveIngesterIsDown",
 			alerting.Expr(
 				promqlbuilder.Absent(
@@ -307,7 +386,7 @@ func (t ThanosRulesConfig) ThanosComponentAbsentGroup() []rulegroup.Option {
 						vector.New(
 							vector.WithMetricName("up"),
 							vector.WithLabelMatchers(
-								label.New("job").EqualRegexp("thanos-receive-ingester.*"),
+								label.New("job").EqualRegexp(t.ReceiveIngesterServiceSelector),
 							),
 						),
 						promqlbuilder.NewNumber(1),
@@ -338,7 +417,7 @@ func (t ThanosRulesConfig) ThanosComponentAbsentGroup() []rulegroup.Option {
 				),
 			),
 		),
-		rulegroup.AddRule[alerting.Option](
+		rulegroup.AddRule(
 			"ThanosRuleIsDown",
 			alerting.Expr(
 				promqlbuilder.Absent(
@@ -346,7 +425,7 @@ func (t ThanosRulesConfig) ThanosComponentAbsentGroup() []rulegroup.Option {
 						vector.New(
 							vector.WithMetricName("up"),
 							vector.WithLabelMatchers(
-								label.New("job").EqualRegexp("thanos-ruler.*"),
+								label.New("job").EqualRegexp(t.RulerServiceSelector),
 							),
 						),
 						promqlbuilder.NewNumber(1),
@@ -377,7 +456,7 @@ func (t ThanosRulesConfig) ThanosComponentAbsentGroup() []rulegroup.Option {
 				),
 			),
 		),
-		rulegroup.AddRule[alerting.Option](
+		rulegroup.AddRule(
 			"ThanosStoreIsDown",
 			alerting.Expr(
 				promqlbuilder.Absent(
@@ -385,7 +464,7 @@ func (t ThanosRulesConfig) ThanosComponentAbsentGroup() []rulegroup.Option {
 						vector.New(
 							vector.WithMetricName("up"),
 							vector.WithLabelMatchers(
-								label.New("job").EqualRegexp("thanos-store.*"),
+								label.New("job").EqualRegexp(t.StoreServiceSelector),
 							),
 						),
 						promqlbuilder.NewNumber(1),
@@ -421,7 +500,7 @@ func (t ThanosRulesConfig) ThanosComponentAbsentGroup() []rulegroup.Option {
 
 func (t ThanosRulesConfig) ThanosCompactGroup() []rulegroup.Option {
 	return []rulegroup.Option{
-		rulegroup.AddRule[alerting.Option](
+		rulegroup.AddRule(
 			"ThanosCompactMultipleRunning",
 			alerting.Expr(
 				promqlbuilder.Sum(
@@ -429,7 +508,7 @@ func (t ThanosRulesConfig) ThanosCompactGroup() []rulegroup.Option {
 						vector.New(
 							vector.WithMetricName("up"),
 							vector.WithLabelMatchers(
-								label.New("job").EqualRegexp("thanos-compact.*"),
+								label.New("job").EqualRegexp(t.CompactServiceSelector),
 							),
 						),
 						promqlbuilder.NewNumber(1),
@@ -460,14 +539,14 @@ func (t ThanosRulesConfig) ThanosCompactGroup() []rulegroup.Option {
 				),
 			),
 		),
-		rulegroup.AddRule[alerting.Option](
+		rulegroup.AddRule(
 			"ThanosCompactHalted",
 			alerting.Expr(
 				promqlbuilder.Eqlc(
 					vector.New(
 						vector.WithMetricName("thanos_compact_halted"),
 						vector.WithLabelMatchers(
-							label.New("job").EqualRegexp("thanos-compact.*"),
+							label.New("job").EqualRegexp(t.CompactServiceSelector),
 						),
 					),
 					promqlbuilder.NewNumber(1),
@@ -497,7 +576,7 @@ func (t ThanosRulesConfig) ThanosCompactGroup() []rulegroup.Option {
 				),
 			),
 		),
-		rulegroup.AddRule[alerting.Option](
+		rulegroup.AddRule(
 			"ThanosCompactHighCompactionFailures",
 			alerting.Expr(
 				promqlbuilder.Gtr(
@@ -509,7 +588,7 @@ func (t ThanosRulesConfig) ThanosCompactGroup() []rulegroup.Option {
 										vector.New(
 											vector.WithMetricName("thanos_compact_group_compactions_failures_total"),
 											vector.WithLabelMatchers(
-												label.New("job").EqualRegexp("thanos-compact.*"),
+												label.New("job").EqualRegexp(t.CompactServiceSelector),
 											),
 										),
 										matrix.WithRange(5*time.Minute),
@@ -522,7 +601,7 @@ func (t ThanosRulesConfig) ThanosCompactGroup() []rulegroup.Option {
 										vector.New(
 											vector.WithMetricName("thanos_compact_group_compactions_total"),
 											vector.WithLabelMatchers(
-												label.New("job").EqualRegexp("thanos-compact.*"),
+												label.New("job").EqualRegexp(t.CompactServiceSelector),
 											),
 										),
 										matrix.WithRange(5*time.Minute),
@@ -559,7 +638,7 @@ func (t ThanosRulesConfig) ThanosCompactGroup() []rulegroup.Option {
 				),
 			),
 		),
-		rulegroup.AddRule[alerting.Option](
+		rulegroup.AddRule(
 			"ThanosCompactBucketHighOperationFailures",
 			alerting.Expr(
 				promqlbuilder.Gtr(
@@ -571,7 +650,7 @@ func (t ThanosRulesConfig) ThanosCompactGroup() []rulegroup.Option {
 										vector.New(
 											vector.WithMetricName("thanos_objstore_bucket_operation_failures_total"),
 											vector.WithLabelMatchers(
-												label.New("job").EqualRegexp("thanos-compact.*"),
+												label.New("job").EqualRegexp(t.CompactServiceSelector),
 											),
 										),
 										matrix.WithRange(5*time.Minute),
@@ -584,7 +663,7 @@ func (t ThanosRulesConfig) ThanosCompactGroup() []rulegroup.Option {
 										vector.New(
 											vector.WithMetricName("thanos_objstore_bucket_operations_total"),
 											vector.WithLabelMatchers(
-												label.New("job").EqualRegexp("thanos-compact.*"),
+												label.New("job").EqualRegexp(t.CompactServiceSelector),
 											),
 										),
 										matrix.WithRange(5*time.Minute),
@@ -621,7 +700,7 @@ func (t ThanosRulesConfig) ThanosCompactGroup() []rulegroup.Option {
 				),
 			),
 		),
-		rulegroup.AddRule[alerting.Option](
+		rulegroup.AddRule(
 			"ThanosCompactHasNotRun",
 			alerting.Expr(
 				promqlbuilder.Gtr(
@@ -635,7 +714,7 @@ func (t ThanosRulesConfig) ThanosCompactGroup() []rulegroup.Option {
 											vector.New(
 												vector.WithMetricName("thanos_objstore_bucket_last_successful_upload_time"),
 												vector.WithLabelMatchers(
-													label.New("job").EqualRegexp("thanos-compact.*"),
+													label.New("job").EqualRegexp(t.CompactServiceSelector),
 												),
 											),
 											matrix.WithRange(24*time.Hour),
@@ -679,7 +758,7 @@ func (t ThanosRulesConfig) ThanosCompactGroup() []rulegroup.Option {
 
 func (t ThanosRulesConfig) ThanosQueryGroup() []rulegroup.Option {
 	return []rulegroup.Option{
-		rulegroup.AddRule[alerting.Option](
+		rulegroup.AddRule(
 			"ThanosQueryHttpRequestQueryErrorRateHigh",
 			alerting.Expr(
 				promqlbuilder.Gtr(
@@ -692,7 +771,7 @@ func (t ThanosRulesConfig) ThanosQueryGroup() []rulegroup.Option {
 											vector.WithMetricName("http_requests_total"),
 											vector.WithLabelMatchers(
 												label.New("code").EqualRegexp("5.."),
-												label.New("job").EqualRegexp("thanos-query.*"),
+												label.New("job").EqualRegexp(t.QueryServiceSelector),
 												label.New("handler").Equal("query"),
 											),
 										),
@@ -706,7 +785,7 @@ func (t ThanosRulesConfig) ThanosQueryGroup() []rulegroup.Option {
 										vector.New(
 											vector.WithMetricName("http_requests_total"),
 											vector.WithLabelMatchers(
-												label.New("job").EqualRegexp("thanos-query.*"),
+												label.New("job").EqualRegexp(t.QueryServiceSelector),
 												label.New("handler").Equal("query"),
 											),
 										),
@@ -744,7 +823,7 @@ func (t ThanosRulesConfig) ThanosQueryGroup() []rulegroup.Option {
 				),
 			),
 		),
-		rulegroup.AddRule[alerting.Option](
+		rulegroup.AddRule(
 			"ThanosQueryGrpcServerErrorRate",
 			alerting.Expr(
 				promqlbuilder.Gtr(
@@ -757,7 +836,7 @@ func (t ThanosRulesConfig) ThanosQueryGroup() []rulegroup.Option {
 											vector.WithMetricName("grpc_server_handled_total"),
 											vector.WithLabelMatchers(
 												label.New("grpc_code").EqualRegexp("Unknown|ResourceExhausted|Internal|Unavailable|DataLoss|DeadlineExceeded"),
-												label.New("job").EqualRegexp("thanos-query.*"),
+												label.New("job").EqualRegexp(t.QueryServiceSelector),
 											),
 										),
 										matrix.WithRange(5*time.Minute),
@@ -770,7 +849,7 @@ func (t ThanosRulesConfig) ThanosQueryGroup() []rulegroup.Option {
 										vector.New(
 											vector.WithMetricName("grpc_server_started_total"),
 											vector.WithLabelMatchers(
-												label.New("job").EqualRegexp("thanos-query.*"),
+												label.New("job").EqualRegexp(t.QueryServiceSelector),
 											),
 										),
 										matrix.WithRange(5*time.Minute),
@@ -807,7 +886,7 @@ func (t ThanosRulesConfig) ThanosQueryGroup() []rulegroup.Option {
 				),
 			),
 		),
-		rulegroup.AddRule[alerting.Option](
+		rulegroup.AddRule(
 			"ThanosQueryGrpcClientErrorRate",
 			alerting.Expr(
 				promqlbuilder.Gtr(
@@ -820,7 +899,7 @@ func (t ThanosRulesConfig) ThanosQueryGroup() []rulegroup.Option {
 											vector.WithMetricName("grpc_client_handled_total"),
 											vector.WithLabelMatchers(
 												label.New("grpc_code").NotEqual("OK"),
-												label.New("job").EqualRegexp("thanos-query.*"),
+												label.New("job").EqualRegexp(t.QueryServiceSelector),
 											),
 										),
 										matrix.WithRange(5*time.Minute),
@@ -833,7 +912,7 @@ func (t ThanosRulesConfig) ThanosQueryGroup() []rulegroup.Option {
 										vector.New(
 											vector.WithMetricName("grpc_client_started_total"),
 											vector.WithLabelMatchers(
-												label.New("job").EqualRegexp("thanos-query.*"),
+												label.New("job").EqualRegexp(t.QueryServiceSelector),
 											),
 										),
 										matrix.WithRange(5*time.Minute),
@@ -870,7 +949,7 @@ func (t ThanosRulesConfig) ThanosQueryGroup() []rulegroup.Option {
 				),
 			),
 		),
-		rulegroup.AddRule[alerting.Option](
+		rulegroup.AddRule(
 			"ThanosQueryHighDNSFailures",
 			alerting.Expr(
 				promqlbuilder.Gtr(
@@ -882,7 +961,7 @@ func (t ThanosRulesConfig) ThanosQueryGroup() []rulegroup.Option {
 										vector.New(
 											vector.WithMetricName("thanos_query_store_apis_dns_failures_total"),
 											vector.WithLabelMatchers(
-												label.New("job").EqualRegexp("thanos-query.*"),
+												label.New("job").EqualRegexp(t.QueryServiceSelector),
 											),
 										),
 										matrix.WithRange(5*time.Minute),
@@ -895,7 +974,7 @@ func (t ThanosRulesConfig) ThanosQueryGroup() []rulegroup.Option {
 										vector.New(
 											vector.WithMetricName("thanos_query_store_apis_dns_lookups_total"),
 											vector.WithLabelMatchers(
-												label.New("job").EqualRegexp("thanos-query.*"),
+												label.New("job").EqualRegexp(t.QueryServiceSelector),
 											),
 										),
 										matrix.WithRange(5*time.Minute),
@@ -932,7 +1011,7 @@ func (t ThanosRulesConfig) ThanosQueryGroup() []rulegroup.Option {
 				),
 			),
 		),
-		rulegroup.AddRule[alerting.Option](
+		rulegroup.AddRule(
 			"ThanosQueryInstantLatencyHigh",
 			alerting.Expr(
 				promqlbuilder.And(
@@ -945,7 +1024,7 @@ func (t ThanosRulesConfig) ThanosQueryGroup() []rulegroup.Option {
 										vector.New(
 											vector.WithMetricName("http_request_duration_seconds_bucket"),
 											vector.WithLabelMatchers(
-												label.New("job").EqualRegexp("thanos-query.*"),
+												label.New("job").EqualRegexp(t.QueryServiceSelector),
 												label.New("handler").Equal("query"),
 											),
 										),
@@ -963,7 +1042,7 @@ func (t ThanosRulesConfig) ThanosQueryGroup() []rulegroup.Option {
 									vector.New(
 										vector.WithMetricName("http_request_duration_seconds_count"),
 										vector.WithLabelMatchers(
-											label.New("job").EqualRegexp("thanos-query.*"),
+											label.New("job").EqualRegexp(t.QueryServiceSelector),
 											label.New("handler").Equal("query"),
 										),
 									),
@@ -1004,7 +1083,7 @@ func (t ThanosRulesConfig) ThanosQueryGroup() []rulegroup.Option {
 
 func (t ThanosRulesConfig) ThanosReceiveGroup() []rulegroup.Option {
 	return []rulegroup.Option{
-		rulegroup.AddRule[alerting.Option](
+		rulegroup.AddRule(
 			"ThanosReceiveHttpRequestErrorRateHigh",
 			alerting.Expr(
 				promqlbuilder.Gtr(
@@ -1017,7 +1096,7 @@ func (t ThanosRulesConfig) ThanosReceiveGroup() []rulegroup.Option {
 											vector.WithMetricName("http_requests_total"),
 											vector.WithLabelMatchers(
 												label.New("code").EqualRegexp("5.."),
-												label.New("job").EqualRegexp("thanos-receive-router.*"),
+												label.New("job").EqualRegexp(t.ReceiveRouterServiceSelector),
 												label.New("handler").Equal("receive"),
 											),
 										),
@@ -1031,7 +1110,7 @@ func (t ThanosRulesConfig) ThanosReceiveGroup() []rulegroup.Option {
 										vector.New(
 											vector.WithMetricName("http_requests_total"),
 											vector.WithLabelMatchers(
-												label.New("job").EqualRegexp("thanos-receive-router.*"),
+												label.New("job").EqualRegexp(t.ReceiveRouterServiceSelector),
 												label.New("handler").Equal("receive"),
 											),
 										),
@@ -1069,7 +1148,7 @@ func (t ThanosRulesConfig) ThanosReceiveGroup() []rulegroup.Option {
 				),
 			),
 		),
-		rulegroup.AddRule[alerting.Option](
+		rulegroup.AddRule(
 			"ThanosReceiveHttpRequestLatencyHigh",
 			alerting.Expr(
 				promqlbuilder.And(
@@ -1082,7 +1161,7 @@ func (t ThanosRulesConfig) ThanosReceiveGroup() []rulegroup.Option {
 										vector.New(
 											vector.WithMetricName("http_request_duration_seconds_bucket"),
 											vector.WithLabelMatchers(
-												label.New("job").EqualRegexp("thanos-receive-router.*"),
+												label.New("job").EqualRegexp(t.ReceiveRouterServiceSelector),
 												label.New("handler").Equal("receive"),
 											),
 										),
@@ -1100,7 +1179,7 @@ func (t ThanosRulesConfig) ThanosReceiveGroup() []rulegroup.Option {
 									vector.New(
 										vector.WithMetricName("http_request_duration_seconds_count"),
 										vector.WithLabelMatchers(
-											label.New("job").EqualRegexp("thanos-receive-router.*"),
+											label.New("job").EqualRegexp(t.ReceiveRouterServiceSelector),
 											label.New("handler").Equal("receive"),
 										),
 									),
@@ -1136,7 +1215,7 @@ func (t ThanosRulesConfig) ThanosReceiveGroup() []rulegroup.Option {
 				),
 			),
 		),
-		rulegroup.AddRule[alerting.Option](
+		rulegroup.AddRule(
 			"ThanosReceiveHighReplicationFailures",
 			alerting.Expr(
 				promqlbuilder.And(
@@ -1156,7 +1235,7 @@ func (t ThanosRulesConfig) ThanosReceiveGroup() []rulegroup.Option {
 												vector.WithMetricName("thanos_receive_replications_total"),
 												vector.WithLabelMatchers(
 													label.New("result").Equal("error"),
-													label.New("job").EqualRegexp("thanos-receive-router.*"),
+													label.New("job").EqualRegexp(t.ReceiveRouterServiceSelector),
 												),
 											),
 											matrix.WithRange(5*time.Minute),
@@ -1169,7 +1248,7 @@ func (t ThanosRulesConfig) ThanosReceiveGroup() []rulegroup.Option {
 											vector.New(
 												vector.WithMetricName("thanos_receive_replications_total"),
 												vector.WithLabelMatchers(
-													label.New("job").EqualRegexp("thanos-receive-router.*"),
+													label.New("job").EqualRegexp(t.ReceiveRouterServiceSelector),
 												),
 											),
 											matrix.WithRange(5*time.Minute),
@@ -1185,7 +1264,7 @@ func (t ThanosRulesConfig) ThanosReceiveGroup() []rulegroup.Option {
 												vector.New(
 													vector.WithMetricName("thanos_receive_replication_factor"),
 													vector.WithLabelMatchers(
-														label.New("job").EqualRegexp("thanos-receive-router.*"),
+														label.New("job").EqualRegexp(t.ReceiveRouterServiceSelector),
 													),
 												),
 												promqlbuilder.NewNumber(1),
@@ -1198,7 +1277,7 @@ func (t ThanosRulesConfig) ThanosReceiveGroup() []rulegroup.Option {
 									vector.New(
 										vector.WithMetricName("thanos_receive_hashring_nodes"),
 										vector.WithLabelMatchers(
-											label.New("job").EqualRegexp("thanos-receive-router.*"),
+											label.New("job").EqualRegexp(t.ReceiveRouterServiceSelector),
 										),
 									),
 								).By("namespace", "job"),
@@ -1232,7 +1311,7 @@ func (t ThanosRulesConfig) ThanosReceiveGroup() []rulegroup.Option {
 				),
 			),
 		),
-		rulegroup.AddRule[alerting.Option](
+		rulegroup.AddRule(
 			"ThanosReceiveHighForwardRequestFailures",
 			alerting.Expr(
 				promqlbuilder.Gtr(
@@ -1245,7 +1324,7 @@ func (t ThanosRulesConfig) ThanosReceiveGroup() []rulegroup.Option {
 											vector.WithMetricName("thanos_receive_forward_requests_total"),
 											vector.WithLabelMatchers(
 												label.New("result").Equal("error"),
-												label.New("job").EqualRegexp("thanos-receive-router.*"),
+												label.New("job").EqualRegexp(t.ReceiveRouterServiceSelector),
 											),
 										),
 										matrix.WithRange(5*time.Minute),
@@ -1258,7 +1337,7 @@ func (t ThanosRulesConfig) ThanosReceiveGroup() []rulegroup.Option {
 										vector.New(
 											vector.WithMetricName("thanos_receive_forward_requests_total"),
 											vector.WithLabelMatchers(
-												label.New("job").EqualRegexp("thanos-receive-router.*"),
+												label.New("job").EqualRegexp(t.ReceiveRouterServiceSelector),
 											),
 										),
 										matrix.WithRange(5*time.Minute),
@@ -1295,7 +1374,7 @@ func (t ThanosRulesConfig) ThanosReceiveGroup() []rulegroup.Option {
 				),
 			),
 		),
-		rulegroup.AddRule[alerting.Option](
+		rulegroup.AddRule(
 			"ThanosReceiveHighHashringFileRefreshFailures",
 			alerting.Expr(
 				promqlbuilder.Gtr(
@@ -1306,7 +1385,7 @@ func (t ThanosRulesConfig) ThanosReceiveGroup() []rulegroup.Option {
 									vector.New(
 										vector.WithMetricName("thanos_receive_hashrings_file_errors_total"),
 										vector.WithLabelMatchers(
-											label.New("job").EqualRegexp("thanos-receive-router.*"),
+											label.New("job").EqualRegexp(t.ReceiveRouterServiceSelector),
 										),
 									),
 									matrix.WithRange(5*time.Minute),
@@ -1319,7 +1398,7 @@ func (t ThanosRulesConfig) ThanosReceiveGroup() []rulegroup.Option {
 									vector.New(
 										vector.WithMetricName("thanos_receive_hashrings_file_refreshes_total"),
 										vector.WithLabelMatchers(
-											label.New("job").EqualRegexp("thanos-receive-router.*"),
+											label.New("job").EqualRegexp(t.ReceiveRouterServiceSelector),
 										),
 									),
 									matrix.WithRange(5*time.Minute),
@@ -1354,7 +1433,7 @@ func (t ThanosRulesConfig) ThanosReceiveGroup() []rulegroup.Option {
 				),
 			),
 		),
-		rulegroup.AddRule[alerting.Option](
+		rulegroup.AddRule(
 			"ThanosReceiveConfigReloadFailure",
 			alerting.Expr(
 				promqlbuilder.Neq(
@@ -1362,7 +1441,7 @@ func (t ThanosRulesConfig) ThanosReceiveGroup() []rulegroup.Option {
 						vector.New(
 							vector.WithMetricName("thanos_receive_config_last_reload_successful"),
 							vector.WithLabelMatchers(
-								label.New("job").EqualRegexp("thanos-receive-router.*"),
+								label.New("job").EqualRegexp(t.ReceiveRouterServiceSelector),
 							),
 						),
 					).By("namespace", "job"),
@@ -1393,7 +1472,7 @@ func (t ThanosRulesConfig) ThanosReceiveGroup() []rulegroup.Option {
 				),
 			),
 		),
-		rulegroup.AddRule[alerting.Option](
+		rulegroup.AddRule(
 			"ThanosReceiveNoUpload",
 			alerting.Expr(
 				promqlbuilder.Add(
@@ -1401,7 +1480,7 @@ func (t ThanosRulesConfig) ThanosReceiveGroup() []rulegroup.Option {
 						vector.New(
 							vector.WithMetricName("up"),
 							vector.WithLabelMatchers(
-								label.New("job").EqualRegexp("thanos-receive-ingester.*"),
+								label.New("job").EqualRegexp(t.ReceiveIngesterServiceSelector),
 							),
 						),
 						promqlbuilder.NewNumber(1),
@@ -1413,7 +1492,7 @@ func (t ThanosRulesConfig) ThanosReceiveGroup() []rulegroup.Option {
 									vector.New(
 										vector.WithMetricName("thanos_shipper_uploads_total"),
 										vector.WithLabelMatchers(
-											label.New("job").EqualRegexp("thanos-receive-ingester.*"),
+											label.New("job").EqualRegexp(t.ReceiveIngesterServiceSelector),
 										),
 									),
 									matrix.WithRange(3*time.Hour),
@@ -1448,7 +1527,7 @@ func (t ThanosRulesConfig) ThanosReceiveGroup() []rulegroup.Option {
 				),
 			),
 		),
-		rulegroup.AddRule[alerting.Option](
+		rulegroup.AddRule(
 			"ThanosReceiveLimitsConfigReloadFailure",
 			alerting.Expr(
 				promqlbuilder.Gtr(
@@ -1458,7 +1537,7 @@ func (t ThanosRulesConfig) ThanosReceiveGroup() []rulegroup.Option {
 								vector.New(
 									vector.WithMetricName("thanos_receive_limits_config_reload_err_total"),
 									vector.WithLabelMatchers(
-										label.New("job").EqualRegexp("thanos-receive-router.*"),
+										label.New("job").EqualRegexp(t.ReceiveRouterServiceSelector),
 									),
 								),
 								matrix.WithRange(5*time.Minute),
@@ -1492,7 +1571,7 @@ func (t ThanosRulesConfig) ThanosReceiveGroup() []rulegroup.Option {
 				),
 			),
 		),
-		rulegroup.AddRule[alerting.Option](
+		rulegroup.AddRule(
 			"ThanosReceiveLimitsHighMetaMonitoringQueriesFailureRate",
 			alerting.Expr(
 				promqlbuilder.Gtr(
@@ -1504,7 +1583,7 @@ func (t ThanosRulesConfig) ThanosReceiveGroup() []rulegroup.Option {
 										vector.New(
 											vector.WithMetricName("thanos_receive_metamonitoring_failed_queries_total"),
 											vector.WithLabelMatchers(
-												label.New("job").EqualRegexp("thanos-receive-router.*"),
+												label.New("job").EqualRegexp(t.ReceiveRouterServiceSelector),
 											),
 										),
 										matrix.WithRange(5*time.Minute),
@@ -1542,7 +1621,7 @@ func (t ThanosRulesConfig) ThanosReceiveGroup() []rulegroup.Option {
 				),
 			),
 		),
-		rulegroup.AddRule[alerting.Option](
+		rulegroup.AddRule(
 			"ThanosReceiveTenantLimitedByHeadSeries",
 			alerting.Expr(
 				promqlbuilder.Gtr(
@@ -1552,7 +1631,7 @@ func (t ThanosRulesConfig) ThanosReceiveGroup() []rulegroup.Option {
 								vector.New(
 									vector.WithMetricName("thanos_receive_head_series_limited_requests_total"),
 									vector.WithLabelMatchers(
-										label.New("job").EqualRegexp("thanos-receive-router.*"),
+										label.New("job").EqualRegexp(t.ReceiveRouterServiceSelector),
 									),
 								),
 								matrix.WithRange(5*time.Minute),
@@ -1591,7 +1670,7 @@ func (t ThanosRulesConfig) ThanosReceiveGroup() []rulegroup.Option {
 
 func (t ThanosRulesConfig) ThanosStoreGroup() []rulegroup.Option {
 	return []rulegroup.Option{
-		rulegroup.AddRule[alerting.Option](
+		rulegroup.AddRule(
 			"ThanosStoreGrpcErrorRate",
 			alerting.Expr(
 				promqlbuilder.Gtr(
@@ -1604,7 +1683,7 @@ func (t ThanosRulesConfig) ThanosStoreGroup() []rulegroup.Option {
 											vector.WithMetricName("grpc_server_handled_total"),
 											vector.WithLabelMatchers(
 												label.New("grpc_code").EqualRegexp("Unknown|ResourceExhausted|Internal|Unavailable|DataLoss|DeadlineExceeded"),
-												label.New("job").EqualRegexp("thanos-store.*"),
+												label.New("job").EqualRegexp(t.StoreServiceSelector),
 											),
 										),
 										matrix.WithRange(5*time.Minute),
@@ -1617,7 +1696,7 @@ func (t ThanosRulesConfig) ThanosStoreGroup() []rulegroup.Option {
 										vector.New(
 											vector.WithMetricName("grpc_server_started_total"),
 											vector.WithLabelMatchers(
-												label.New("job").EqualRegexp("thanos-store.*"),
+												label.New("job").EqualRegexp(t.StoreServiceSelector),
 											),
 										),
 										matrix.WithRange(5*time.Minute),
@@ -1654,7 +1733,7 @@ func (t ThanosRulesConfig) ThanosStoreGroup() []rulegroup.Option {
 				),
 			),
 		),
-		rulegroup.AddRule[alerting.Option](
+		rulegroup.AddRule(
 			"ThanosStoreBucketHighOperationFailures",
 			alerting.Expr(
 				promqlbuilder.Gtr(
@@ -1666,7 +1745,7 @@ func (t ThanosRulesConfig) ThanosStoreGroup() []rulegroup.Option {
 										vector.New(
 											vector.WithMetricName("thanos_objstore_bucket_operation_failures_total"),
 											vector.WithLabelMatchers(
-												label.New("job").EqualRegexp("thanos-store.*"),
+												label.New("job").EqualRegexp(t.StoreServiceSelector),
 											),
 										),
 										matrix.WithRange(5*time.Minute),
@@ -1679,7 +1758,7 @@ func (t ThanosRulesConfig) ThanosStoreGroup() []rulegroup.Option {
 										vector.New(
 											vector.WithMetricName("thanos_objstore_bucket_operations_total"),
 											vector.WithLabelMatchers(
-												label.New("job").EqualRegexp("thanos-store.*"),
+												label.New("job").EqualRegexp(t.StoreServiceSelector),
 											),
 										),
 										matrix.WithRange(5*time.Minute),
@@ -1716,7 +1795,7 @@ func (t ThanosRulesConfig) ThanosStoreGroup() []rulegroup.Option {
 				),
 			),
 		),
-		rulegroup.AddRule[alerting.Option](
+		rulegroup.AddRule(
 			"ThanosStoreObjstoreOperationLatencyHigh",
 			alerting.Expr(
 				promqlbuilder.And(
@@ -1729,7 +1808,7 @@ func (t ThanosRulesConfig) ThanosStoreGroup() []rulegroup.Option {
 										vector.New(
 											vector.WithMetricName("thanos_objstore_bucket_operation_duration_seconds_bucket"),
 											vector.WithLabelMatchers(
-												label.New("job").EqualRegexp("thanos-store.*"),
+												label.New("job").EqualRegexp(t.StoreServiceSelector),
 											),
 										),
 										matrix.WithRange(5*time.Minute),
@@ -1746,7 +1825,7 @@ func (t ThanosRulesConfig) ThanosStoreGroup() []rulegroup.Option {
 									vector.New(
 										vector.WithMetricName("thanos_objstore_bucket_operation_duration_seconds_count"),
 										vector.WithLabelMatchers(
-											label.New("job").EqualRegexp("thanos-store.*"),
+											label.New("job").EqualRegexp(t.StoreServiceSelector),
 										),
 									),
 									matrix.WithRange(5*time.Minute),
@@ -1786,7 +1865,7 @@ func (t ThanosRulesConfig) ThanosStoreGroup() []rulegroup.Option {
 
 func (t ThanosRulesConfig) ThanosRuleGroup() []rulegroup.Option {
 	return []rulegroup.Option{
-		rulegroup.AddRule[alerting.Option](
+		rulegroup.AddRule(
 			"ThanosRuleQueueIsDroppingAlerts",
 			alerting.Expr(
 				promqlbuilder.Gtr(
@@ -1796,7 +1875,7 @@ func (t ThanosRulesConfig) ThanosRuleGroup() []rulegroup.Option {
 								vector.New(
 									vector.WithMetricName("thanos_alert_queue_alerts_dropped_total"),
 									vector.WithLabelMatchers(
-										label.New("job").EqualRegexp("thanos-ruler.*"),
+										label.New("job").EqualRegexp(t.RulerServiceSelector),
 									),
 								),
 								matrix.WithRange(5*time.Minute),
@@ -1830,7 +1909,7 @@ func (t ThanosRulesConfig) ThanosRuleGroup() []rulegroup.Option {
 				),
 			),
 		),
-		rulegroup.AddRule[alerting.Option](
+		rulegroup.AddRule(
 			"ThanosRuleSenderIsFailingAlerts",
 			alerting.Expr(
 				promqlbuilder.Gtr(
@@ -1840,7 +1919,7 @@ func (t ThanosRulesConfig) ThanosRuleGroup() []rulegroup.Option {
 								vector.New(
 									vector.WithMetricName("thanos_alert_sender_alerts_dropped_total"),
 									vector.WithLabelMatchers(
-										label.New("job").EqualRegexp("thanos-ruler.*"),
+										label.New("job").EqualRegexp(t.RulerServiceSelector),
 									),
 								),
 								matrix.WithRange(5*time.Minute),
@@ -1874,7 +1953,7 @@ func (t ThanosRulesConfig) ThanosRuleGroup() []rulegroup.Option {
 				),
 			),
 		),
-		rulegroup.AddRule[alerting.Option](
+		rulegroup.AddRule(
 			"ThanosRuleHighRuleEvaluationFailures",
 			alerting.Expr(
 				promqlbuilder.Gtr(
@@ -1886,7 +1965,7 @@ func (t ThanosRulesConfig) ThanosRuleGroup() []rulegroup.Option {
 										vector.New(
 											vector.WithMetricName("prometheus_rule_evaluation_failures_total"),
 											vector.WithLabelMatchers(
-												label.New("job").EqualRegexp("thanos-ruler.*"),
+												label.New("job").EqualRegexp(t.RulerServiceSelector),
 											),
 										),
 										matrix.WithRange(5*time.Minute),
@@ -1899,7 +1978,7 @@ func (t ThanosRulesConfig) ThanosRuleGroup() []rulegroup.Option {
 										vector.New(
 											vector.WithMetricName("prometheus_rule_evaluations_total"),
 											vector.WithLabelMatchers(
-												label.New("job").EqualRegexp("thanos-ruler.*"),
+												label.New("job").EqualRegexp(t.RulerServiceSelector),
 											),
 										),
 										matrix.WithRange(5*time.Minute),
@@ -1936,7 +2015,7 @@ func (t ThanosRulesConfig) ThanosRuleGroup() []rulegroup.Option {
 				),
 			),
 		),
-		rulegroup.AddRule[alerting.Option](
+		rulegroup.AddRule(
 			"ThanosRuleHighRuleEvaluationWarnings",
 			alerting.Expr(
 				promqlbuilder.Gtr(
@@ -1946,7 +2025,7 @@ func (t ThanosRulesConfig) ThanosRuleGroup() []rulegroup.Option {
 								vector.New(
 									vector.WithMetricName("thanos_rule_evaluation_with_warnings_total"),
 									vector.WithLabelMatchers(
-										label.New("job").EqualRegexp("thanos-ruler.*"),
+										label.New("job").EqualRegexp(t.RulerServiceSelector),
 									),
 								),
 								matrix.WithRange(5*time.Minute),
@@ -1980,7 +2059,7 @@ func (t ThanosRulesConfig) ThanosRuleGroup() []rulegroup.Option {
 				),
 			),
 		),
-		rulegroup.AddRule[alerting.Option](
+		rulegroup.AddRule(
 			"ThanosRuleRuleEvaluationLatencyHigh",
 			alerting.Expr(
 				promqlbuilder.Gtr(
@@ -1988,7 +2067,7 @@ func (t ThanosRulesConfig) ThanosRuleGroup() []rulegroup.Option {
 						vector.New(
 							vector.WithMetricName("prometheus_rule_group_last_duration_seconds"),
 							vector.WithLabelMatchers(
-								label.New("job").EqualRegexp("thanos-ruler.*"),
+								label.New("job").EqualRegexp(t.RulerServiceSelector),
 							),
 						),
 					).By("namespace", "job", "instance", "rule_group"),
@@ -1996,7 +2075,7 @@ func (t ThanosRulesConfig) ThanosRuleGroup() []rulegroup.Option {
 						vector.New(
 							vector.WithMetricName("prometheus_rule_group_interval_seconds"),
 							vector.WithLabelMatchers(
-								label.New("job").EqualRegexp("thanos-ruler.*"),
+								label.New("job").EqualRegexp(t.RulerServiceSelector),
 							),
 						),
 					).By("namespace", "job", "instance", "rule_group"),
@@ -2026,7 +2105,7 @@ func (t ThanosRulesConfig) ThanosRuleGroup() []rulegroup.Option {
 				),
 			),
 		),
-		rulegroup.AddRule[alerting.Option](
+		rulegroup.AddRule(
 			"ThanosRuleGrpcErrorRate",
 			alerting.Expr(
 				promqlbuilder.Gtr(
@@ -2039,7 +2118,7 @@ func (t ThanosRulesConfig) ThanosRuleGroup() []rulegroup.Option {
 											vector.WithMetricName("grpc_server_handled_total"),
 											vector.WithLabelMatchers(
 												label.New("grpc_code").EqualRegexp("Unknown|ResourceExhausted|Internal|Unavailable|DataLoss|DeadlineExceeded"),
-												label.New("job").EqualRegexp("thanos-ruler.*"),
+												label.New("job").EqualRegexp(t.RulerServiceSelector),
 											),
 										),
 										matrix.WithRange(5*time.Minute),
@@ -2052,7 +2131,7 @@ func (t ThanosRulesConfig) ThanosRuleGroup() []rulegroup.Option {
 										vector.New(
 											vector.WithMetricName("grpc_server_started_total"),
 											vector.WithLabelMatchers(
-												label.New("job").EqualRegexp("thanos-ruler.*"),
+												label.New("job").EqualRegexp(t.RulerServiceSelector),
 											),
 										),
 										matrix.WithRange(5*time.Minute),
@@ -2089,7 +2168,7 @@ func (t ThanosRulesConfig) ThanosRuleGroup() []rulegroup.Option {
 				),
 			),
 		),
-		rulegroup.AddRule[alerting.Option](
+		rulegroup.AddRule(
 			"ThanosRuleConfigReloadFailure",
 			alerting.Expr(
 				promqlbuilder.Neq(
@@ -2097,7 +2176,7 @@ func (t ThanosRulesConfig) ThanosRuleGroup() []rulegroup.Option {
 						vector.New(
 							vector.WithMetricName("thanos_rule_config_last_reload_successful"),
 							vector.WithLabelMatchers(
-								label.New("job").EqualRegexp("thanos-ruler.*"),
+								label.New("job").EqualRegexp(t.RulerServiceSelector),
 							),
 						),
 					).By("namespace", "job", "instance"),
@@ -2128,7 +2207,7 @@ func (t ThanosRulesConfig) ThanosRuleGroup() []rulegroup.Option {
 				),
 			),
 		),
-		rulegroup.AddRule[alerting.Option](
+		rulegroup.AddRule(
 			"ThanosRuleQueryHighDNSFailures",
 			alerting.Expr(
 				promqlbuilder.Gtr(
@@ -2140,7 +2219,7 @@ func (t ThanosRulesConfig) ThanosRuleGroup() []rulegroup.Option {
 										vector.New(
 											vector.WithMetricName("thanos_rule_query_apis_dns_failures_total"),
 											vector.WithLabelMatchers(
-												label.New("job").EqualRegexp("thanos-ruler.*"),
+												label.New("job").EqualRegexp(t.RulerServiceSelector),
 											),
 										),
 										matrix.WithRange(5*time.Minute),
@@ -2153,7 +2232,7 @@ func (t ThanosRulesConfig) ThanosRuleGroup() []rulegroup.Option {
 										vector.New(
 											vector.WithMetricName("thanos_rule_query_apis_dns_lookups_total"),
 											vector.WithLabelMatchers(
-												label.New("job").EqualRegexp("thanos-ruler.*"),
+												label.New("job").EqualRegexp(t.RulerServiceSelector),
 											),
 										),
 										matrix.WithRange(5*time.Minute),
@@ -2190,7 +2269,7 @@ func (t ThanosRulesConfig) ThanosRuleGroup() []rulegroup.Option {
 				),
 			),
 		),
-		rulegroup.AddRule[alerting.Option](
+		rulegroup.AddRule(
 			"ThanosRuleAlertmanagerHighDNSFailures",
 			alerting.Expr(
 				promqlbuilder.Gtr(
@@ -2202,7 +2281,7 @@ func (t ThanosRulesConfig) ThanosRuleGroup() []rulegroup.Option {
 										vector.New(
 											vector.WithMetricName("thanos_rule_alertmanagers_dns_failures_total"),
 											vector.WithLabelMatchers(
-												label.New("job").EqualRegexp("thanos-ruler.*"),
+												label.New("job").EqualRegexp(t.RulerServiceSelector),
 											),
 										),
 										matrix.WithRange(5*time.Minute),
@@ -2215,7 +2294,7 @@ func (t ThanosRulesConfig) ThanosRuleGroup() []rulegroup.Option {
 										vector.New(
 											vector.WithMetricName("thanos_rule_alertmanagers_dns_lookups_total"),
 											vector.WithLabelMatchers(
-												label.New("job").EqualRegexp("thanos-ruler.*"),
+												label.New("job").EqualRegexp(t.RulerServiceSelector),
 											),
 										),
 										matrix.WithRange(5*time.Minute),
@@ -2252,7 +2331,7 @@ func (t ThanosRulesConfig) ThanosRuleGroup() []rulegroup.Option {
 				),
 			),
 		),
-		rulegroup.AddRule[alerting.Option](
+		rulegroup.AddRule(
 			"ThanosRuleNoEvaluationFor10Intervals",
 			alerting.Expr(
 				promqlbuilder.Gtr(
@@ -2262,7 +2341,7 @@ func (t ThanosRulesConfig) ThanosRuleGroup() []rulegroup.Option {
 							vector.New(
 								vector.WithMetricName("prometheus_rule_group_last_evaluation_timestamp_seconds"),
 								vector.WithLabelMatchers(
-									label.New("job").EqualRegexp("thanos-ruler.*"),
+									label.New("job").EqualRegexp(t.RulerServiceSelector),
 								),
 							),
 						).By("namespace", "job", "instance", "group"),
@@ -2273,7 +2352,7 @@ func (t ThanosRulesConfig) ThanosRuleGroup() []rulegroup.Option {
 							vector.New(
 								vector.WithMetricName("prometheus_rule_group_interval_seconds"),
 								vector.WithLabelMatchers(
-									label.New("job").EqualRegexp("thanos-ruler.*"),
+									label.New("job").EqualRegexp(t.RulerServiceSelector),
 								),
 							),
 						).By("namespace", "job", "instance", "group"),
@@ -2304,7 +2383,7 @@ func (t ThanosRulesConfig) ThanosRuleGroup() []rulegroup.Option {
 				),
 			),
 		),
-		rulegroup.AddRule[alerting.Option](
+		rulegroup.AddRule(
 			"ThanosNoRuleEvaluations",
 			alerting.Expr(
 				promqlbuilder.And(
@@ -2315,7 +2394,7 @@ func (t ThanosRulesConfig) ThanosRuleGroup() []rulegroup.Option {
 									vector.New(
 										vector.WithMetricName("prometheus_rule_evaluations_total"),
 										vector.WithLabelMatchers(
-											label.New("job").EqualRegexp("thanos-ruler.*"),
+											label.New("job").EqualRegexp(t.RulerServiceSelector),
 										),
 									),
 									matrix.WithRange(5*time.Minute),
@@ -2329,7 +2408,7 @@ func (t ThanosRulesConfig) ThanosRuleGroup() []rulegroup.Option {
 							vector.New(
 								vector.WithMetricName("thanos_rule_loaded_rules"),
 								vector.WithLabelMatchers(
-									label.New("job").EqualRegexp("thanos-ruler.*"),
+									label.New("job").EqualRegexp(t.RulerServiceSelector),
 								),
 							),
 						).By("namespace", "job", "instance"),
