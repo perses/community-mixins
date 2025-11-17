@@ -6,8 +6,6 @@ groups:
       dashboard: https://demo.perses.dev/projects/perses/dashboards/thanoscompact
       description: ThanosCompact has disappeared from {{$labels.namespace}}. Prometheus
         target for the component cannot be discovered.
-      message: ThanosCompact has disappeared from {{$labels.namespace}}. Prometheus
-        target for the component cannot be discovered.
       runbook: https://github.com/thanos-io/thanos/blob/main/mixin/runbook.md#thanoscompactisdown
       summary: Thanos component has disappeared from {{$labels.namespace}}.
     expr: absent(up{job=~"thanos-compact.*"} == 1)
@@ -19,8 +17,6 @@ groups:
     annotations:
       dashboard: https://demo.perses.dev/projects/perses/dashboards/thanosquery
       description: ThanosQuery has disappeared from {{$labels.namespace}}. Prometheus
-        target for the component cannot be discovered.
-      message: ThanosQuery has disappeared from {{$labels.namespace}}. Prometheus
         target for the component cannot be discovered.
       runbook: https://github.com/thanos-io/thanos/blob/main/mixin/runbook.md#thanosqueryisdown
       summary: Thanos component has disappeared from {{$labels.namespace}}.
@@ -34,8 +30,6 @@ groups:
       dashboard: https://demo.perses.dev/projects/perses/dashboards/thanosreceive
       description: ThanosReceiveRouter has disappeared from {{$labels.namespace}}.
         Prometheus target for the component cannot be discovered.
-      message: ThanosReceiveRouter has disappeared from {{$labels.namespace}}. Prometheus
-        target for the component cannot be discovered.
       runbook: https://github.com/thanos-io/thanos/blob/main/mixin/runbook.md#thanosreceiveisdown
       summary: Thanos component has disappeared from {{$labels.namespace}}.
     expr: absent(up{job=~"thanos-receive-router.*"} == 1)
@@ -48,8 +42,6 @@ groups:
       dashboard: https://demo.perses.dev/projects/perses/dashboards/thanosreceive
       description: ThanosReceiveIngester has disappeared from {{$labels.namespace}}.
         Prometheus target for the component cannot be discovered.
-      message: ThanosReceiveIngester has disappeared from {{$labels.namespace}}. Prometheus
-        target for the component cannot be discovered.
       runbook: https://github.com/thanos-io/thanos/blob/main/mixin/runbook.md#thanosreceiveisdown
       summary: Thanos component has disappeared from {{$labels.namespace}}.
     expr: absent(up{job=~"thanos-receive-ingester.*"} == 1)
@@ -62,8 +54,6 @@ groups:
       dashboard: https://demo.perses.dev/projects/perses/dashboards/thanosrule
       description: ThanosRule has disappeared from {{$labels.namespace}}. Prometheus
         target for the component cannot be discovered.
-      message: ThanosRule has disappeared from {{$labels.namespace}}. Prometheus target
-        for the component cannot be discovered.
       runbook: https://github.com/thanos-io/thanos/blob/main/mixin/runbook.md#thanosruleisdown
       summary: Thanos component has disappeared from {{$labels.namespace}}.
     expr: absent(up{job=~"thanos-ruler.*"} == 1)
@@ -75,8 +65,6 @@ groups:
     annotations:
       dashboard: https://demo.perses.dev/projects/perses/dashboards/thanosstore
       description: ThanosStore has disappeared from {{$labels.namespace}}. Prometheus
-        target for the component cannot be discovered.
-      message: ThanosStore has disappeared from {{$labels.namespace}}. Prometheus
         target for the component cannot be discovered.
       runbook: https://github.com/thanos-io/thanos/blob/main/mixin/runbook.md#thanosstoreisdown
       summary: Thanos component has disappeared from {{$labels.namespace}}.
@@ -92,8 +80,6 @@ groups:
       dashboard: https://demo.perses.dev/projects/perses/dashboards/thanoscompact
       description: No more than one Thanos Compact instance should be running at once.
         There are {{$value}} in {{$labels.namespace}} instances running.
-      message: No more than one Thanos Compact instance should be running at once.
-        There are {{$value}} in {{$labels.namespace}} instances running.
       runbook: https://github.com/thanos-io/thanos/blob/main/mixin/runbook.md#thanoscompactmultiplerunning
       summary: Thanos Compact has multiple instances running.
     expr: sum by (namespace, job) (up{job=~"thanos-compact.*"} > 1)
@@ -106,8 +92,6 @@ groups:
       dashboard: https://demo.perses.dev/projects/perses/dashboards/thanoscompact
       description: Thanos Compact {{$labels.job}} in {{$labels.namespace}} has failed
         to run and now is halted.
-      message: Thanos Compact {{$labels.job}} in {{$labels.namespace}} has failed
-        to run and now is halted.
       runbook: https://github.com/thanos-io/thanos/blob/main/mixin/runbook.md#thanoscompacthalted
       summary: Thanos Compact has failed to run and is now halted.
     expr: thanos_compact_halted{job=~"thanos-compact.*"} == 1
@@ -119,8 +103,6 @@ groups:
     annotations:
       dashboard: https://demo.perses.dev/projects/perses/dashboards/thanoscompact
       description: Thanos Compact {{$labels.job}} in {{$labels.namespace}} is failing
-        to execute {{$value | humanize}}% of compactions.
-      message: Thanos Compact {{$labels.job}} in {{$labels.namespace}} is failing
         to execute {{$value | humanize}}% of compactions.
       runbook: https://github.com/thanos-io/thanos/blob/main/mixin/runbook.md#thanoscompacthighcompactionfailures
       summary: Thanos Compact is failing to execute compactions.
@@ -143,8 +125,6 @@ groups:
       dashboard: https://demo.perses.dev/projects/perses/dashboards/thanoscompact
       description: Thanos Compact {{$labels.job}} in {{$labels.namespace}} Bucket
         is failing to execute {{$value | humanize}}% of operations.
-      message: Thanos Compact {{$labels.job}} in {{$labels.namespace}} Bucket is failing
-        to execute {{$value | humanize}}% of operations.
       runbook: https://github.com/thanos-io/thanos/blob/main/mixin/runbook.md#thanoscompactbuckethighoperationfailures
       summary: Thanos Compact Bucket is having a high number of operation failures.
     expr: |2-
@@ -166,8 +146,6 @@ groups:
       dashboard: https://demo.perses.dev/projects/perses/dashboards/thanoscompact
       description: Thanos Compact {{$labels.job}} in {{$labels.namespace}} has not
         uploaded anything for 24 hours.
-      message: Thanos Compact {{$labels.job}} in {{$labels.namespace}} has not uploaded
-        anything for 24 hours.
       runbook: https://github.com/thanos-io/thanos/blob/main/mixin/runbook.md#thanoscompacthasnotrun
       summary: Thanos Compact has not uploaded anything for last 24 hours.
     expr: |2-
@@ -193,8 +171,6 @@ groups:
       dashboard: https://demo.perses.dev/projects/perses/dashboards/thanosquery
       description: Thanos Query {{$labels.job}} in {{$labels.namespace}} is failing
         to handle {{$value | humanize}}% of "query" requests.
-      message: Thanos Query {{$labels.job}} in {{$labels.namespace}} is failing to
-        handle {{$value | humanize}}% of "query" requests.
       runbook: https://github.com/thanos-io/thanos/blob/main/mixin/runbook.md#thanosqueryhttprequestqueryerrorratehigh
       summary: Thanos Query is failing to handle requests.
     expr: |2-
@@ -216,8 +192,6 @@ groups:
       dashboard: https://demo.perses.dev/projects/perses/dashboards/thanosquery
       description: Thanos Query {{$labels.job}} in {{$labels.namespace}} is failing
         to handle {{$value | humanize}}% of requests.
-      message: Thanos Query {{$labels.job}} in {{$labels.namespace}} is failing to
-        handle {{$value | humanize}}% of requests.
       runbook: https://github.com/thanos-io/thanos/blob/main/mixin/runbook.md#thanosquerygrpcservererrorrate
       summary: Thanos Query is failing to handle requests.
     expr: |2-
@@ -241,8 +215,6 @@ groups:
       dashboard: https://demo.perses.dev/projects/perses/dashboards/thanosquery
       description: Thanos Query {{$labels.job}} in {{$labels.namespace}} is failing
         to send {{$value | humanize}}% of requests.
-      message: Thanos Query {{$labels.job}} in {{$labels.namespace}} is failing to
-        send {{$value | humanize}}% of requests.
       runbook: https://github.com/thanos-io/thanos/blob/main/mixin/runbook.md#thanosquerygrpcclienterrorrate
       summary: Thanos Query is failing to send requests.
     expr: |2-
@@ -261,8 +233,6 @@ groups:
     annotations:
       dashboard: https://demo.perses.dev/projects/perses/dashboards/thanosquery
       description: Thanos Query {{$labels.job}} in {{$labels.namespace}} have {{$value
-        | humanize}}% of failing DNS queries for store endpoints.
-      message: Thanos Query {{$labels.job}} in {{$labels.namespace}} have {{$value
         | humanize}}% of failing DNS queries for store endpoints.
       runbook: https://github.com/thanos-io/thanos/blob/main/mixin/runbook.md#thanosqueryhighdnsfailures
       summary: Thanos Query is having high number of DNS failures.
@@ -285,8 +255,6 @@ groups:
       dashboard: https://demo.perses.dev/projects/perses/dashboards/thanosquery
       description: Thanos Query {{$labels.job}} in {{$labels.namespace}} has a 99th
         percentile latency of {{$value}} seconds for instant queries.
-      message: Thanos Query {{$labels.job}} in {{$labels.namespace}} has a 99th percentile
-        latency of {{$value}} seconds for instant queries.
       runbook: https://github.com/thanos-io/thanos/blob/main/mixin/runbook.md#thanosqueryinstantlatencyhigh
       summary: Thanos Query has high latency for queries.
     expr: |2-
@@ -315,8 +283,6 @@ groups:
       dashboard: https://demo.perses.dev/projects/perses/dashboards/thanosreceive
       description: Thanos Receive {{$labels.job}} in {{$labels.namespace}} is failing
         to handle {{$value | humanize}}% of requests.
-      message: Thanos Receive {{$labels.job}} in {{$labels.namespace}} is failing
-        to handle {{$value | humanize}}% of requests.
       runbook: https://github.com/thanos-io/thanos/blob/main/mixin/runbook.md#thanosreceivehttprequesterrorratehigh
       summary: Thanos Receive is failing to handle requests.
     expr: |2-
@@ -339,8 +305,6 @@ groups:
     annotations:
       dashboard: https://demo.perses.dev/projects/perses/dashboards/thanosreceive
       description: Thanos Receive {{$labels.job}} in {{$labels.namespace}} has a 99th
-        percentile latency of {{ $value }} seconds for requests.
-      message: Thanos Receive {{$labels.job}} in {{$labels.namespace}} has a 99th
         percentile latency of {{ $value }} seconds for requests.
       runbook: https://github.com/thanos-io/thanos/blob/main/mixin/runbook.md#thanosreceivehttprequestlatencyhigh
       summary: Thanos Receive has high HTTP requests latency.
@@ -367,8 +331,6 @@ groups:
     annotations:
       dashboard: https://demo.perses.dev/projects/perses/dashboards/thanosreceive
       description: Thanos Receive {{$labels.job}} in {{$labels.namespace}} is failing
-        to replicate {{$value | humanize}}% of requests.
-      message: Thanos Receive {{$labels.job}} in {{$labels.namespace}} is failing
         to replicate {{$value | humanize}}% of requests.
       runbook: https://github.com/thanos-io/thanos/blob/main/mixin/runbook.md#thanosreceivehighreplicationfailures
       summary: Thanos Receive is having high number of replication failures.
@@ -399,8 +361,6 @@ groups:
       dashboard: https://demo.perses.dev/projects/perses/dashboards/thanosreceive
       description: Thanos Receive {{$labels.job}} in {{$labels.namespace}} is failing
         to forward {{$value | humanize}}% of requests.
-      message: Thanos Receive {{$labels.job}} in {{$labels.namespace}} is failing
-        to forward {{$value | humanize}}% of requests.
       runbook: https://github.com/thanos-io/thanos/blob/main/mixin/runbook.md#thanosreceivehighforwardrequestfailures
       summary: Thanos Receive is failing to forward requests.
     expr: |2-
@@ -424,8 +384,6 @@ groups:
       dashboard: https://demo.perses.dev/projects/perses/dashboards/thanosreceive
       description: Thanos Receive {{$labels.job}} in {{$labels.namespace}} is failing
         to refresh hashring file, {{$value | humanize}} of attempts failed.
-      message: Thanos Receive {{$labels.job}} in {{$labels.namespace}} is failing
-        to refresh hashring file, {{$value | humanize}} of attempts failed.
       runbook: https://github.com/thanos-io/thanos/blob/main/mixin/runbook.md#thanosreceivehighhashringfilerefreshfailures
       summary: Thanos Receive is failing to refresh hasring file.
     expr: |2-
@@ -447,8 +405,6 @@ groups:
       dashboard: https://demo.perses.dev/projects/perses/dashboards/thanosreceive
       description: Thanos Receive {{$labels.job}} in {{$labels.namespace}} has not
         been able to reload hashring configurations.
-      message: Thanos Receive {{$labels.job}} in {{$labels.namespace}} has not been
-        able to reload hashring configurations.
       runbook: https://github.com/thanos-io/thanos/blob/main/mixin/runbook.md#thanosreceiveconfigreloadfailure
       summary: Thanos Receive is failing to reload hashring configurations.
     expr: |2-
@@ -466,8 +422,6 @@ groups:
       dashboard: https://demo.perses.dev/projects/perses/dashboards/thanosreceive
       description: Thanos Receive {{$labels.instance}} in {{$labels.namespace}} has
         not uploaded latest data to object storage.
-      message: Thanos Receive {{$labels.instance}} in {{$labels.namespace}} has not
-        uploaded latest data to object storage.
       runbook: https://github.com/thanos-io/thanos/blob/main/mixin/runbook.md#thanosreceivenoupload
       summary: Thanos Receive has not uploaded latest data to object storage.
     expr: |2-
@@ -487,8 +441,6 @@ groups:
       dashboard: https://demo.perses.dev/projects/perses/dashboards/thanosreceive
       description: Thanos Receive {{$labels.job}} in {{$labels.namespace}} has not
         been able to reload the limits configuration.
-      message: Thanos Receive {{$labels.job}} in {{$labels.namespace}} has not been
-        able to reload the limits configuration.
       runbook: https://github.com/thanos-io/thanos/blob/main/mixin/runbook.md#thanosreceivelimitsconfigreloadfailure
       summary: Thanos Receive has not been able to reload the limits configuration.
     expr: |2-
@@ -505,8 +457,6 @@ groups:
     annotations:
       dashboard: https://demo.perses.dev/projects/perses/dashboards/thanosreceive
       description: Thanos Receive {{$labels.job}} in {{$labels.namespace}} is failing
-        for {{$value | humanize}}% of meta monitoring queries.
-      message: Thanos Receive {{$labels.job}} in {{$labels.namespace}} is failing
         for {{$value | humanize}}% of meta monitoring queries.
       runbook: https://github.com/thanos-io/thanos/blob/main/mixin/runbook.md#thanosreceivelimitshighmetamonitoringqueriesfailurerate
       summary: Thanos Receive has not been able to update the number of head series.
@@ -529,8 +479,6 @@ groups:
       dashboard: https://demo.perses.dev/projects/perses/dashboards/thanosreceive
       description: Thanos Receive tenant {{$labels.tenant}} in {{$labels.namespace}}
         is limited by head series.
-      message: Thanos Receive tenant {{$labels.tenant}} in {{$labels.namespace}} is
-        limited by head series.
       runbook: https://github.com/thanos-io/thanos/blob/main/mixin/runbook.md#thanosreceivetenantlimitedbyheadseries
       summary: Thanos Receive tenant is limited by head series.
     expr: |2-
@@ -550,8 +498,6 @@ groups:
       dashboard: https://demo.perses.dev/projects/perses/dashboards/thanosstore
       description: Thanos Store {{$labels.job}} in {{$labels.namespace}} is failing
         to handle {{$value | humanize}}% of requests.
-      message: Thanos Store {{$labels.job}} in {{$labels.namespace}} is failing to
-        handle {{$value | humanize}}% of requests.
       runbook: https://github.com/thanos-io/thanos/blob/main/mixin/runbook.md#thanosstoregrpcerrorrate
       summary: Thanos Store is failing to handle gRPC requests.
     expr: |2-
@@ -575,8 +521,6 @@ groups:
       dashboard: https://demo.perses.dev/projects/perses/dashboards/thanosstore
       description: Thanos Store {{$labels.job}} in {{$labels.namespace}} Bucket is
         failing to execute {{$value | humanize}}% of operations.
-      message: Thanos Store {{$labels.job}} in {{$labels.namespace}} Bucket is failing
-        to execute {{$value | humanize}}% of operations.
       runbook: https://github.com/thanos-io/thanos/blob/main/mixin/runbook.md#thanosstorebuckethighoperationfailures
       summary: Thanos Store Bucket is failing to execute operations.
     expr: |2-
@@ -598,8 +542,6 @@ groups:
       dashboard: https://demo.perses.dev/projects/perses/dashboards/thanosstore
       description: Thanos Store {{$labels.job}} in {{$labels.namespace}} Bucket has
         a 99th percentile latency of {{$value}} seconds for the bucket operations.
-      message: Thanos Store {{$labels.job}} in {{$labels.namespace}} Bucket has a
-        99th percentile latency of {{$value}} seconds for the bucket operations.
       runbook: https://github.com/thanos-io/thanos/blob/main/mixin/runbook.md#thanosstoreobjstoreoperationlatencyhigh
       summary: Thanos Store is having high latency for bucket operations.
     expr: |2-
@@ -628,8 +570,6 @@ groups:
       dashboard: https://demo.perses.dev/projects/perses/dashboards/thanosrule
       description: Thanos Rule {{$labels.instance}} in {{$labels.namespace}} is failing
         to queue rulehelpers.
-      message: Thanos Rule {{$labels.instance}} in {{$labels.namespace}} is failing
-        to queue rulehelpers.
       runbook: https://github.com/thanos-io/thanos/blob/main/mixin/runbook.md#thanosrulequeueisdroppingalerts
       summary: Thanos Rule is failing to queue rulehelpers.
     expr: |2-
@@ -647,8 +587,6 @@ groups:
       dashboard: https://demo.perses.dev/projects/perses/dashboards/thanosrule
       description: Thanos Rule {{$labels.instance}} in {{$labels.namespace}} is failing
         to send alerts to alertmanager.
-      message: Thanos Rule {{$labels.instance}} in {{$labels.namespace}} is failing
-        to send alerts to alertmanager.
       runbook: https://github.com/thanos-io/thanos/blob/main/mixin/runbook.md#thanosrulesenderisfailingalerts
       summary: Thanos Rule is failing to send alerts to alertmanager.
     expr: |2-
@@ -665,8 +603,6 @@ groups:
     annotations:
       dashboard: https://demo.perses.dev/projects/perses/dashboards/thanosrule
       description: Thanos Rule {{$labels.instance}} in {{$labels.namespace}} is failing
-        to evaluate rules.
-      message: Thanos Rule {{$labels.instance}} in {{$labels.namespace}} is failing
         to evaluate rules.
       runbook: https://github.com/thanos-io/thanos/blob/main/mixin/runbook.md#thanosrulehighruleevaluationfailures
       summary: Thanos Rule is failing to evaluate rules.
@@ -691,8 +627,6 @@ groups:
       dashboard: https://demo.perses.dev/projects/perses/dashboards/thanosrule
       description: Thanos Rule {{$labels.instance}} in {{$labels.namespace}} has high
         number of evaluation warnings.
-      message: Thanos Rule {{$labels.instance}} in {{$labels.namespace}} has high
-        number of evaluation warnings.
       runbook: https://github.com/thanos-io/thanos/blob/main/mixin/runbook.md#thanosrulehighruleevaluationwarnings
       summary: Thanos Rule has high number of evaluation warnings.
     expr: |2-
@@ -709,8 +643,6 @@ groups:
     annotations:
       dashboard: https://demo.perses.dev/projects/perses/dashboards/thanosrule
       description: Thanos Rule {{$labels.instance}} in {{$labels.namespace}} has higher
-        evaluation latency than interval for {{$labels.rule_group}}.
-      message: Thanos Rule {{$labels.instance}} in {{$labels.namespace}} has higher
         evaluation latency than interval for {{$labels.rule_group}}.
       runbook: https://github.com/thanos-io/thanos/blob/main/mixin/runbook.md#thanosruleruleevaluationlatencyhigh
       summary: Thanos Rule has high rule evaluation latency.
@@ -731,8 +663,6 @@ groups:
       dashboard: https://demo.perses.dev/projects/perses/dashboards/thanosrule
       description: Thanos Rule {{$labels.job}} in {{$labels.namespace}} is failing
         to handle {{$value | humanize}}% of requests.
-      message: Thanos Rule {{$labels.job}} in {{$labels.namespace}} is failing to
-        handle {{$value | humanize}}% of requests.
       runbook: https://github.com/thanos-io/thanos/blob/main/mixin/runbook.md#thanosrulegrpcerrorrate
       summary: Thanos Rule is failing to handle grpc requests.
     expr: |2-
@@ -756,8 +686,6 @@ groups:
       dashboard: https://demo.perses.dev/projects/perses/dashboards/thanosrule
       description: Thanos Rule {{$labels.job}} in {{$labels.namespace}} has not been
         able to reload its configuration.
-      message: Thanos Rule {{$labels.job}} in {{$labels.namespace}} has not been able
-        to reload its configuration.
       runbook: https://github.com/thanos-io/thanos/blob/main/mixin/runbook.md#thanosruleconfigreloadfailure
       summary: Thanos Rule has not been able to reload configuration.
     expr: |2-
@@ -773,8 +701,6 @@ groups:
       dashboard: https://demo.perses.dev/projects/perses/dashboards/thanosrule
       description: Thanos Rule {{$labels.job}} in {{$labels.namespace}} has {{$value
         | humanize}}% of failing DNS queries for query endpoints.
-      message: Thanos Rule {{$labels.job}} in {{$labels.namespace}} has {{$value |
-        humanize}}% of failing DNS queries for query endpoints.
       runbook: https://github.com/thanos-io/thanos/blob/main/mixin/runbook.md#thanosrulequeryhighdnsfailures
       summary: Thanos Rule is having high number of DNS failures.
     expr: |2-
@@ -797,8 +723,6 @@ groups:
     annotations:
       dashboard: https://demo.perses.dev/projects/perses/dashboards/thanosrule
       description: Thanos Rule {{$labels.instance}} in {{$labels.namespace}} has {{$value
-        | humanize}}% of failing DNS queries for Alertmanager endpoints.
-      message: Thanos Rule {{$labels.instance}} in {{$labels.namespace}} has {{$value
         | humanize}}% of failing DNS queries for Alertmanager endpoints.
       runbook: https://github.com/thanos-io/thanos/blob/main/mixin/runbook.md#thanosrulealertmanagerhighdnsfailures
       summary: Thanos Rule is having high number of DNS failures.
@@ -823,8 +747,6 @@ groups:
       dashboard: https://demo.perses.dev/projects/perses/dashboards/thanosrule
       description: Thanos Rule {{$labels.job}} in {{$labels.namespace}} has rule groups
         that did not evaluate for at least 10x of their expected interval.
-      message: Thanos Rule {{$labels.job}} in {{$labels.namespace}} has rule groups
-        that did not evaluate for at least 10x of their expected interval.
       runbook: https://github.com/thanos-io/thanos/blob/main/mixin/runbook.md#thanosrulenoevaluationfor10intervals
       summary: Thanos Rule has rule groups that did not evaluate for 10 intervals.
     expr: |2-
@@ -848,8 +770,6 @@ groups:
       dashboard: https://demo.perses.dev/projects/perses/dashboards/thanosrule
       description: Thanos Rule {{$labels.instance}} in {{$labels.namespace}} did not
         perform any rule evaluations in the past 10 minutes.
-      message: Thanos Rule {{$labels.instance}} in {{$labels.namespace}} did not perform
-        any rule evaluations in the past 10 minutes.
       runbook: https://github.com/thanos-io/thanos/blob/main/mixin/runbook.md#thanosnoruleevaluations
       summary: Thanos Rule did not perform any rule evaluations.
     expr: |2-
