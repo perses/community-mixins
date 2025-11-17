@@ -16,7 +16,6 @@ spec:
       annotations:
         dashboard: https://demo.perses.dev/projects/perses/dashboards/alertmanager
         description: Configuration has failed to load for {{$labels.instance}}.
-        message: Configuration has failed to load for {{$labels.instance}}.
         runbook: https://github.com/prometheus/alertmanager/blob/main/doc/alertmanager-mixin/README.md#alertmanagerfailedreload
         summary: Reloading an Alertmanager configuration has failed.
       expr: max_over_time(alertmanager_config_last_reload_successful{job="alertmanager"}[5m])
@@ -30,8 +29,6 @@ spec:
         dashboard: https://demo.perses.dev/projects/perses/dashboards/alertmanager
         description: Alertmanager {{$labels.instance}} has only found {{ $value }}
           members of the {{$labels.job}} cluster.
-        message: Alertmanager {{$labels.instance}} has only found {{ $value }} members
-          of the {{$labels.job}} cluster.
         runbook: https://github.com/prometheus/alertmanager/blob/main/doc/alertmanager-mixin/README.md#alertmanagermembersinconsistent
         summary: A member of an Alertmanager cluster has not found all other cluster
           members.
@@ -48,8 +45,6 @@ spec:
         dashboard: https://demo.perses.dev/projects/perses/dashboards/alertmanager
         description: Alertmanager {{$labels.instance}} failed to send {{ $value |
           humanizePercentage }} of notifications to {{ $labels.integration }}.
-        message: Alertmanager {{$labels.instance}} failed to send {{ $value | humanizePercentage
-          }} of notifications to {{ $labels.integration }}.
         runbook: https://github.com/prometheus/alertmanager/blob/main/doc/alertmanager-mixin/README.md#alertmanagerfailedtosendalerts
         summary: An Alertmanager instance failed to send notifications.
       expr: |2-
@@ -68,9 +63,6 @@ spec:
         description: The minimum notification failure rate to {{ $labels.integration
           }} sent from any instance in the {{$labels.job}} cluster is {{ $value |
           humanizePercentage }}.
-        message: The minimum notification failure rate to {{ $labels.integration }}
-          sent from any instance in the {{$labels.job}} cluster is {{ $value | humanizePercentage
-          }}.
         runbook: https://github.com/prometheus/alertmanager/blob/main/doc/alertmanager-mixin/README.md#alertmanagerclusterfailedtosendalerts
         summary: All Alertmanager instances in a cluster failed to send notifications
           to a critical integration.
@@ -92,9 +84,6 @@ spec:
         description: The minimum notification failure rate to {{ $labels.integration
           }} sent from any instance in the {{$labels.job}} cluster is {{ $value |
           humanizePercentage }}.
-        message: The minimum notification failure rate to {{ $labels.integration }}
-          sent from any instance in the {{$labels.job}} cluster is {{ $value | humanizePercentage
-          }}.
         runbook: https://github.com/prometheus/alertmanager/blob/main/doc/alertmanager-mixin/README.md#alertmanagerclusterfailedtosendalertsnonCrit
         summary: All Alertmanager instances in a cluster failed to send notifications
           to a non-critical integration.
@@ -115,8 +104,6 @@ spec:
         dashboard: https://demo.perses.dev/projects/perses/dashboards/alertmanager
         description: Alertmanager instances within the {{$labels.job}} cluster have
           different configurations.
-        message: Alertmanager instances within the {{$labels.job}} cluster have different
-          configurations.
         runbook: https://github.com/prometheus/alertmanager/blob/main/doc/alertmanager-mixin/README.md#alertmanagerconfiginconsistent
         summary: Alertmanager instances within the same cluster have different configurations.
       expr: |2-
@@ -133,9 +120,6 @@ spec:
         description: '{{ $value | humanizePercentage }} of Alertmanager instances
           within the {{$labels.job}} cluster have been up for less than half of the
           last 5m.'
-        message: '{{ $value | humanizePercentage }} of Alertmanager instances within
-          the {{$labels.job}} cluster have been up for less than half of the last
-          5m.'
         runbook: https://github.com/prometheus/alertmanager/blob/main/doc/alertmanager-mixin/README.md#alertmanagerclusterdown
         summary: Half or more of the Alertmanager instances within the same cluster
           are down.
@@ -155,9 +139,6 @@ spec:
         description: '{{ $value | humanizePercentage }} of Alertmanager instances
           within the {{$labels.job}} cluster have restarted at least 5 times in the
           last 10m.'
-        message: '{{ $value | humanizePercentage }} of Alertmanager instances within
-          the {{$labels.job}} cluster have restarted at least 5 times in the last
-          10m.'
         runbook: https://github.com/prometheus/alertmanager/blob/main/doc/alertmanager-mixin/README.md#alertmanagerclustercrashlooping
         summary: Half or more of the Alertmanager instances within the same cluster
           are crashlooping.

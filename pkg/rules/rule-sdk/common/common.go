@@ -3,10 +3,9 @@ package common
 import "maps"
 
 // BuildAnnotations creates annotations map with conditional dashboard and runbook labels
-func BuildAnnotations(dashboardURL, runbookURL, runbookFragment, description, message, summary string) map[string]string {
+func BuildAnnotations(dashboardURL, runbookURL, runbookFragment, description, summary string) map[string]string {
 	annotations := map[string]string{
 		"description": description,
-		"message":     message,
 		"summary":     summary,
 	}
 

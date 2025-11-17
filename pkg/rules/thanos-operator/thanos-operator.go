@@ -23,25 +23,20 @@ const (
 	runbookThanosOperatorWorkQueueGrowth            = "#thanosoperatorworkqueuegrowth"
 	runbookThanosOperatorSlowReconciliation         = "#thanosoperatorslowreconciliation"
 	runbookThanosQueryNoEndpointsConfigured         = "#thanosquerynoendpointsconfigured"
-	runbookThanosQueryReconcileErrors               = "#thanosqueryreconcileerrors"
 	runbookThanosQueryServiceWatchReconcileStorm    = "#thanosqueryservicewatchreconcilestorm"
 	runbookThanosReceiveNoHashringsConfigured       = "#thanosreceivenohashringsconfigured"
 	runbookThanosReceiveHashringNoEndpoints         = "#thanosreceivehashringnoendpoints"
 	runbookThanosReceiveHashringConfigurationChange = "#thanosreceivehashringconfigurationchange"
-	runbookThanosReceiveReconcileErrors             = "#thanosreceivereconcileerrors"
 	runbookThanosReceiveEndpointReconcileStorm      = "#thanosreceiveendpointreconcilestorm"
 	runbookThanosRulerNoQueryEndpointsConfigured    = "#thanosrulernoqueryendpointsconfigured"
 	runbookThanosRulerNoRulesConfigured             = "#thanosrulernorulesconfigured"
 	runbookThanosRulerConfigMapCreationFailures     = "#thanosrulerconfigmapcreationfailures"
 	runbookThanosRulerHighConfigMapCreationRate     = "#thanosrulerhighconfigmapcreationrate"
-	runbookThanosRulerReconcileErrors               = "#thanosrulerreconcileerrors"
 	runbookThanosRulerWatchReconcileStorm           = "#thanosrulerwatchreconcilestorm"
 	runbookThanosStoreNoShardsConfigured            = "#thanosstenoreshardsconfigured"
 	runbookThanosStoreShardCreationFailures         = "#thanosstoreshardcreationfailures"
-	runbookThanosStoreReconcileErrors               = "#thanosstorereconcileerrors"
 	runbookThanosCompactNoShardsConfigured          = "#thanoscompactnoshardsconfigured"
 	runbookThanosCompactShardCreationFailures       = "#thanoscompactshardcreationfailures"
-	runbookThanosCompactReconcileErrors             = "#thanoscompactreconcileerrors"
 	runbookThanosResourcePausedForLong              = "#thanosresourcepausedforlong"
 	runbookThanosOperatorHighWorkqueueRetries       = "#thanosoperatorhighworkqueueretries"
 	runbookThanosOperatorLongWorkqueueLatency       = "#thanosoperatorlongworkqueuelatency"
@@ -209,7 +204,6 @@ func (t ThanosOperatorRulesConfig) ThanosOperatorGeneralGroup() []rulegroup.Opti
 						runbookThanosOperatorDown,
 						"The Thanos Operator has been down for more than 5 minutes. No reconciliation is happening.",
 						"Thanos resources are not being reconciled. Configuration changes will not be applied.",
-						"Thanos Operator is down",
 					),
 					t.AdditionalAlertAnnotations,
 				),
@@ -268,9 +262,8 @@ func (t ThanosOperatorRulesConfig) ThanosOperatorGeneralGroup() []rulegroup.Opti
 						t.DashboardURL,
 						t.RunbookURL,
 						runbookThanosOperatorHighReconcileErrorRate,
-						"Controller {{ $labels.controller }} has an error rate of {{ $value | humanizePercentage }} over the last 10 minutes.",
+						"Controller {{ $labels.controller }} for resource {{ $labels.namespace }}/{{ $labels.resource }} has a high reconciliation error rate of {{ $value | humanizePercentage }} over the last 10 minutes.",
 						"Resources managed by this controller may not be correctly configured or updated.",
-						"High reconciliation error rate for {{ $labels.controller }}",
 					),
 					t.AdditionalAlertAnnotations,
 				),
@@ -323,9 +316,8 @@ func (t ThanosOperatorRulesConfig) ThanosOperatorGeneralGroup() []rulegroup.Opti
 						t.DashboardURL,
 						t.RunbookURL,
 						runbookThanosOperatorReconcileStuck,
-						"Workqueue for {{ $labels.name }} has items but no reconciliations are happening.",
+						"Workqueue for {{ $labels.name }} has items but no reconciliations are happening. Controller appears stuck.",
 						"Changes to Thanos resources are not being processed.",
-						"Controller {{ $labels.name }} appears stuck",
 					),
 					t.AdditionalAlertAnnotations,
 				),
@@ -335,10 +327,15 @@ func (t ThanosOperatorRulesConfig) ThanosOperatorGeneralGroup() []rulegroup.Opti
 			"ThanosOperatorWorkQueueGrowth",
 			alerting.Expr(
 				promqlbuilder.Gtr(
-					vector.New(
-						vector.WithMetricName("workqueue_depth"),
-						vector.WithLabelMatchers(
-							label.New("job").Equal(t.MetricsServiceSelector),
+					promqlbuilder.LastOverTime(
+						matrix.New(
+							vector.New(
+								vector.WithMetricName("workqueue_depth"),
+								vector.WithLabelMatchers(
+									label.New("job").Equal(t.MetricsServiceSelector),
+								),
+							),
+							matrix.WithRange(5*time.Minute),
 						),
 					),
 					promqlbuilder.NewNumber(100),
@@ -364,7 +361,6 @@ func (t ThanosOperatorRulesConfig) ThanosOperatorGeneralGroup() []rulegroup.Opti
 						runbookThanosOperatorWorkQueueGrowth,
 						"Workqueue depth for {{ $labels.name }} is {{ $value }}, indicating the controller cannot keep up with events.",
 						"Reconciliation is falling behind. Configuration updates may be delayed.",
-						"Controller workqueue {{ $labels.name }} is growing",
 					),
 					t.AdditionalAlertAnnotations,
 				),
@@ -409,9 +405,8 @@ func (t ThanosOperatorRulesConfig) ThanosOperatorGeneralGroup() []rulegroup.Opti
 						t.DashboardURL,
 						t.RunbookURL,
 						runbookThanosOperatorSlowReconciliation,
-						"P99 reconciliation time for {{ $labels.controller }} is {{ $value | humanizeDuration }}",
+						"P99 reconciliation time for {{ $labels.controller }} is {{ $value | humanizeDuration }}, which is slow",
 						"Configuration changes are taking longer than expected to apply.",
-						"Slow reconciliation for {{ $labels.controller }}",
 					),
 					t.AdditionalAlertAnnotations,
 				),
@@ -455,56 +450,12 @@ func (t ThanosOperatorRulesConfig) ThanosOperatorQueryGroup() []rulegroup.Option
 						runbookThanosQueryNoEndpointsConfigured,
 						"ThanosQuery resource {{ $labels.namespace }}/{{ $labels.resource }} has no store endpoints configured.",
 						"Query component cannot retrieve data from any stores. Queries will return no results.",
-						"ThanosQuery {{ $labels.namespace }}/{{ $labels.resource }} has no endpoints configured",
 					),
 					t.AdditionalAlertAnnotations,
 				),
 			),
 		),
-		rulegroup.AddRule(
-			"ThanosQueryReconcileErrors",
-			alerting.Expr(
-				promqlbuilder.Gtr(
-					promqlbuilder.Rate(
-						matrix.New(
-							vector.New(
-								vector.WithMetricName("controller_runtime_reconcile_errors_total"),
-								vector.WithLabelMatchers(
-									label.New("controller").Equal("thanosquery"),
-									label.New("job").Equal(t.MetricsServiceSelector),
-								),
-							),
-							matrix.WithRange(10*time.Minute),
-						),
-					),
-					promqlbuilder.NewNumber(0),
-				),
-			),
-			alerting.For("15m"),
-			alerting.Labels(
-				common.MergeMaps(
-					map[string]string{
-						"service":   t.ServiceLabelValue,
-						"severity":  "warning",
-						"component": "thanos-query",
-					},
-					t.AdditionalAlertLabels,
-				),
-			),
-			alerting.Annotations(
-				common.MergeMaps(
-					common.BuildAnnotations(
-						t.DashboardURL,
-						t.RunbookURL,
-						runbookThanosQueryReconcileErrors,
-						"ThanosQuery controller has {{ $value | humanize }} errors/sec",
-						"ThanosQuery resources may not be properly configured or updated.",
-						"ThanosQuery controller experiencing reconciliation errors",
-					),
-					t.AdditionalAlertAnnotations,
-				),
-			),
-		),
+
 		rulegroup.AddRule(
 			"ThanosQueryServiceWatchReconcileStorm",
 			alerting.Expr(
@@ -542,7 +493,6 @@ func (t ThanosOperatorRulesConfig) ThanosOperatorQueryGroup() []rulegroup.Option
 						runbookThanosQueryServiceWatchReconcileStorm,
 						"ThanosQuery {{ $labels.namespace }}/{{ $labels.resource }} is reconciling {{ $value | humanize }} times/sec due to service events.",
 						"Excessive reconciliations may indicate service churn or configuration issues.",
-						"High service watch reconciliation rate for ThanosQuery {{ $labels.namespace }}/{{ $labels.resource }}",
 					),
 					t.AdditionalAlertAnnotations,
 				),
@@ -586,7 +536,6 @@ func (t ThanosOperatorRulesConfig) ThanosOperatorReceiveGroup() []rulegroup.Opti
 						runbookThanosReceiveNoHashringsConfigured,
 						"ThanosReceive resource {{ $labels.namespace }}/{{ $labels.resource }} has no hashrings configured.",
 						"Receive component cannot accept remote write data without hashring configuration.",
-						"ThanosReceive {{ $labels.namespace }}/{{ $labels.resource }} has no hashrings configured",
 					),
 					t.AdditionalAlertAnnotations,
 				),
@@ -624,7 +573,6 @@ func (t ThanosOperatorRulesConfig) ThanosOperatorReceiveGroup() []rulegroup.Opti
 						runbookThanosReceiveHashringNoEndpoints,
 						"Hashring {{ $labels.hashring }} for ThanosReceive {{ $labels.namespace }}/{{ $labels.resource }} has no endpoints configured.",
 						"Data cannot be distributed to this hashring. Remote write data may be lost or rejected.",
-						"ThanosReceive hashring {{ $labels.hashring }} has no endpoints",
 					),
 					t.AdditionalAlertAnnotations,
 				),
@@ -669,51 +617,6 @@ func (t ThanosOperatorRulesConfig) ThanosOperatorReceiveGroup() []rulegroup.Opti
 						runbookThanosReceiveHashringConfigurationChange,
 						"The hashring configuration for ThanosReceive {{ $labels.namespace }}/{{ $labels.resource }} has changed.",
 						"Data distribution pattern has changed. This may cause temporary inconsistencies.",
-						"ThanosReceive {{ $labels.namespace }}/{{ $labels.resource }} hashring configuration changed",
-					),
-					t.AdditionalAlertAnnotations,
-				),
-			),
-		),
-		rulegroup.AddRule(
-			"ThanosReceiveReconcileErrors",
-			alerting.Expr(
-				promqlbuilder.Gtr(
-					promqlbuilder.Rate(
-						matrix.New(
-							vector.New(
-								vector.WithMetricName("controller_runtime_reconcile_errors_total"),
-								vector.WithLabelMatchers(
-									label.New("job").Equal(t.MetricsServiceSelector),
-									label.New("controller").Equal("thanosreceive"),
-								),
-							),
-							matrix.WithRange(10*time.Minute),
-						),
-					),
-					promqlbuilder.NewNumber(0),
-				),
-			),
-			alerting.For("15m"),
-			alerting.Labels(
-				common.MergeMaps(
-					map[string]string{
-						"service":   t.ServiceLabelValue,
-						"severity":  "warning",
-						"component": "thanos-receive",
-					},
-					t.AdditionalAlertLabels,
-				),
-			),
-			alerting.Annotations(
-				common.MergeMaps(
-					common.BuildAnnotations(
-						t.DashboardURL,
-						t.RunbookURL,
-						runbookThanosReceiveReconcileErrors,
-						"ThanosReceive controller has {{ $value | humanize }} errors/sec",
-						"ThanosReceive resources may not be properly configured or updated.",
-						"ThanosReceive controller experiencing reconciliation errors",
 					),
 					t.AdditionalAlertAnnotations,
 				),
@@ -756,7 +659,6 @@ func (t ThanosOperatorRulesConfig) ThanosOperatorReceiveGroup() []rulegroup.Opti
 						runbookThanosReceiveEndpointReconcileStorm,
 						"ThanosReceive {{ $labels.namespace }}/{{ $labels.resource }} is reconciling {{ $value | humanize }} times/sec due to endpoint events.",
 						"Excessive reconciliations may indicate endpoint churn or configuration issues.",
-						"High endpoint watch reconciliation rate for ThanosReceive {{ $labels.namespace }}/{{ $labels.resource }}",
 					),
 					t.AdditionalAlertAnnotations,
 				),
@@ -800,7 +702,6 @@ func (t ThanosOperatorRulesConfig) ThanosOperatorRulerGroup() []rulegroup.Option
 						runbookThanosRulerNoQueryEndpointsConfigured,
 						"ThanosRuler resource {{ $labels.namespace }}/{{ $labels.resource }} has no query endpoints configured.",
 						"Ruler cannot query data for rule evaluation. Recording and alerting rules will not work.",
-						"ThanosRuler {{ $labels.namespace }}/{{ $labels.resource }} has no query endpoints configured",
 					),
 					t.AdditionalAlertAnnotations,
 				),
@@ -838,7 +739,6 @@ func (t ThanosOperatorRulesConfig) ThanosOperatorRulerGroup() []rulegroup.Option
 						runbookThanosRulerNoRulesConfigured,
 						"No PrometheusRules found for ThanosRuler {{ $labels.namespace }}/{{ $labels.resource }}.",
 						"No rules are being evaluated. This may be expected if no rules have been defined yet.",
-						"ThanosRuler {{ $labels.namespace }}/{{ $labels.resource }} has no PrometheusRules",
 					),
 					t.AdditionalAlertAnnotations,
 				),
@@ -881,7 +781,6 @@ func (t ThanosOperatorRulesConfig) ThanosOperatorRulerGroup() []rulegroup.Option
 						runbookThanosRulerConfigMapCreationFailures,
 						"ThanosRuler controller is failing to create ConfigMaps for {{ $labels.namespace }}/{{ $labels.resource }}.",
 						"PrometheusRules cannot be loaded into the Ruler. Rules will not be evaluated.",
-						"ThanosRuler {{ $labels.namespace }}/{{ $labels.resource }} failing to create ConfigMaps",
 					),
 					t.AdditionalAlertAnnotations,
 				),
@@ -924,51 +823,6 @@ func (t ThanosOperatorRulesConfig) ThanosOperatorRulerGroup() []rulegroup.Option
 						runbookThanosRulerHighConfigMapCreationRate,
 						"ThanosRuler {{ $labels.namespace }}/{{ $labels.resource }} is creating ConfigMaps at {{ $value | humanize }}/sec.",
 						"Excessive ConfigMap updates may indicate rule churn and cause unnecessary Ruler reloads.",
-						"High ConfigMap creation rate for ThanosRuler {{ $labels.namespace }}/{{ $labels.resource }}",
-					),
-					t.AdditionalAlertAnnotations,
-				),
-			),
-		),
-		rulegroup.AddRule(
-			"ThanosRulerReconcileErrors",
-			alerting.Expr(
-				promqlbuilder.Gtr(
-					promqlbuilder.Rate(
-						matrix.New(
-							vector.New(
-								vector.WithMetricName("controller_runtime_reconcile_errors_total"),
-								vector.WithLabelMatchers(
-									label.New("controller").Equal("thanosruler"),
-									label.New("job").Equal(t.MetricsServiceSelector),
-								),
-							),
-							matrix.WithRange(10*time.Minute),
-						),
-					),
-					promqlbuilder.NewNumber(0),
-				),
-			),
-			alerting.For("15m"),
-			alerting.Labels(
-				common.MergeMaps(
-					map[string]string{
-						"service":   t.ServiceLabelValue,
-						"severity":  "warning",
-						"component": "thanos-ruler",
-					},
-					t.AdditionalAlertLabels,
-				),
-			),
-			alerting.Annotations(
-				common.MergeMaps(
-					common.BuildAnnotations(
-						t.DashboardURL,
-						t.RunbookURL,
-						runbookThanosRulerReconcileErrors,
-						"ThanosRuler controller has {{ $value | humanize }} errors/sec",
-						"ThanosRuler resources may not be properly configured or updated.",
-						"ThanosRuler controller experiencing reconciliation errors",
 					),
 					t.AdditionalAlertAnnotations,
 				),
@@ -1043,7 +897,6 @@ func (t ThanosOperatorRulesConfig) ThanosOperatorRulerGroup() []rulegroup.Option
 						runbookThanosRulerWatchReconcileStorm,
 						"ThanosRuler {{ $labels.namespace }}/{{ $labels.resource }} is experiencing high reconciliation rate.",
 						"Excessive reconciliations may indicate resource churn or configuration issues.",
-						"High watch reconciliation rate for ThanosRuler {{ $labels.namespace }}/{{ $labels.resource }}",
 					),
 					t.AdditionalAlertAnnotations,
 				),
@@ -1087,7 +940,6 @@ func (t ThanosOperatorRulesConfig) ThanosOperatorStoreGroup() []rulegroup.Option
 						runbookThanosStoreNoShardsConfigured,
 						"ThanosStore resource {{ $labels.namespace }}/{{ $labels.resource }} has 0 shards configured.",
 						"This may be expected for single-instance stores. For sharded deployments, data queries may fail.",
-						"ThanosStore {{ $labels.namespace }}/{{ $labels.resource }} has no shards configured",
 					),
 					t.AdditionalAlertAnnotations,
 				),
@@ -1130,51 +982,6 @@ func (t ThanosOperatorRulesConfig) ThanosOperatorStoreGroup() []rulegroup.Option
 						runbookThanosStoreShardCreationFailures,
 						"ThanosStore controller is failing to create/update shards for {{ $labels.namespace }}/{{ $labels.resource }}.",
 						"Store shards cannot be created. Historical data queries may be incomplete or fail.",
-						"ThanosStore {{ $labels.namespace }}/{{ $labels.resource }} shard creation/update failures",
-					),
-					t.AdditionalAlertAnnotations,
-				),
-			),
-		),
-		rulegroup.AddRule(
-			"ThanosStoreReconcileErrors",
-			alerting.Expr(
-				promqlbuilder.Gtr(
-					promqlbuilder.Rate(
-						matrix.New(
-							vector.New(
-								vector.WithMetricName("controller_runtime_reconcile_errors_total"),
-								vector.WithLabelMatchers(
-									label.New("controller").Equal("thanosstore"),
-									label.New("job").Equal(t.MetricsServiceSelector),
-								),
-							),
-							matrix.WithRange(10*time.Minute),
-						),
-					),
-					promqlbuilder.NewNumber(0),
-				),
-			),
-			alerting.For("15m"),
-			alerting.Labels(
-				common.MergeMaps(
-					map[string]string{
-						"service":   t.ServiceLabelValue,
-						"severity":  "warning",
-						"component": "thanos-store",
-					},
-					t.AdditionalAlertLabels,
-				),
-			),
-			alerting.Annotations(
-				common.MergeMaps(
-					common.BuildAnnotations(
-						t.DashboardURL,
-						t.RunbookURL,
-						runbookThanosStoreReconcileErrors,
-						"ThanosStore controller has {{ $value | humanize }} errors/sec",
-						"ThanosStore resources may not be properly configured or updated.",
-						"ThanosStore controller experiencing reconciliation errors",
 					),
 					t.AdditionalAlertAnnotations,
 				),
@@ -1218,7 +1025,6 @@ func (t ThanosOperatorRulesConfig) ThanosOperatorCompactGroup() []rulegroup.Opti
 						runbookThanosCompactNoShardsConfigured,
 						"ThanosCompact resource {{ $labels.namespace }}/{{ $labels.resource }} has 0 shards configured.",
 						"This may be expected for single-instance compactors. For sharded deployments, compaction may not work.",
-						"ThanosCompact {{ $labels.namespace }}/{{ $labels.resource }} has no shards configured",
 					),
 					t.AdditionalAlertAnnotations,
 				),
@@ -1261,51 +1067,6 @@ func (t ThanosOperatorRulesConfig) ThanosOperatorCompactGroup() []rulegroup.Opti
 						runbookThanosCompactShardCreationFailures,
 						"ThanosCompact controller is failing to create/update shards for {{ $labels.namespace }}/{{ $labels.resource }}.",
 						"Compactor shards cannot be created. Data compaction will not occur, leading to increased storage costs and slower queries.",
-						"ThanosCompact {{ $labels.namespace }}/{{ $labels.resource }} shard creation/update failures",
-					),
-					t.AdditionalAlertAnnotations,
-				),
-			),
-		),
-		rulegroup.AddRule(
-			"ThanosCompactReconcileErrors",
-			alerting.Expr(
-				promqlbuilder.Gtr(
-					promqlbuilder.Rate(
-						matrix.New(
-							vector.New(
-								vector.WithMetricName("controller_runtime_reconcile_errors_total"),
-								vector.WithLabelMatchers(
-									label.New("controller").Equal("thanoscompact"),
-									label.New("job").Equal(t.MetricsServiceSelector),
-								),
-							),
-							matrix.WithRange(10*time.Minute),
-						),
-					),
-					promqlbuilder.NewNumber(0),
-				),
-			),
-			alerting.For("15m"),
-			alerting.Labels(
-				common.MergeMaps(
-					map[string]string{
-						"service":   t.ServiceLabelValue,
-						"severity":  "warning",
-						"component": "thanos-compact",
-					},
-					t.AdditionalAlertLabels,
-				),
-			),
-			alerting.Annotations(
-				common.MergeMaps(
-					common.BuildAnnotations(
-						t.DashboardURL,
-						t.RunbookURL,
-						runbookThanosCompactReconcileErrors,
-						"ThanosCompact controller has {{ $value | humanize }} errors/sec",
-						"ThanosCompact resources may not be properly configured or updated.",
-						"ThanosCompact controller experiencing reconciliation errors",
 					),
 					t.AdditionalAlertAnnotations,
 				),
@@ -1350,7 +1111,6 @@ func (t ThanosOperatorRulesConfig) ThanosOperatorPausedGroup() []rulegroup.Optio
 						runbookThanosResourcePausedForLong,
 						"{{ $labels.component }} resource {{ $labels.namespace }}/{{ $labels.resource }} has been in paused state for over 24 hours.",
 						"No reconciliation is happening for this resource. Configuration changes are not being applied.",
-						"Thanos resource {{ $labels.namespace }}/{{ $labels.resource }} has been paused for 24+ hours",
 					),
 					t.AdditionalAlertAnnotations,
 				),
@@ -1400,7 +1160,6 @@ func (t ThanosOperatorRulesConfig) ThanosOperatorWorkqueueGroup() []rulegroup.Op
 						runbookThanosOperatorHighWorkqueueRetries,
 						"Workqueue {{ $labels.name }} has {{ $value | humanize }} retries/sec.",
 						"Items are being retried frequently, indicating persistent errors or resource issues.",
-						"High retry rate for workqueue {{ $labels.name }}",
 					),
 					t.AdditionalAlertAnnotations,
 				),
@@ -1447,7 +1206,6 @@ func (t ThanosOperatorRulesConfig) ThanosOperatorWorkqueueGroup() []rulegroup.Op
 						runbookThanosOperatorLongWorkqueueLatency,
 						"P99 queue wait time for {{ $labels.name }} is {{ $value | humanizeDuration }}.",
 						"Items are waiting too long in queue before processing. Reconciliation is delayed.",
-						"High queue latency for workqueue {{ $labels.name }}",
 					),
 					t.AdditionalAlertAnnotations,
 				),
