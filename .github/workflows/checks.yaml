@@ -9,7 +9,7 @@ jobs:
     runs-on: ubuntu-latest
     name: Golang Linting
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
       - name: Import environment variables from file
         run: cat ".github/env" >> $GITHUB_ENV
 
@@ -32,7 +32,7 @@ jobs:
     runs-on: ubuntu-latest
     name: Dashboards Linting
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
 
       - name: Import environment variables from file
         run: cat ".github/env" >> $GITHUB_ENV
@@ -54,7 +54,7 @@ jobs:
     runs-on: ubuntu-latest
     name: Documentation Formatting Check
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
 
       - name: Import environment variables from file
         run: cat ".github/env" >> $GITHUB_ENV
