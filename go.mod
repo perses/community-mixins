@@ -3,7 +3,7 @@ module github.com/perses/community-mixins
 go 1.25.1
 
 require (
-	github.com/perses/perses v0.53.0-beta.2
+	github.com/perses/perses v0.53.0-beta.3
 	github.com/perses/perses-operator v0.2.0
 	github.com/perses/plugins/gaugechart v0.11.0
 	github.com/perses/plugins/markdown v0.10.0
@@ -67,9 +67,9 @@ require (
 	github.com/zitadel/schema v1.3.1 // indirect
 	go.uber.org/atomic v1.11.0 // indirect
 	golang.org/x/crypto v0.43.0 // indirect
-	golang.org/x/exp v0.0.0-20251009144603-d2f985daa21b
+	golang.org/x/exp v0.0.0-20251023183803-a4bb9ffd2546
 	golang.org/x/net v0.46.0 // indirect
-	golang.org/x/oauth2 v0.32.0 // indirect
+	golang.org/x/oauth2 v0.33.0 // indirect
 	golang.org/x/sys v0.37.0 // indirect
 	golang.org/x/text v0.30.0 // indirect
 	google.golang.org/genproto/googleapis/api v0.0.0-20250929231259-57b25ae835d4 // indirect
