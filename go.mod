@@ -3,7 +3,7 @@ module github.com/perses/community-mixins
 go 1.25.1
 
 require (
-	github.com/perses/perses v0.53.0-beta.2
+	github.com/perses/perses v0.53.0-beta.3
 	github.com/perses/perses-operator v0.2.0
 	github.com/perses/plugins/gaugechart v0.11.0
 	github.com/perses/plugins/markdown v0.10.0
@@ -12,7 +12,7 @@ require (
 	github.com/perses/plugins/table v0.7.1
 	github.com/perses/plugins/timeserieschart v0.11.1
 	github.com/perses/promql-builder v0.2.1-0.20251110140620-19229f7152d4
-	github.com/prometheus-operator/prometheus-operator/pkg/apis/monitoring v0.86.2
+	github.com/prometheus-operator/prometheus-operator/pkg/apis/monitoring v0.87.0
 	github.com/prometheus/prometheus v0.307.3
 	gopkg.in/yaml.v3 v3.0.1
 	k8s.io/apimachinery v0.34.2
@@ -67,19 +67,19 @@ require (
 	github.com/zitadel/schema v1.3.1 // indirect
 	go.uber.org/atomic v1.11.0 // indirect
 	golang.org/x/crypto v0.43.0 // indirect
-	golang.org/x/exp v0.0.0-20251009144603-d2f985daa21b
+	golang.org/x/exp v0.0.0-20251023183803-a4bb9ffd2546
 	golang.org/x/net v0.46.0 // indirect
-	golang.org/x/oauth2 v0.32.0 // indirect
+	golang.org/x/oauth2 v0.33.0 // indirect
 	golang.org/x/sys v0.37.0 // indirect
 	golang.org/x/text v0.30.0 // indirect
 	google.golang.org/genproto/googleapis/api v0.0.0-20250929231259-57b25ae835d4 // indirect
 	google.golang.org/genproto/googleapis/rpc v0.0.0-20250922171735-9219d122eba9 // indirect
 	google.golang.org/protobuf v1.36.10 // indirect
 	gopkg.in/inf.v0 v0.9.1 // indirect
-	k8s.io/api v0.34.1 // indirect
+	k8s.io/api v0.34.2 // indirect
 	k8s.io/klog/v2 v2.130.1 // indirect
 	k8s.io/utils v0.0.0-20251002143259-bc988d571ff4 // indirect
-	sigs.k8s.io/controller-runtime v0.22.2 // indirect
+	sigs.k8s.io/controller-runtime v0.22.3 // indirect
 	sigs.k8s.io/json v0.0.0-20250730193827-2d320260d730 // indirect
 	sigs.k8s.io/randfill v1.0.0 // indirect
 )
