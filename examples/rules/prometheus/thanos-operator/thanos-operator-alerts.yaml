@@ -238,6 +238,25 @@ groups:
       component: thanos-ruler
       service: thanos-operator
       severity: warning
+  - alert: ThanosRulerNoPrometheusRulesConfigured
+    annotations:
+      dashboard: https://demo.perses.dev/projects/perses/dashboards/thanosoperator
+      description: No PrometheusRules found for ThanosRuler {{ $labels.namespace }}/{{
+        $labels.resource }}.
+      runbook: https://github.com/thanos-community/thanos-operator/blob/main/mixin/runbook.md#thanosrulernorulesconfigured
+      summary: No rules are being evaluated. This may be expected if no rules have
+        been defined yet.
+    expr: |2-
+        thanos_operator_ruler_promrules_found{job="thanos-operator-controller-manager-metrics-service"} == 0
+      or
+        absent(
+          thanos_operator_ruler_promrules_found{job="thanos-operator-controller-manager-metrics-service"}
+        )
+    for: 10m
+    labels:
+      component: thanos-ruler
+      service: thanos-operator
+      severity: warning
   - alert: ThanosRulerNoRulesConfigured
     annotations:
       dashboard: https://demo.perses.dev/projects/perses/dashboards/thanosoperator
@@ -246,13 +265,19 @@ groups:
       runbook: https://github.com/thanos-community/thanos-operator/blob/main/mixin/runbook.md#thanosrulernorulesconfigured
       summary: No rules are being evaluated. This may be expected if no rules have
         been defined yet.
-    expr: thanos_operator_ruler_promrules_found{job="thanos-operator-controller-manager-metrics-service"}
-      == 0
+    expr: |2-
+          thanos_operator_ruler_rulefiles_configured{job="thanos-operator-controller-manager-metrics-service"}
+        ==
+          0
+      or
+        absent(
+          thanos_operator_ruler_rulefiles_configured{job="thanos-operator-controller-manager-metrics-service"}
+        )
     for: 10m
     labels:
       component: thanos-ruler
       service: thanos-operator
-      severity: info
+      severity: warning
   - alert: ThanosRulerConfigMapCreationFailures
     annotations:
       dashboard: https://demo.perses.dev/projects/perses/dashboards/thanosoperator
