@@ -255,8 +255,8 @@ spec:
         description: No PrometheusRules found for ThanosRuler {{ $labels.namespace
           }}/{{ $labels.resource }}.
         runbook: https://github.com/thanos-community/thanos-operator/blob/main/mixin/runbook.md#thanosrulernorulesconfigured
-        summary: No rules are being evaluated. This may be expected if no rules have
-          been defined yet.
+        summary: No rules from PrometheusRules are being evaluated. This may be expected
+          if no rules have been defined yet.
       expr: |2-
           thanos_operator_ruler_promrules_found{job="thanos-operator-controller-manager-metrics-service"} == 0
         or
@@ -271,11 +271,11 @@ spec:
     - alert: ThanosRulerNoRulesConfigured
       annotations:
         dashboard: https://demo.perses.dev/projects/perses/dashboards/thanosoperator
-        description: No PrometheusRules found for ThanosRuler {{ $labels.namespace
+        description: No rule configmaps found for ThanosRuler {{ $labels.namespace
           }}/{{ $labels.resource }}.
         runbook: https://github.com/thanos-community/thanos-operator/blob/main/mixin/runbook.md#thanosrulernorulesconfigured
-        summary: No rules are being evaluated. This may be expected if no rules have
-          been defined yet.
+        summary: No rules are being evaluated as no rule configmaps were found. This
+          may be expected if no rules have been defined yet.
       expr: |2-
             thanos_operator_ruler_rulefiles_configured{job="thanos-operator-controller-manager-metrics-service"}
           ==
