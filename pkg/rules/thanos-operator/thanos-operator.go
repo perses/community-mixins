@@ -708,16 +708,26 @@ func (t ThanosOperatorRulesConfig) ThanosOperatorRulerGroup() []rulegroup.Option
 			),
 		),
 		rulegroup.AddRule(
-			"ThanosRulerNoRulesConfigured",
+			"ThanosRulerNoPrometheusRulesConfigured",
 			alerting.Expr(
-				promqlbuilder.Eqlc(
-					vector.New(
-						vector.WithMetricName("thanos_operator_ruler_promrules_found"),
-						vector.WithLabelMatchers(
-							label.New("job").Equal(t.MetricsServiceSelector),
+				promqlbuilder.Or(
+					promqlbuilder.Eqlc(
+						vector.New(
+							vector.WithMetricName("thanos_operator_ruler_promrules_found"),
+							vector.WithLabelMatchers(
+								label.New("job").Equal(t.MetricsServiceSelector),
+							),
+						),
+						promqlbuilder.NewNumber(0),
+					),
+					promqlbuilder.Absent(
+						vector.New(
+							vector.WithMetricName("thanos_operator_ruler_promrules_found"),
+							vector.WithLabelMatchers(
+								label.New("job").Equal(t.MetricsServiceSelector),
+							),
 						),
 					),
-					promqlbuilder.NewNumber(0),
 				),
 			),
 			alerting.For("10m"),
@@ -725,7 +735,54 @@ func (t ThanosOperatorRulesConfig) ThanosOperatorRulerGroup() []rulegroup.Option
 				common.MergeMaps(
 					map[string]string{
 						"service":   t.ServiceLabelValue,
-						"severity":  "info",
+						"severity":  "warning",
+						"component": "thanos-ruler",
+					},
+					t.AdditionalAlertLabels,
+				),
+			),
+			alerting.Annotations(
+				common.MergeMaps(
+					common.BuildAnnotations(
+						t.DashboardURL,
+						t.RunbookURL,
+						runbookThanosRulerNoRulesConfigured,
+						"No PrometheusRules found for ThanosRuler {{ $labels.namespace }}/{{ $labels.resource }}.",
+						"No rules are being evaluated. This may be expected if no rules have been defined yet.",
+					),
+					t.AdditionalAlertAnnotations,
+				),
+			),
+		),
+		rulegroup.AddRule(
+			"ThanosRulerNoRulesConfigured",
+			alerting.Expr(
+				promqlbuilder.Or(
+					promqlbuilder.Eqlc(
+						vector.New(
+							vector.WithMetricName("thanos_operator_ruler_rulefiles_configured"),
+							vector.WithLabelMatchers(
+								label.New("job").Equal(t.MetricsServiceSelector),
+							),
+						),
+						promqlbuilder.NewNumber(0),
+					),
+					promqlbuilder.Absent(
+						vector.New(
+							vector.WithMetricName("thanos_operator_ruler_rulefiles_configured"),
+							vector.WithLabelMatchers(
+								label.New("job").Equal(t.MetricsServiceSelector),
+							),
+						),
+					),
+				),
+			),
+			alerting.For("10m"),
+			alerting.Labels(
+				common.MergeMaps(
+					map[string]string{
+						"service":   t.ServiceLabelValue,
+						"severity":  "warning",
 						"component": "thanos-ruler",
 					},
 					t.AdditionalAlertLabels,
