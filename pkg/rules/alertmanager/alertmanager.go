@@ -247,30 +247,32 @@ func (a AlertmanagerRulesConfig) AlertmanagerRulesGroup() []rulegroup.Option {
 			"AlertmanagerFailedToSendAlerts",
 			alerting.Expr(
 				promqlbuilder.Gtr(
-					promqlbuilder.Div(
-						promqlbuilder.Rate(
-							matrix.New(
-								vector.New(
-									vector.WithMetricName("alertmanager_notifications_failed_total"),
-									vector.WithLabelMatchers(
-										label.New("job").Equal(a.AlertmanagerServiceSelector),
+					promqlbuilder.Parenthesis(
+						promqlbuilder.Div(
+							promqlbuilder.Rate(
+								matrix.New(
+									vector.New(
+										vector.WithMetricName("alertmanager_notifications_failed_total"),
+										vector.WithLabelMatchers(
+											label.New("job").Equal(a.AlertmanagerServiceSelector),
+										),
 									),
+									matrix.WithRange(15*time.Minute),
 								),
-								matrix.WithRange(15*time.Minute),
 							),
-						),
-						promqlbuilder.Rate(
-							matrix.New(
-								vector.New(
-									vector.WithMetricName("alertmanager_notifications_total"),
-									vector.WithLabelMatchers(
-										label.New("job").Equal(a.AlertmanagerServiceSelector),
+							promqlbuilder.Rate(
+								matrix.New(
+									vector.New(
+										vector.WithMetricName("alertmanager_notifications_total"),
+										vector.WithLabelMatchers(
+											label.New("job").Equal(a.AlertmanagerServiceSelector),
+										),
 									),
+									matrix.WithRange(15*time.Minute),
 								),
-								matrix.WithRange(15*time.Minute),
 							),
-						),
-					).Ignoring("reason").GroupLeft(),
+						).Ignoring("reason").GroupLeft(),
+					),
 					promqlbuilder.NewNumber(0.01),
 				),
 			),
@@ -458,31 +460,33 @@ func (a AlertmanagerRulesConfig) AlertmanagerRulesGroup() []rulegroup.Option {
 			"AlertmanagerClusterDown",
 			alerting.Expr(
 				promqlbuilder.Gte(
-					promqlbuilder.Div(
-						promqlbuilder.Count(
-							promqlbuilder.Lss(
-								promqlbuilder.AvgOverTime(
-									matrix.New(
-										vector.New(
-											vector.WithMetricName("up"),
-											vector.WithLabelMatchers(
-												label.New("job").Equal(a.AlertmanagerServiceSelector),
+					promqlbuilder.Parenthesis(
+						promqlbuilder.Div(
+							promqlbuilder.Count(
+								promqlbuilder.Lss(
+									promqlbuilder.AvgOverTime(
+										matrix.New(
+											vector.New(
+												vector.WithMetricName("up"),
+												vector.WithLabelMatchers(
+													label.New("job").Equal(a.AlertmanagerServiceSelector),
+												),
 											),
+											matrix.WithRange(5*time.Minute),
 										),
-										matrix.WithRange(5*time.Minute),
+									),
+									promqlbuilder.NewNumber(0.5),
+								),
+							).By("job"),
+							promqlbuilder.Count(
+								vector.New(
+									vector.WithMetricName("up"),
+									vector.WithLabelMatchers(
+										label.New("job").Equal(a.AlertmanagerServiceSelector),
 									),
 								),
-								promqlbuilder.NewNumber(0.5),
-							),
-						).By("job"),
-						promqlbuilder.Count(
-							vector.New(
-								vector.WithMetricName("up"),
-								vector.WithLabelMatchers(
-									label.New("job").Equal(a.AlertmanagerServiceSelector),
-								),
-							),
-						).By("job"),
+							).By("job"),
+						),
 					),
 					promqlbuilder.NewNumber(0.5),
 				),
@@ -514,31 +518,33 @@ func (a AlertmanagerRulesConfig) AlertmanagerRulesGroup() []rulegroup.Option {
 			"AlertmanagerClusterCrashlooping",
 			alerting.Expr(
 				promqlbuilder.Gte(
-					promqlbuilder.Div(
-						promqlbuilder.Count(
-							promqlbuilder.Gtr(
-								promqlbuilder.Changes(
-									matrix.New(
-										vector.New(
-											vector.WithMetricName("process_start_time_seconds"),
-											vector.WithLabelMatchers(
-												label.New("job").Equal(a.AlertmanagerServiceSelector),
+					promqlbuilder.Parenthesis(
+						promqlbuilder.Div(
+							promqlbuilder.Count(
+								promqlbuilder.Gtr(
+									promqlbuilder.Changes(
+										matrix.New(
+											vector.New(
+												vector.WithMetricName("process_start_time_seconds"),
+												vector.WithLabelMatchers(
+													label.New("job").Equal(a.AlertmanagerServiceSelector),
+												),
 											),
+											matrix.WithRange(10*time.Minute),
 										),
-										matrix.WithRange(10*time.Minute),
+									),
+									promqlbuilder.NewNumber(4),
+								),
+							).By("job"),
+							promqlbuilder.Count(
+								vector.New(
+									vector.WithMetricName("up"),
+									vector.WithLabelMatchers(
+										label.New("job").Equal(a.AlertmanagerServiceSelector),
 									),
 								),
-								promqlbuilder.NewNumber(4),
-							),
-						).By("job"),
-						promqlbuilder.Count(
-							vector.New(
-								vector.WithMetricName("up"),
-								vector.WithLabelMatchers(
-									label.New("job").Equal(a.AlertmanagerServiceSelector),
-								),
-							),
-						).By("job"),
+							).By("job"),
+						),
 					),
 					promqlbuilder.NewNumber(0.5),
 				),
