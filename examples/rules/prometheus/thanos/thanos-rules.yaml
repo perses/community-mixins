@@ -107,11 +107,13 @@ groups:
       runbook: https://github.com/thanos-io/thanos/blob/main/mixin/runbook.md#thanoscompacthighcompactionfailures
       summary: Thanos Compact is failing to execute compactions.
     expr: |2-
-            sum by (namespace, job) (
-              rate(thanos_compact_group_compactions_failures_total{job=~"thanos-compact.*"}[5m])
-            )
-          /
-            sum by (namespace, job) (rate(thanos_compact_group_compactions_total{job=~"thanos-compact.*"}[5m]))
+          (
+              sum by (namespace, job) (
+                rate(thanos_compact_group_compactions_failures_total{job=~"thanos-compact.*"}[5m])
+              )
+            /
+              sum by (namespace, job) (rate(thanos_compact_group_compactions_total{job=~"thanos-compact.*"}[5m]))
+          )
         *
           100
       >
@@ -128,11 +130,13 @@ groups:
       runbook: https://github.com/thanos-io/thanos/blob/main/mixin/runbook.md#thanoscompactbuckethighoperationfailures
       summary: Thanos Compact Bucket is having a high number of operation failures.
     expr: |2-
-            sum by (namespace, job) (
-              rate(thanos_objstore_bucket_operation_failures_total{job=~"thanos-compact.*"}[5m])
-            )
-          /
-            sum by (namespace, job) (rate(thanos_objstore_bucket_operations_total{job=~"thanos-compact.*"}[5m]))
+          (
+              sum by (namespace, job) (
+                rate(thanos_objstore_bucket_operation_failures_total{job=~"thanos-compact.*"}[5m])
+              )
+            /
+              sum by (namespace, job) (rate(thanos_objstore_bucket_operations_total{job=~"thanos-compact.*"}[5m]))
+          )
         *
           100
       >
@@ -149,11 +153,13 @@ groups:
       runbook: https://github.com/thanos-io/thanos/blob/main/mixin/runbook.md#thanoscompacthasnotrun
       summary: Thanos Compact has not uploaded anything for last 24 hours.
     expr: |2-
-              time()
-            -
-              max by (namespace, job) (
-                max_over_time(thanos_objstore_bucket_last_successful_upload_time{job=~"thanos-compact.*"}[1d])
-              )
+            (
+                time()
+              -
+                max by (namespace, job) (
+                  max_over_time(thanos_objstore_bucket_last_successful_upload_time{job=~"thanos-compact.*"}[1d])
+                )
+            )
           /
             60
         /
@@ -174,11 +180,13 @@ groups:
       runbook: https://github.com/thanos-io/thanos/blob/main/mixin/runbook.md#thanosqueryhttprequestqueryerrorratehigh
       summary: Thanos Query is failing to handle requests.
     expr: |2-
-            sum by (namespace, job) (
-              rate(http_requests_total{code=~"5..",handler="query",job=~"thanos-query.*"}[5m])
-            )
-          /
-            sum by (namespace, job) (rate(http_requests_total{handler="query",job=~"thanos-query.*"}[5m]))
+          (
+              sum by (namespace, job) (
+                rate(http_requests_total{code=~"5..",handler="query",job=~"thanos-query.*"}[5m])
+              )
+            /
+              sum by (namespace, job) (rate(http_requests_total{handler="query",job=~"thanos-query.*"}[5m]))
+          )
         *
           100
       >
@@ -195,13 +203,15 @@ groups:
       runbook: https://github.com/thanos-io/thanos/blob/main/mixin/runbook.md#thanosquerygrpcservererrorrate
       summary: Thanos Query is failing to handle requests.
     expr: |2-
-            sum by (namespace, job) (
-              rate(
-                grpc_server_handled_total{grpc_code=~"Unknown|ResourceExhausted|Internal|Unavailable|DataLoss|DeadlineExceeded",job=~"thanos-query.*"}[5m]
+          (
+              sum by (namespace, job) (
+                rate(
+                  grpc_server_handled_total{grpc_code=~"Unknown|ResourceExhausted|Internal|Unavailable|DataLoss|DeadlineExceeded",job=~"thanos-query.*"}[5m]
+                )
               )
-            )
-          /
-            sum by (namespace, job) (rate(grpc_server_started_total{job=~"thanos-query.*"}[5m]))
+            /
+              sum by (namespace, job) (rate(grpc_server_started_total{job=~"thanos-query.*"}[5m]))
+          )
         *
           100
       >
@@ -218,9 +228,11 @@ groups:
       runbook: https://github.com/thanos-io/thanos/blob/main/mixin/runbook.md#thanosquerygrpcclienterrorrate
       summary: Thanos Query is failing to send requests.
     expr: |2-
-            sum by (namespace, job) (rate(grpc_client_handled_total{grpc_code!="OK",job=~"thanos-query.*"}[5m]))
-          /
-            sum by (namespace, job) (rate(grpc_client_started_total{job=~"thanos-query.*"}[5m]))
+          (
+              sum by (namespace, job) (rate(grpc_client_handled_total{grpc_code!="OK",job=~"thanos-query.*"}[5m]))
+            /
+              sum by (namespace, job) (rate(grpc_client_started_total{job=~"thanos-query.*"}[5m]))
+          )
         *
           100
       >
@@ -237,11 +249,13 @@ groups:
       runbook: https://github.com/thanos-io/thanos/blob/main/mixin/runbook.md#thanosqueryhighdnsfailures
       summary: Thanos Query is having high number of DNS failures.
     expr: |2-
-            sum by (namespace, job) (
-              rate(thanos_query_store_apis_dns_failures_total{job=~"thanos-query.*"}[5m])
-            )
-          /
-            sum by (namespace, job) (rate(thanos_query_store_apis_dns_lookups_total{job=~"thanos-query.*"}[5m]))
+          (
+              sum by (namespace, job) (
+                rate(thanos_query_store_apis_dns_failures_total{job=~"thanos-query.*"}[5m])
+              )
+            /
+              sum by (namespace, job) (rate(thanos_query_store_apis_dns_lookups_total{job=~"thanos-query.*"}[5m]))
+          )
         *
           100
       >
@@ -286,13 +300,15 @@ groups:
       runbook: https://github.com/thanos-io/thanos/blob/main/mixin/runbook.md#thanosreceivehttprequesterrorratehigh
       summary: Thanos Receive is failing to handle requests.
     expr: |2-
-            sum by (namespace, job) (
-              rate(http_requests_total{code=~"5..",handler="receive",job=~"thanos-receive-router.*"}[5m])
-            )
-          /
-            sum by (namespace, job) (
-              rate(http_requests_total{handler="receive",job=~"thanos-receive-router.*"}[5m])
-            )
+          (
+              sum by (namespace, job) (
+                rate(http_requests_total{code=~"5..",handler="receive",job=~"thanos-receive-router.*"}[5m])
+              )
+            /
+              sum by (namespace, job) (
+                rate(http_requests_total{handler="receive",job=~"thanos-receive-router.*"}[5m])
+              )
+          )
         *
           100
       >
@@ -337,21 +353,27 @@ groups:
     expr: |2-
         thanos_receive_replication_factor > 1
       and
-              sum by (namespace, job) (
-                rate(thanos_receive_replications_total{job=~"thanos-receive-router.*",result="error"}[5m])
+        (
+              (
+                  sum by (namespace, job) (
+                    rate(thanos_receive_replications_total{job=~"thanos-receive-router.*",result="error"}[5m])
+                  )
+                /
+                  sum by (namespace, job) (
+                    rate(thanos_receive_replications_total{job=~"thanos-receive-router.*"}[5m])
+                  )
               )
-            /
-              sum by (namespace, job) (
-                rate(thanos_receive_replications_total{job=~"thanos-receive-router.*"}[5m])
+            >
+              (
+                  max by (namespace, job) (
+                    floor(thanos_receive_replication_factor{job=~"thanos-receive-router.*"} + 1 / 2)
+                  )
+                /
+                  max by (namespace, job) (thanos_receive_hashring_nodes{job=~"thanos-receive-router.*"})
               )
-          >
-              max by (namespace, job) (
-                floor(thanos_receive_replication_factor{job=~"thanos-receive-router.*"} + 1 / 2)
-              )
-            /
-              max by (namespace, job) (thanos_receive_hashring_nodes{job=~"thanos-receive-router.*"})
-        *
-          100
+          *
+            100
+        )
     for: 5m
     labels:
       service: thanos
@@ -364,13 +386,15 @@ groups:
       runbook: https://github.com/thanos-io/thanos/blob/main/mixin/runbook.md#thanosreceivehighforwardrequestfailures
       summary: Thanos Receive is failing to forward requests.
     expr: |2-
-            sum by (namespace, job) (
-              rate(thanos_receive_forward_requests_total{job=~"thanos-receive-router.*",result="error"}[5m])
-            )
-          /
-            sum by (namespace, job) (
-              rate(thanos_receive_forward_requests_total{job=~"thanos-receive-router.*"}[5m])
-            )
+          (
+              sum by (namespace, job) (
+                rate(thanos_receive_forward_requests_total{job=~"thanos-receive-router.*",result="error"}[5m])
+              )
+            /
+              sum by (namespace, job) (
+                rate(thanos_receive_forward_requests_total{job=~"thanos-receive-router.*"}[5m])
+              )
+          )
         *
           100
       >
@@ -387,13 +411,15 @@ groups:
       runbook: https://github.com/thanos-io/thanos/blob/main/mixin/runbook.md#thanosreceivehighhashringfilerefreshfailures
       summary: Thanos Receive is failing to refresh hasring file.
     expr: |2-
-          sum by (namespace, job) (
-            rate(thanos_receive_hashrings_file_errors_total{job=~"thanos-receive-router.*"}[5m])
-          )
-        /
-          sum by (namespace, job) (
-            rate(thanos_receive_hashrings_file_refreshes_total{job=~"thanos-receive-router.*"}[5m])
-          )
+        (
+            sum by (namespace, job) (
+              rate(thanos_receive_hashrings_file_errors_total{job=~"thanos-receive-router.*"}[5m])
+            )
+          /
+            sum by (namespace, job) (
+              rate(thanos_receive_hashrings_file_refreshes_total{job=~"thanos-receive-router.*"}[5m])
+            )
+        )
       >
         0
     for: 15m
@@ -425,13 +451,15 @@ groups:
       runbook: https://github.com/thanos-io/thanos/blob/main/mixin/runbook.md#thanosreceivenoupload
       summary: Thanos Receive has not uploaded latest data to object storage.
     expr: |2-
-        up{job=~"thanos-receive-ingester.*"} - 1
+        (up{job=~"thanos-receive-ingester.*"} - 1)
       + on (namespace, job, instance)
-          sum by (namespace, job, instance) (
-            increase(thanos_shipper_uploads_total{job=~"thanos-receive-ingester.*"}[3h])
-          )
-        ==
-          0
+        (
+            sum by (namespace, job, instance) (
+              increase(thanos_shipper_uploads_total{job=~"thanos-receive-ingester.*"}[3h])
+            )
+          ==
+            0
+        )
     for: 3h
     labels:
       service: thanos
@@ -501,13 +529,15 @@ groups:
       runbook: https://github.com/thanos-io/thanos/blob/main/mixin/runbook.md#thanosstoregrpcerrorrate
       summary: Thanos Store is failing to handle gRPC requests.
     expr: |2-
-            sum by (namespace, job) (
-              rate(
-                grpc_server_handled_total{grpc_code=~"Unknown|ResourceExhausted|Internal|Unavailable|DataLoss|DeadlineExceeded",job=~"thanos-store.*"}[5m]
+          (
+              sum by (namespace, job) (
+                rate(
+                  grpc_server_handled_total{grpc_code=~"Unknown|ResourceExhausted|Internal|Unavailable|DataLoss|DeadlineExceeded",job=~"thanos-store.*"}[5m]
+                )
               )
-            )
-          /
-            sum by (namespace, job) (rate(grpc_server_started_total{job=~"thanos-store.*"}[5m]))
+            /
+              sum by (namespace, job) (rate(grpc_server_started_total{job=~"thanos-store.*"}[5m]))
+          )
         *
           100
       >
@@ -524,11 +554,13 @@ groups:
       runbook: https://github.com/thanos-io/thanos/blob/main/mixin/runbook.md#thanosstorebuckethighoperationfailures
       summary: Thanos Store Bucket is failing to execute operations.
     expr: |2-
-            sum by (namespace, job) (
-              rate(thanos_objstore_bucket_operation_failures_total{job=~"thanos-store.*"}[5m])
-            )
-          /
-            sum by (namespace, job) (rate(thanos_objstore_bucket_operations_total{job=~"thanos-store.*"}[5m]))
+          (
+              sum by (namespace, job) (
+                rate(thanos_objstore_bucket_operation_failures_total{job=~"thanos-store.*"}[5m])
+              )
+            /
+              sum by (namespace, job) (rate(thanos_objstore_bucket_operations_total{job=~"thanos-store.*"}[5m]))
+          )
         *
           100
       >
@@ -607,13 +639,15 @@ groups:
       runbook: https://github.com/thanos-io/thanos/blob/main/mixin/runbook.md#thanosrulehighruleevaluationfailures
       summary: Thanos Rule is failing to evaluate rules.
     expr: |2-
-            sum by (namespace, job, instance) (
-              rate(prometheus_rule_evaluation_failures_total{job=~"thanos-ruler.*"}[5m])
-            )
-          /
-            sum by (namespace, job, instance) (
-              rate(prometheus_rule_evaluations_total{job=~"thanos-ruler.*"}[5m])
-            )
+          (
+              sum by (namespace, job, instance) (
+                rate(prometheus_rule_evaluation_failures_total{job=~"thanos-ruler.*"}[5m])
+              )
+            /
+              sum by (namespace, job, instance) (
+                rate(prometheus_rule_evaluations_total{job=~"thanos-ruler.*"}[5m])
+              )
+          )
         *
           100
       >
@@ -666,13 +700,15 @@ groups:
       runbook: https://github.com/thanos-io/thanos/blob/main/mixin/runbook.md#thanosrulegrpcerrorrate
       summary: Thanos Rule is failing to handle grpc requests.
     expr: |2-
-            sum by (namespace, job, instance) (
-              rate(
-                grpc_server_handled_total{grpc_code=~"Unknown|ResourceExhausted|Internal|Unavailable|DataLoss|DeadlineExceeded",job=~"thanos-ruler.*"}[5m]
+          (
+              sum by (namespace, job, instance) (
+                rate(
+                  grpc_server_handled_total{grpc_code=~"Unknown|ResourceExhausted|Internal|Unavailable|DataLoss|DeadlineExceeded",job=~"thanos-ruler.*"}[5m]
+                )
               )
-            )
-          /
-            sum by (namespace, job, instance) (rate(grpc_server_started_total{job=~"thanos-ruler.*"}[5m]))
+            /
+              sum by (namespace, job, instance) (rate(grpc_server_started_total{job=~"thanos-ruler.*"}[5m]))
+          )
         *
           100
       >
@@ -704,13 +740,15 @@ groups:
       runbook: https://github.com/thanos-io/thanos/blob/main/mixin/runbook.md#thanosrulequeryhighdnsfailures
       summary: Thanos Rule is having high number of DNS failures.
     expr: |2-
-            sum by (namespace, job, instance) (
-              rate(thanos_rule_query_apis_dns_failures_total{job=~"thanos-ruler.*"}[5m])
-            )
-          /
-            sum by (namespace, job, instance) (
-              rate(thanos_rule_query_apis_dns_lookups_total{job=~"thanos-ruler.*"}[5m])
-            )
+          (
+              sum by (namespace, job, instance) (
+                rate(thanos_rule_query_apis_dns_failures_total{job=~"thanos-ruler.*"}[5m])
+              )
+            /
+              sum by (namespace, job, instance) (
+                rate(thanos_rule_query_apis_dns_lookups_total{job=~"thanos-ruler.*"}[5m])
+              )
+          )
         *
           100
       >
@@ -727,13 +765,15 @@ groups:
       runbook: https://github.com/thanos-io/thanos/blob/main/mixin/runbook.md#thanosrulealertmanagerhighdnsfailures
       summary: Thanos Rule is having high number of DNS failures.
     expr: |2-
-            sum by (namespace, job, instance) (
-              rate(thanos_rule_alertmanagers_dns_failures_total{job=~"thanos-ruler.*"}[5m])
-            )
-          /
-            sum by (namespace, job, instance) (
-              rate(thanos_rule_alertmanagers_dns_lookups_total{job=~"thanos-ruler.*"}[5m])
-            )
+          (
+              sum by (namespace, job, instance) (
+                rate(thanos_rule_alertmanagers_dns_failures_total{job=~"thanos-ruler.*"}[5m])
+              )
+            /
+              sum by (namespace, job, instance) (
+                rate(thanos_rule_alertmanagers_dns_lookups_total{job=~"thanos-ruler.*"}[5m])
+              )
+          )
         *
           100
       >
@@ -750,17 +790,21 @@ groups:
       runbook: https://github.com/thanos-io/thanos/blob/main/mixin/runbook.md#thanosrulenoevaluationfor10intervals
       summary: Thanos Rule has rule groups that did not evaluate for 10 intervals.
     expr: |2-
-          time()
-        -
-          max by (namespace, job, instance, group) (
-            prometheus_rule_group_last_evaluation_timestamp_seconds{job=~"thanos-ruler.*"}
-          )
+        (
+            time()
+          -
+            max by (namespace, job, instance, group) (
+              prometheus_rule_group_last_evaluation_timestamp_seconds{job=~"thanos-ruler.*"}
+            )
+        )
       >
-          10
-        *
-          max by (namespace, job, instance, group) (
-            prometheus_rule_group_interval_seconds{job=~"thanos-ruler.*"}
-          )
+        (
+            10
+          *
+            max by (namespace, job, instance, group) (
+              prometheus_rule_group_interval_seconds{job=~"thanos-ruler.*"}
+            )
+        )
     for: 5m
     labels:
       service: thanos
