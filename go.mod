@@ -13,7 +13,7 @@ require (
 	github.com/perses/plugins/timeserieschart v0.11.1
 	github.com/perses/promql-builder v0.2.1-0.20251203103153-a3bca1892a7b
 	github.com/prometheus-operator/prometheus-operator/pkg/apis/monitoring v0.87.0
-	github.com/prometheus/prometheus v0.307.3
+	github.com/prometheus/prometheus v0.308.0
 	gopkg.in/yaml.v3 v3.0.1
 	k8s.io/apimachinery v0.34.2
 	sigs.k8s.io/yaml v1.6.0
@@ -75,7 +75,7 @@ require (
 	golang.org/x/sys v0.37.0 // indirect
 	golang.org/x/text v0.30.0 // indirect
 	google.golang.org/genproto/googleapis/api v0.0.0-20250929231259-57b25ae835d4 // indirect
-	google.golang.org/genproto/googleapis/rpc v0.0.0-20250922171735-9219d122eba9 // indirect
+	google.golang.org/genproto/googleapis/rpc v0.0.0-20251002232023-7c0ddcbb5797 // indirect
 	google.golang.org/protobuf v1.36.10 // indirect
 	gopkg.in/inf.v0 v0.9.1 // indirect
 	k8s.io/api v0.34.2 // indirect
