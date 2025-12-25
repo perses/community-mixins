@@ -92,7 +92,7 @@ func BuildKubernetesWorkloadNamespaceOverview(project string, datasource string,
 		dashboard.AddVariable("cluster",
 			listVar.List(
 				labelValuesVar.PrometheusLabelValues("cluster",
-					labelValuesVar.Matchers("up{"+panels.GetKubeletMatcher()+", metrics_path=\"/metrics/cadvisor\"}"),
+					labelValuesVar.Matchers("up{"+panels.GetKubeletMatcher()+"}"),
 					dashboards.AddVariableDatasource(datasource),
 				),
 				listVar.DisplayName("cluster"),

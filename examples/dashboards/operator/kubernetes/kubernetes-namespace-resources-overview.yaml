@@ -1320,7 +1320,7 @@ spec:
             name: prometheus-datasource
           labelName: cluster
           matchers:
-          - up{job="kubelet", metrics_path="/metrics/cadvisor"}
+          - up{job="kubelet"}
   - kind: ListVariable
     spec:
       allowAllValue: false
