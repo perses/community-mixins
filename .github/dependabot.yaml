@@ -1,12 +1,20 @@
 version: 2
 updates:
   - package-ecosystem: "gomod"
-    rebase-strategy: "auto"
+    directories:
+      - "**/*"
+    open-pull-requests-limit: 10
+    schedule:
+      interval: "weekly"
+    groups:
+      gomod:
+        patterns:
+          - "*"
+  - package-ecosystem: "github-actions"
     directory: "/"
     schedule:
       interval: "weekly"
-
-  - package-ecosystem: github-actions
-    directory: /
-    schedule:
-      interval: daily
+    groups:
+      actions:
+        patterns:
+          - "*"
