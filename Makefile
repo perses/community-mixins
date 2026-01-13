@@ -99,6 +99,16 @@ check-docs: $(MDOX_BINARY)
 	@echo ">> checking formatting and local/remote links"
 	$(MDOX_BINARY) fmt --soft-wraps --check -l --links.validate.config-file=$(MDOX_VALIDATE_CONFIG) $(MD_FILES_TO_FORMAT)
 
+.PHONY: checklicense
+checklicense:
+	@echo ">> checking license"
+	$(GOCMD) run ./ci-scripts/check-license --check
+
+.PHONY: fixlicense
+fixlicense:
+	@echo ">> adding license header where it's missing"
+	$(GOCMD) run ./ci-scripts/check-license --fix
+
 .PHONY: tidy
 tidy:
 	go mod tidy -v

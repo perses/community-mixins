@@ -3,7 +3,7 @@ module github.com/perses/community-mixins
 go 1.25.5
 
 require (
-	github.com/perses/perses v0.53.0-rc.0
+	github.com/perses/perses v0.53.0-rc.0.0.20260113112038-1e65a7475ba9
 	github.com/perses/perses-operator v0.2.0
 	github.com/perses/plugins/gaugechart v0.11.1
 	github.com/perses/plugins/markdown v0.10.1
@@ -54,10 +54,10 @@ require (
 	github.com/munnerz/goautoneg v0.0.0-20191010083416-a7dc8b61c822 // indirect
 	github.com/mwitkow/go-conntrack v0.0.0-20190716064945-2f068394615f // indirect
 	github.com/nexucis/lamenv v0.5.2 // indirect
-	github.com/perses/common v0.28.1 // indirect
+	github.com/perses/common v0.29.1 // indirect
 	github.com/prometheus/client_golang v1.23.2 // indirect
 	github.com/prometheus/client_model v0.6.2 // indirect
-	github.com/prometheus/common v0.67.4 // indirect
+	github.com/prometheus/common v0.67.5 // indirect
 	github.com/prometheus/procfs v0.17.0 // indirect
 	github.com/shopspring/decimal v1.4.0 // indirect
 	github.com/sirupsen/logrus v1.9.3 // indirect

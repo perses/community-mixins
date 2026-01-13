@@ -154,3 +154,6 @@ built/
 
 # tmp folder
 tmp/
+
+# IDE specific files
+.idea/
