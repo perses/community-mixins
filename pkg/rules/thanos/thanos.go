@@ -80,6 +80,8 @@ type ThanosRulesConfig struct {
 	RuleDashboardURL    string
 
 	ServiceLabelValue              string
+	ServiceSelectorPrefix          string
+	ServiceSelectorSuffix          string
 	ReceiveRouterServiceSelector   string
 	ReceiveIngesterServiceSelector string
 	RulerServiceSelector           string
@@ -105,56 +107,50 @@ func WithServiceLabelValue(serviceLabelValue string) ThanosRulesConfigOption {
 	}
 }
 
+func WithServiceSelectorPrefix(serviceSelectorPrefix string) ThanosRulesConfigOption {
+	return func(thanosRulesConfig *ThanosRulesConfig) {
+		thanosRulesConfig.ServiceSelectorPrefix = serviceSelectorPrefix
+	}
+}
+
+func WithServiceSelectorSuffix(serviceSelectorSuffix string) ThanosRulesConfigOption {
+	return func(thanosRulesConfig *ThanosRulesConfig) {
+		thanosRulesConfig.ServiceSelectorSuffix = serviceSelectorSuffix
+	}
+}
+
 func WithReceiveRouterServiceSelector(receiveRouterServiceSelector string) ThanosRulesConfigOption {
 	return func(thanosRulesConfig *ThanosRulesConfig) {
-		if receiveRouterServiceSelector == "" {
-			receiveRouterServiceSelector = "thanos-receive-router.*"
-		}
 		thanosRulesConfig.ReceiveRouterServiceSelector = receiveRouterServiceSelector
 	}
 }
 
 func WithReceiveIngesterServiceSelector(receiveIngesterServiceSelector string) ThanosRulesConfigOption {
 	return func(thanosRulesConfig *ThanosRulesConfig) {
-		if receiveIngesterServiceSelector == "" {
-			receiveIngesterServiceSelector = "thanos-receive-ingester.*"
-		}
 		thanosRulesConfig.ReceiveIngesterServiceSelector = receiveIngesterServiceSelector
 	}
 }
 
 func WithRulerServiceSelector(rulerServiceSelector string) ThanosRulesConfigOption {
 	return func(thanosRulesConfig *ThanosRulesConfig) {
-		if rulerServiceSelector == "" {
-			rulerServiceSelector = "thanos-ruler.*"
-		}
 		thanosRulesConfig.RulerServiceSelector = rulerServiceSelector
 	}
 }
 
 func WithStoreServiceSelector(storeServiceSelector string) ThanosRulesConfigOption {
 	return func(thanosRulesConfig *ThanosRulesConfig) {
-		if storeServiceSelector == "" {
-			storeServiceSelector = "thanos-store.*"
-		}
 		thanosRulesConfig.StoreServiceSelector = storeServiceSelector
 	}
 }
 
 func WithCompactServiceSelector(compactServiceSelector string) ThanosRulesConfigOption {
 	return func(thanosRulesConfig *ThanosRulesConfig) {
-		if compactServiceSelector == "" {
-			compactServiceSelector = "thanos-compact.*"
-		}
 		thanosRulesConfig.CompactServiceSelector = compactServiceSelector
 	}
 }
 
 func WithQueryServiceSelector(queryServiceSelector string) ThanosRulesConfigOption {
 	return func(thanosRulesConfig *ThanosRulesConfig) {
-		if queryServiceSelector == "" {
-			queryServiceSelector = "thanos-query.*"
-		}
 		thanosRulesConfig.QueryServiceSelector = queryServiceSelector
 	}
 }
@@ -201,6 +197,13 @@ func WithRuleDashboardURL(ruleDashboardURL string) ThanosRulesConfigOption {
 	}
 }
 
+// buildServiceSelector constructs a service selector regex pattern with optional prefix and suffix.
+// For example, with baseComponent="thanos-compact", prefix="my-", suffix="-dev",
+// it returns "my-thanos-compact-dev.*"
+func buildServiceSelector(baseComponent, prefix, suffix string) string {
+	return prefix + baseComponent + suffix + ".*"
+}
+
 // NewThanosRulesBuilder creates a new Thanos rules builder.
 func NewThanosRulesBuilder(
 	namespace string,
@@ -208,16 +211,29 @@ func NewThanosRulesBuilder(
 	annotations map[string]string,
 	options ...ThanosRulesConfigOption,
 ) (promtheusrule.Builder, error) {
-	thanosRulesConfig := ThanosRulesConfig{
-		ReceiveRouterServiceSelector:   "thanos-receive-router.*",
-		ReceiveIngesterServiceSelector: "thanos-receive-ingester.*",
-		RulerServiceSelector:           "thanos-ruler.*",
-		StoreServiceSelector:           "thanos-store.*",
-		CompactServiceSelector:         "thanos-compact.*",
-		QueryServiceSelector:           "thanos-query.*",
-	}
+	thanosRulesConfig := ThanosRulesConfig{}
 	for _, option := range options {
 		option(&thanosRulesConfig)
+	}
+
+	// Apply defaults with prefix/suffix if selectors are not explicitly set
+	if thanosRulesConfig.ReceiveRouterServiceSelector == "" {
+		thanosRulesConfig.ReceiveRouterServiceSelector = buildServiceSelector("thanos-receive-router", thanosRulesConfig.ServiceSelectorPrefix, thanosRulesConfig.ServiceSelectorSuffix)
+	}
+	if thanosRulesConfig.ReceiveIngesterServiceSelector == "" {
+		thanosRulesConfig.ReceiveIngesterServiceSelector = buildServiceSelector("thanos-receive-ingester", thanosRulesConfig.ServiceSelectorPrefix, thanosRulesConfig.ServiceSelectorSuffix)
+	}
+	if thanosRulesConfig.RulerServiceSelector == "" {
+		thanosRulesConfig.RulerServiceSelector = buildServiceSelector("thanos-ruler", thanosRulesConfig.ServiceSelectorPrefix, thanosRulesConfig.ServiceSelectorSuffix)
+	}
+	if thanosRulesConfig.StoreServiceSelector == "" {
+		thanosRulesConfig.StoreServiceSelector = buildServiceSelector("thanos-store", thanosRulesConfig.ServiceSelectorPrefix, thanosRulesConfig.ServiceSelectorSuffix)
+	}
+	if thanosRulesConfig.CompactServiceSelector == "" {
+		thanosRulesConfig.CompactServiceSelector = buildServiceSelector("thanos-compact", thanosRulesConfig.ServiceSelectorPrefix, thanosRulesConfig.ServiceSelectorSuffix)
+	}
+	if thanosRulesConfig.QueryServiceSelector == "" {
+		thanosRulesConfig.QueryServiceSelector = buildServiceSelector("thanos-query", thanosRulesConfig.ServiceSelectorPrefix, thanosRulesConfig.ServiceSelectorSuffix)
 	}
 
 	promRule, err := promtheusrule.New(
