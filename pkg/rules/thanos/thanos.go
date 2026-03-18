@@ -1531,7 +1531,7 @@ func (t ThanosRulesConfig) ThanosReceiveGroup() []rulegroup.Option {
 												label.New("job").EqualRegexp(t.ReceiveIngesterServiceSelector),
 											),
 										),
-										matrix.WithRange(3*time.Hour),
+										matrix.WithRange(4*time.Hour),
 									),
 								),
 							).By("namespace", "job", "instance"),
@@ -1540,7 +1540,7 @@ func (t ThanosRulesConfig) ThanosReceiveGroup() []rulegroup.Option {
 					),
 				).On("namespace", "job", "instance"),
 			),
-			alerting.For("3h"),
+			alerting.For("4h"),
 			alerting.Labels(
 				common.MergeMaps(
 					map[string]string{
