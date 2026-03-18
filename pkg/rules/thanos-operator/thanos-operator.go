@@ -46,7 +46,7 @@ const (
 	runbookThanosRulerConfigMapCreationFailures     = "#thanosrulerconfigmapcreationfailures"
 	runbookThanosRulerHighConfigMapCreationRate     = "#thanosrulerhighconfigmapcreationrate"
 	runbookThanosRulerWatchReconcileStorm           = "#thanosrulerwatchreconcilestorm"
-	runbookThanosStoreNoShardsConfigured            = "#thanosstenoreshardsconfigured"
+	runbookThanosStoreNoShardsConfigured            = "#thanosstorenoshardsconfigured"
 	runbookThanosStoreShardCreationFailures         = "#thanosstoreshardcreationfailures"
 	runbookThanosCompactNoShardsConfigured          = "#thanoscompactnoshardsconfigured"
 	runbookThanosCompactShardCreationFailures       = "#thanoscompactshardcreationfailures"
@@ -1033,7 +1033,7 @@ func (t ThanosOperatorRulesConfig) ThanosOperatorStoreGroup() []rulegroup.Option
 					promqlbuilder.NewNumber(0),
 				),
 			),
-			alerting.For("5m"),
+			alerting.For("2m"),
 			alerting.Labels(
 				common.MergeMaps(
 					map[string]string{
