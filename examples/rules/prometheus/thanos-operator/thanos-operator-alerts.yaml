@@ -28,13 +28,13 @@ groups:
     expr: |2-
           sum by (controller) (
             rate(
-              controller_runtime_reconcile_errors_total{job="thanos-operator-controller-manager-metrics-service"}[5m]
+              controller_runtime_reconcile_errors_total{job="thanos-operator-controller-manager-metrics-service"}[2m]
             )
           )
         /
           sum by (controller) (
             rate(
-              controller_runtime_reconcile_total{job="thanos-operator-controller-manager-metrics-service"}[5m]
+              controller_runtime_reconcile_total{job="thanos-operator-controller-manager-metrics-service"}[2m]
             )
           )
       >
@@ -355,7 +355,7 @@ groups:
       dashboard: https://demo.perses.dev/projects/perses/dashboards/thanosoperator
       description: ThanosStore resource {{ $labels.namespace }}/{{ $labels.resource
         }} has 0 shards configured.
-      runbook: https://github.com/thanos-community/thanos-operator/blob/main/mixin/runbook.md#thanosstenoreshardsconfigured
+      runbook: https://github.com/thanos-community/thanos-operator/blob/main/mixin/runbook.md#thanosstorenoshardsconfigured
       summary: This may be expected for single-instance stores. For sharded deployments,
         data queries may fail.
     expr: |2-
@@ -377,7 +377,7 @@ groups:
         or fail.
     expr: |2-
         rate(
-          thanos_operator_store_shards_creation_update_failures_total{job="thanos-operator-controller-manager-metrics-service"}[5m]
+          thanos_operator_store_shards_creation_update_failures_total{job="thanos-operator-controller-manager-metrics-service"}[2m]
         )
       >
         0

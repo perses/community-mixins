@@ -455,12 +455,12 @@ groups:
       + on (namespace, job, instance)
         (
             sum by (namespace, job, instance) (
-              increase(thanos_shipper_uploads_total{job=~"thanos-receive-ingester.*"}[3h])
+              increase(thanos_shipper_uploads_total{job=~"thanos-receive-ingester.*"}[4h])
             )
           ==
             0
         )
-    for: 3h
+    for: 4h
     labels:
       service: thanos
       severity: high

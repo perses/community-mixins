@@ -46,7 +46,7 @@ const (
 	runbookThanosRulerConfigMapCreationFailures     = "#thanosrulerconfigmapcreationfailures"
 	runbookThanosRulerHighConfigMapCreationRate     = "#thanosrulerhighconfigmapcreationrate"
 	runbookThanosRulerWatchReconcileStorm           = "#thanosrulerwatchreconcilestorm"
-	runbookThanosStoreNoShardsConfigured            = "#thanosstenoreshardsconfigured"
+	runbookThanosStoreNoShardsConfigured            = "#thanosstorenoshardsconfigured"
 	runbookThanosStoreShardCreationFailures         = "#thanosstoreshardcreationfailures"
 	runbookThanosCompactNoShardsConfigured          = "#thanoscompactnoshardsconfigured"
 	runbookThanosCompactShardCreationFailures       = "#thanoscompactshardcreationfailures"
@@ -236,7 +236,7 @@ func (t ThanosOperatorRulesConfig) ThanosOperatorGeneralGroup() []rulegroup.Opti
 											label.New("job").Equal(t.MetricsServiceSelector),
 										),
 									),
-									matrix.WithRange(5*time.Minute),
+									matrix.WithRange(2*time.Minute),
 								),
 							),
 						).By("controller"),
@@ -249,7 +249,7 @@ func (t ThanosOperatorRulesConfig) ThanosOperatorGeneralGroup() []rulegroup.Opti
 											label.New("job").Equal(t.MetricsServiceSelector),
 										),
 									),
-									matrix.WithRange(5*time.Minute),
+									matrix.WithRange(2*time.Minute),
 								),
 							),
 						).By("controller"),
@@ -1027,7 +1027,7 @@ func (t ThanosOperatorRulesConfig) ThanosOperatorStoreGroup() []rulegroup.Option
 									label.New("job").Equal(t.MetricsServiceSelector),
 								),
 							),
-							matrix.WithRange(5*time.Minute),
+							matrix.WithRange(2*time.Minute),
 						),
 					),
 					promqlbuilder.NewNumber(0),
