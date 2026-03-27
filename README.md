@@ -125,6 +125,35 @@ All available job label flags (defaults match the standard community conventions
 
 > **Note:** Dashboards for Prometheus, Thanos, Alertmanager, Perses, Blackbox, OpenTelemetry, and etcd already use a `$job` runtime variable, so users can select the job value directly in the Perses UI without needing a CLI flag.
 
+### Library Usage
+
+When using this repository as a Go library, you can configure job labels programmatically by calling the exported setter functions before building dashboards:
+
+```go
+import (
+	nodeexporter "github.com/perses/community-mixins/pkg/panels/node_exporter"
+	k8s "github.com/perses/community-mixins/pkg/panels/kubernetes"
+	nodeexporterdash "github.com/perses/community-mixins/pkg/dashboards/node_exporter"
+)
+
+func main() {
+	// Configure job labels before building dashboards
+	nodeexporter.SetNodeExporterLabelValue("node-exporter")
+	k8s.SetAPIServerLabelValue("my-apiserver")
+	k8s.SetKubeletLabelValue("my-kubelet")
+
+	// Build dashboards with the configured values
+	result := nodeexporterdash.BuildNodeExporterNodes("myproject", "myds", "cluster")
+	dashboard := result.Builder().Dashboard
+	// ...
+}
+```
+
+The full list of available setters can be found in:
+
+- [`pkg/panels/node_exporter/globals.go`](pkg/panels/node_exporter/globals.go) — `SetNodeExporterLabelValue`
+- [`pkg/panels/kubernetes/globals.go`](pkg/panels/kubernetes/globals.go) — `SetAPIServerLabelValue`, `SetKubeletLabelValue`, `SetNodeExporterLabelValue`, `SetControllerManagerLabelValue`, `SetCAdvisorLabelValue`, `SetSchedulerLabelValue`, `SetKubeProxyLabelValue`, `SetKubeStateMetricsLabelValue`
+
 ## Rendering PrometheusRules
 
 To render and generate the PrometheusRule objects, run the following command:

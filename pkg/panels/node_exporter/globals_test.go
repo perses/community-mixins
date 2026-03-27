@@ -15,16 +15,16 @@ package nodeexporter
 
 import "testing"
 
-func TestGetNodeExporterJobValueDefault(t *testing.T) {
-	NODE_EXPORTER_JOB_VALUE = "node"
-	got := GetNodeExporterJobValue()
+func TestGetNodeExporterLabelValueDefault(t *testing.T) {
+	NODE_EXPORTER_LABEL_VALUE = "node"
+	got := GetNodeExporterLabelValue()
 	if got != "node" {
-		t.Errorf("GetNodeExporterJobValue() = %q, want %q", got, "node")
+		t.Errorf("GetNodeExporterLabelValue() = %q, want %q", got, "node")
 	}
 }
 
-func TestSetNodeExporterJobValue(t *testing.T) {
-	defer func() { NODE_EXPORTER_JOB_VALUE = "node" }()
+func TestSetNodeExporterLabelValue(t *testing.T) {
+	defer func() { NODE_EXPORTER_LABEL_VALUE = "node" }()
 
 	tests := []struct {
 		name  string
@@ -37,10 +37,10 @@ func TestSetNodeExporterJobValue(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			SetNodeExporterJobValue(tt.value)
-			got := GetNodeExporterJobValue()
+			SetNodeExporterLabelValue(tt.value)
+			got := GetNodeExporterLabelValue()
 			if got != tt.value {
-				t.Errorf("after SetNodeExporterJobValue(%q), GetNodeExporterJobValue() = %q", tt.value, got)
+				t.Errorf("after SetNodeExporterLabelValue(%q), GetNodeExporterLabelValue() = %q", tt.value, got)
 			}
 		})
 	}

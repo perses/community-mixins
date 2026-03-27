@@ -73,7 +73,7 @@ func BuildNodeExporterClusterUseMethod(project string, datasource string, cluste
 		Value: "$instance",
 		Type:  labels.MatchRegexp,
 	}
-	jobValue := panels.GetNodeExporterJobValue()
+	jobValue := panels.GetNodeExporterLabelValue()
 	jobMatcher := &labels.Matcher{Name: "job", Type: labels.MatchEqual, Value: jobValue}
 	return dashboards.NewDashboardResult(
 		dashboard.New("node-exporter-cluster-use-method",
