@@ -1,0 +1,36 @@
+name: 🚀 Feature
+description: Propose a new feature or enhancement to the community mixins
+labels: ["kind/feature", "needs-triage"]
+body:
+  - type: dropdown
+    attributes:
+      label: Component(s)
+      description: Select which area(s) of the project this feature relates to.
+      multiple: true
+      options:
+        - Dashboards
+        - Panels
+        - Rules / Alerts
+        - Build / Tooling
+        - Documentation
+        - Other (please comment)
+    validations:
+      required: true
+  - type: textarea
+    attributes:
+      label: What is missing? Please describe.
+      description: A clear and concise description of what is missing currently.
+    validations:
+      required: true
+  - type: textarea
+    attributes:
+      label: Describe alternatives you've considered.
+      description: A clear and concise description of any alternative solutions or features you've considered.
+  - type: textarea
+    attributes:
+      label: Environment Information
+      description: Please provide any additional information about your environment.
+      value: |
+        ## Environment
+        Perses Version:
+        Go Version:

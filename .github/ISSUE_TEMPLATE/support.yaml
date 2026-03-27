@@ -1,0 +1,70 @@
+name: ✋ Support
+description: Support needed with community mixins
+labels: ["kind/support", "needs-triage"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        **Note:** This repository is about Perses community mixins. If you have questions about Perses itself, go to [perses/perses](https://github.com/perses/perses). For the operator, go to [perses/perses-operator](https://github.com/perses/perses-operator).
+  - type: textarea
+    attributes:
+      label: What do you need help with?
+      description: A concise description of what you're experiencing.
+      value: |
+        ## Description
+
+        ## What I've tried
+
+        ## Expected behavior
+    validations:
+      required: true
+  - type: dropdown
+    attributes:
+      label: Component(s)
+      description: Select which area(s) of the project this relates to.
+      multiple: true
+      options:
+        - Dashboards
+        - Panels
+        - Rules / Alerts
+        - Build / Tooling
+        - Documentation
+        - Other (please comment)
+    validations:
+      required: true
+  - type: textarea
+    attributes:
+      label: Perses Version
+      description: |
+        Provide the Perses version used.
+        This will be automatically formatted into code, so no need for backticks.
+      render: shell
+    validations:
+      required: false
+  - type: textarea
+    attributes:
+      label: Go Version
+      description: |
+        Paste the output of `go version`.
+        This will be automatically formatted into code, so no need for backticks.
+      render: shell
+    validations:
+      required: false
+  - type: textarea
+    attributes:
+      label: Relevant manifests or config
+      description: |
+        Insert any relevant manifests, configuration, or generated output.
+        This will be automatically formatted into code, so no need for backticks.
+      render: yaml
+    validations:
+      required: false
+  - type: textarea
+    attributes:
+      label: Anything else?
+      description: |
+        Links? References? Anything that will give us more context about the issue you are encountering!
+
+        Tip: You can attach images or any other relevant log files by clicking this area to highlight it and then dragging files in.
+    validations:
+      required: false
