@@ -2,6 +2,10 @@ name: 🐞 Bug
 description: Report a bug related to Perses community mixins
 labels: ["kind/bug", "needs-triage"]
 body:
+  - type: markdown
+    attributes:
+      value: |
+        **Note:** This repository is about Perses community mixins. If you have a bug related to the Perses operator, please file it at [perses/perses-operator](https://github.com/perses/perses-operator). For Perses itself, go to [perses/perses](https://github.com/perses/perses).
   - type: checkboxes
     attributes:
       label: Is there an existing issue for this?
@@ -42,6 +46,28 @@ body:
       label: Perses Version
       description: |
         Provide the Perses version used.
+        This will be automatically formatted into code, so no need for backticks.
+      render: shell
+    validations:
+      required: false
+  - type: dropdown
+    attributes:
+      label: How did you install Perses?
+      description: Select the method you used to install Perses.
+      options:
+        - Binary
+        - Docker/Podman
+        - Perses Helm Chart
+        - Perses Operator (Helm)
+        - Perses Operator (Manifests)
+        - Other (please comment)
+    validations:
+      required: false
+  - type: textarea
+    attributes:
+      label: Perses Operator Version
+      description: |
+        If using the Perses Operator, provide the version.
         This will be automatically formatted into code, so no need for backticks.
       render: shell
     validations:
