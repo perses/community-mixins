@@ -81,6 +81,11 @@ fmt:
 vet:
 	$(ENVVARS) $(GOCMD) vet ./...
 
+.PHONY: unit-test
+unit-test:
+	@echo ">> running unit tests"
+	$(GOCMD) test ./...
+
 .PHONY: check-golang
 check-golang: $(GOLANGCILINTER_BINARY)
 	$(GOLANGCILINTER_BINARY) run
