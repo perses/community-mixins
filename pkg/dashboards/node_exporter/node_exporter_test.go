@@ -22,8 +22,8 @@ import (
 )
 
 func TestBuildNodeExporterNodes_DefaultJobLabel(t *testing.T) {
-	panels.SetNodeExporterJobValue("node")
-	defer panels.SetNodeExporterJobValue("node")
+	panels.SetNodeExporterLabelValue("node")
+	defer panels.SetNodeExporterLabelValue("node")
 
 	result := BuildNodeExporterNodes("default", "", "")
 	if result.Err() != nil {
@@ -42,8 +42,8 @@ func TestBuildNodeExporterNodes_DefaultJobLabel(t *testing.T) {
 }
 
 func TestBuildNodeExporterNodes_CustomJobLabel(t *testing.T) {
-	panels.SetNodeExporterJobValue("node-exporter")
-	defer panels.SetNodeExporterJobValue("node")
+	panels.SetNodeExporterLabelValue("node-exporter")
+	defer panels.SetNodeExporterLabelValue("node")
 
 	result := BuildNodeExporterNodes("default", "", "")
 	if result.Err() != nil {
@@ -67,8 +67,8 @@ func TestBuildNodeExporterNodes_CustomJobLabel(t *testing.T) {
 }
 
 func TestBuildNodeExporterClusterUseMethod_CustomJobLabel(t *testing.T) {
-	panels.SetNodeExporterJobValue("node-exporter")
-	defer panels.SetNodeExporterJobValue("node")
+	panels.SetNodeExporterLabelValue("node-exporter")
+	defer panels.SetNodeExporterLabelValue("node")
 
 	result := BuildNodeExporterClusterUseMethod("default", "", "")
 	if result.Err() != nil {

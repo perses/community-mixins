@@ -90,7 +90,7 @@ func main() {
 	flag.Parse()
 
 	// Apply job label overrides
-	nodeExporterPanels.SetNodeExporterJobValue(nodeExporterJob)
+	nodeExporterPanels.SetNodeExporterLabelValue(nodeExporterJob)
 	k8sPanels.SetAPIServerLabelValue(apiserverJob)
 	k8sPanels.SetKubeletLabelValue(kubeletJob)
 	k8sPanels.SetKubeStateMetricsLabelValue(kubeStateMetricsJob)

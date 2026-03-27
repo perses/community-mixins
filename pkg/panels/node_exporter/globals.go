@@ -13,15 +13,15 @@
 
 package nodeexporter
 
-var NODE_EXPORTER_JOB_VALUE = "node"
+var NODE_EXPORTER_LABEL_VALUE = "node"
 
-// GetNodeExporterJobValue returns the current job label value for node-exporter dashboards.
-func GetNodeExporterJobValue() string {
-	return NODE_EXPORTER_JOB_VALUE
+// GetNodeExporterLabelValue returns the current job label value for node-exporter dashboards.
+func GetNodeExporterLabelValue() string {
+	return NODE_EXPORTER_LABEL_VALUE
 }
 
-// SetNodeExporterJobValue sets the job label value for node-exporter dashboards globally.
+// SetNodeExporterLabelValue sets the job label value for node-exporter dashboards globally.
 // WARNING: Ensure you only set this to a value that represents a Node Exporter specifically.
-func SetNodeExporterJobValue(labelValue string) {
-	NODE_EXPORTER_JOB_VALUE = labelValue
+func SetNodeExporterLabelValue(labelValue string) {
+	NODE_EXPORTER_LABEL_VALUE = labelValue
 }

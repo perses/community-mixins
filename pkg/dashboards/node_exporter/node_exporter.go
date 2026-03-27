@@ -62,7 +62,7 @@ func withNodeExporterNodesNetwork(datasource string, labelMatchers ...*labels.Ma
 
 func BuildNodeExporterNodes(project string, datasource string, clusterLabelName string) dashboards.DashboardResult {
 	clusterLabelMatcher := dashboards.GetClusterLabelMatcherV2(clusterLabelName)
-	jobValue := panels.GetNodeExporterJobValue()
+	jobValue := panels.GetNodeExporterLabelValue()
 	jobMatcher := &labels.Matcher{Name: "job", Type: labels.MatchEqual, Value: jobValue}
 	return dashboards.NewDashboardResult(
 		dashboard.New("node-exporter-nodes",
