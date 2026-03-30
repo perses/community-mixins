@@ -38,7 +38,7 @@ func ControllerManagerUpStatus(datasourceName string, labelMatchers ...promql.La
 		panel.AddQuery(
 			query.PromQL(
 				promql.SetLabelMatchers(
-					"sum(up{cluster=\"$cluster\", job=\"kube-controller-manager\"})",
+					"sum(up{cluster=\"$cluster\", "+GetControllerManagerMatcher()+"})",
 					labelMatchers,
 				),
 				dashboards.AddQueryDataSource(datasourceName),
@@ -72,7 +72,7 @@ func WorkQueueAddRate(datasourceName string, labelMatchers ...promql.LabelMatche
 		panel.AddQuery(
 			query.PromQL(
 				promql.SetLabelMatchers(
-					"sum(rate(workqueue_adds_total{cluster=\"$cluster\", job=\"kube-controller-manager\", instance=~\"$instance\"}[$__rate_interval])) by (cluster, instance, name)",
+					"sum(rate(workqueue_adds_total{cluster=\"$cluster\", "+GetControllerManagerMatcher()+", instance=~\"$instance\"}[$__rate_interval])) by (cluster, instance, name)",
 					labelMatchers,
 				),
 				dashboards.AddQueryDataSource(datasourceName),
@@ -107,7 +107,7 @@ func WorkQueueDepth(datasourceName string, labelMatchers ...promql.LabelMatcher)
 		panel.AddQuery(
 			query.PromQL(
 				promql.SetLabelMatchers(
-					"sum(rate(workqueue_depth{cluster=\"$cluster\", job=\"kube-controller-manager\", instance=~\"$instance\"}[$__rate_interval])) by (cluster, instance, name)",
+					"sum(rate(workqueue_depth{cluster=\"$cluster\", "+GetControllerManagerMatcher()+", instance=~\"$instance\"}[$__rate_interval])) by (cluster, instance, name)",
 					labelMatchers,
 				),
 				dashboards.AddQueryDataSource(datasourceName),
@@ -142,7 +142,7 @@ func WorkQueueLatency(datasourceName string, labelMatchers ...promql.LabelMatche
 		panel.AddQuery(
 			query.PromQL(
 				promql.SetLabelMatchers(
-					"histogram_quantile(0.99, sum(rate(workqueue_queue_duration_seconds_bucket{cluster=\"$cluster\", job=\"kube-controller-manager\", instance=~\"$instance\"}[$__rate_interval])) by (cluster, instance, name, le))",
+					"histogram_quantile(0.99, sum(rate(workqueue_queue_duration_seconds_bucket{cluster=\"$cluster\", "+GetControllerManagerMatcher()+", instance=~\"$instance\"}[$__rate_interval])) by (cluster, instance, name, le))",
 					labelMatchers,
 				),
 				dashboards.AddQueryDataSource(datasourceName),

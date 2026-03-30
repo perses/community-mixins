@@ -35,6 +35,8 @@ import (
 	"github.com/perses/community-mixins/pkg/dashboards/prometheus"
 	"github.com/perses/community-mixins/pkg/dashboards/tempo"
 	"github.com/perses/community-mixins/pkg/dashboards/thanos"
+	k8sPanels "github.com/perses/community-mixins/pkg/panels/kubernetes"
+	nodeExporterPanels "github.com/perses/community-mixins/pkg/panels/node_exporter"
 	"github.com/perses/community-mixins/pkg/rules"
 	alertmanagerrules "github.com/perses/community-mixins/pkg/rules/alertmanager"
 	blackboxrules "github.com/perses/community-mixins/pkg/rules/blackbox"
@@ -47,6 +49,17 @@ var (
 	datasource       string
 	clusterLabelName string
 	buildRules       bool
+
+	// Job label overrides
+	nodeExporterJob      string
+	apiserverJob         string
+	kubeletJob           string
+	kubeStateMetricsJob  string
+	cadvisorJob          string
+	nodeExporterK8sJob   string
+	controllerManagerJob string
+	schedulerJob         string
+	kubeProxyJob         string
 )
 
 func main() {
@@ -61,7 +74,31 @@ func main() {
 	flag.String("output", dashboards.YAMLOutput, "output format of the dashboard exec")
 	flag.String("output-dir", "./built", "output directory of the dashboard exec")
 
+	// Job label flags for node-exporter dashboards
+	flag.StringVar(&nodeExporterJob, "node-exporter-job", "node", "The job label value for node-exporter dashboards")
+
+	// Job label flags for Kubernetes component dashboards
+	flag.StringVar(&apiserverJob, "apiserver-job", "kube-apiserver", "The job label value for kube-apiserver")
+	flag.StringVar(&kubeletJob, "kubelet-job", "kubelet", "The job label value for kubelet")
+	flag.StringVar(&kubeStateMetricsJob, "kube-state-metrics-job", "kube-state-metrics", "The job label value for kube-state-metrics")
+	flag.StringVar(&cadvisorJob, "cadvisor-job", "cadvisor", "The job label value for cadvisor")
+	flag.StringVar(&nodeExporterK8sJob, "node-exporter-k8s-job", "node-exporter", "The job label value for node-exporter in Kubernetes dashboards")
+	flag.StringVar(&controllerManagerJob, "controller-manager-job", "kube-controller-manager", "The job label value for kube-controller-manager")
+	flag.StringVar(&schedulerJob, "scheduler-job", "kube-scheduler", "The job label value for kube-scheduler")
+	flag.StringVar(&kubeProxyJob, "kube-proxy-job", "kube-proxy", "The job label value for kube-proxy")
+
 	flag.Parse()
+
+	// Apply job label overrides
+	nodeExporterPanels.SetNodeExporterLabelValue(nodeExporterJob)
+	k8sPanels.SetAPIServerLabelValue(apiserverJob)
+	k8sPanels.SetKubeletLabelValue(kubeletJob)
+	k8sPanels.SetKubeStateMetricsLabelValue(kubeStateMetricsJob)
+	k8sPanels.SetCAdvisorLabelValue(cadvisorJob)
+	k8sPanels.SetNodeExporterLabelValue(nodeExporterK8sJob)
+	k8sPanels.SetControllerManagerLabelValue(controllerManagerJob)
+	k8sPanels.SetSchedulerLabelValue(schedulerJob)
+	k8sPanels.SetKubeProxyLabelValue(kubeProxyJob)
 
 	if buildRules {
 		ruleWriter := rules.NewRuleWriter()
