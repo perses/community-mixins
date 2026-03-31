@@ -72,7 +72,7 @@ spec:
           min by (job, integration) (
               rate(alertmanager_notifications_failed_total{integration=~".*",job="alertmanager"}[15m])
             / ignoring (reason) group_left ()
-              rate(alertmanager_notifications_total{integration=~".*",job="alertmanager"}[15m])
+              rate(alertmanager_notifications_total{integration=~".*",job="alertmanager"}[15m]) > 0
           )
         >
           0.01
@@ -93,7 +93,7 @@ spec:
           min by (job, integration) (
               rate(alertmanager_notifications_failed_total{integration!~".*",job="alertmanager"}[15m])
             / ignoring (reason) group_left ()
-              rate(alertmanager_notifications_total{integration!~".*",job="alertmanager"}[15m])
+              rate(alertmanager_notifications_total{integration!~".*",job="alertmanager"}[15m]) > 0
           )
         >
           0.01
