@@ -330,17 +330,20 @@ func (a AlertmanagerRulesConfig) AlertmanagerRulesGroup() []rulegroup.Option {
 									matrix.WithRange(15*time.Minute),
 								),
 							),
-							promqlbuilder.Rate(
-								matrix.New(
-									vector.New(
-										vector.WithMetricName("alertmanager_notifications_total"),
-										vector.WithLabelMatchers(
-											label.New("job").Equal(a.AlertmanagerServiceSelector),
-											label.New("integration").EqualRegexp(a.CriticalIntegrationSelector),
+							promqlbuilder.Gtr(
+								promqlbuilder.Rate(
+									matrix.New(
+										vector.New(
+											vector.WithMetricName("alertmanager_notifications_total"),
+											vector.WithLabelMatchers(
+												label.New("job").Equal(a.AlertmanagerServiceSelector),
+												label.New("integration").EqualRegexp(a.CriticalIntegrationSelector),
+											),
 										),
+										matrix.WithRange(15*time.Minute),
 									),
-									matrix.WithRange(15*time.Minute),
 								),
+								promqlbuilder.NewNumber(0.0),
 							),
 						).Ignoring("reason").GroupLeft(),
 					).By("job", "integration"),
@@ -388,17 +391,20 @@ func (a AlertmanagerRulesConfig) AlertmanagerRulesGroup() []rulegroup.Option {
 									matrix.WithRange(15*time.Minute),
 								),
 							),
-							promqlbuilder.Rate(
-								matrix.New(
-									vector.New(
-										vector.WithMetricName("alertmanager_notifications_total"),
-										vector.WithLabelMatchers(
-											label.New("job").Equal(a.AlertmanagerServiceSelector),
-											label.New("integration").NotEqualRegexp(a.NonCriticalIntegrationSelector),
+							promqlbuilder.Gtr(
+								promqlbuilder.Rate(
+									matrix.New(
+										vector.New(
+											vector.WithMetricName("alertmanager_notifications_total"),
+											vector.WithLabelMatchers(
+												label.New("job").Equal(a.AlertmanagerServiceSelector),
+												label.New("integration").NotEqualRegexp(a.NonCriticalIntegrationSelector),
+											),
 										),
+										matrix.WithRange(15*time.Minute),
 									),
-									matrix.WithRange(15*time.Minute),
 								),
+								promqlbuilder.NewNumber(0),
 							),
 						).Ignoring("reason").GroupLeft(),
 					).By("job", "integration"),
