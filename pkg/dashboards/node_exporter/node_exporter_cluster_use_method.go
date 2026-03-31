@@ -14,6 +14,8 @@
 package nodeexporter
 
 import (
+	"fmt"
+
 	"github.com/perses/community-mixins/pkg/dashboards"
 	panels "github.com/perses/community-mixins/pkg/panels/node_exporter"
 	"github.com/perses/community-mixins/pkg/promql"
@@ -25,42 +27,42 @@ import (
 	"github.com/prometheus/prometheus/model/labels"
 )
 
-func withClusterCPU(datasource string, clusterLabelMatcher *labels.Matcher, instanceLabelMatcher *labels.Matcher) dashboard.Option {
+func withClusterCPU(datasource string, labelMatchers ...*labels.Matcher) dashboard.Option {
 	return dashboard.AddPanelGroup("CPU",
 		panelgroup.PanelsPerLine(2),
-		panels.ClusterNodeCPUUsagePercentage(datasource, clusterLabelMatcher, instanceLabelMatcher),
-		panels.ClusterNodeCPUSaturationPercentage(datasource, clusterLabelMatcher, instanceLabelMatcher),
+		panels.ClusterNodeCPUUsagePercentage(datasource, labelMatchers...),
+		panels.ClusterNodeCPUSaturationPercentage(datasource, labelMatchers...),
 	)
 }
 
-func withClusterMemory(datasource string, clusterLabelMatcher *labels.Matcher, instanceLabelMatcher *labels.Matcher) dashboard.Option {
+func withClusterMemory(datasource string, labelMatchers ...*labels.Matcher) dashboard.Option {
 	return dashboard.AddPanelGroup("Memory",
 		panelgroup.PanelsPerLine(2),
-		panels.ClusterNodeMemoryUsagePercentage(datasource, clusterLabelMatcher, instanceLabelMatcher),
-		panels.ClusterNodeMemorySaturationPercentage(datasource, clusterLabelMatcher, instanceLabelMatcher),
+		panels.ClusterNodeMemoryUsagePercentage(datasource, labelMatchers...),
+		panels.ClusterNodeMemorySaturationPercentage(datasource, labelMatchers...),
 	)
 }
 
-func withClusterNetwork(datasource string, clusterLabelMatcher *labels.Matcher, instanceLabelMatcher *labels.Matcher) dashboard.Option {
+func withClusterNetwork(datasource string, labelMatchers ...*labels.Matcher) dashboard.Option {
 	return dashboard.AddPanelGroup("Network",
 		panelgroup.PanelsPerLine(2),
-		panels.ClusterNodeNetworkUsageBytes(datasource, clusterLabelMatcher, instanceLabelMatcher),
-		panels.ClusterNodeNetworkSaturationBytes(datasource, clusterLabelMatcher, instanceLabelMatcher),
+		panels.ClusterNodeNetworkUsageBytes(datasource, labelMatchers...),
+		panels.ClusterNodeNetworkSaturationBytes(datasource, labelMatchers...),
 	)
 }
 
-func withClusterDiskIO(datasource string, clusterLabelMatcher *labels.Matcher, instanceLabelMatcher *labels.Matcher) dashboard.Option {
+func withClusterDiskIO(datasource string, labelMatchers ...*labels.Matcher) dashboard.Option {
 	return dashboard.AddPanelGroup("Disk IO",
 		panelgroup.PanelsPerLine(2),
-		panels.ClusterNodeDiskUsagePercentage(datasource, clusterLabelMatcher, instanceLabelMatcher),
-		panels.ClusterNodeDiskSaturationPercentage(datasource, clusterLabelMatcher, instanceLabelMatcher),
+		panels.ClusterNodeDiskUsagePercentage(datasource, labelMatchers...),
+		panels.ClusterNodeDiskSaturationPercentage(datasource, labelMatchers...),
 	)
 }
 
-func withClusterDiskSpace(datasource string, clusterLabelMatcher *labels.Matcher, instanceLabelMatcher *labels.Matcher) dashboard.Option {
+func withClusterDiskSpace(datasource string, labelMatchers ...*labels.Matcher) dashboard.Option {
 	return dashboard.AddPanelGroup("Disk Space",
 		panelgroup.PanelsPerLine(1),
-		panels.ClusterNodeDiskSpacePercentage(datasource, clusterLabelMatcher, instanceLabelMatcher),
+		panels.ClusterNodeDiskSpacePercentage(datasource, labelMatchers...),
 	)
 }
 
@@ -71,11 +73,13 @@ func BuildNodeExporterClusterUseMethod(project string, datasource string, cluste
 		Value: "$instance",
 		Type:  labels.MatchRegexp,
 	}
+	jobValue := panels.GetNodeExporterLabelValue()
+	jobMatcher := &labels.Matcher{Name: "job", Type: labels.MatchEqual, Value: jobValue}
 	return dashboards.NewDashboardResult(
 		dashboard.New("node-exporter-cluster-use-method",
 			dashboard.ProjectName(project),
 			dashboard.Name("Node Exporter / USE Method / Cluster"),
-			dashboards.AddClusterVariable(datasource, clusterLabelName, "node_uname_info{job='node', sysname!='Darwin'}"),
+			dashboards.AddClusterVariable(datasource, clusterLabelName, fmt.Sprintf("node_uname_info{job='%s', sysname!='Darwin'}", jobValue)),
 			dashboard.AddVariable("instance",
 				listVar.List(
 					labelValuesVar.PrometheusLabelValues("instance",
@@ -84,7 +88,7 @@ func BuildNodeExporterClusterUseMethod(project string, datasource string, cluste
 							promql.SetLabelMatchersV2(
 								vector.New(vector.WithMetricName("node_uname_info")),
 								[]*labels.Matcher{clusterLabelMatcher,
-									{Name: "job", Type: labels.MatchEqual, Value: "node"},
+									{Name: "job", Type: labels.MatchEqual, Value: jobValue},
 									{Name: "sysname", Type: labels.MatchNotEqual, Value: "Darwin"}},
 							).Pretty(0),
 						),
@@ -94,11 +98,11 @@ func BuildNodeExporterClusterUseMethod(project string, datasource string, cluste
 					listVar.AllowMultiple(true),
 				),
 			),
-			withClusterCPU(datasource, clusterLabelMatcher, instanceLabelMatcher),
-			withClusterMemory(datasource, clusterLabelMatcher, instanceLabelMatcher),
-			withClusterNetwork(datasource, clusterLabelMatcher, instanceLabelMatcher),
-			withClusterDiskIO(datasource, clusterLabelMatcher, instanceLabelMatcher),
-			withClusterDiskSpace(datasource, clusterLabelMatcher, instanceLabelMatcher),
+			withClusterCPU(datasource, clusterLabelMatcher, instanceLabelMatcher, jobMatcher),
+			withClusterMemory(datasource, clusterLabelMatcher, instanceLabelMatcher, jobMatcher),
+			withClusterNetwork(datasource, clusterLabelMatcher, instanceLabelMatcher, jobMatcher),
+			withClusterDiskIO(datasource, clusterLabelMatcher, instanceLabelMatcher, jobMatcher),
+			withClusterDiskSpace(datasource, clusterLabelMatcher, instanceLabelMatcher, jobMatcher),
 		),
 	).Component("node-exporter")
 }

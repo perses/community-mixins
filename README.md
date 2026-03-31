@@ -9,17 +9,21 @@ This repo also offers Prometheus Operator format recording rules and alerts alon
 ## Overview of Available Dashboards
 
 ### Prometheus Dashboards
+
 - Prometheus Overview
 - Prometheus Remote Write
 
 ### Node Exporter Dashboards
+
 - Nodes
 - Cluster USE Method
 
 ### AlertManager Dashboards
+
 - AlertManager Overview
 
 ### Thanos Dashboards
+
 - Receive Overview
 - Query Overview
 - Query Frontend Overview
@@ -28,6 +32,7 @@ This repo also offers Prometheus Operator format recording rules and alerts alon
 - Ruler Overview
 
 ### Kubernetes-mixin Dashboards
+
 - API Server
 - Compute Resources / Multi-Cluster
 - Compute Resources / Cluster
@@ -48,15 +53,19 @@ This repo also offers Prometheus Operator format recording rules and alerts alon
 - Proxy
 
 ### etcd-mixin Dashboards
+
 - etcd Overview
 
 ### Blackbox Exporter
+
 - Blackbox Exporter Overview
 
 ### Perses
+
 - Perses Overview
 
 ### Istio
+
 - Istio Control Plane Dashboard
 - Istio Mesh Dashboard
 - Istio Performance Dashboard
@@ -65,6 +74,7 @@ This repo also offers Prometheus Operator format recording rules and alerts alon
 - Istio Ztunnel Dashboard
 
 ### OpenTelemetry Collector Dashboards
+
 - OpenTelemetry Collector
 
 ## Overview of Available PrometheusRules
@@ -85,6 +95,64 @@ make build-dashboards
 ```
 
 The generated dashboard files will be stored as **YAML files** in the `examples/dashboards/` directory by default and split by component (both in native Perses and Perses Operator format). You can then import these files into your Perses instances.
+
+### Customizing Job Labels
+
+Some dashboards use hardcoded job label values in PromQL queries (e.g., `job="node"` for Node Exporter). If your monitoring stack uses different job names (e.g., kube-prometheus-stack uses `job="node-exporter"`), you can override them with CLI flags:
+
+```bash
+go run main.go \
+  --output-dir="./examples/dashboards/perses" \
+  --output="yaml" \
+  --project="default" \
+  --datasource="prometheus-datasource" \
+  --node-exporter-job=node-exporter
+```
+
+All available job label flags (defaults match the standard community conventions):
+
+| Flag                       | Default                   | Description                            |
+|----------------------------|---------------------------|----------------------------------------|
+| `--node-exporter-job`      | `node`                    | Node Exporter dashboard queries        |
+| `--apiserver-job`          | `kube-apiserver`          | Kubernetes API server                  |
+| `--kubelet-job`            | `kubelet`                 | Kubelet                                |
+| `--kube-state-metrics-job` | `kube-state-metrics`      | kube-state-metrics                     |
+| `--cadvisor-job`           | `cadvisor`                | cAdvisor                               |
+| `--node-exporter-k8s-job`  | `node-exporter`           | Node Exporter in Kubernetes dashboards |
+| `--controller-manager-job` | `kube-controller-manager` | Kube Controller Manager                |
+| `--scheduler-job`          | `kube-scheduler`          | Kube Scheduler                         |
+| `--kube-proxy-job`         | `kube-proxy`              | Kube Proxy                             |
+
+> **Note:** Dashboards for Prometheus, Thanos, Alertmanager, Perses, Blackbox, OpenTelemetry, and etcd already use a `$job` runtime variable, so users can select the job value directly in the Perses UI without needing a CLI flag.
+
+### Library Usage
+
+When using this repository as a Go library, you can configure job labels programmatically by calling the exported setter functions before building dashboards:
+
+```go
+import (
+	nodeexporter "github.com/perses/community-mixins/pkg/panels/node_exporter"
+	k8s "github.com/perses/community-mixins/pkg/panels/kubernetes"
+	nodeexporterdash "github.com/perses/community-mixins/pkg/dashboards/node_exporter"
+)
+
+func main() {
+	// Configure job labels before building dashboards
+	nodeexporter.SetNodeExporterLabelValue("node-exporter")
+	k8s.SetAPIServerLabelValue("my-apiserver")
+	k8s.SetKubeletLabelValue("my-kubelet")
+
+	// Build dashboards with the configured values
+	result := nodeexporterdash.BuildNodeExporterNodes("myproject", "myds", "cluster")
+	dashboard := result.Builder().Dashboard
+	// ...
+}
+```
+
+The full list of available setters can be found in:
+
+- [`pkg/panels/node_exporter/globals.go`](pkg/panels/node_exporter/globals.go) — `SetNodeExporterLabelValue`
+- [`pkg/panels/kubernetes/globals.go`](pkg/panels/kubernetes/globals.go) — `SetAPIServerLabelValue`, `SetKubeletLabelValue`, `SetNodeExporterLabelValue`, `SetControllerManagerLabelValue`, `SetCAdvisorLabelValue`, `SetSchedulerLabelValue`, `SetKubeProxyLabelValue`, `SetKubeStateMetricsLabelValue`
 
 ## Rendering PrometheusRules
 

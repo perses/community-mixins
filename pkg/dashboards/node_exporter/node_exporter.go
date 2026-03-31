@@ -14,6 +14,8 @@
 package nodeexporter
 
 import (
+	"fmt"
+
 	"github.com/perses/community-mixins/pkg/dashboards"
 	"github.com/perses/community-mixins/pkg/promql"
 	"github.com/perses/perses/go-sdk/dashboard"
@@ -26,45 +28,47 @@ import (
 	"github.com/prometheus/prometheus/model/labels"
 )
 
-func withNodeExporterNodesCPU(datasource string, labelMatcher *labels.Matcher) dashboard.Option {
+func withNodeExporterNodesCPU(datasource string, labelMatchers ...*labels.Matcher) dashboard.Option {
 	return dashboard.AddPanelGroup("CPU",
 		panelgroup.PanelsPerLine(2),
-		panels.NodeCPUUsagePercentage(datasource, labelMatcher),
-		panels.NodeAverage(datasource, labelMatcher),
+		panels.NodeCPUUsagePercentage(datasource, labelMatchers...),
+		panels.NodeAverage(datasource, labelMatchers...),
 	)
 }
 
-func withNodeExporterNodesMemory(datasource string, labelMatcher *labels.Matcher) dashboard.Option {
+func withNodeExporterNodesMemory(datasource string, labelMatchers ...*labels.Matcher) dashboard.Option {
 	return dashboard.AddPanelGroup("Memory",
 		panelgroup.PanelsPerLine(2),
-		panels.NodeMemoryUsageBytes(datasource, labelMatcher),
-		panels.NodeMemoryUsagePercentage(datasource, labelMatcher),
+		panels.NodeMemoryUsageBytes(datasource, labelMatchers...),
+		panels.NodeMemoryUsagePercentage(datasource, labelMatchers...),
 	)
 }
 
-func withNodeExporterNodesDisk(datasource string, labelMatcher *labels.Matcher) dashboard.Option {
+func withNodeExporterNodesDisk(datasource string, labelMatchers ...*labels.Matcher) dashboard.Option {
 	return dashboard.AddPanelGroup("Disk",
 		panelgroup.PanelsPerLine(2),
-		panels.NodeDiskIOBytes(datasource, labelMatcher),
-		panels.NodeDiskIOSeconds(datasource, labelMatcher),
+		panels.NodeDiskIOBytes(datasource, labelMatchers...),
+		panels.NodeDiskIOSeconds(datasource, labelMatchers...),
 	)
 }
 
-func withNodeExporterNodesNetwork(datasource string, labelMatcher *labels.Matcher) dashboard.Option {
+func withNodeExporterNodesNetwork(datasource string, labelMatchers ...*labels.Matcher) dashboard.Option {
 	return dashboard.AddPanelGroup("Network",
 		panelgroup.PanelsPerLine(2),
-		panels.NodeNetworkReceivedBytes(datasource, labelMatcher),
-		panels.NodeNetworkTransmitedBytes(datasource, labelMatcher),
+		panels.NodeNetworkReceivedBytes(datasource, labelMatchers...),
+		panels.NodeNetworkTransmitedBytes(datasource, labelMatchers...),
 	)
 }
 
 func BuildNodeExporterNodes(project string, datasource string, clusterLabelName string) dashboards.DashboardResult {
 	clusterLabelMatcher := dashboards.GetClusterLabelMatcherV2(clusterLabelName)
+	jobValue := panels.GetNodeExporterLabelValue()
+	jobMatcher := &labels.Matcher{Name: "job", Type: labels.MatchEqual, Value: jobValue}
 	return dashboards.NewDashboardResult(
 		dashboard.New("node-exporter-nodes",
 			dashboard.ProjectName(project),
 			dashboard.Name("Node Exporter / Nodes"),
-			dashboards.AddClusterVariable(datasource, clusterLabelName, "node_uname_info{job='node', sysname!='Darwin'}"),
+			dashboards.AddClusterVariable(datasource, clusterLabelName, fmt.Sprintf("node_uname_info{job='%s', sysname!='Darwin'}", jobValue)),
 			dashboard.AddVariable("instance",
 				listVar.List(
 					labelValuesVar.PrometheusLabelValues("instance",
@@ -73,23 +77,19 @@ func BuildNodeExporterNodes(project string, datasource string, clusterLabelName 
 							promql.SetLabelMatchersV2(
 								vector.New(vector.WithMetricName("node_uname_info")),
 								[]*labels.Matcher{clusterLabelMatcher,
-									{Name: "job", Type: labels.MatchEqual, Value: "node"},
+									{Name: "job", Type: labels.MatchEqual, Value: jobValue},
 									{Name: "sysname", Type: labels.MatchNotEqual, Value: "Darwin"}},
 							).Pretty(0),
 						),
-						// promql.SetLabelMatchers(
-						// 	"node_uname_info{job='node', sysname!='Darwin'}",
-						// 	[]*labels.Matcher{clusterLabelMatcher},
-						// )),
 					),
 					listVar.DisplayName("instance"),
 					listVar.AllowAllValue(true),
 				),
 			),
-			withNodeExporterNodesCPU(datasource, clusterLabelMatcher),
-			withNodeExporterNodesMemory(datasource, clusterLabelMatcher),
-			withNodeExporterNodesDisk(datasource, clusterLabelMatcher),
-			withNodeExporterNodesNetwork(datasource, clusterLabelMatcher),
+			withNodeExporterNodesCPU(datasource, clusterLabelMatcher, jobMatcher),
+			withNodeExporterNodesMemory(datasource, clusterLabelMatcher, jobMatcher),
+			withNodeExporterNodesDisk(datasource, clusterLabelMatcher, jobMatcher),
+			withNodeExporterNodesNetwork(datasource, clusterLabelMatcher, jobMatcher),
 		),
 	).Component("node-exporter")
 }

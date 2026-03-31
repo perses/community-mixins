@@ -38,7 +38,7 @@ func SchedulerUpStatus(datasourceName string, labelMatchers ...promql.LabelMatch
 		panel.AddQuery(
 			query.PromQL(
 				promql.SetLabelMatchers(
-					"sum(up{cluster=\"$cluster\", job=\"kube-scheduler\"})",
+					"sum(up{cluster=\"$cluster\", "+GetSchedulerMatcher()+"})",
 					labelMatchers,
 				),
 				dashboards.AddQueryDataSource(datasourceName),
@@ -72,7 +72,7 @@ func SchedulingRate(datasourceName string, labelMatchers ...promql.LabelMatcher)
 		panel.AddQuery(
 			query.PromQL(
 				promql.SetLabelMatchers(
-					"sum(rate(scheduler_e2e_scheduling_duration_seconds_count{cluster=\"$cluster\", job=\"kube-scheduler\", instance=~\"$instance\"}[$__rate_interval])) by (cluster, instance)",
+					"sum(rate(scheduler_e2e_scheduling_duration_seconds_count{cluster=\"$cluster\", "+GetSchedulerMatcher()+", instance=~\"$instance\"}[$__rate_interval])) by (cluster, instance)",
 					labelMatchers,
 				),
 				dashboards.AddQueryDataSource(datasourceName),
@@ -82,7 +82,7 @@ func SchedulingRate(datasourceName string, labelMatchers ...promql.LabelMatcher)
 		panel.AddQuery(
 			query.PromQL(
 				promql.SetLabelMatchers(
-					"sum(rate(scheduler_binding_duration_seconds_count{cluster=\"$cluster\", job=\"kube-scheduler\", instance=~\"$instance\"}[$__rate_interval])) by (cluster, instance)",
+					"sum(rate(scheduler_binding_duration_seconds_count{cluster=\"$cluster\", "+GetSchedulerMatcher()+", instance=~\"$instance\"}[$__rate_interval])) by (cluster, instance)",
 					labelMatchers,
 				),
 				dashboards.AddQueryDataSource(datasourceName),
@@ -92,7 +92,7 @@ func SchedulingRate(datasourceName string, labelMatchers ...promql.LabelMatcher)
 		panel.AddQuery(
 			query.PromQL(
 				promql.SetLabelMatchers(
-					"sum(rate(scheduler_scheduling_algorithm_duration_seconds_count{cluster=\"$cluster\", job=\"kube-scheduler\", instance=~\"$instance\"}[$__rate_interval])) by (cluster, instance)",
+					"sum(rate(scheduler_scheduling_algorithm_duration_seconds_count{cluster=\"$cluster\", "+GetSchedulerMatcher()+", instance=~\"$instance\"}[$__rate_interval])) by (cluster, instance)",
 					labelMatchers,
 				),
 				dashboards.AddQueryDataSource(datasourceName),
@@ -102,7 +102,7 @@ func SchedulingRate(datasourceName string, labelMatchers ...promql.LabelMatcher)
 		panel.AddQuery(
 			query.PromQL(
 				promql.SetLabelMatchers(
-					"sum(rate(scheduler_volume_scheduling_duration_seconds_count{cluster=\"$cluster\", job=\"kube-scheduler\", instance=~\"$instance\"}[$__rate_interval])) by (cluster, instance)",
+					"sum(rate(scheduler_volume_scheduling_duration_seconds_count{cluster=\"$cluster\", "+GetSchedulerMatcher()+", instance=~\"$instance\"}[$__rate_interval])) by (cluster, instance)",
 					labelMatchers,
 				),
 				dashboards.AddQueryDataSource(datasourceName),
@@ -137,7 +137,7 @@ func SchedulingLatency(datasourceName string, labelMatchers ...promql.LabelMatch
 		panel.AddQuery(
 			query.PromQL(
 				promql.SetLabelMatchers(
-					"histogram_quantile(0.99, sum(rate(scheduler_e2e_scheduling_duration_seconds_bucket{cluster=\"$cluster\", job=\"kube-scheduler\",instance=~\"$instance\"}[$__rate_interval])) by (cluster, instance, le))",
+					"histogram_quantile(0.99, sum(rate(scheduler_e2e_scheduling_duration_seconds_bucket{cluster=\"$cluster\", "+GetSchedulerMatcher()+", instance=~\"$instance\"}[$__rate_interval])) by (cluster, instance, le))",
 					labelMatchers,
 				),
 				dashboards.AddQueryDataSource(datasourceName),
@@ -147,7 +147,7 @@ func SchedulingLatency(datasourceName string, labelMatchers ...promql.LabelMatch
 		panel.AddQuery(
 			query.PromQL(
 				promql.SetLabelMatchers(
-					"histogram_quantile(0.99, sum(rate(scheduler_binding_duration_seconds_bucket{cluster=\"$cluster\", job=\"kube-scheduler\",instance=~\"$instance\"}[$__rate_interval])) by (cluster, instance, le))",
+					"histogram_quantile(0.99, sum(rate(scheduler_binding_duration_seconds_bucket{cluster=\"$cluster\", "+GetSchedulerMatcher()+", instance=~\"$instance\"}[$__rate_interval])) by (cluster, instance, le))",
 					labelMatchers,
 				),
 				dashboards.AddQueryDataSource(datasourceName),
@@ -157,7 +157,7 @@ func SchedulingLatency(datasourceName string, labelMatchers ...promql.LabelMatch
 		panel.AddQuery(
 			query.PromQL(
 				promql.SetLabelMatchers(
-					"histogram_quantile(0.99, sum(rate(scheduler_scheduling_algorithm_duration_seconds_bucket{cluster=\"$cluster\", job=\"kube-scheduler\",instance=~\"$instance\"}[$__rate_interval])) by (cluster, instance, le))",
+					"histogram_quantile(0.99, sum(rate(scheduler_scheduling_algorithm_duration_seconds_bucket{cluster=\"$cluster\", "+GetSchedulerMatcher()+", instance=~\"$instance\"}[$__rate_interval])) by (cluster, instance, le))",
 					labelMatchers,
 				),
 				dashboards.AddQueryDataSource(datasourceName),
@@ -167,7 +167,7 @@ func SchedulingLatency(datasourceName string, labelMatchers ...promql.LabelMatch
 		panel.AddQuery(
 			query.PromQL(
 				promql.SetLabelMatchers(
-					"histogram_quantile(0.99, sum(rate(scheduler_volume_scheduling_duration_seconds_bucket{cluster=\"$cluster\", job=\"kube-scheduler\",instance=~\"$instance\"}[$__rate_interval])) by (cluster, instance, le))",
+					"histogram_quantile(0.99, sum(rate(scheduler_volume_scheduling_duration_seconds_bucket{cluster=\"$cluster\", "+GetSchedulerMatcher()+", instance=~\"$instance\"}[$__rate_interval])) by (cluster, instance, le))",
 					labelMatchers,
 				),
 				dashboards.AddQueryDataSource(datasourceName),

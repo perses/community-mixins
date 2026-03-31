@@ -36,7 +36,17 @@ func NewDashboardResult(builder dashboard.Builder, err error) DashboardResult {
 	}
 }
 
-// Components sets the component field of the DashboardResult.
+// Builder returns the dashboard builder from the result.
+func (d DashboardResult) Builder() dashboard.Builder {
+	return d.builder
+}
+
+// Err returns any error from building the dashboard.
+func (d DashboardResult) Err() error {
+	return d.err
+}
+
+// Component sets the component field of the DashboardResult.
 // This component field is used by DashboardWriter, as the subdirectory name for the dashboard.
 func (d DashboardResult) Component(component string) DashboardResult {
 	d.component = component
