@@ -116,7 +116,7 @@ fixlicense:
 
 .PHONY: tidy
 tidy:
-	go mod tidy -v
+	go mod tidy -e -v
 	cd scripts && go mod tidy -v -modfile=go.mod -compat=1.18
 
 .PHONY: jsonnet-resources
