@@ -117,7 +117,8 @@ func SetLabelMatchers(query string, labelMatchers []LabelMatcher) string {
 // Use LabelsSetPromQLV2 instead.
 func LabelsSetPromQL(query, labelMatchType, name, value string, processor *PersesVarProcessor) string {
 	modifiedQuery, originalVars := processor.Replace(query)
-	expr, err := parser.ParseExpr(modifiedQuery)
+	p := parser.NewParser(parser.Options{})
+	expr, err := p.ParseExpr(modifiedQuery)
 	if err != nil {
 		fmt.Println("Error parsing query:", err, modifiedQuery)
 		return ""
