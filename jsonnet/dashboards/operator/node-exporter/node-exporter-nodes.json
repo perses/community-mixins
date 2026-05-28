@@ -78,7 +78,7 @@
                       "kind": "PrometheusDatasource",
                       "name": "prometheus-datasource"
                     },
-                    "query": "    1\n  -\n    sum without (mode) (\n      rate(\n        node_cpu_seconds_total{instance=\"$instance\",job=\"node\",mode=~\"idle|iowait|steal\"}[$__rate_interval]\n      )\n    )\n/ ignoring (cpu) group_left ()\n  count without (cpu, mode) (node_cpu_seconds_total{instance=\"$instance\",job=\"node\",mode=\"idle\"})",
+                    "query": "    1\n  -\n    sum without (mode) (\n      rate(\n        node_cpu_seconds_total{instance=~\"$instance\",job=\"node\",mode=~\"idle|iowait|steal\"}[$__rate_interval]\n      )\n    )\n/ ignoring (cpu) group_left ()\n  count without (cpu, mode) (node_cpu_seconds_total{instance=~\"$instance\",job=\"node\",mode=\"idle\"})",
                     "seriesNameFormat": "{{device}} - CPU - Usage"
                   }
                 }
@@ -117,7 +117,7 @@
                       "kind": "PrometheusDatasource",
                       "name": "prometheus-datasource"
                     },
-                    "query": "node_load1{instance=\"$instance\",job=\"node\"}",
+                    "query": "node_load1{instance=~\"$instance\",job=\"node\"}",
                     "seriesNameFormat": "CPU - 1m Average"
                   }
                 }
@@ -133,7 +133,7 @@
                       "kind": "PrometheusDatasource",
                       "name": "prometheus-datasource"
                     },
-                    "query": "node_load5{instance=\"$instance\",job=\"node\"}",
+                    "query": "node_load5{instance=~\"$instance\",job=\"node\"}",
                     "seriesNameFormat": "CPU - 5m Average"
                   }
                 }
@@ -149,7 +149,7 @@
                       "kind": "PrometheusDatasource",
                       "name": "prometheus-datasource"
                     },
-                    "query": "node_load15{instance=\"$instance\",job=\"node\"}",
+                    "query": "node_load15{instance=~\"$instance\",job=\"node\"}",
                     "seriesNameFormat": "CPU - 15m Average"
                   }
                 }
@@ -165,7 +165,7 @@
                       "kind": "PrometheusDatasource",
                       "name": "prometheus-datasource"
                     },
-                    "query": "count(node_cpu_seconds_total{instance=\"$instance\",job=\"node\",mode=\"idle\"})",
+                    "query": "count(node_cpu_seconds_total{instance=~\"$instance\",job=\"node\",mode=\"idle\"})",
                     "seriesNameFormat": "CPU - Logical Cores"
                   }
                 }
@@ -210,7 +210,7 @@
                       "kind": "PrometheusDatasource",
                       "name": "prometheus-datasource"
                     },
-                    "query": "node_memory_Buffers_bytes{instance=\"$instance\",job=\"node\"}",
+                    "query": "node_memory_Buffers_bytes{instance=~\"$instance\",job=\"node\"}",
                     "seriesNameFormat": "Memory - Buffers"
                   }
                 }
@@ -226,7 +226,7 @@
                       "kind": "PrometheusDatasource",
                       "name": "prometheus-datasource"
                     },
-                    "query": "node_memory_Cached_bytes{instance=\"$instance\",job=\"node\"}",
+                    "query": "node_memory_Cached_bytes{instance=~\"$instance\",job=\"node\"}",
                     "seriesNameFormat": "Memory - Cached"
                   }
                 }
@@ -242,7 +242,7 @@
                       "kind": "PrometheusDatasource",
                       "name": "prometheus-datasource"
                     },
-                    "query": "node_memory_MemFree_bytes{instance=\"$instance\",job=\"node\"}",
+                    "query": "node_memory_MemFree_bytes{instance=~\"$instance\",job=\"node\"}",
                     "seriesNameFormat": "Memory - Free"
                   }
                 }
@@ -292,7 +292,7 @@
                       "kind": "PrometheusDatasource",
                       "name": "prometheus-datasource"
                     },
-                    "query": "  100\n-\n    avg(node_memory_MemAvailable_bytes{instance=\"$instance\",job=\"node\"})\n  /\n    avg(node_memory_MemTotal_bytes{instance=\"$instance\",job=\"node\"}) * 100",
+                    "query": "  100\n-\n    avg(node_memory_MemAvailable_bytes{instance=~\"$instance\",job=\"node\"})\n  /\n    avg(node_memory_MemTotal_bytes{instance=~\"$instance\",job=\"node\"}) * 100",
                     "seriesNameFormat": "Memory - Usage"
                   }
                 }
@@ -336,7 +336,7 @@
                       "kind": "PrometheusDatasource",
                       "name": "prometheus-datasource"
                     },
-                    "query": "rate(node_disk_read_bytes_total{device!=\"\",instance=\"$instance\",job=\"node\"}[$__rate_interval])",
+                    "query": "rate(node_disk_read_bytes_total{device!=\"\",instance=~\"$instance\",job=\"node\"}[$__rate_interval])",
                     "seriesNameFormat": "{{device}} - Disk - Usage"
                   }
                 }
@@ -352,7 +352,7 @@
                       "kind": "PrometheusDatasource",
                       "name": "prometheus-datasource"
                     },
-                    "query": "rate(node_disk_io_time_seconds_total{device!=\"\",instance=\"$instance\",job=\"node\"}[$__rate_interval])",
+                    "query": "rate(node_disk_io_time_seconds_total{device!=\"\",instance=~\"$instance\",job=\"node\"}[$__rate_interval])",
                     "seriesNameFormat": "{{device}} - Disk - Written"
                   }
                 }
@@ -396,7 +396,7 @@
                       "kind": "PrometheusDatasource",
                       "name": "prometheus-datasource"
                     },
-                    "query": "rate(node_disk_io_time_seconds_total{device!=\"\",instance=\"$instance\",job=\"node\"}[$__rate_interval])",
+                    "query": "rate(node_disk_io_time_seconds_total{device!=\"\",instance=~\"$instance\",job=\"node\"}[$__rate_interval])",
                     "seriesNameFormat": "{{device}} - Disk - IO Time"
                   }
                 }
@@ -440,7 +440,7 @@
                       "kind": "PrometheusDatasource",
                       "name": "prometheus-datasource"
                     },
-                    "query": "rate(\n  node_network_receive_bytes_total{device!=\"lo\",instance=\"$instance\",job=\"node\"}[$__rate_interval]\n)",
+                    "query": "rate(\n  node_network_receive_bytes_total{device!=\"lo\",instance=~\"$instance\",job=\"node\"}[$__rate_interval]\n)",
                     "seriesNameFormat": "{{device}} - Network - Received"
                   }
                 }
@@ -484,7 +484,7 @@
                       "kind": "PrometheusDatasource",
                       "name": "prometheus-datasource"
                     },
-                    "query": "rate(\n  node_network_receive_bytes_total{device!=\"lo\",instance=\"$instance\",job=\"node\"}[$__rate_interval]\n)",
+                    "query": "rate(\n  node_network_receive_bytes_total{device!=\"lo\",instance=~\"$instance\",job=\"node\"}[$__rate_interval]\n)",
                     "seriesNameFormat": "{{device}} - Network - Transmitted"
                   }
                 }
