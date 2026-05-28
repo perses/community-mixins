@@ -58,11 +58,11 @@ spec:
                                       -
                                         sum without (mode) (
                                           rate(
-                                            node_cpu_seconds_total{instance="$instance",job="node",mode=~"idle|iowait|steal"}[$__rate_interval]
+                                            node_cpu_seconds_total{instance=~"$instance",job="node",mode=~"idle|iowait|steal"}[$__rate_interval]
                                           )
                                         )
                                     / ignoring (cpu) group_left ()
-                                      count without (cpu, mode) (node_cpu_seconds_total{instance="$instance",job="node",mode="idle"})
+                                      count without (cpu, mode) (node_cpu_seconds_total{instance=~"$instance",job="node",mode="idle"})
                                 seriesNameFormat: '{{device}} - CPU - Usage'
         "0_1":
             kind: Panel
@@ -87,7 +87,7 @@ spec:
                                 datasource:
                                     kind: PrometheusDatasource
                                     name: prometheus-datasource
-                                query: node_load1{instance="$instance",job="node"}
+                                query: node_load1{instance=~"$instance",job="node"}
                                 seriesNameFormat: CPU - 1m Average
                     - kind: TimeSeriesQuery
                       spec:
@@ -97,7 +97,7 @@ spec:
                                 datasource:
                                     kind: PrometheusDatasource
                                     name: prometheus-datasource
-                                query: node_load5{instance="$instance",job="node"}
+                                query: node_load5{instance=~"$instance",job="node"}
                                 seriesNameFormat: CPU - 5m Average
                     - kind: TimeSeriesQuery
                       spec:
@@ -107,7 +107,7 @@ spec:
                                 datasource:
                                     kind: PrometheusDatasource
                                     name: prometheus-datasource
-                                query: node_load15{instance="$instance",job="node"}
+                                query: node_load15{instance=~"$instance",job="node"}
                                 seriesNameFormat: CPU - 15m Average
                     - kind: TimeSeriesQuery
                       spec:
@@ -117,7 +117,7 @@ spec:
                                 datasource:
                                     kind: PrometheusDatasource
                                     name: prometheus-datasource
-                                query: count(node_cpu_seconds_total{instance="$instance",job="node",mode="idle"})
+                                query: count(node_cpu_seconds_total{instance=~"$instance",job="node",mode="idle"})
                                 seriesNameFormat: CPU - Logical Cores
         "1_0":
             kind: Panel
@@ -146,7 +146,7 @@ spec:
                                 datasource:
                                     kind: PrometheusDatasource
                                     name: prometheus-datasource
-                                query: node_memory_Buffers_bytes{instance="$instance",job="node"}
+                                query: node_memory_Buffers_bytes{instance=~"$instance",job="node"}
                                 seriesNameFormat: Memory - Buffers
                     - kind: TimeSeriesQuery
                       spec:
@@ -156,7 +156,7 @@ spec:
                                 datasource:
                                     kind: PrometheusDatasource
                                     name: prometheus-datasource
-                                query: node_memory_Cached_bytes{instance="$instance",job="node"}
+                                query: node_memory_Cached_bytes{instance=~"$instance",job="node"}
                                 seriesNameFormat: Memory - Cached
                     - kind: TimeSeriesQuery
                       spec:
@@ -166,7 +166,7 @@ spec:
                                 datasource:
                                     kind: PrometheusDatasource
                                     name: prometheus-datasource
-                                query: node_memory_MemFree_bytes{instance="$instance",job="node"}
+                                query: node_memory_MemFree_bytes{instance=~"$instance",job="node"}
                                 seriesNameFormat: Memory - Free
         "1_1":
             kind: Panel
@@ -200,9 +200,9 @@ spec:
                                 query: |4-
                                       100
                                     -
-                                        avg(node_memory_MemAvailable_bytes{instance="$instance",job="node"})
+                                        avg(node_memory_MemAvailable_bytes{instance=~"$instance",job="node"})
                                       /
-                                        avg(node_memory_MemTotal_bytes{instance="$instance",job="node"}) * 100
+                                        avg(node_memory_MemTotal_bytes{instance=~"$instance",job="node"}) * 100
                                 seriesNameFormat: Memory - Usage
         "2_0":
             kind: Panel
@@ -230,7 +230,7 @@ spec:
                                 datasource:
                                     kind: PrometheusDatasource
                                     name: prometheus-datasource
-                                query: rate(node_disk_read_bytes_total{device!="",instance="$instance",job="node"}[$__rate_interval])
+                                query: rate(node_disk_read_bytes_total{device!="",instance=~"$instance",job="node"}[$__rate_interval])
                                 seriesNameFormat: '{{device}} - Disk - Usage'
                     - kind: TimeSeriesQuery
                       spec:
@@ -240,7 +240,7 @@ spec:
                                 datasource:
                                     kind: PrometheusDatasource
                                     name: prometheus-datasource
-                                query: rate(node_disk_io_time_seconds_total{device!="",instance="$instance",job="node"}[$__rate_interval])
+                                query: rate(node_disk_io_time_seconds_total{device!="",instance=~"$instance",job="node"}[$__rate_interval])
                                 seriesNameFormat: '{{device}} - Disk - Written'
         "2_1":
             kind: Panel
@@ -268,7 +268,7 @@ spec:
                                 datasource:
                                     kind: PrometheusDatasource
                                     name: prometheus-datasource
-                                query: rate(node_disk_io_time_seconds_total{device!="",instance="$instance",job="node"}[$__rate_interval])
+                                query: rate(node_disk_io_time_seconds_total{device!="",instance=~"$instance",job="node"}[$__rate_interval])
                                 seriesNameFormat: '{{device}} - Disk - IO Time'
         "3_0":
             kind: Panel
@@ -298,7 +298,7 @@ spec:
                                     name: prometheus-datasource
                                 query: |-
                                     rate(
-                                      node_network_receive_bytes_total{device!="lo",instance="$instance",job="node"}[$__rate_interval]
+                                      node_network_receive_bytes_total{device!="lo",instance=~"$instance",job="node"}[$__rate_interval]
                                     )
                                 seriesNameFormat: '{{device}} - Network - Received'
         "3_1":
@@ -329,7 +329,7 @@ spec:
                                     name: prometheus-datasource
                                 query: |-
                                     rate(
-                                      node_network_receive_bytes_total{device!="lo",instance="$instance",job="node"}[$__rate_interval]
+                                      node_network_receive_bytes_total{device!="lo",instance=~"$instance",job="node"}[$__rate_interval]
                                     )
                                 seriesNameFormat: '{{device}} - Network - Transmitted'
     layouts:
