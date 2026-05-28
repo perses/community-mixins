@@ -37,7 +37,7 @@ var NodeExporterCommonPanelQueries = map[string]parser.Expr{
 								vector.WithLabelMatchers(
 									label.New("job").Equal("node"),
 									label.New("mode").EqualRegexp("idle|iowait|steal"),
-									label.New("instance").Equal("$instance"),
+									label.New("instance").EqualRegexp("$instance"),
 								),
 							),
 							matrix.WithRangeAsVariable("$__rate_interval"),
@@ -51,7 +51,7 @@ var NodeExporterCommonPanelQueries = map[string]parser.Expr{
 					vector.WithLabelMatchers(
 						label.New("job").Equal("node"),
 						label.New("mode").Equal("idle"),
-						label.New("instance").Equal("$instance"),
+						label.New("instance").EqualRegexp("$instance"),
 					),
 				),
 			).Without("cpu", "mode"),
@@ -257,21 +257,21 @@ var NodeExporterCommonPanelQueries = map[string]parser.Expr{
 		vector.WithMetricName("node_load1"),
 		vector.WithLabelMatchers(
 			label.New("job").Equal("node"),
-			label.New("instance").Equal("$instance"),
+			label.New("instance").EqualRegexp("$instance"),
 		),
 	),
 	"NodeExporterNodeAverageLoad5": vector.New(
 		vector.WithMetricName("node_load5"),
 		vector.WithLabelMatchers(
 			label.New("job").Equal("node"),
-			label.New("instance").Equal("$instance"),
+			label.New("instance").EqualRegexp("$instance"),
 		),
 	),
 	"NodeExporterNodeAverageLoad15": vector.New(
 		vector.WithMetricName("node_load15"),
 		vector.WithLabelMatchers(
 			label.New("job").Equal("node"),
-			label.New("instance").Equal("$instance"),
+			label.New("instance").EqualRegexp("$instance"),
 		),
 	),
 	"NodeExporterNodeAverageCountCPU": promqlbuilder.Count(
@@ -279,7 +279,7 @@ var NodeExporterCommonPanelQueries = map[string]parser.Expr{
 			vector.WithMetricName("node_cpu_seconds_total"),
 			vector.WithLabelMatchers(
 				label.New("job").Equal("node"),
-				label.New("instance").Equal("$instance"),
+				label.New("instance").EqualRegexp("$instance"),
 				label.New("mode").Equal("idle"),
 			),
 		),
@@ -288,21 +288,21 @@ var NodeExporterCommonPanelQueries = map[string]parser.Expr{
 		vector.WithMetricName("node_memory_Buffers_bytes"),
 		vector.WithLabelMatchers(
 			label.New("job").Equal("node"),
-			label.New("instance").Equal("$instance"),
+			label.New("instance").EqualRegexp("$instance"),
 		),
 	),
 	"NodeExporterNodeMemoryUsageBytesCached": vector.New(
 		vector.WithMetricName("node_memory_Cached_bytes"),
 		vector.WithLabelMatchers(
 			label.New("job").Equal("node"),
-			label.New("instance").Equal("$instance"),
+			label.New("instance").EqualRegexp("$instance"),
 		),
 	),
 	"NodeExporterNodeMemoryUsageBytesMemFree": vector.New(
 		vector.WithMetricName("node_memory_MemFree_bytes"),
 		vector.WithLabelMatchers(
 			label.New("job").Equal("node"),
-			label.New("instance").Equal("$instance"),
+			label.New("instance").EqualRegexp("$instance"),
 		),
 	),
 	"NodeExporterNodeMemoryUsagePercentage": promqlbuilder.Sub(
@@ -313,7 +313,7 @@ var NodeExporterCommonPanelQueries = map[string]parser.Expr{
 					vector.WithMetricName("node_memory_MemAvailable_bytes"),
 					vector.WithLabelMatchers(
 						label.New("job").Equal("node"),
-						label.New("instance").Equal("$instance"),
+						label.New("instance").EqualRegexp("$instance"),
 					),
 				),
 			),
@@ -323,7 +323,7 @@ var NodeExporterCommonPanelQueries = map[string]parser.Expr{
 						vector.WithMetricName("node_memory_MemTotal_bytes"),
 						vector.WithLabelMatchers(
 							label.New("job").Equal("node"),
-							label.New("instance").Equal("$instance"),
+							label.New("instance").EqualRegexp("$instance"),
 						),
 					),
 				),
@@ -337,7 +337,7 @@ var NodeExporterCommonPanelQueries = map[string]parser.Expr{
 				vector.WithMetricName("node_disk_read_bytes_total"),
 				vector.WithLabelMatchers(
 					label.New("job").Equal("node"),
-					label.New("instance").Equal("$instance"),
+					label.New("instance").EqualRegexp("$instance"),
 					label.New("device").NotEqual(""),
 				),
 			),
@@ -350,7 +350,7 @@ var NodeExporterCommonPanelQueries = map[string]parser.Expr{
 				vector.WithMetricName("node_disk_io_time_seconds_total"),
 				vector.WithLabelMatchers(
 					label.New("job").Equal("node"),
-					label.New("instance").Equal("$instance"),
+					label.New("instance").EqualRegexp("$instance"),
 					label.New("device").NotEqual(""),
 				),
 			),
@@ -363,7 +363,7 @@ var NodeExporterCommonPanelQueries = map[string]parser.Expr{
 				vector.WithMetricName("node_disk_io_time_seconds_total"),
 				vector.WithLabelMatchers(
 					label.New("job").Equal("node"),
-					label.New("instance").Equal("$instance"),
+					label.New("instance").EqualRegexp("$instance"),
 					label.New("device").NotEqual(""),
 				),
 			),
@@ -376,7 +376,7 @@ var NodeExporterCommonPanelQueries = map[string]parser.Expr{
 				vector.WithMetricName("node_network_receive_bytes_total"),
 				vector.WithLabelMatchers(
 					label.New("job").Equal("node"),
-					label.New("instance").Equal("$instance"),
+					label.New("instance").EqualRegexp("$instance"),
 					label.New("device").NotEqual("lo"),
 				),
 			),
@@ -389,7 +389,7 @@ var NodeExporterCommonPanelQueries = map[string]parser.Expr{
 				vector.WithMetricName("node_network_transmit_bytes_total"),
 				vector.WithLabelMatchers(
 					label.New("job").Equal("node"),
-					label.New("instance").Equal("$instance"),
+					label.New("instance").EqualRegexp("$instance"),
 					label.New("device").NotEqual("lo"),
 				),
 			),
