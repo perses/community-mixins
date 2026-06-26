@@ -55,6 +55,7 @@ const (
 	runbookThanosReceiveLimitsConfigReloadFailure                  = "#thanosreceivelimitsconfigreloadfailure"
 	runbookThanosReceiveLimitsHighMetaMonitoringQueriesFailureRate = "#thanosreceivelimitshighmetamonitoringqueriesfailurerate"
 	runbookThanosReceiveTenantLimitedByHeadSeries                  = "#thanosreceivetenantlimitedbyheadseries"
+	runbookThanosReceiveLimitsHit                                  = "#thanosreceivelimitshit"
 	runbookThanosStoreGrpcErrorRate                                = "#thanosstoregrpcerrorrate"
 	runbookThanosStoreBucketHighOperationFailures                  = "#thanosstorebuckethighoperationfailures"
 	runbookThanosStoreObjstoreOperationLatencyHigh                 = "#thanosstoreobjstoreoperationlatencyhigh"
@@ -1693,6 +1694,49 @@ func (t ThanosRulesConfig) ThanosReceiveGroup() []rulegroup.Option {
 						runbookThanosReceiveTenantLimitedByHeadSeries,
 						"Thanos Receive tenant {{$labels.tenant}} in {{$labels.namespace}} is limited by head series.",
 						"Thanos Receive tenant is limited by head series.",
+					),
+					t.AdditionalAlertAnnotations,
+				),
+			),
+		),
+		rulegroup.AddRule(
+			"ThanosReceiveLimitsHit",
+			alerting.Expr(
+				promqlbuilder.Gtr(
+					promqlbuilder.Sum(
+						promqlbuilder.Rate(
+							matrix.New(
+								vector.New(
+									vector.WithMetricName("thanos_receive_write_limits_hit_count"),
+									vector.WithLabelMatchers(
+										label.New("job").EqualRegexp(t.ReceiveRouterServiceSelector),
+									),
+								),
+								matrix.WithRange(10*time.Minute),
+							),
+						),
+					).By("namespace", "job", "tenant", "limit"),
+					promqlbuilder.NewNumber(0),
+				),
+			),
+			alerting.For("10m"),
+			alerting.Labels(
+				common.MergeMaps(
+					map[string]string{
+						"service":  t.ServiceLabelValue,
+						"severity": "medium",
+					},
+					t.AdditionalAlertLabels,
+				),
+			),
+			alerting.Annotations(
+				common.MergeMaps(
+					common.BuildAnnotations(
+						t.ReceiveDashboardURL,
+						t.RunbookURL,
+						runbookThanosReceiveLimitsHit,
+						"Thanos Receive {{$labels.job}} in {{$labels.namespace}} is limiting requests for tenant {{$labels.tenant}} due to {{$labels.limit}} limit.",
+						"Thanos Receive is limiting requests.",
 					),
 					t.AdditionalAlertAnnotations,
 				),
