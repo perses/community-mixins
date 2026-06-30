@@ -519,6 +519,23 @@ groups:
     labels:
       service: thanos
       severity: medium
+  - alert: ThanosReceiveLimitsHit
+    annotations:
+      dashboard: https://demo.perses.dev/projects/perses/dashboards/thanosreceive
+      description: Thanos Receive {{$labels.job}} in {{$labels.namespace}} is limiting
+        requests for tenant {{$labels.tenant}} due to {{$labels.limit}} limit.
+      runbook: https://github.com/thanos-io/thanos/blob/main/mixin/runbook.md#thanosreceivelimitshit
+      summary: Thanos Receive is limiting requests.
+    expr: |2-
+        sum by (namespace, job, tenant, limit) (
+          rate(thanos_receive_write_limits_hit_count{job=~"thanos-receive-router.*"}[10m])
+        )
+      >
+        0
+    for: 10m
+    labels:
+      service: thanos
+      severity: medium
 - name: thanos-store
   rules:
   - alert: ThanosStoreGrpcErrorRate
