@@ -6,9 +6,12 @@ require (
 	github.com/perses/perses v0.53.1
 	github.com/perses/perses-operator v0.4.0
 	github.com/perses/plugins/gaugechart v0.12.1
+	github.com/perses/plugins/logstable v0.2.1
+	github.com/perses/plugins/loki v0.5.1
 	github.com/perses/plugins/markdown v0.11.1
 	github.com/perses/plugins/prometheus v0.57.1
 	github.com/perses/plugins/statchart v0.12.1
+	github.com/perses/plugins/staticlistvariable v0.8.1
 	github.com/perses/plugins/table v0.11.2
 	github.com/perses/plugins/timeserieschart v0.12.1
 	github.com/perses/promql-builder v0.2.1-0.20260106092606-e4909fea9c57

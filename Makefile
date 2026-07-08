@@ -29,6 +29,7 @@ OUTPUT_DIR_PERSES ?= ./built/dashboards/perses
 OUTPUT_FORMAT_PERSES ?= json
 PROJECT ?= default
 DATASOURCE ?= prometheus-datasource
+LOKI_DATASOURCE ?= loki-datasource
 
 .PHONY: demo
 start-demo:
@@ -47,8 +48,8 @@ build-dashboards:
 	@echo "Removing old dashboards"
 	@rm -rf ./examples/dashboards/
 	@echo "Building dashboards"
-	@$(ENVVARS) $(GOCMD) run $(GOMAIN) --output-dir="./examples/dashboards/operator" --output="operator" --project="perses-dev" --datasource="prometheus-datasource"
-	@$(ENVVARS) $(GOCMD) run $(GOMAIN) --output-dir="./examples/dashboards/perses" --output="yaml" --project="perses-dev" --datasource="prometheus-datasource"
+	@$(ENVVARS) $(GOCMD) run $(GOMAIN) --output-dir="./examples/dashboards/operator" --output="operator" --project="perses-dev" --datasource="prometheus-datasource" --loki-datasource="loki-datasource"
+	@$(ENVVARS) $(GOCMD) run $(GOMAIN) --output-dir="./examples/dashboards/perses" --output="yaml" --project="perses-dev" --datasource="prometheus-datasource" --loki-datasource="loki-datasource"
 
 .PHONY: build-rules
 build-rules:
@@ -65,8 +66,8 @@ build-dashboards-local:
 	@rm -rf $(OUTPUT_DIR_OPERATOR)
 	@rm -rf $(OUTPUT_DIR_PERSES)
 	@echo "Building dashboards for local testing"
-	@$(ENVVARS) $(GOCMD) run $(GOMAIN) --output-dir=$(OUTPUT_DIR_OPERATOR) --output="operator" --project=$(PROJECT) --datasource=$(DATASOURCE)
-	@$(ENVVARS) $(GOCMD) run $(GOMAIN) --output-dir=$(OUTPUT_DIR_PERSES) --output=$(OUTPUT_FORMAT_PERSES) --project=$(PROJECT) --datasource=$(DATASOURCE)
+	@$(ENVVARS) $(GOCMD) run $(GOMAIN) --output-dir=$(OUTPUT_DIR_OPERATOR) --output="operator" --project=$(PROJECT) --datasource=$(DATASOURCE) --loki-datasource=$(LOKI_DATASOURCE)
+	@$(ENVVARS) $(GOCMD) run $(GOMAIN) --output-dir=$(OUTPUT_DIR_PERSES) --output=$(OUTPUT_FORMAT_PERSES) --project=$(PROJECT) --datasource=$(DATASOURCE) --loki-datasource=$(LOKI_DATASOURCE)
 
 .PHONY: deps
 deps:
