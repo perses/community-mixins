@@ -17,8 +17,8 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/perses/perses/go-sdk/dashboard"
 	operatorv2 "github.com/perses/perses-operator/api/v1alpha2"
+	"github.com/perses/perses/go-sdk/dashboard"
 	k8syaml "sigs.k8s.io/yaml"
 )
 
