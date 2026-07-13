@@ -6,42 +6,44 @@ local overrideDashboard(dashboard, namespace, commonLabels, newDatasource) =
     },
 
     spec+: {
-      panels: {
-        [panelKey]: dashboard.spec.panels[panelKey] {
-          spec+: if std.objectHas(dashboard.spec.panels[panelKey].spec, 'queries') then {
-            queries: [
-              query {
-                spec+: {
-                  plugin+: {
-                    spec+: {
-                      datasource+: {
-                        name: newDatasource,
+      config+: {
+        panels: {
+          [panelKey]: dashboard.spec.config.panels[panelKey] {
+            spec+: if std.objectHas(dashboard.spec.config.panels[panelKey].spec, 'queries') then {
+              queries: [
+                query {
+                  spec+: {
+                    plugin+: {
+                      spec+: {
+                        datasource+: {
+                          name: newDatasource,
+                        },
                       },
                     },
                   },
-                },
-              }
-              for query in dashboard.spec.panels[panelKey].spec.queries
-            ],
-          } else {},
-        }
-        for panelKey in std.objectFields(dashboard.spec.panels)
-      },
+                }
+                for query in dashboard.spec.config.panels[panelKey].spec.queries
+              ],
+            } else {},
+          }
+          for panelKey in std.objectFields(dashboard.spec.config.panels)
+        },
 
-      variables: if std.objectHas(dashboard.spec, 'variables') then [
-        variable {
-          spec+: {
-            plugin+: {
-              spec+: {
-                datasource+: {
-                  name: newDatasource,
+        variables: if std.objectHas(dashboard.spec.config, 'variables') then [
+          variable {
+            spec+: {
+              plugin+: {
+                spec+: {
+                  datasource+: {
+                    name: newDatasource,
+                  },
                 },
               },
             },
-          },
-        }
-        for variable in dashboard.spec.variables
-      ] else [],
+          }
+          for variable in dashboard.spec.config.variables
+        ] else [],
+      },
     },
   };
 {

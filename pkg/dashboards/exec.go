@@ -21,7 +21,7 @@ import (
 	"os"
 	"path"
 
-	persesv1 "github.com/perses/perses-operator/api/v1alpha1"
+	operatorv2 "github.com/perses/perses-operator/api/v1alpha2"
 	"github.com/perses/perses/go-sdk/dashboard"
 	"gopkg.in/yaml.v3"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -82,10 +82,10 @@ func executeDashboardBuilder(builder dashboard.Builder, outputFormat string, out
 }
 
 func builderToOperatorResource(builder dashboard.Builder) runtime.Object {
-	return &persesv1.PersesDashboard{
+	return &operatorv2.PersesDashboard{
 		TypeMeta: metav1.TypeMeta{
 			Kind:       "PersesDashboard",
-			APIVersion: "perses.dev/v1alpha1",
+			APIVersion: "perses.dev/v1alpha2",
 		},
 		ObjectMeta: metav1.ObjectMeta{
 			Name:      builder.Dashboard.Metadata.Name,
@@ -97,8 +97,10 @@ func builderToOperatorResource(builder dashboard.Builder) runtime.Object {
 				"app.kubernetes.io/component": "dashboard",
 			},
 		},
-		Spec: persesv1.Dashboard{
-			DashboardSpec: builder.Dashboard.Spec,
+		Spec: operatorv2.PersesDashboardSpec{
+			Config: operatorv2.Dashboard{
+				DashboardSpec: builder.Dashboard.Spec,
+			},
 		},
 	}
 }
