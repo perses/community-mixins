@@ -30,6 +30,7 @@ import (
 	"github.com/perses/community-mixins/pkg/dashboards/kubernetes/proxy"
 	"github.com/perses/community-mixins/pkg/dashboards/kubernetes/scheduler"
 	nodeexporter "github.com/perses/community-mixins/pkg/dashboards/node_exporter"
+	openshiftlogging "github.com/perses/community-mixins/pkg/dashboards/openshift/logging"
 	"github.com/perses/community-mixins/pkg/dashboards/opentelemetry"
 	"github.com/perses/community-mixins/pkg/dashboards/perses"
 	"github.com/perses/community-mixins/pkg/dashboards/prometheus"
@@ -47,6 +48,7 @@ import (
 var (
 	project          string
 	datasource       string
+	lokiDatasource   string
 	clusterLabelName string
 	buildRules       bool
 
@@ -65,6 +67,7 @@ var (
 func main() {
 	flag.StringVar(&project, "project", "default", "The project name")
 	flag.StringVar(&datasource, "datasource", "", "The datasource name")
+	flag.StringVar(&lokiDatasource, "loki-datasource", "", "The Loki datasource name (for log-based dashboards)")
 	flag.StringVar(&clusterLabelName, "cluster-label-name", "", "The cluster label name")
 	flag.BoolVar(&buildRules, "build-rules", false, "Whether to build rules")
 
@@ -197,6 +200,10 @@ func main() {
 		dashboardWriter.Add(istio.BuildIstioService(project, datasource, clusterLabelName))
 		dashboardWriter.Add(istio.BuildIstioPerformance(project, datasource, clusterLabelName))
 		dashboardWriter.Add(istio.BuildIstioZtunnel(project, datasource, clusterLabelName))
+
+		if lokiDatasource != "" {
+			dashboardWriter.Add(openshiftlogging.BuildAuditLogViewer(project, lokiDatasource))
+		}
 
 		dashboardWriter.Write()
 	}

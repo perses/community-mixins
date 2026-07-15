@@ -1,0 +1,275 @@
+kind: Dashboard
+metadata:
+    name: ocp-audit-log-viewer
+    createdAt: 0001-01-01T00:00:00Z
+    updatedAt: 0001-01-01T00:00:00Z
+    version: 0
+    project: perses-dev
+spec:
+    display:
+        name: OCP Audit Log Viewer
+    variables:
+        - kind: TextVariable
+          spec:
+            display:
+                name: Username
+                description: 'Regex filter. Examples: username, .*@redhat.com, admin|user'
+                hidden: false
+            value: ""
+            name: username
+        - kind: ListVariable
+          spec:
+            display:
+                name: Exclude System Users
+                description: Select None to show all users including system accounts
+                hidden: false
+            defaultValue: $__all
+            allowAllValue: true
+            allowMultiple: true
+            customAllValue: system:serviceaccount:.*|system:node:.*|system:kube.*|system:openshift.*|system:apiserver.*|system:aggregator.*|system:open-cluster-management:.*|system:ovn-node:.*|system:authenticated.*|system:unauthenticated.*|system:monitoring.*|system:master.*|system:multus.*
+            plugin:
+                kind: StaticListVariable
+                spec:
+                    pluginspec:
+                        values:
+                            - ^$
+                            - system:serviceaccount:.*
+                            - system:node:.*
+                            - system:kube.*
+                            - system:openshift.*
+                            - system:apiserver.*
+                            - system:aggregator.*
+                            - system:open-cluster-management:.*
+                            - system:ovn-node:.*
+                            - system:authenticated.*
+                            - system:unauthenticated.*
+                            - system:monitoring.*
+                            - system:master.*
+                            - system:multus.*
+            name: exclude_sa
+        - kind: ListVariable
+          spec:
+            display:
+                name: Verb
+                description: Filter by API verb
+                hidden: false
+            defaultValue: $__all
+            allowAllValue: true
+            allowMultiple: true
+            customAllValue: .*
+            plugin:
+                kind: StaticListVariable
+                spec:
+                    pluginspec:
+                        values:
+                            - create
+                            - update
+                            - patch
+                            - delete
+                            - deletecollection
+                            - get
+                            - list
+                            - watch
+            name: verb
+        - kind: ListVariable
+          spec:
+            display:
+                name: Resource
+                description: Filter by resource type (populated from audit logs)
+                hidden: false
+            defaultValue: $__all
+            allowAllValue: true
+            allowMultiple: true
+            customAllValue: .*
+            plugin:
+                kind: LokiLogQLVariable
+                spec:
+                    datasource:
+                        kind: LokiDatasource
+                        name: loki-datasource
+                    expr: count by (objectRef_resource) (count_over_time({log_type="audit", openshift_log_source="kubeAPI"} | json objectRef_resource [1h]))
+                    labelname: objectRef_resource
+            name: resource
+        - kind: TextVariable
+          spec:
+            display:
+                name: Resource Name
+                description: 'Regex filter. Examples: my-pod.*, nginx, etcd.*'
+                hidden: false
+            value: ""
+            name: resource_name
+        - kind: TextVariable
+          spec:
+            display:
+                name: Namespace
+                description: 'Regex filter. Examples: openshift-.*, my-app, kube-system|default'
+                hidden: false
+            value: ""
+            name: namespace
+        - kind: ListVariable
+          spec:
+            display:
+                name: Response Code
+                description: Filter by HTTP response code
+                hidden: false
+            defaultValue: $__all
+            allowAllValue: true
+            allowMultiple: true
+            customAllValue: .*
+            plugin:
+                kind: StaticListVariable
+                spec:
+                    values:
+                        - value: "200"
+                          label: 200 OK
+                        - value: "201"
+                          label: 201 Created
+                        - value: "204"
+                          label: 204 No Content
+                        - value: "304"
+                          label: 304 Not Modified
+                        - value: "400"
+                          label: 400 Bad Request
+                        - value: "401"
+                          label: 401 Unauthorized
+                        - value: "403"
+                          label: 403 Forbidden
+                        - value: "404"
+                          label: 404 Not Found
+                        - value: "409"
+                          label: 409 Conflict
+                        - value: "422"
+                          label: 422 Unprocessable
+                        - value: "500"
+                          label: 500 Internal Error
+                        - value: "503"
+                          label: 503 Unavailable
+            name: response_code
+        - kind: ListVariable
+          spec:
+            display:
+                name: Exclude Resources
+                description: Select None to show all resource types
+                hidden: false
+            defaultValue: $__all
+            allowAllValue: true
+            allowMultiple: true
+            customAllValue: events|endpoints|endpointslices|leases|tokenreviews|subjectaccessreviews|selfsubjectaccessreviews|selfsubjectrulesreviews
+            plugin:
+                kind: StaticListVariable
+                spec:
+                    pluginspec:
+                        values:
+                            - ^$
+                            - events
+                            - endpoints
+                            - endpointslices
+                            - leases
+                            - tokenreviews
+                            - subjectaccessreviews
+                            - selfsubjectaccessreviews
+                            - selfsubjectrulesreviews
+            name: exclude_resource
+        - kind: TextVariable
+          spec:
+            display:
+                name: Client
+                description: 'User agent regex. Examples: oc, kubectl, console, argocd'
+                hidden: false
+            value: ""
+            name: client
+        - kind: TextVariable
+          spec:
+            display:
+                name: LogQL Filter
+                description: 'Raw LogQL stage. Examples: |~ "error" (include), !~ "health" (exclude), | user_username!~"bot.*"'
+                hidden: false
+            value: ""
+            name: filter
+    panels:
+        "0_0":
+            kind: Panel
+            spec:
+                display:
+                    name: Usage Guide
+                plugin:
+                    kind: Markdown
+                    spec:
+                        text: |-
+                            **Requires:** OpenShift Logging with OTLP data model enabled.
+
+                            **Filters:** All text filters support regex. Leave empty = match all.
+                            - **Username:** e.g. `admin`, `.*@example.com`, `user1|user2`
+                            - **Resource Type:** e.g. `pods`, `deploy.*`, `configmaps|secrets`
+                            - **Resource Name:** e.g. `my-pod.*`, `nginx`, `etcd.*`
+                            - **Namespace:** e.g. `openshift-.*`, `my-app`, `kube-system|default`
+                            - **Client:** e.g. `oc`, `kubectl`, `console`, `argocd`
+
+                            **LogQL Filter:** Raw stage, e.g. `|~ "error"` (include), `!~ "health"` (exclude), `| user_username!~"bot.*"`
+
+                            **Tip:** Use shorter time ranges for faster queries.
+        "1_0":
+            kind: Panel
+            spec:
+                display:
+                    name: Current LogQL Query
+                plugin:
+                    kind: Markdown
+                    spec:
+                        text: 'Active Query: `{log_type="audit", openshift_log_source="kubeAPI"} | json | user_username!~"${exclude_sa}" | user_username=~"(?i).*(?:${username}).*" | verb=~"${verb}" | objectRef_resource=~"${resource}" | objectRef_resource!~"${exclude_resource}" | objectRef_namespace=~".*(?:${namespace}).*" | objectRef_name=~"(?i).*(?:${resource_name}).*" | responseStatus_code=~"${response_code}" | userAgent=~"(?i).*(?:${client}).*" | line_format "User={{.user_username}} | Verb={{.verb}} | Namespace={{.objectRef_namespace}} | Resource={{.objectRef_resource}} | Resource Name={{.objectRef_name}} | Status={{.responseStatus_code}} | Client={{.userAgent}}" ${filter}`'
+        "2_0":
+            kind: Panel
+            spec:
+                display:
+                    name: Audit Logs
+                plugin:
+                    kind: LogsTable
+                    spec:
+                        enableDetails: true
+                        showTime: true
+                queries:
+                    - kind: LogQuery
+                      spec:
+                        plugin:
+                            kind: LokiLogQuery
+                            spec:
+                                datasource:
+                                    kind: LokiDatasource
+                                    name: loki-datasource
+                                query: '{log_type="audit", openshift_log_source="kubeAPI"} | json | user_username!~"${exclude_sa}" | user_username=~"(?i).*(?:${username}).*" | verb=~"${verb}" | objectRef_resource=~"${resource}" | objectRef_resource!~"${exclude_resource}" | objectRef_namespace=~".*(?:${namespace}).*" | objectRef_name=~"(?i).*(?:${resource_name}).*" | responseStatus_code=~"${response_code}" | userAgent=~"(?i).*(?:${client}).*" | line_format "User={{.user_username}} | Verb={{.verb}} | Namespace={{.objectRef_namespace}} | Resource={{.objectRef_resource}} | Resource Name={{.objectRef_name}} | Status={{.responseStatus_code}} | Client={{.userAgent}}" ${filter}'
+    layouts:
+        - kind: Grid
+          spec:
+            display:
+                title: Help
+            items:
+                - x: 0
+                  "y": 0
+                  width: 12
+                  height: 5
+                  content:
+                    $ref: '#/spec/panels/0_0'
+        - kind: Grid
+          spec:
+            display:
+                title: Active Query
+            items:
+                - x: 0
+                  "y": 0
+                  width: 12
+                  height: 6
+                  content:
+                    $ref: '#/spec/panels/1_0'
+        - kind: Grid
+          spec:
+            display:
+                title: ""
+            items:
+                - x: 0
+                  "y": 0
+                  width: 12
+                  height: 20
+                  content:
+                    $ref: '#/spec/panels/2_0'
+    duration: 1h
+    refreshInterval: 0s
