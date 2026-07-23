@@ -54,6 +54,7 @@ const (
 	runbookThanosReceiveNoUpload                                   = "#thanosreceivenoupload"
 	runbookThanosReceiveLimitsConfigReloadFailure                  = "#thanosreceivelimitsconfigreloadfailure"
 	runbookThanosReceiveLimitsHighMetaMonitoringQueriesFailureRate = "#thanosreceivelimitshighmetamonitoringqueriesfailurerate"
+	runbookThanosReceiveHeadSeriesReachingLimit                    = "#thanosreceiveheadseriesreachinglimit"
 	runbookThanosReceiveTenantLimitedByHeadSeries                  = "#thanosreceivetenantlimitedbyheadseries"
 	runbookThanosReceiveLimitsHit                                  = "#thanosreceivelimitshit"
 	runbookThanosStoreGrpcErrorRate                                = "#thanosstoregrpcerrorrate"
@@ -1651,6 +1652,89 @@ func (t ThanosRulesConfig) ThanosReceiveGroup() []rulegroup.Option {
 						runbookThanosReceiveLimitsHighMetaMonitoringQueriesFailureRate,
 						"Thanos Receive {{$labels.job}} in {{$labels.namespace}} is failing for {{$value | humanize}}% of meta monitoring queries.",
 						"Thanos Receive has not been able to update the number of head series.",
+					),
+					t.AdditionalAlertAnnotations,
+				),
+			),
+		),
+		rulegroup.AddRule(
+			"ThanosReceiveHeadSeriesReachingLimit",
+			alerting.Expr(
+				promqlbuilder.Gtr(
+					promqlbuilder.Div(
+						promqlbuilder.Sum(
+							vector.New(
+								vector.WithMetricName("prometheus_tsdb_head_series"),
+								vector.WithLabelMatchers(
+									label.New("job").EqualRegexp(t.ReceiveIngesterServiceSelector),
+								),
+							),
+						).By("tenant"),
+						promqlbuilder.Parenthesis(
+							promqlbuilder.Or(
+								promqlbuilder.Max(
+									promqlbuilder.Gtr(
+										vector.New(
+											vector.WithMetricName("thanos_receive_head_series_limit"),
+											vector.WithLabelMatchers(
+												label.New("job").EqualRegexp(t.ReceiveRouterServiceSelector),
+												label.New("tenant").NotEqual(""),
+											),
+										),
+										promqlbuilder.NewNumber(0),
+									),
+								).By("tenant"),
+								promqlbuilder.Parenthesis(
+									promqlbuilder.Add(
+										promqlbuilder.Mul(
+											promqlbuilder.Sum(
+												vector.New(
+													vector.WithMetricName("prometheus_tsdb_head_series"),
+													vector.WithLabelMatchers(
+														label.New("job").EqualRegexp(t.ReceiveIngesterServiceSelector),
+													),
+												),
+											).By("tenant"),
+											promqlbuilder.NewNumber(0),
+										),
+										promqlbuilder.Max(
+											promqlbuilder.Gtr(
+												vector.New(
+													vector.WithMetricName("thanos_receive_head_series_limit"),
+													vector.WithLabelMatchers(
+														label.New("job").EqualRegexp(t.ReceiveRouterServiceSelector),
+														label.New("tenant").Equal(""),
+													),
+												),
+												promqlbuilder.NewNumber(0),
+											),
+										),
+									).On().GroupLeft(),
+								),
+							).On("tenant"),
+						),
+					).On("tenant").GroupLeft(),
+					promqlbuilder.NewNumber(0.9),
+				),
+			),
+			alerting.For("5m"),
+			alerting.Labels(
+				common.MergeMaps(
+					map[string]string{
+						"service":  t.ServiceLabelValue,
+						"severity": "warning",
+					},
+					t.AdditionalAlertLabels,
+				),
+			),
+			alerting.Annotations(
+				common.MergeMaps(
+					common.BuildAnnotations(
+						t.ReceiveDashboardURL,
+						t.RunbookURL,
+						runbookThanosReceiveHeadSeriesReachingLimit,
+						"Thanos Receive tenant {{$labels.tenant}} head series is at {{ $value | humanizePercentage }} of the configured limit.",
+						"Thanos Receive tenant head series is reaching the configured limit.",
 					),
 					t.AdditionalAlertAnnotations,
 				),

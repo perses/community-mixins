@@ -513,6 +513,31 @@ spec:
       labels:
         service: thanos
         severity: medium
+    - alert: ThanosReceiveHeadSeriesReachingLimit
+      annotations:
+        dashboard: https://demo.perses.dev/projects/perses/dashboards/thanosreceive
+        description: Thanos Receive tenant {{$labels.tenant}} head series is at {{
+          $value | humanizePercentage }} of the configured limit.
+        runbook: https://github.com/thanos-io/thanos/blob/main/mixin/runbook.md#thanosreceiveheadseriesreachinglimit
+        summary: Thanos Receive tenant head series is reaching the configured limit.
+      expr: |2-
+            sum by (tenant) (prometheus_tsdb_head_series{job=~"thanos-receive-ingester.*"})
+          / on (tenant) group_left ()
+            (
+                max by (tenant) (thanos_receive_head_series_limit{job=~"thanos-receive-router.*",tenant!=""} > 0)
+              or on (tenant)
+                (
+                    sum by (tenant) (prometheus_tsdb_head_series{job=~"thanos-receive-ingester.*"}) * 0
+                  + on () group_left ()
+                    max(thanos_receive_head_series_limit{job=~"thanos-receive-router.*",tenant=""} > 0)
+                )
+            )
+        >
+          0.9
+      for: 5m
+      labels:
+        service: thanos
+        severity: warning
     - alert: ThanosReceiveTenantLimitedByHeadSeries
       annotations:
         dashboard: https://demo.perses.dev/projects/perses/dashboards/thanosreceive
