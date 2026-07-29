@@ -85,7 +85,7 @@ vet:
 .PHONY: unit-test
 unit-test:
 	@echo ">> running unit tests"
-	$(GOCMD) test ./...
+	$(GOCMD) test -v ./...
 
 .PHONY: check-golang
 check-golang: $(GOLANGCILINTER_BINARY)
