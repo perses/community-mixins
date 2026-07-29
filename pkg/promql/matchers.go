@@ -24,6 +24,9 @@ func SetLabelMatchersV2(query parser.Expr, matchers []*labels.Matcher) parser.Ex
 	for _, l := range matchers {
 		copy = LabelsSetPromQLV2(copy, l.Type, l.Name, l.Value)
 	}
+	if err := promqlbuilder.Validate(copy); err != nil {
+		panic(err)
+	}
 	return copy
 }
 
