@@ -242,6 +242,8 @@ spec:
           spec:
             display:
                 title: Help
+                collapse:
+                    open: false
             items:
                 - x: 0
                   "y": 0
@@ -253,6 +255,8 @@ spec:
           spec:
             display:
                 title: Active Query
+                collapse:
+                    open: false
             items:
                 - x: 0
                   "y": 0

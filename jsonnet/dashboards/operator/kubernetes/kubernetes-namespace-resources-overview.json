@@ -81,8 +81,8 @@
               "spec": {
                 "calculation": "last",
                 "format": {
-                  "unit": "percent",
-                  "decimalPlaces": 2
+                  "decimalPlaces": 2,
+                  "unit": "percent"
                 },
                 "valueFontSize": 50
               }
@@ -118,8 +118,8 @@
               "spec": {
                 "calculation": "last",
                 "format": {
-                  "unit": "percent",
-                  "decimalPlaces": 2
+                  "decimalPlaces": 2,
+                  "unit": "percent"
                 },
                 "valueFontSize": 50
               }
@@ -155,8 +155,8 @@
               "spec": {
                 "calculation": "last",
                 "format": {
-                  "unit": "percent",
-                  "decimalPlaces": 2
+                  "decimalPlaces": 2,
+                  "unit": "percent"
                 },
                 "valueFontSize": 50
               }
@@ -192,8 +192,8 @@
               "spec": {
                 "calculation": "last",
                 "format": {
-                  "unit": "percent",
-                  "decimalPlaces": 2
+                  "decimalPlaces": 2,
+                  "unit": "percent"
                 },
                 "valueFontSize": 50
               }
@@ -229,61 +229,61 @@
               "spec": {
                 "columnSettings": [
                   {
-                    "name": "pod",
+                    "align": "left",
                     "header": "Pod",
-                    "align": "left"
+                    "name": "pod"
                   },
                   {
-                    "name": "value #1",
+                    "align": "right",
+                    "format": {
+                      "unit": "ops/sec"
+                    },
                     "header": "IOPS(Reads)",
+                    "name": "value #1"
+                  },
+                  {
+                    "align": "right",
                     "format": {
                       "unit": "ops/sec"
                     },
-                    "align": "right"
-                  },
-                  {
-                    "name": "value #2",
                     "header": "IOPS(Writes)",
+                    "name": "value #2"
+                  },
+                  {
+                    "align": "right",
                     "format": {
                       "unit": "ops/sec"
                     },
-                    "align": "right"
-                  },
-                  {
-                    "name": "value #3",
                     "header": "IOPS(Reads + Writes)",
-                    "format": {
-                      "unit": "ops/sec"
-                    },
-                    "align": "right"
+                    "name": "value #3"
                   },
                   {
-                    "name": "value #4",
+                    "align": "right",
+                    "format": {
+                      "unit": "bytes/sec"
+                    },
                     "header": "Throughput(Reads)",
+                    "name": "value #4"
+                  },
+                  {
+                    "align": "right",
                     "format": {
                       "unit": "bytes/sec"
                     },
-                    "align": "right"
-                  },
-                  {
-                    "name": "value #5",
                     "header": "Throughput(Writes)",
+                    "name": "value #5"
+                  },
+                  {
+                    "align": "right",
                     "format": {
                       "unit": "bytes/sec"
                     },
-                    "align": "right"
-                  },
-                  {
-                    "name": "value #6",
                     "header": "Throughput(Reads + Writes)",
-                    "format": {
-                      "unit": "bytes/sec"
-                    },
-                    "align": "right"
+                    "name": "value #6"
                   },
                   {
-                    "name": "timestamp",
-                    "hide": true
+                    "hide": true,
+                    "name": "timestamp"
                   }
                 ],
                 "transforms": [
@@ -399,21 +399,21 @@
               "kind": "TimeSeriesChart",
               "spec": {
                 "legend": {
-                  "position": "bottom",
                   "mode": "list",
+                  "position": "bottom",
                   "size": "small"
+                },
+                "visual": {
+                  "areaOpacity": 1,
+                  "display": "line",
+                  "lineWidth": 0.25,
+                  "palette": {
+                    "mode": "auto"
+                  }
                 },
                 "yAxis": {
                   "format": {
                     "unit": "decimal"
-                  }
-                },
-                "visual": {
-                  "display": "line",
-                  "lineWidth": 0.25,
-                  "areaOpacity": 1,
-                  "palette": {
-                    "mode": "auto"
                   }
                 }
               }
@@ -482,58 +482,58 @@
               "spec": {
                 "columnSettings": [
                   {
-                    "name": "pod",
+                    "align": "left",
                     "header": "Pod",
-                    "align": "left"
+                    "name": "pod"
                   },
                   {
-                    "name": "value #1",
+                    "align": "right",
+                    "format": {
+                      "decimalPlaces": 4,
+                      "unit": "decimal"
+                    },
                     "header": "CPU Usage",
-                    "format": {
-                      "unit": "decimal",
-                      "decimalPlaces": 4
-                    },
-                    "align": "right"
+                    "name": "value #1"
                   },
                   {
-                    "name": "value #2",
+                    "align": "right",
+                    "format": {
+                      "decimalPlaces": 4,
+                      "unit": "decimal"
+                    },
                     "header": "CPU Requests",
-                    "format": {
-                      "unit": "decimal",
-                      "decimalPlaces": 4
-                    },
-                    "align": "right"
+                    "name": "value #2"
                   },
                   {
-                    "name": "value #3",
+                    "align": "right",
+                    "format": {
+                      "decimalPlaces": 4,
+                      "unit": "percent-decimal"
+                    },
                     "header": "CPU Requests %",
-                    "format": {
-                      "unit": "percent-decimal",
-                      "decimalPlaces": 4
-                    },
-                    "align": "right"
+                    "name": "value #3"
                   },
                   {
-                    "name": "value #4",
+                    "align": "right",
+                    "format": {
+                      "decimalPlaces": 4,
+                      "unit": "decimal"
+                    },
                     "header": "CPU Limits",
-                    "format": {
-                      "unit": "decimal",
-                      "decimalPlaces": 4
-                    },
-                    "align": "right"
+                    "name": "value #4"
                   },
                   {
-                    "name": "value #5",
+                    "align": "right",
+                    "format": {
+                      "decimalPlaces": 4,
+                      "unit": "percent-decimal"
+                    },
                     "header": "CPU Limits %",
-                    "format": {
-                      "unit": "percent-decimal",
-                      "decimalPlaces": 4
-                    },
-                    "align": "right"
+                    "name": "value #5"
                   },
                   {
-                    "name": "timestamp",
-                    "hide": true
+                    "hide": true,
+                    "name": "timestamp"
                   }
                 ],
                 "transforms": [
@@ -634,21 +634,21 @@
               "kind": "TimeSeriesChart",
               "spec": {
                 "legend": {
-                  "position": "bottom",
                   "mode": "list",
+                  "position": "bottom",
                   "size": "small"
+                },
+                "visual": {
+                  "areaOpacity": 1,
+                  "display": "line",
+                  "lineWidth": 0.25,
+                  "palette": {
+                    "mode": "auto"
+                  }
                 },
                 "yAxis": {
                   "format": {
                     "unit": "bytes"
-                  }
-                },
-                "visual": {
-                  "display": "line",
-                  "lineWidth": 0.25,
-                  "areaOpacity": 1,
-                  "palette": {
-                    "mode": "auto"
                   }
                 }
               }
@@ -717,79 +717,79 @@
               "spec": {
                 "columnSettings": [
                   {
-                    "name": "pod",
+                    "align": "left",
                     "header": "Pod",
-                    "align": "left"
+                    "name": "pod"
                   },
                   {
-                    "name": "value #1",
+                    "align": "right",
+                    "format": {
+                      "unit": "bytes"
+                    },
                     "header": "Memory Usage",
+                    "name": "value #1"
+                  },
+                  {
+                    "align": "right",
                     "format": {
                       "unit": "bytes"
                     },
-                    "align": "right"
-                  },
-                  {
-                    "name": "value #2",
                     "header": "Memory Requests",
-                    "format": {
-                      "unit": "bytes"
-                    },
-                    "align": "right"
+                    "name": "value #2"
                   },
                   {
-                    "name": "value #3",
+                    "align": "right",
+                    "format": {
+                      "decimalPlaces": 4,
+                      "unit": "percent-decimal"
+                    },
                     "header": "Memory Requests %",
-                    "format": {
-                      "unit": "percent-decimal",
-                      "decimalPlaces": 4
-                    },
-                    "align": "right"
+                    "name": "value #3"
                   },
                   {
-                    "name": "value #4",
+                    "align": "right",
+                    "format": {
+                      "unit": "bytes"
+                    },
                     "header": "Memory Limits",
-                    "format": {
-                      "unit": "bytes"
-                    },
-                    "align": "right"
+                    "name": "value #4"
                   },
                   {
-                    "name": "value #5",
+                    "align": "right",
+                    "format": {
+                      "decimalPlaces": 4,
+                      "unit": "percent-decimal"
+                    },
                     "header": "Memory Limits %",
-                    "format": {
-                      "unit": "percent-decimal",
-                      "decimalPlaces": 4
-                    },
-                    "align": "right"
+                    "name": "value #5"
                   },
                   {
-                    "name": "value #6",
+                    "align": "right",
+                    "format": {
+                      "unit": "bytes"
+                    },
                     "header": "Memory Usage (RSS)",
+                    "name": "value #6"
+                  },
+                  {
+                    "align": "right",
                     "format": {
                       "unit": "bytes"
                     },
-                    "align": "right"
-                  },
-                  {
-                    "name": "value #7",
                     "header": "Memory Usage (Cache)",
+                    "name": "value #7"
+                  },
+                  {
+                    "align": "right",
                     "format": {
                       "unit": "bytes"
                     },
-                    "align": "right"
-                  },
-                  {
-                    "name": "value #8",
                     "header": "Memory Usage (Swap)",
-                    "format": {
-                      "unit": "bytes"
-                    },
-                    "align": "right"
+                    "name": "value #8"
                   },
                   {
-                    "name": "timestamp",
-                    "hide": true
+                    "hide": true,
+                    "name": "timestamp"
                   }
                 ],
                 "transforms": [
@@ -936,61 +936,61 @@
               "spec": {
                 "columnSettings": [
                   {
-                    "name": "pod",
+                    "align": "left",
                     "header": "Pod",
-                    "align": "left"
+                    "name": "pod"
                   },
                   {
-                    "name": "value #1",
+                    "align": "right",
+                    "format": {
+                      "unit": "bytes/sec"
+                    },
                     "header": "Current Receive Bandwidth",
+                    "name": "value #1"
+                  },
+                  {
+                    "align": "right",
                     "format": {
                       "unit": "bytes/sec"
                     },
-                    "align": "right"
-                  },
-                  {
-                    "name": "value #2",
                     "header": "Current Transmit Bandwidth",
-                    "format": {
-                      "unit": "bytes/sec"
-                    },
-                    "align": "right"
+                    "name": "value #2"
                   },
                   {
-                    "name": "value #3",
+                    "align": "right",
+                    "format": {
+                      "unit": "packets/sec"
+                    },
                     "header": "Rate of Received Packets",
+                    "name": "value #3"
+                  },
+                  {
+                    "align": "right",
                     "format": {
                       "unit": "packets/sec"
                     },
-                    "align": "right"
-                  },
-                  {
-                    "name": "value #4",
                     "header": "Rate of Transmitted Packets",
+                    "name": "value #4"
+                  },
+                  {
+                    "align": "right",
                     "format": {
                       "unit": "packets/sec"
                     },
-                    "align": "right"
-                  },
-                  {
-                    "name": "value #5",
                     "header": "Rate of Received Packets Dropped",
+                    "name": "value #5"
+                  },
+                  {
+                    "align": "right",
                     "format": {
                       "unit": "packets/sec"
                     },
-                    "align": "right"
-                  },
-                  {
-                    "name": "value #6",
                     "header": "Rate of Transmitted Packets Dropped",
-                    "format": {
-                      "unit": "packets/sec"
-                    },
-                    "align": "right"
+                    "name": "value #6"
                   },
                   {
-                    "name": "timestamp",
-                    "hide": true
+                    "hide": true,
+                    "name": "timestamp"
                   }
                 ],
                 "transforms": [
@@ -1106,21 +1106,21 @@
               "kind": "TimeSeriesChart",
               "spec": {
                 "legend": {
-                  "position": "bottom",
                   "mode": "list",
+                  "position": "bottom",
                   "size": "small"
+                },
+                "visual": {
+                  "areaOpacity": 0.75,
+                  "display": "line",
+                  "lineWidth": 0.25,
+                  "palette": {
+                    "mode": "auto"
+                  }
                 },
                 "yAxis": {
                   "format": {
                     "unit": "bytes/sec"
-                  }
-                },
-                "visual": {
-                  "display": "line",
-                  "lineWidth": 0.25,
-                  "areaOpacity": 0.75,
-                  "palette": {
-                    "mode": "auto"
                   }
                 }
               }
@@ -1156,21 +1156,21 @@
               "kind": "TimeSeriesChart",
               "spec": {
                 "legend": {
-                  "position": "bottom",
                   "mode": "list",
+                  "position": "bottom",
                   "size": "small"
+                },
+                "visual": {
+                  "areaOpacity": 0.75,
+                  "display": "line",
+                  "lineWidth": 0.25,
+                  "palette": {
+                    "mode": "auto"
+                  }
                 },
                 "yAxis": {
                   "format": {
                     "unit": "bytes/sec"
-                  }
-                },
-                "visual": {
-                  "display": "line",
-                  "lineWidth": 0.25,
-                  "areaOpacity": 0.75,
-                  "palette": {
-                    "mode": "auto"
                   }
                 }
               }
@@ -1206,21 +1206,21 @@
               "kind": "TimeSeriesChart",
               "spec": {
                 "legend": {
-                  "position": "bottom",
                   "mode": "list",
+                  "position": "bottom",
                   "size": "small"
+                },
+                "visual": {
+                  "areaOpacity": 0.75,
+                  "display": "line",
+                  "lineWidth": 0.25,
+                  "palette": {
+                    "mode": "auto"
+                  }
                 },
                 "yAxis": {
                   "format": {
                     "unit": "packets/sec"
-                  }
-                },
-                "visual": {
-                  "display": "line",
-                  "lineWidth": 0.25,
-                  "areaOpacity": 0.75,
-                  "palette": {
-                    "mode": "auto"
                   }
                 }
               }
@@ -1256,21 +1256,21 @@
               "kind": "TimeSeriesChart",
               "spec": {
                 "legend": {
-                  "position": "bottom",
                   "mode": "list",
+                  "position": "bottom",
                   "size": "small"
+                },
+                "visual": {
+                  "areaOpacity": 0.75,
+                  "display": "line",
+                  "lineWidth": 0.25,
+                  "palette": {
+                    "mode": "auto"
+                  }
                 },
                 "yAxis": {
                   "format": {
                     "unit": "packets/sec"
-                  }
-                },
-                "visual": {
-                  "display": "line",
-                  "lineWidth": 0.25,
-                  "areaOpacity": 0.75,
-                  "palette": {
-                    "mode": "auto"
                   }
                 }
               }
@@ -1306,21 +1306,21 @@
               "kind": "TimeSeriesChart",
               "spec": {
                 "legend": {
-                  "position": "bottom",
                   "mode": "list",
+                  "position": "bottom",
                   "size": "small"
+                },
+                "visual": {
+                  "areaOpacity": 0.75,
+                  "display": "line",
+                  "lineWidth": 0.25,
+                  "palette": {
+                    "mode": "auto"
+                  }
                 },
                 "yAxis": {
                   "format": {
                     "unit": "packets/sec"
-                  }
-                },
-                "visual": {
-                  "display": "line",
-                  "lineWidth": 0.25,
-                  "areaOpacity": 0.75,
-                  "palette": {
-                    "mode": "auto"
                   }
                 }
               }
@@ -1356,21 +1356,21 @@
               "kind": "TimeSeriesChart",
               "spec": {
                 "legend": {
-                  "position": "bottom",
                   "mode": "list",
+                  "position": "bottom",
                   "size": "small"
+                },
+                "visual": {
+                  "areaOpacity": 0.75,
+                  "display": "line",
+                  "lineWidth": 0.25,
+                  "palette": {
+                    "mode": "auto"
+                  }
                 },
                 "yAxis": {
                   "format": {
                     "unit": "packets/sec"
-                  }
-                },
-                "visual": {
-                  "display": "line",
-                  "lineWidth": 0.25,
-                  "areaOpacity": 0.75,
-                  "palette": {
-                    "mode": "auto"
                   }
                 }
               }
@@ -1406,21 +1406,21 @@
               "kind": "TimeSeriesChart",
               "spec": {
                 "legend": {
-                  "position": "bottom",
                   "mode": "list",
+                  "position": "bottom",
                   "size": "small"
+                },
+                "visual": {
+                  "areaOpacity": 0.75,
+                  "display": "line",
+                  "lineWidth": 0.25,
+                  "palette": {
+                    "mode": "auto"
+                  }
                 },
                 "yAxis": {
                   "format": {
                     "unit": "ops/sec"
-                  }
-                },
-                "visual": {
-                  "display": "line",
-                  "lineWidth": 0.25,
-                  "areaOpacity": 0.75,
-                  "palette": {
-                    "mode": "auto"
                   }
                 }
               }
@@ -1456,21 +1456,21 @@
               "kind": "TimeSeriesChart",
               "spec": {
                 "legend": {
-                  "position": "bottom",
                   "mode": "list",
+                  "position": "bottom",
                   "size": "small"
+                },
+                "visual": {
+                  "areaOpacity": 0.75,
+                  "display": "line",
+                  "lineWidth": 0.25,
+                  "palette": {
+                    "mode": "auto"
+                  }
                 },
                 "yAxis": {
                   "format": {
                     "unit": "bytes/sec"
-                  }
-                },
-                "visual": {
-                  "display": "line",
-                  "lineWidth": 0.25,
-                  "areaOpacity": 0.75,
-                  "palette": {
-                    "mode": "auto"
                   }
                 }
               }

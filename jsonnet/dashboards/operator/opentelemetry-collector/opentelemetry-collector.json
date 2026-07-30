@@ -106,8 +106,8 @@
               "kind": "TimeSeriesChart",
               "spec": {
                 "legend": {
-                  "position": "bottom",
                   "mode": "table",
+                  "position": "bottom",
                   "values": [
                     "last"
                   ]
@@ -166,8 +166,8 @@
               "kind": "TimeSeriesChart",
               "spec": {
                 "legend": {
-                  "position": "bottom",
                   "mode": "table",
+                  "position": "bottom",
                   "values": [
                     "last"
                   ]
@@ -226,8 +226,8 @@
               "kind": "TimeSeriesChart",
               "spec": {
                 "legend": {
-                  "position": "bottom",
                   "mode": "table",
+                  "position": "bottom",
                   "values": [
                     "last"
                   ]
@@ -286,8 +286,8 @@
               "kind": "TimeSeriesChart",
               "spec": {
                 "legend": {
-                  "position": "bottom",
                   "mode": "table",
+                  "position": "bottom",
                   "values": [
                     "last"
                   ]
@@ -346,8 +346,8 @@
               "kind": "TimeSeriesChart",
               "spec": {
                 "legend": {
-                  "position": "bottom",
                   "mode": "table",
+                  "position": "bottom",
                   "values": [
                     "last"
                   ]
@@ -406,8 +406,8 @@
               "kind": "TimeSeriesChart",
               "spec": {
                 "legend": {
-                  "position": "bottom",
                   "mode": "table",
+                  "position": "bottom",
                   "values": [
                     "last"
                   ]
@@ -466,8 +466,8 @@
               "kind": "TimeSeriesChart",
               "spec": {
                 "legend": {
-                  "position": "bottom",
                   "mode": "table",
+                  "position": "bottom",
                   "values": [
                     "last"
                   ]
@@ -509,8 +509,8 @@
               "kind": "TimeSeriesChart",
               "spec": {
                 "legend": {
-                  "position": "bottom",
                   "mode": "table",
+                  "position": "bottom",
                   "values": [
                     "last"
                   ]

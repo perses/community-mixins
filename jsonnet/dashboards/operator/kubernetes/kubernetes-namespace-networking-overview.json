@@ -80,21 +80,21 @@
               "kind": "TimeSeriesChart",
               "spec": {
                 "legend": {
-                  "position": "bottom",
                   "mode": "list",
+                  "position": "bottom",
                   "size": "small"
+                },
+                "visual": {
+                  "areaOpacity": 0.75,
+                  "display": "line",
+                  "lineWidth": 0.25,
+                  "palette": {
+                    "mode": "auto"
+                  }
                 },
                 "yAxis": {
                   "format": {
                     "unit": "bytes/sec"
-                  }
-                },
-                "visual": {
-                  "display": "line",
-                  "lineWidth": 0.25,
-                  "areaOpacity": 0.75,
-                  "palette": {
-                    "mode": "auto"
                   }
                 }
               }
@@ -130,21 +130,21 @@
               "kind": "TimeSeriesChart",
               "spec": {
                 "legend": {
-                  "position": "bottom",
                   "mode": "list",
+                  "position": "bottom",
                   "size": "small"
+                },
+                "visual": {
+                  "areaOpacity": 0.75,
+                  "display": "line",
+                  "lineWidth": 0.25,
+                  "palette": {
+                    "mode": "auto"
+                  }
                 },
                 "yAxis": {
                   "format": {
                     "unit": "bytes/sec"
-                  }
-                },
-                "visual": {
-                  "display": "line",
-                  "lineWidth": 0.25,
-                  "areaOpacity": 0.75,
-                  "palette": {
-                    "mode": "auto"
                   }
                 }
               }
@@ -181,61 +181,61 @@
               "spec": {
                 "columnSettings": [
                   {
-                    "name": "pod",
+                    "align": "left",
                     "header": "Pod",
-                    "align": "left"
+                    "name": "pod"
                   },
                   {
-                    "name": "value #1",
+                    "align": "right",
+                    "format": {
+                      "unit": "bytes/sec"
+                    },
                     "header": "Current Receive Bandwidth",
+                    "name": "value #1"
+                  },
+                  {
+                    "align": "right",
                     "format": {
                       "unit": "bytes/sec"
                     },
-                    "align": "right"
-                  },
-                  {
-                    "name": "value #2",
                     "header": "Current Transmit Bandwidth",
-                    "format": {
-                      "unit": "bytes/sec"
-                    },
-                    "align": "right"
+                    "name": "value #2"
                   },
                   {
-                    "name": "value #3",
+                    "align": "right",
+                    "format": {
+                      "unit": "packets/sec"
+                    },
                     "header": "Rate of Received Packets",
+                    "name": "value #3"
+                  },
+                  {
+                    "align": "right",
                     "format": {
                       "unit": "packets/sec"
                     },
-                    "align": "right"
-                  },
-                  {
-                    "name": "value #4",
                     "header": "Rate of Transmitted Packets",
+                    "name": "value #4"
+                  },
+                  {
+                    "align": "right",
                     "format": {
                       "unit": "packets/sec"
                     },
-                    "align": "right"
-                  },
-                  {
-                    "name": "value #5",
                     "header": "Rate of Received Packets Dropped",
+                    "name": "value #5"
+                  },
+                  {
+                    "align": "right",
                     "format": {
                       "unit": "packets/sec"
                     },
-                    "align": "right"
-                  },
-                  {
-                    "name": "value #6",
                     "header": "Rate of Transmitted Packets Dropped",
-                    "format": {
-                      "unit": "packets/sec"
-                    },
-                    "align": "right"
+                    "name": "value #6"
                   },
                   {
-                    "name": "timestamp",
-                    "hide": true
+                    "hide": true,
+                    "name": "timestamp"
                   }
                 ],
                 "transforms": [
@@ -351,21 +351,21 @@
               "kind": "TimeSeriesChart",
               "spec": {
                 "legend": {
-                  "position": "bottom",
                   "mode": "list",
+                  "position": "bottom",
                   "size": "small"
+                },
+                "visual": {
+                  "areaOpacity": 0.75,
+                  "display": "line",
+                  "lineWidth": 0.25,
+                  "palette": {
+                    "mode": "auto"
+                  }
                 },
                 "yAxis": {
                   "format": {
                     "unit": "bytes/sec"
-                  }
-                },
-                "visual": {
-                  "display": "line",
-                  "lineWidth": 0.25,
-                  "areaOpacity": 0.75,
-                  "palette": {
-                    "mode": "auto"
                   }
                 }
               }
@@ -401,21 +401,21 @@
               "kind": "TimeSeriesChart",
               "spec": {
                 "legend": {
-                  "position": "bottom",
                   "mode": "list",
+                  "position": "bottom",
                   "size": "small"
+                },
+                "visual": {
+                  "areaOpacity": 0.75,
+                  "display": "line",
+                  "lineWidth": 0.25,
+                  "palette": {
+                    "mode": "auto"
+                  }
                 },
                 "yAxis": {
                   "format": {
                     "unit": "bytes/sec"
-                  }
-                },
-                "visual": {
-                  "display": "line",
-                  "lineWidth": 0.25,
-                  "areaOpacity": 0.75,
-                  "palette": {
-                    "mode": "auto"
                   }
                 }
               }
@@ -451,21 +451,21 @@
               "kind": "TimeSeriesChart",
               "spec": {
                 "legend": {
-                  "position": "bottom",
                   "mode": "list",
+                  "position": "bottom",
                   "size": "small"
+                },
+                "visual": {
+                  "areaOpacity": 0.75,
+                  "display": "line",
+                  "lineWidth": 0.25,
+                  "palette": {
+                    "mode": "auto"
+                  }
                 },
                 "yAxis": {
                   "format": {
                     "unit": "packets/sec"
-                  }
-                },
-                "visual": {
-                  "display": "line",
-                  "lineWidth": 0.25,
-                  "areaOpacity": 0.75,
-                  "palette": {
-                    "mode": "auto"
                   }
                 }
               }
@@ -501,21 +501,21 @@
               "kind": "TimeSeriesChart",
               "spec": {
                 "legend": {
-                  "position": "bottom",
                   "mode": "list",
+                  "position": "bottom",
                   "size": "small"
+                },
+                "visual": {
+                  "areaOpacity": 0.75,
+                  "display": "line",
+                  "lineWidth": 0.25,
+                  "palette": {
+                    "mode": "auto"
+                  }
                 },
                 "yAxis": {
                   "format": {
                     "unit": "packets/sec"
-                  }
-                },
-                "visual": {
-                  "display": "line",
-                  "lineWidth": 0.25,
-                  "areaOpacity": 0.75,
-                  "palette": {
-                    "mode": "auto"
                   }
                 }
               }
@@ -551,21 +551,21 @@
               "kind": "TimeSeriesChart",
               "spec": {
                 "legend": {
-                  "position": "bottom",
                   "mode": "list",
+                  "position": "bottom",
                   "size": "small"
+                },
+                "visual": {
+                  "areaOpacity": 0.75,
+                  "display": "line",
+                  "lineWidth": 0.25,
+                  "palette": {
+                    "mode": "auto"
+                  }
                 },
                 "yAxis": {
                   "format": {
                     "unit": "packets/sec"
-                  }
-                },
-                "visual": {
-                  "display": "line",
-                  "lineWidth": 0.25,
-                  "areaOpacity": 0.75,
-                  "palette": {
-                    "mode": "auto"
                   }
                 }
               }
@@ -601,21 +601,21 @@
               "kind": "TimeSeriesChart",
               "spec": {
                 "legend": {
-                  "position": "bottom",
                   "mode": "list",
+                  "position": "bottom",
                   "size": "small"
+                },
+                "visual": {
+                  "areaOpacity": 0.75,
+                  "display": "line",
+                  "lineWidth": 0.25,
+                  "palette": {
+                    "mode": "auto"
+                  }
                 },
                 "yAxis": {
                   "format": {
                     "unit": "packets/sec"
-                  }
-                },
-                "visual": {
-                  "display": "line",
-                  "lineWidth": 0.25,
-                  "areaOpacity": 0.75,
-                  "palette": {
-                    "mode": "auto"
                   }
                 }
               }
