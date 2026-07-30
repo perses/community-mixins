@@ -80,8 +80,8 @@
               "kind": "TimeSeriesChart",
               "spec": {
                 "legend": {
-                  "position": "bottom",
-                  "mode": "table"
+                  "mode": "table",
+                  "position": "bottom"
                 }
               }
             },
@@ -116,8 +116,8 @@
               "kind": "TimeSeriesChart",
               "spec": {
                 "legend": {
-                  "position": "bottom",
-                  "mode": "table"
+                  "mode": "table",
+                  "position": "bottom"
                 }
               }
             },
@@ -152,8 +152,8 @@
               "kind": "TimeSeriesChart",
               "spec": {
                 "legend": {
-                  "position": "bottom",
-                  "mode": "table"
+                  "mode": "table",
+                  "position": "bottom"
                 }
               }
             },
@@ -188,8 +188,8 @@
               "kind": "TimeSeriesChart",
               "spec": {
                 "legend": {
-                  "position": "bottom",
-                  "mode": "table"
+                  "mode": "table",
+                  "position": "bottom"
                 }
               }
             },
@@ -224,8 +224,8 @@
               "kind": "TimeSeriesChart",
               "spec": {
                 "legend": {
-                  "position": "bottom",
-                  "mode": "table"
+                  "mode": "table",
+                  "position": "bottom"
                 }
               }
             },
@@ -260,8 +260,8 @@
               "kind": "TimeSeriesChart",
               "spec": {
                 "legend": {
-                  "position": "bottom",
-                  "mode": "table"
+                  "mode": "table",
+                  "position": "bottom"
                 }
               }
             },
@@ -296,8 +296,8 @@
               "kind": "TimeSeriesChart",
               "spec": {
                 "legend": {
-                  "position": "bottom",
-                  "mode": "table"
+                  "mode": "table",
+                  "position": "bottom"
                 }
               }
             },
@@ -332,8 +332,8 @@
               "kind": "TimeSeriesChart",
               "spec": {
                 "legend": {
-                  "position": "bottom",
-                  "mode": "table"
+                  "mode": "table",
+                  "position": "bottom"
                 }
               }
             },
@@ -368,8 +368,8 @@
               "kind": "TimeSeriesChart",
               "spec": {
                 "legend": {
-                  "position": "bottom",
-                  "mode": "table"
+                  "mode": "table",
+                  "position": "bottom"
                 }
               }
             },
@@ -404,8 +404,8 @@
               "kind": "TimeSeriesChart",
               "spec": {
                 "legend": {
-                  "position": "bottom",
-                  "mode": "table"
+                  "mode": "table",
+                  "position": "bottom"
                 }
               }
             },
@@ -440,8 +440,8 @@
               "kind": "TimeSeriesChart",
               "spec": {
                 "legend": {
-                  "position": "bottom",
-                  "mode": "table"
+                  "mode": "table",
+                  "position": "bottom"
                 }
               }
             },
@@ -476,8 +476,8 @@
               "kind": "TimeSeriesChart",
               "spec": {
                 "legend": {
-                  "position": "bottom",
-                  "mode": "table"
+                  "mode": "table",
+                  "position": "bottom"
                 }
               }
             },
@@ -512,8 +512,8 @@
               "kind": "TimeSeriesChart",
               "spec": {
                 "legend": {
-                  "position": "bottom",
-                  "mode": "table"
+                  "mode": "table",
+                  "position": "bottom"
                 }
               }
             },
@@ -548,8 +548,8 @@
               "kind": "TimeSeriesChart",
               "spec": {
                 "legend": {
-                  "position": "bottom",
-                  "mode": "table"
+                  "mode": "table",
+                  "position": "bottom"
                 }
               }
             },
@@ -584,8 +584,8 @@
               "kind": "TimeSeriesChart",
               "spec": {
                 "legend": {
-                  "position": "bottom",
-                  "mode": "table"
+                  "mode": "table",
+                  "position": "bottom"
                 }
               }
             },

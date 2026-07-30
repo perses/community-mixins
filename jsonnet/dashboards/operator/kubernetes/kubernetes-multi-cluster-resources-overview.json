@@ -29,8 +29,8 @@
               "spec": {
                 "calculation": "last",
                 "format": {
-                  "unit": "percent",
-                  "decimalPlaces": 2
+                  "decimalPlaces": 2,
+                  "unit": "percent"
                 },
                 "valueFontSize": 50
               }
@@ -66,8 +66,8 @@
               "spec": {
                 "calculation": "last",
                 "format": {
-                  "unit": "percent",
-                  "decimalPlaces": 2
+                  "decimalPlaces": 2,
+                  "unit": "percent"
                 },
                 "valueFontSize": 50
               }
@@ -103,8 +103,8 @@
               "spec": {
                 "calculation": "last",
                 "format": {
-                  "unit": "percent",
-                  "decimalPlaces": 2
+                  "decimalPlaces": 2,
+                  "unit": "percent"
                 },
                 "valueFontSize": 50
               }
@@ -140,8 +140,8 @@
               "spec": {
                 "calculation": "last",
                 "format": {
-                  "unit": "percent",
-                  "decimalPlaces": 2
+                  "decimalPlaces": 2,
+                  "unit": "percent"
                 },
                 "valueFontSize": 50
               }
@@ -177,8 +177,8 @@
               "spec": {
                 "calculation": "last",
                 "format": {
-                  "unit": "percent",
-                  "decimalPlaces": 2
+                  "decimalPlaces": 2,
+                  "unit": "percent"
                 },
                 "valueFontSize": 50
               }
@@ -214,8 +214,8 @@
               "spec": {
                 "calculation": "last",
                 "format": {
-                  "unit": "percent",
-                  "decimalPlaces": 2
+                  "decimalPlaces": 2,
+                  "unit": "percent"
                 },
                 "valueFontSize": 50
               }
@@ -250,21 +250,21 @@
               "kind": "TimeSeriesChart",
               "spec": {
                 "legend": {
-                  "position": "bottom",
                   "mode": "list",
+                  "position": "bottom",
                   "size": "small"
+                },
+                "visual": {
+                  "areaOpacity": 1,
+                  "display": "line",
+                  "lineWidth": 0.25,
+                  "palette": {
+                    "mode": "auto"
+                  }
                 },
                 "yAxis": {
                   "format": {
                     "unit": "decimal"
-                  }
-                },
-                "visual": {
-                  "display": "line",
-                  "lineWidth": 0.25,
-                  "areaOpacity": 1,
-                  "palette": {
-                    "mode": "auto"
                   }
                 }
               }
@@ -301,58 +301,58 @@
               "spec": {
                 "columnSettings": [
                   {
-                    "name": "cluster",
+                    "align": "left",
                     "header": "Cluster",
-                    "align": "left"
+                    "name": "cluster"
                   },
                   {
-                    "name": "value #1",
+                    "align": "right",
+                    "format": {
+                      "decimalPlaces": 4,
+                      "unit": "decimal"
+                    },
                     "header": "CPU Usage",
-                    "format": {
-                      "unit": "decimal",
-                      "decimalPlaces": 4
-                    },
-                    "align": "right"
+                    "name": "value #1"
                   },
                   {
-                    "name": "value #2",
+                    "align": "right",
+                    "format": {
+                      "decimalPlaces": 4,
+                      "unit": "decimal"
+                    },
                     "header": "CPU Requests",
-                    "format": {
-                      "unit": "decimal",
-                      "decimalPlaces": 4
-                    },
-                    "align": "right"
+                    "name": "value #2"
                   },
                   {
-                    "name": "value #3",
+                    "align": "right",
+                    "format": {
+                      "decimalPlaces": 4,
+                      "unit": "percent-decimal"
+                    },
                     "header": "CPU Requests %",
-                    "format": {
-                      "unit": "percent-decimal",
-                      "decimalPlaces": 4
-                    },
-                    "align": "right"
+                    "name": "value #3"
                   },
                   {
-                    "name": "value #4",
+                    "align": "right",
+                    "format": {
+                      "decimalPlaces": 4,
+                      "unit": "decimal"
+                    },
                     "header": "CPU Limits",
-                    "format": {
-                      "unit": "decimal",
-                      "decimalPlaces": 4
-                    },
-                    "align": "right"
+                    "name": "value #4"
                   },
                   {
-                    "name": "value #5",
+                    "align": "right",
+                    "format": {
+                      "decimalPlaces": 4,
+                      "unit": "percent-decimal"
+                    },
                     "header": "CPU Limits %",
-                    "format": {
-                      "unit": "percent-decimal",
-                      "decimalPlaces": 4
-                    },
-                    "align": "right"
+                    "name": "value #5"
                   },
                   {
-                    "name": "timestamp",
-                    "hide": true
+                    "hide": true,
+                    "name": "timestamp"
                   }
                 ],
                 "transforms": [
@@ -453,21 +453,21 @@
               "kind": "TimeSeriesChart",
               "spec": {
                 "legend": {
-                  "position": "bottom",
                   "mode": "list",
+                  "position": "bottom",
                   "size": "small"
+                },
+                "visual": {
+                  "areaOpacity": 1,
+                  "display": "line",
+                  "lineWidth": 0.25,
+                  "palette": {
+                    "mode": "auto"
+                  }
                 },
                 "yAxis": {
                   "format": {
                     "unit": "bytes"
-                  }
-                },
-                "visual": {
-                  "display": "line",
-                  "lineWidth": 0.25,
-                  "areaOpacity": 1,
-                  "palette": {
-                    "mode": "auto"
                   }
                 }
               }
@@ -504,55 +504,55 @@
               "spec": {
                 "columnSettings": [
                   {
-                    "name": "cluster",
+                    "align": "left",
                     "header": "Cluster",
-                    "align": "left"
+                    "name": "cluster"
                   },
                   {
-                    "name": "value #1",
+                    "align": "right",
+                    "format": {
+                      "unit": "bytes"
+                    },
                     "header": "Memory Usage",
+                    "name": "value #1"
+                  },
+                  {
+                    "align": "right",
                     "format": {
                       "unit": "bytes"
                     },
-                    "align": "right"
-                  },
-                  {
-                    "name": "value #2",
                     "header": "Memory Requests",
-                    "format": {
-                      "unit": "bytes"
-                    },
-                    "align": "right"
+                    "name": "value #2"
                   },
                   {
-                    "name": "value #3",
+                    "align": "right",
+                    "format": {
+                      "decimalPlaces": 4,
+                      "unit": "percent-decimal"
+                    },
                     "header": "Memory Requests %",
-                    "format": {
-                      "unit": "percent-decimal",
-                      "decimalPlaces": 4
-                    },
-                    "align": "right"
+                    "name": "value #3"
                   },
                   {
-                    "name": "value #4",
-                    "header": "Memory Limits",
+                    "align": "right",
                     "format": {
                       "unit": "bytes"
                     },
-                    "align": "right"
+                    "header": "Memory Limits",
+                    "name": "value #4"
                   },
                   {
-                    "name": "value #5",
-                    "header": "Memory Limits %",
+                    "align": "right",
                     "format": {
-                      "unit": "percent-decimal",
-                      "decimalPlaces": 4
+                      "decimalPlaces": 4,
+                      "unit": "percent-decimal"
                     },
-                    "align": "right"
+                    "header": "Memory Limits %",
+                    "name": "value #5"
                   },
                   {
-                    "name": "timestamp",
-                    "hide": true
+                    "hide": true,
+                    "name": "timestamp"
                   }
                 ],
                 "transforms": [

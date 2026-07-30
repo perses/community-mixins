@@ -28,17 +28,17 @@
               "kind": "TimeSeriesChart",
               "spec": {
                 "legend": {
-                  "position": "bottom",
                   "mode": "table",
+                  "position": "bottom",
                   "values": [
                     "last",
                     "max"
                   ]
                 },
                 "visual": {
+                  "areaOpacity": 0.1,
                   "display": "line",
-                  "lineWidth": 1,
-                  "areaOpacity": 0.1
+                  "lineWidth": 1
                 }
               }
             },
@@ -73,22 +73,22 @@
               "kind": "TimeSeriesChart",
               "spec": {
                 "legend": {
-                  "position": "bottom",
                   "mode": "table",
+                  "position": "bottom",
                   "values": [
                     "last",
                     "max"
                   ]
                 },
+                "visual": {
+                  "areaOpacity": 0.1,
+                  "display": "line",
+                  "lineWidth": 1
+                },
                 "yAxis": {
                   "format": {
                     "unit": "bytes"
                   }
-                },
-                "visual": {
-                  "display": "line",
-                  "lineWidth": 1,
-                  "areaOpacity": 0.1
                 }
               }
             },
@@ -123,17 +123,17 @@
               "kind": "TimeSeriesChart",
               "spec": {
                 "legend": {
-                  "position": "bottom",
                   "mode": "table",
+                  "position": "bottom",
                   "values": [
                     "last",
                     "max"
                   ]
                 },
                 "visual": {
+                  "areaOpacity": 0.1,
                   "display": "line",
-                  "lineWidth": 1,
-                  "areaOpacity": 0.1
+                  "lineWidth": 1
                 }
               }
             },
@@ -168,22 +168,22 @@
               "kind": "TimeSeriesChart",
               "spec": {
                 "legend": {
-                  "position": "bottom",
                   "mode": "table",
+                  "position": "bottom",
                   "values": [
                     "last",
                     "max"
                   ]
                 },
+                "visual": {
+                  "areaOpacity": 0.1,
+                  "display": "line",
+                  "lineWidth": 1
+                },
                 "yAxis": {
                   "format": {
                     "unit": "counts/sec"
                   }
-                },
-                "visual": {
-                  "display": "line",
-                  "lineWidth": 1,
-                  "areaOpacity": 0.1
                 }
               }
             },
@@ -234,22 +234,22 @@
               "kind": "TimeSeriesChart",
               "spec": {
                 "legend": {
-                  "position": "bottom",
                   "mode": "table",
+                  "position": "bottom",
                   "values": [
                     "last",
                     "max"
                   ]
                 },
+                "visual": {
+                  "areaOpacity": 0.1,
+                  "display": "line",
+                  "lineWidth": 1
+                },
                 "yAxis": {
                   "format": {
                     "unit": "bytes/sec"
                   }
-                },
-                "visual": {
-                  "display": "line",
-                  "lineWidth": 1,
-                  "areaOpacity": 0.1
                 }
               }
             },
@@ -300,17 +300,17 @@
               "kind": "TimeSeriesChart",
               "spec": {
                 "legend": {
-                  "position": "bottom",
                   "mode": "table",
+                  "position": "bottom",
                   "values": [
                     "last",
                     "max"
                   ]
                 },
                 "visual": {
+                  "areaOpacity": 0.1,
                   "display": "line",
-                  "lineWidth": 1,
-                  "areaOpacity": 0.1
+                  "lineWidth": 1
                 }
               }
             },
@@ -345,17 +345,17 @@
               "kind": "TimeSeriesChart",
               "spec": {
                 "legend": {
-                  "position": "bottom",
                   "mode": "table",
+                  "position": "bottom",
                   "values": [
                     "last",
                     "max"
                   ]
                 },
                 "visual": {
+                  "areaOpacity": 0.1,
                   "display": "line",
-                  "lineWidth": 1,
-                  "areaOpacity": 0.1
+                  "lineWidth": 1
                 }
               }
             },
@@ -389,13 +389,13 @@
               "kind": "TimeSeriesChart",
               "spec": {
                 "legend": {
-                  "position": "bottom",
-                  "mode": "list"
+                  "mode": "list",
+                  "position": "bottom"
                 },
                 "visual": {
+                  "areaOpacity": 1,
                   "display": "bar",
                   "lineWidth": 1,
-                  "areaOpacity": 1,
                   "stack": "all"
                 }
               }
@@ -431,17 +431,17 @@
               "kind": "TimeSeriesChart",
               "spec": {
                 "legend": {
-                  "position": "bottom",
                   "mode": "table",
+                  "position": "bottom",
                   "values": [
                     "last",
                     "max"
                   ]
                 },
                 "visual": {
+                  "areaOpacity": 0.1,
                   "display": "line",
-                  "lineWidth": 1,
-                  "areaOpacity": 0.1
+                  "lineWidth": 1
                 }
               }
             },

@@ -55,8 +55,8 @@
               "kind": "TimeSeriesChart",
               "spec": {
                 "legend": {
-                  "position": "bottom",
                   "mode": "table",
+                  "position": "bottom",
                   "values": [
                     "last"
                   ]
@@ -99,8 +99,8 @@
               "kind": "TimeSeriesChart",
               "spec": {
                 "legend": {
-                  "position": "bottom",
                   "mode": "table",
+                  "position": "bottom",
                   "values": [
                     "last"
                   ]
@@ -186,16 +186,16 @@
               "kind": "TimeSeriesChart",
               "spec": {
                 "legend": {
-                  "position": "bottom",
                   "mode": "table",
+                  "position": "bottom",
                   "values": [
                     "last"
                   ]
                 },
                 "yAxis": {
                   "format": {
-                    "unit": "bytes",
-                    "shortValues": true
+                    "shortValues": true,
+                    "unit": "bytes"
                   }
                 }
               }
@@ -267,16 +267,16 @@
                   "unit": "percent"
                 },
                 "thresholds": {
-                  "mode": "absolute",
                   "defaultColor": "green",
+                  "mode": "absolute",
                   "steps": [
                     {
-                      "value": 80,
-                      "color": "orange"
+                      "color": "orange",
+                      "value": 80
                     },
                     {
-                      "value": 90,
-                      "color": "red"
+                      "color": "red",
+                      "value": 90
                     }
                   ]
                 }
@@ -313,8 +313,8 @@
               "kind": "TimeSeriesChart",
               "spec": {
                 "legend": {
-                  "position": "bottom",
                   "mode": "table",
+                  "position": "bottom",
                   "values": [
                     "last"
                   ]
@@ -373,8 +373,8 @@
               "kind": "TimeSeriesChart",
               "spec": {
                 "legend": {
-                  "position": "bottom",
                   "mode": "table",
+                  "position": "bottom",
                   "values": [
                     "last"
                   ]
@@ -417,8 +417,8 @@
               "kind": "TimeSeriesChart",
               "spec": {
                 "legend": {
-                  "position": "bottom",
                   "mode": "table",
+                  "position": "bottom",
                   "values": [
                     "last"
                   ]
@@ -461,8 +461,8 @@
               "kind": "TimeSeriesChart",
               "spec": {
                 "legend": {
-                  "position": "bottom",
                   "mode": "table",
+                  "position": "bottom",
                   "values": [
                     "last"
                   ]

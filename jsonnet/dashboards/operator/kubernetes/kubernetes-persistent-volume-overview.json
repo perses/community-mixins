@@ -105,23 +105,23 @@
               "kind": "TimeSeriesChart",
               "spec": {
                 "legend": {
-                  "position": "bottom",
                   "mode": "table",
+                  "position": "bottom",
                   "size": "small"
+                },
+                "visual": {
+                  "areaOpacity": 1,
+                  "display": "line",
+                  "lineWidth": 0.25,
+                  "palette": {
+                    "mode": "auto"
+                  },
+                  "stack": "all"
                 },
                 "yAxis": {
                   "format": {
                     "unit": "bytes"
                   }
-                },
-                "visual": {
-                  "display": "line",
-                  "lineWidth": 0.25,
-                  "areaOpacity": 1,
-                  "palette": {
-                    "mode": "auto"
-                  },
-                  "stack": "all"
                 }
               }
             },
@@ -176,20 +176,20 @@
                   "unit": "percent"
                 },
                 "thresholds": {
-                  "mode": "absolute",
                   "defaultColor": "green",
+                  "mode": "absolute",
                   "steps": [
                     {
-                      "value": 0,
-                      "color": "green"
+                      "color": "green",
+                      "value": 0
                     },
                     {
-                      "value": 80,
-                      "color": "orange"
+                      "color": "orange",
+                      "value": 80
                     },
                     {
-                      "value": 90,
-                      "color": "red"
+                      "color": "red",
+                      "value": 90
                     }
                   ]
                 }
@@ -225,23 +225,23 @@
               "kind": "TimeSeriesChart",
               "spec": {
                 "legend": {
-                  "position": "bottom",
                   "mode": "table",
+                  "position": "bottom",
                   "size": "small"
+                },
+                "visual": {
+                  "areaOpacity": 1,
+                  "display": "line",
+                  "lineWidth": 0.25,
+                  "palette": {
+                    "mode": "auto"
+                  },
+                  "stack": "all"
                 },
                 "yAxis": {
                   "format": {
                     "unit": "bytes"
                   }
-                },
-                "visual": {
-                  "display": "line",
-                  "lineWidth": 0.25,
-                  "areaOpacity": 1,
-                  "palette": {
-                    "mode": "auto"
-                  },
-                  "stack": "all"
                 }
               }
             },
@@ -296,20 +296,20 @@
                   "unit": "percent"
                 },
                 "thresholds": {
-                  "mode": "absolute",
                   "defaultColor": "green",
+                  "mode": "absolute",
                   "steps": [
                     {
-                      "value": 0,
-                      "color": "green"
+                      "color": "green",
+                      "value": 0
                     },
                     {
-                      "value": 80,
-                      "color": "orange"
+                      "color": "orange",
+                      "value": 80
                     },
                     {
-                      "value": 90,
-                      "color": "red"
+                      "color": "red",
+                      "value": 90
                     }
                   ]
                 }
