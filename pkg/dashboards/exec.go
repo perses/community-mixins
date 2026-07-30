@@ -82,6 +82,15 @@ func executeDashboardBuilder(builder dashboard.Builder, outputFormat string, out
 }
 
 func builderToOperatorResource(builder dashboard.Builder) runtime.Object {
+	specData, err := json.Marshal(builder.Dashboard.Spec)
+	if err != nil {
+		panic(fmt.Errorf("failed to marshal dashboard spec: %w", err))
+	}
+	var operatorDashboard operatorv2.Dashboard
+	if err := json.Unmarshal(specData, &operatorDashboard); err != nil {
+		panic(fmt.Errorf("failed to unmarshal dashboard spec into operator dashboard: %w", err))
+	}
+
 	return &operatorv2.PersesDashboard{
 		TypeMeta: metav1.TypeMeta{
 			Kind:       "PersesDashboard",
@@ -98,9 +107,7 @@ func builderToOperatorResource(builder dashboard.Builder) runtime.Object {
 			},
 		},
 		Spec: operatorv2.PersesDashboardSpec{
-			Config: operatorv2.Dashboard{
-				DashboardSpec: builder.Dashboard.Spec,
-			},
+			Config: operatorDashboard,
 		},
 	}
 }

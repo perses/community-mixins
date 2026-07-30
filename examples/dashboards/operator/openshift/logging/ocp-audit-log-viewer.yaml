@@ -17,6 +17,8 @@ spec:
     - kind: Grid
       spec:
         display:
+          collapse:
+            open: false
           title: Help
         items:
         - content:
@@ -28,6 +30,8 @@ spec:
     - kind: Grid
       spec:
         display:
+          collapse:
+            open: false
           title: Active Query
         items:
         - content:
