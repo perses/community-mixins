@@ -25,7 +25,7 @@ import (
 	"github.com/prometheus/prometheus/model/labels"
 )
 
-func withProxyStatsGroup(datasource string, labelMatcher promql.LabelMatcher) dashboard.Option {
+func withProxyStatsGroup(datasource string, labelMatcher *labels.Matcher) dashboard.Option {
 	return dashboard.AddPanelGroup("Proxy Status",
 		panelgroup.PanelsPerLine(1),
 		panelgroup.PanelHeight(8),
@@ -33,7 +33,7 @@ func withProxyStatsGroup(datasource string, labelMatcher promql.LabelMatcher) da
 	)
 }
 
-func withProxyRulesSyncRateGroup(datasource string, labelMatcher promql.LabelMatcher) dashboard.Option {
+func withProxyRulesSyncRateGroup(datasource string, labelMatcher *labels.Matcher) dashboard.Option {
 	return dashboard.AddPanelGroup("Proxy Rules Sync Rate",
 		panelgroup.PanelsPerLine(2),
 		panelgroup.PanelHeight(8),
@@ -42,7 +42,7 @@ func withProxyRulesSyncRateGroup(datasource string, labelMatcher promql.LabelMat
 	)
 }
 
-func withProxyNetworkProgrammingRateGroup(datasource string, labelMatcher promql.LabelMatcher) dashboard.Option {
+func withProxyNetworkProgrammingRateGroup(datasource string, labelMatcher *labels.Matcher) dashboard.Option {
 	return dashboard.AddPanelGroup("Proxy Network Programming Rate",
 		panelgroup.PanelsPerLine(2),
 		panelgroup.PanelHeight(8),
@@ -51,15 +51,15 @@ func withProxyNetworkProgrammingRateGroup(datasource string, labelMatcher promql
 	)
 }
 
-func withProxyKubeAPIRequestsGroup(datasource string, labelMatcher promql.LabelMatcher) dashboard.Option {
+func withProxyKubeAPIRequestsGroup(datasource string, labelMatcher *labels.Matcher) dashboard.Option {
 	// TODO(saswatamcode): Add a way to configure these.
-	labelMatchersToUse := []promql.LabelMatcher{
-		promql.ClusterVar,
-		promql.InstanceVar,
+	labelMatchersToUse := []*labels.Matcher{
+		promql.ClusterVarV2,
+		promql.InstanceVarV2,
 		{
 			Name:  "job",
 			Value: panels.KUBE_PROXY_LABEL_VALUE,
-			Type:  "=",
+			Type:  labels.MatchEqual,
 		},
 	}
 
@@ -125,8 +125,7 @@ func BuildProxyOverview(project string, datasource string, clusterLabelName stri
 		),
 	}
 
-	clusterLabelMatcher := dashboards.GetClusterLabelMatcher(clusterLabelName)
-	clusterLabelMatcherV2 := dashboards.GetClusterLabelMatcherV2(clusterLabelName)
+	clusterLabelMatcher := dashboards.GetClusterLabelMatcherV2(clusterLabelName)
 
 	vars := defaultVars
 	if len(variableOverrides) > 0 {
@@ -141,7 +140,7 @@ func BuildProxyOverview(project string, datasource string, clusterLabelName stri
 		withProxyRulesSyncRateGroup(datasource, clusterLabelMatcher),
 		withProxyNetworkProgrammingRateGroup(datasource, clusterLabelMatcher),
 		withProxyKubeAPIRequestsGroup(datasource, clusterLabelMatcher),
-		withProxyResources(datasource, clusterLabelMatcherV2),
+		withProxyResources(datasource, clusterLabelMatcher),
 	)
 	return dashboards.NewDashboardResult(
 		dashboard.New("proxy-overview", options...),

@@ -24,16 +24,17 @@ import (
 	timeSeriesPanel "github.com/perses/plugins/timeserieschart/sdk/go"
 
 	commonSdk "github.com/perses/perses/go-sdk/common"
+	"github.com/prometheus/prometheus/model/labels"
 )
 
-func APIServerSLONotice(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
+func APIServerSLONotice(datasourceName string, labelMatchers ...*labels.Matcher) panelgroup.Option {
 	return panelgroup.AddPanel("Notice",
 		markdown.Markdown("Notice",
 			markdown.Text("The SLO (service level objective) and other metrics displayed on this dashboard are for informational purposes only.")),
 	)
 }
 
-func APIServerAvailability(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
+func APIServerAvailability(datasourceName string, labelMatchers ...*labels.Matcher) panelgroup.Option {
 	return panelgroup.AddPanel("Availability (30d) > 99.000%",
 		panel.Description("How many percent of requests (both read and write) in 30 days have been answered successfully and fast enough?"),
 		statPanel.Chart(
@@ -46,17 +47,17 @@ func APIServerAvailability(datasourceName string, labelMatchers ...promql.LabelM
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchers(
-					"apiserver_request:availability30d{verb='all', cluster=~'$cluster'}",
+				promql.SetLabelMatchersV2(
+					KubernetesCommonPanelQueries["APIServerAvailability"],
 					labelMatchers,
-				),
+				).Pretty(0),
 				dashboards.AddQueryDataSource(datasourceName),
 			),
 		),
 	)
 }
 
-func APIServerErrorBudget(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
+func APIServerErrorBudget(datasourceName string, labelMatchers ...*labels.Matcher) panelgroup.Option {
 	return panelgroup.AddPanel("ErrorBudget (30d) > 99.000%",
 		panel.Description("How much error budget is left looking at our 0.990% availability guarantees?"),
 		timeSeriesPanel.Chart(
@@ -80,10 +81,10 @@ func APIServerErrorBudget(datasourceName string, labelMatchers ...promql.LabelMa
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchers(
-					"100 * (apiserver_request:availability30d{verb='all', cluster=~'$cluster'} - 0.990000)",
+				promql.SetLabelMatchersV2(
+					KubernetesCommonPanelQueries["APIServerErrorBudget"],
 					labelMatchers,
-				),
+				).Pretty(0),
 				dashboards.AddQueryDataSource(datasourceName),
 				query.SeriesNameFormat("errorbudget"),
 			),
@@ -91,7 +92,7 @@ func APIServerErrorBudget(datasourceName string, labelMatchers ...promql.LabelMa
 	)
 }
 
-func APIServerReadAvailability(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
+func APIServerReadAvailability(datasourceName string, labelMatchers ...*labels.Matcher) panelgroup.Option {
 	return panelgroup.AddPanel("Read Availability (30d)",
 		panel.Description("How many percent of read requests (LIST,GET) in 30 days have been answered successfully and fast enough?"),
 		statPanel.Chart(
@@ -104,17 +105,17 @@ func APIServerReadAvailability(datasourceName string, labelMatchers ...promql.La
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchers(
-					"apiserver_request:availability30d{verb='read', cluster=~'$cluster'}",
+				promql.SetLabelMatchersV2(
+					KubernetesCommonPanelQueries["APIServerReadAvailability"],
 					labelMatchers,
-				),
+				).Pretty(0),
 				dashboards.AddQueryDataSource(datasourceName),
 			),
 		),
 	)
 }
 
-func APIServerReadSLIRequests(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
+func APIServerReadSLIRequests(datasourceName string, labelMatchers ...*labels.Matcher) panelgroup.Option {
 	return panelgroup.AddPanel("Read SLI - Requests",
 		panel.Description("How many read requests (LIST,GET) per second do the apiservers get by code?"),
 		timeSeriesPanel.Chart(
@@ -139,10 +140,10 @@ func APIServerReadSLIRequests(datasourceName string, labelMatchers ...promql.Lab
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchers(
-					"sum by (code) (code_resource:apiserver_request_total:rate5m{verb='read', cluster=~'$cluster'})",
+				promql.SetLabelMatchersV2(
+					KubernetesCommonPanelQueries["APIServerReadSLIRequests"],
 					labelMatchers,
-				),
+				).Pretty(0),
 				dashboards.AddQueryDataSource(datasourceName),
 				query.SeriesNameFormat("{{ code }}"),
 			),
@@ -150,7 +151,7 @@ func APIServerReadSLIRequests(datasourceName string, labelMatchers ...promql.Lab
 	)
 }
 
-func APIServerReadSLIErrors(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
+func APIServerReadSLIErrors(datasourceName string, labelMatchers ...*labels.Matcher) panelgroup.Option {
 	return panelgroup.AddPanel("Read SLI - Errors",
 		panel.Description("How many percent of read requests (LIST,GET) per second are returned with errors (5xx)?"),
 		timeSeriesPanel.Chart(
@@ -174,10 +175,10 @@ func APIServerReadSLIErrors(datasourceName string, labelMatchers ...promql.Label
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchers(
-					"sum by (resource) (code_resource:apiserver_request_total:rate5m{verb='read',code=~'5..', cluster=~'$cluster'}) / sum by (resource) (code_resource:apiserver_request_total:rate5m{verb='read', cluster=~'$cluster'})",
+				promql.SetLabelMatchersV2(
+					KubernetesCommonPanelQueries["APIServerReadSLIErrors"],
 					labelMatchers,
-				),
+				).Pretty(0),
 				dashboards.AddQueryDataSource(datasourceName),
 				query.SeriesNameFormat("{{ resource }}"),
 			),
@@ -185,7 +186,7 @@ func APIServerReadSLIErrors(datasourceName string, labelMatchers ...promql.Label
 	)
 }
 
-func APIServerReadSLIDuration(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
+func APIServerReadSLIDuration(datasourceName string, labelMatchers ...*labels.Matcher) panelgroup.Option {
 	return panelgroup.AddPanel("Read SLI - Duration",
 		panel.Description("How many seconds is the 99th percentile for reading (LIST|GET) a given resource?"),
 		timeSeriesPanel.Chart(
@@ -208,10 +209,10 @@ func APIServerReadSLIDuration(datasourceName string, labelMatchers ...promql.Lab
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchers(
-					"cluster_quantile:apiserver_request_sli_duration_seconds:histogram_quantile{verb='read', cluster=~'$cluster'}",
+				promql.SetLabelMatchersV2(
+					KubernetesCommonPanelQueries["APIServerReadSLIDuration"],
 					labelMatchers,
-				),
+				).Pretty(0),
 				dashboards.AddQueryDataSource(datasourceName),
 				query.SeriesNameFormat("{{ resource }}"),
 			),
@@ -219,7 +220,7 @@ func APIServerReadSLIDuration(datasourceName string, labelMatchers ...promql.Lab
 	)
 }
 
-func APIServerWriteAvailability(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
+func APIServerWriteAvailability(datasourceName string, labelMatchers ...*labels.Matcher) panelgroup.Option {
 	return panelgroup.AddPanel("Write Availability (30d)",
 		panel.Description("How many percent of write requests (POST|PUT|PATCH|DELETE) in 30 days have been answered successfully and fast enough?"),
 		statPanel.Chart(
@@ -232,17 +233,17 @@ func APIServerWriteAvailability(datasourceName string, labelMatchers ...promql.L
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchers(
-					"apiserver_request:availability30d{verb='write', cluster=~'$cluster'}",
+				promql.SetLabelMatchersV2(
+					KubernetesCommonPanelQueries["APIServerWriteAvailability"],
 					labelMatchers,
-				),
+				).Pretty(0),
 				dashboards.AddQueryDataSource(datasourceName),
 			),
 		),
 	)
 }
 
-func APIServerWriteSLIRequests(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
+func APIServerWriteSLIRequests(datasourceName string, labelMatchers ...*labels.Matcher) panelgroup.Option {
 	return panelgroup.AddPanel("Write SLI - Requests",
 		panel.Description("How many write requests (POST|PUT|PATCH|DELETE) per second do the apiservers get by code?"),
 		timeSeriesPanel.Chart(
@@ -267,10 +268,10 @@ func APIServerWriteSLIRequests(datasourceName string, labelMatchers ...promql.La
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchers(
-					"sum by (code) (code_resource:apiserver_request_total:rate5m{verb='write', cluster=~'$cluster'})",
+				promql.SetLabelMatchersV2(
+					KubernetesCommonPanelQueries["APIServerWriteSLIRequests"],
 					labelMatchers,
-				),
+				).Pretty(0),
 				dashboards.AddQueryDataSource(datasourceName),
 				query.SeriesNameFormat("{{ code }}"),
 			),
@@ -278,7 +279,7 @@ func APIServerWriteSLIRequests(datasourceName string, labelMatchers ...promql.La
 	)
 }
 
-func APIServerWriteSLIErrors(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
+func APIServerWriteSLIErrors(datasourceName string, labelMatchers ...*labels.Matcher) panelgroup.Option {
 	return panelgroup.AddPanel("Write SLI - Errors",
 		panel.Description("How many percent of write requests (POST|PUT|PATCH|DELETE) per second are returned with errors (5xx)?"),
 		timeSeriesPanel.Chart(
@@ -302,10 +303,10 @@ func APIServerWriteSLIErrors(datasourceName string, labelMatchers ...promql.Labe
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchers(
-					"sum by (resource) (code_resource:apiserver_request_total:rate5m{verb='write',code=~'5..', cluster=~'$cluster'}) / sum by (resource) (code_resource:apiserver_request_total:rate5m{verb='write', cluster=~'$cluster'})",
+				promql.SetLabelMatchersV2(
+					KubernetesCommonPanelQueries["APIServerWriteSLIErrors"],
 					labelMatchers,
-				),
+				).Pretty(0),
 				dashboards.AddQueryDataSource(datasourceName),
 				query.SeriesNameFormat("{{ resource }}"),
 			),
@@ -313,7 +314,7 @@ func APIServerWriteSLIErrors(datasourceName string, labelMatchers ...promql.Labe
 	)
 }
 
-func APIServerWriteSLIDuration(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
+func APIServerWriteSLIDuration(datasourceName string, labelMatchers ...*labels.Matcher) panelgroup.Option {
 	return panelgroup.AddPanel("Write SLI - Duration",
 		panel.Description("How many seconds is the 99th percentile for writing (POST|PUT|PATCH|DELETE) a given resource?"),
 		timeSeriesPanel.Chart(
@@ -336,10 +337,10 @@ func APIServerWriteSLIDuration(datasourceName string, labelMatchers ...promql.La
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchers(
-					"cluster_quantile:apiserver_request_sli_duration_seconds:histogram_quantile{verb='write', cluster=~'$cluster'}",
+				promql.SetLabelMatchersV2(
+					KubernetesCommonPanelQueries["APIServerWriteSLIDuration"],
 					labelMatchers,
-				),
+				).Pretty(0),
 				dashboards.AddQueryDataSource(datasourceName),
 				query.SeriesNameFormat("{{ resource }}"),
 			),
@@ -347,7 +348,7 @@ func APIServerWriteSLIDuration(datasourceName string, labelMatchers ...promql.La
 	)
 }
 
-func APIServerWorkQueueAddRate(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
+func APIServerWorkQueueAddRate(datasourceName string, labelMatchers ...*labels.Matcher) panelgroup.Option {
 	return panelgroup.AddPanel("Work Queue Add Rate",
 		panel.Description("Shows the rate of work queue add events."),
 		timeSeriesPanel.Chart(
@@ -371,10 +372,10 @@ func APIServerWorkQueueAddRate(datasourceName string, labelMatchers ...promql.La
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchers(
-					"sum(rate(workqueue_adds_total{"+GetAPIServerMatcher()+", instance=~'$instance',  cluster=~'$cluster'}[$__rate_interval])) by (instance, name)",
+				promql.SetLabelMatchersV2(
+					KubernetesCommonPanelQueries["APIServerWorkQueueAddRate"],
 					labelMatchers,
-				),
+				).Pretty(0),
 				dashboards.AddQueryDataSource(datasourceName),
 				query.SeriesNameFormat("{{instance}} {{name}}"),
 			),
@@ -382,7 +383,7 @@ func APIServerWorkQueueAddRate(datasourceName string, labelMatchers ...promql.La
 	)
 }
 
-func APIServerWorkQueueDepth(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
+func APIServerWorkQueueDepth(datasourceName string, labelMatchers ...*labels.Matcher) panelgroup.Option {
 	return panelgroup.AddPanel("Work Queue Depth",
 		panel.Description("Shows the depth of the work queue."),
 		timeSeriesPanel.Chart(
@@ -406,10 +407,10 @@ func APIServerWorkQueueDepth(datasourceName string, labelMatchers ...promql.Labe
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchers(
-					"sum(rate(workqueue_depth{"+GetAPIServerMatcher()+", instance=~'$instance', cluster=~'$cluster'}[$__rate_interval])) by (instance, name)",
+				promql.SetLabelMatchersV2(
+					KubernetesCommonPanelQueries["APIServerWorkQueueDepth"],
 					labelMatchers,
-				),
+				).Pretty(0),
 				dashboards.AddQueryDataSource(datasourceName),
 				query.SeriesNameFormat("{{instance}} {{name}}"),
 			),
@@ -417,7 +418,7 @@ func APIServerWorkQueueDepth(datasourceName string, labelMatchers ...promql.Labe
 	)
 }
 
-func APIServerWorkQueueLatency(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
+func APIServerWorkQueueLatency(datasourceName string, labelMatchers ...*labels.Matcher) panelgroup.Option {
 	return panelgroup.AddPanel("Work Queue Latency",
 		panel.Description("Shows the 99th percentile latency of items queued in the work queue"),
 		timeSeriesPanel.Chart(
@@ -441,10 +442,10 @@ func APIServerWorkQueueLatency(datasourceName string, labelMatchers ...promql.La
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchers(
-					"histogram_quantile(0.99, sum(rate(workqueue_queue_duration_seconds_bucket{cluster='$cluster', "+GetAPIServerMatcher()+", instance=~'$instance'}[$__rate_interval])) by (instance, name, le))",
+				promql.SetLabelMatchersV2(
+					KubernetesCommonPanelQueries["APIServerWorkQueueLatency"],
 					labelMatchers,
-				),
+				).Pretty(0),
 				dashboards.AddQueryDataSource(datasourceName),
 				query.SeriesNameFormat("{{instance}} {{name}}"),
 			),

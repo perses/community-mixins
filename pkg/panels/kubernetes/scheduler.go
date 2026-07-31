@@ -23,9 +23,10 @@ import (
 	commonSdk "github.com/perses/perses/go-sdk/common"
 	statPanel "github.com/perses/plugins/statchart/sdk/go"
 	timeSeriesPanel "github.com/perses/plugins/timeserieschart/sdk/go"
+	"github.com/prometheus/prometheus/model/labels"
 )
 
-func SchedulerUpStatus(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
+func SchedulerUpStatus(datasourceName string, labelMatchers ...*labels.Matcher) panelgroup.Option {
 	return panelgroup.AddPanel("Up",
 		panel.Description("Shows the status of the scheduler."),
 		statPanel.Chart(
@@ -37,17 +38,17 @@ func SchedulerUpStatus(datasourceName string, labelMatchers ...promql.LabelMatch
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchers(
-					"sum(up{cluster=\"$cluster\", "+GetSchedulerMatcher()+"})",
+				promql.SetLabelMatchersV2(
+					KubernetesCommonPanelQueries["SchedulerUpStatus"],
 					labelMatchers,
-				),
+				).Pretty(0),
 				dashboards.AddQueryDataSource(datasourceName),
 			),
 		),
 	)
 }
 
-func SchedulingRate(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
+func SchedulingRate(datasourceName string, labelMatchers ...*labels.Matcher) panelgroup.Option {
 	return panelgroup.AddPanel("Scheduling Rate",
 		panel.Description("Shows the rate of scheduling events."),
 		timeSeriesPanel.Chart(
@@ -71,40 +72,40 @@ func SchedulingRate(datasourceName string, labelMatchers ...promql.LabelMatcher)
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchers(
-					"sum(rate(scheduler_e2e_scheduling_duration_seconds_count{cluster=\"$cluster\", "+GetSchedulerMatcher()+", instance=~\"$instance\"}[$__rate_interval])) by (cluster, instance)",
+				promql.SetLabelMatchersV2(
+					KubernetesCommonPanelQueries["SchedulingRate1"],
 					labelMatchers,
-				),
+				).Pretty(0),
 				dashboards.AddQueryDataSource(datasourceName),
 				query.SeriesNameFormat("{{cluster}} {{instance}} e2e"),
 			),
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchers(
-					"sum(rate(scheduler_binding_duration_seconds_count{cluster=\"$cluster\", "+GetSchedulerMatcher()+", instance=~\"$instance\"}[$__rate_interval])) by (cluster, instance)",
+				promql.SetLabelMatchersV2(
+					KubernetesCommonPanelQueries["SchedulingRate2"],
 					labelMatchers,
-				),
+				).Pretty(0),
 				dashboards.AddQueryDataSource(datasourceName),
 				query.SeriesNameFormat("{{cluster}} {{instance}} binding"),
 			),
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchers(
-					"sum(rate(scheduler_scheduling_algorithm_duration_seconds_count{cluster=\"$cluster\", "+GetSchedulerMatcher()+", instance=~\"$instance\"}[$__rate_interval])) by (cluster, instance)",
+				promql.SetLabelMatchersV2(
+					KubernetesCommonPanelQueries["SchedulingRate3"],
 					labelMatchers,
-				),
+				).Pretty(0),
 				dashboards.AddQueryDataSource(datasourceName),
 				query.SeriesNameFormat("{{cluster}} {{instance}} scheduling algorithm"),
 			),
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchers(
-					"sum(rate(scheduler_volume_scheduling_duration_seconds_count{cluster=\"$cluster\", "+GetSchedulerMatcher()+", instance=~\"$instance\"}[$__rate_interval])) by (cluster, instance)",
+				promql.SetLabelMatchersV2(
+					KubernetesCommonPanelQueries["SchedulingRate4"],
 					labelMatchers,
-				),
+				).Pretty(0),
 				dashboards.AddQueryDataSource(datasourceName),
 				query.SeriesNameFormat("{{cluster}} {{instance}} volume"),
 			),
@@ -112,7 +113,7 @@ func SchedulingRate(datasourceName string, labelMatchers ...promql.LabelMatcher)
 	)
 }
 
-func SchedulingLatency(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
+func SchedulingLatency(datasourceName string, labelMatchers ...*labels.Matcher) panelgroup.Option {
 	return panelgroup.AddPanel("Scheduling Latency 99th Quantile",
 		panel.Description("Shows the 99th quantile latency of scheduling events."),
 		timeSeriesPanel.Chart(
@@ -136,40 +137,40 @@ func SchedulingLatency(datasourceName string, labelMatchers ...promql.LabelMatch
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchers(
-					"histogram_quantile(0.99, sum(rate(scheduler_e2e_scheduling_duration_seconds_bucket{cluster=\"$cluster\", "+GetSchedulerMatcher()+", instance=~\"$instance\"}[$__rate_interval])) by (cluster, instance, le))",
+				promql.SetLabelMatchersV2(
+					KubernetesCommonPanelQueries["SchedulingLatency1"],
 					labelMatchers,
-				),
+				).Pretty(0),
 				dashboards.AddQueryDataSource(datasourceName),
 				query.SeriesNameFormat("{{cluster}} {{instance}} e2e"),
 			),
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchers(
-					"histogram_quantile(0.99, sum(rate(scheduler_binding_duration_seconds_bucket{cluster=\"$cluster\", "+GetSchedulerMatcher()+", instance=~\"$instance\"}[$__rate_interval])) by (cluster, instance, le))",
+				promql.SetLabelMatchersV2(
+					KubernetesCommonPanelQueries["SchedulingLatency2"],
 					labelMatchers,
-				),
+				).Pretty(0),
 				dashboards.AddQueryDataSource(datasourceName),
 				query.SeriesNameFormat("{{cluster}} {{instance}} binding"),
 			),
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchers(
-					"histogram_quantile(0.99, sum(rate(scheduler_scheduling_algorithm_duration_seconds_bucket{cluster=\"$cluster\", "+GetSchedulerMatcher()+", instance=~\"$instance\"}[$__rate_interval])) by (cluster, instance, le))",
+				promql.SetLabelMatchersV2(
+					KubernetesCommonPanelQueries["SchedulingLatency3"],
 					labelMatchers,
-				),
+				).Pretty(0),
 				dashboards.AddQueryDataSource(datasourceName),
 				query.SeriesNameFormat("{{cluster}} {{instance}} scheduling algorithm"),
 			),
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchers(
-					"histogram_quantile(0.99, sum(rate(scheduler_volume_scheduling_duration_seconds_bucket{cluster=\"$cluster\", "+GetSchedulerMatcher()+", instance=~\"$instance\"}[$__rate_interval])) by (cluster, instance, le))",
+				promql.SetLabelMatchersV2(
+					KubernetesCommonPanelQueries["SchedulingLatency4"],
 					labelMatchers,
-				),
+				).Pretty(0),
 				dashboards.AddQueryDataSource(datasourceName),
 				query.SeriesNameFormat("{{cluster}} {{instance}} volume"),
 			),

@@ -146,7 +146,9 @@ spec:
                   query: |-
                     sort_desc(
                       sum by (workload) (
-                            rate(container_network_receive_bytes_total{cluster="$cluster",namespace="$namespace"}[$__rate_interval])
+                            rate(
+                              container_network_receive_bytes_total{cluster="$cluster",namespace="$namespace"}[$__rate_interval]
+                            )
                           * on (cluster, namespace, pod) group_left ()
                             topk by (cluster, namespace, pod) (
                               1,
@@ -192,7 +194,9 @@ spec:
                   query: |-
                     sort_desc(
                       sum by (workload) (
-                            rate(container_network_transmit_bytes_total{cluster="$cluster",namespace="$namespace"}[$__rate_interval])
+                            rate(
+                              container_network_transmit_bytes_total{cluster="$cluster",namespace="$namespace"}[$__rate_interval]
+                            )
                           * on (cluster, namespace, pod) group_left ()
                             topk by (cluster, namespace, pod) (
                               1,
@@ -276,7 +280,9 @@ spec:
                   query: |-
                     sort_desc(
                       sum by (workload, workload_type) (
-                            rate(container_network_receive_bytes_total{cluster="$cluster",namespace="$namespace"}[$__rate_interval])
+                            rate(
+                              container_network_receive_bytes_total{cluster="$cluster",namespace="$namespace"}[$__rate_interval]
+                            )
                           * on (namespace, pod)
                             kube_pod_info{cluster="$cluster",host_network="false",namespace="$namespace"}
                         * on (namespace, pod) group_left (workload, workload_type)
@@ -294,7 +300,9 @@ spec:
                   query: |-
                     sort_desc(
                       sum by (workload, workload_type) (
-                            rate(container_network_transmit_bytes_total{cluster="$cluster",namespace="$namespace"}[$__rate_interval])
+                            rate(
+                              container_network_transmit_bytes_total{cluster="$cluster",namespace="$namespace"}[$__rate_interval]
+                            )
                           * on (namespace, pod)
                             kube_pod_info{cluster="$cluster",host_network="false",namespace="$namespace"}
                         * on (namespace, pod) group_left (workload, workload_type)
@@ -312,7 +320,9 @@ spec:
                   query: |-
                     sort_desc(
                       avg by (workload, workload_type) (
-                            rate(container_network_receive_bytes_total{cluster="$cluster",namespace="$namespace"}[$__rate_interval])
+                            rate(
+                              container_network_receive_bytes_total{cluster="$cluster",namespace="$namespace"}[$__rate_interval]
+                            )
                           * on (namespace, pod)
                             kube_pod_info{cluster="$cluster",host_network="false",namespace="$namespace"}
                         * on (namespace, pod) group_left (workload, workload_type)
@@ -330,7 +340,9 @@ spec:
                   query: |-
                     sort_desc(
                       avg by (workload, workload_type) (
-                            rate(container_network_transmit_bytes_total{cluster="$cluster",namespace="$namespace"}[$__rate_interval])
+                            rate(
+                              container_network_transmit_bytes_total{cluster="$cluster",namespace="$namespace"}[$__rate_interval]
+                            )
                           * on (namespace, pod)
                             kube_pod_info{cluster="$cluster",host_network="false",namespace="$namespace"}
                         * on (namespace, pod) group_left (workload, workload_type)
@@ -348,7 +360,9 @@ spec:
                   query: |-
                     sort_desc(
                       sum by (workload, workload_type) (
-                            rate(container_network_receive_packets_total{cluster="$cluster",namespace="$namespace"}[$__rate_interval])
+                            rate(
+                              container_network_receive_packets_total{cluster="$cluster",namespace="$namespace"}[$__rate_interval]
+                            )
                           * on (namespace, pod)
                             kube_pod_info{cluster="$cluster",host_network="false",namespace="$namespace"}
                         * on (namespace, pod) group_left (workload, workload_type)
@@ -366,7 +380,9 @@ spec:
                   query: |-
                     sort_desc(
                       sum by (workload, workload_type) (
-                            rate(container_network_transmit_packets_total{cluster="$cluster",namespace="$namespace"}[$__rate_interval])
+                            rate(
+                              container_network_transmit_packets_total{cluster="$cluster",namespace="$namespace"}[$__rate_interval]
+                            )
                           * on (namespace, pod)
                             kube_pod_info{cluster="$cluster",host_network="false",namespace="$namespace"}
                         * on (namespace, pod) group_left (workload, workload_type)
@@ -448,7 +464,9 @@ spec:
                   query: |-
                     sort_desc(
                       sum by (workload) (
-                            rate(container_network_receive_bytes_total{cluster="$cluster",namespace="$namespace"}[$__rate_interval])
+                            rate(
+                              container_network_receive_bytes_total{cluster="$cluster",namespace="$namespace"}[$__rate_interval]
+                            )
                           * on (cluster, namespace, pod) group_left ()
                             topk by (cluster, namespace, pod) (
                               1,
@@ -494,7 +512,9 @@ spec:
                   query: |-
                     sort_desc(
                       sum by (workload) (
-                            rate(container_network_transmit_bytes_total{cluster="$cluster",namespace="$namespace"}[$__rate_interval])
+                            rate(
+                              container_network_transmit_bytes_total{cluster="$cluster",namespace="$namespace"}[$__rate_interval]
+                            )
                           * on (cluster, namespace, pod) group_left ()
                             topk by (cluster, namespace, pod) (
                               1,
@@ -540,7 +560,9 @@ spec:
                   query: |-
                     sort_desc(
                       avg by (workload) (
-                            rate(container_network_receive_bytes_total{cluster="$cluster",namespace="$namespace"}[$__rate_interval])
+                            rate(
+                              container_network_receive_bytes_total{cluster="$cluster",namespace="$namespace"}[$__rate_interval]
+                            )
                           * on (cluster, namespace, pod) group_left ()
                             topk by (cluster, namespace, pod) (
                               1,
@@ -586,7 +608,9 @@ spec:
                   query: |-
                     sort_desc(
                       avg by (workload) (
-                            rate(container_network_transmit_bytes_total{cluster="$cluster",namespace="$namespace"}[$__rate_interval])
+                            rate(
+                              container_network_transmit_bytes_total{cluster="$cluster",namespace="$namespace"}[$__rate_interval]
+                            )
                           * on (cluster, namespace, pod) group_left ()
                             topk by (cluster, namespace, pod) (
                               1,
@@ -632,7 +656,9 @@ spec:
                   query: |-
                     sort_desc(
                       sum by (workload) (
-                            rate(container_network_receive_packets_total{cluster="$cluster",namespace="$namespace"}[$__rate_interval])
+                            rate(
+                              container_network_receive_packets_total{cluster="$cluster",namespace="$namespace"}[$__rate_interval]
+                            )
                           * on (cluster, namespace, pod) group_left ()
                             topk by (cluster, namespace, pod) (
                               1,
@@ -678,7 +704,9 @@ spec:
                   query: |-
                     sort_desc(
                       sum by (workload) (
-                            rate(container_network_transmit_packets_total{cluster="$cluster",namespace="$namespace"}[$__rate_interval])
+                            rate(
+                              container_network_transmit_packets_total{cluster="$cluster",namespace="$namespace"}[$__rate_interval]
+                            )
                           * on (cluster, namespace, pod) group_left ()
                             topk by (cluster, namespace, pod) (
                               1,

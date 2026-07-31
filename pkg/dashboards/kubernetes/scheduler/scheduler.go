@@ -25,7 +25,7 @@ import (
 	"github.com/prometheus/prometheus/model/labels"
 )
 
-func withSchedulerStatsGroup(datasource string, labelMatcher promql.LabelMatcher) dashboard.Option {
+func withSchedulerStatsGroup(datasource string, labelMatcher *labels.Matcher) dashboard.Option {
 	return dashboard.AddPanelGroup("Scheduler Status",
 		panelgroup.PanelsPerLine(1),
 		panelgroup.PanelHeight(8),
@@ -33,7 +33,7 @@ func withSchedulerStatsGroup(datasource string, labelMatcher promql.LabelMatcher
 	)
 }
 
-func withSchedulingRateGroup(datasource string, labelMatcher promql.LabelMatcher) dashboard.Option {
+func withSchedulingRateGroup(datasource string, labelMatcher *labels.Matcher) dashboard.Option {
 	return dashboard.AddPanelGroup("Scheduling Rate",
 		panelgroup.PanelsPerLine(2),
 		panelgroup.PanelHeight(8),
@@ -42,14 +42,14 @@ func withSchedulingRateGroup(datasource string, labelMatcher promql.LabelMatcher
 	)
 }
 
-func withSchedulerKubeAPIRequestsGroup(datasource string, labelMatcher promql.LabelMatcher) dashboard.Option {
-	labelMatchersToUse := []promql.LabelMatcher{
-		promql.ClusterVar,
-		promql.InstanceVar,
+func withSchedulerKubeAPIRequestsGroup(datasource string, labelMatcher *labels.Matcher) dashboard.Option {
+	labelMatchersToUse := []*labels.Matcher{
+		promql.ClusterVarV2,
+		promql.InstanceVarV2,
 		{
 			Name:  "job",
 			Value: panels.KUBE_SCHEDULER_LABEL_VALUE,
-			Type:  "=",
+			Type:  labels.MatchEqual,
 		},
 	}
 
@@ -115,8 +115,7 @@ func BuildSchedulerOverview(project string, datasource string, clusterLabelName 
 		),
 	}
 
-	clusterLabelMatcher := dashboards.GetClusterLabelMatcher(clusterLabelName)
-	clusterLabelMatcherV2 := dashboards.GetClusterLabelMatcherV2(clusterLabelName)
+	clusterLabelMatcher := dashboards.GetClusterLabelMatcherV2(clusterLabelName)
 
 	vars := defaultVars
 	if len(variableOverrides) > 0 {
@@ -130,7 +129,7 @@ func BuildSchedulerOverview(project string, datasource string, clusterLabelName 
 		withSchedulerStatsGroup(datasource, clusterLabelMatcher),
 		withSchedulingRateGroup(datasource, clusterLabelMatcher),
 		withSchedulerKubeAPIRequestsGroup(datasource, clusterLabelMatcher),
-		withSchedulerResources(datasource, clusterLabelMatcherV2),
+		withSchedulerResources(datasource, clusterLabelMatcher),
 	)
 	return dashboards.NewDashboardResult(
 		dashboard.New("scheduler-overview", options...),

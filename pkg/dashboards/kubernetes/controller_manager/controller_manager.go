@@ -25,7 +25,7 @@ import (
 	"github.com/prometheus/prometheus/model/labels"
 )
 
-func withCMStatsGroup(datasource string, labelMatcher promql.LabelMatcher) dashboard.Option {
+func withCMStatsGroup(datasource string, labelMatcher *labels.Matcher) dashboard.Option {
 	return dashboard.AddPanelGroup("Controller Manager Status",
 		panelgroup.PanelsPerLine(1),
 		panelgroup.PanelHeight(8),
@@ -33,7 +33,7 @@ func withCMStatsGroup(datasource string, labelMatcher promql.LabelMatcher) dashb
 	)
 }
 
-func withCMWorkQueueGroup(datasource string, labelMatcher promql.LabelMatcher) dashboard.Option {
+func withCMWorkQueueGroup(datasource string, labelMatcher *labels.Matcher) dashboard.Option {
 	return dashboard.AddPanelGroup("Work Queue",
 		panelgroup.PanelsPerLine(3),
 		panelgroup.PanelHeight(8),
@@ -43,14 +43,14 @@ func withCMWorkQueueGroup(datasource string, labelMatcher promql.LabelMatcher) d
 	)
 }
 
-func withCMKubeAPIRequestsGroup(datasource string, labelMatcher promql.LabelMatcher) dashboard.Option {
-	labelMatchersToUse := []promql.LabelMatcher{
-		promql.ClusterVar,
-		promql.InstanceVar,
+func withCMKubeAPIRequestsGroup(datasource string, labelMatcher *labels.Matcher) dashboard.Option {
+	labelMatchersToUse := []*labels.Matcher{
+		promql.ClusterVarV2,
+		promql.InstanceVarV2,
 		{
 			Name:  "job",
 			Value: panels.CONTROLLER_MANAGER_LABEL_VALUE,
-			Type:  "=",
+			Type:  labels.MatchEqual,
 		},
 	}
 
@@ -116,8 +116,7 @@ func BuildControllerManagerOverview(project string, datasource string, clusterLa
 		),
 	}
 
-	clusterLabelMatcher := dashboards.GetClusterLabelMatcher(clusterLabelName)
-	clusterLabelMatcherV2 := dashboards.GetClusterLabelMatcherV2(clusterLabelName)
+	clusterLabelMatcher := dashboards.GetClusterLabelMatcherV2(clusterLabelName)
 
 	vars := defaultVars
 	if len(variableOverrides) > 0 {
@@ -131,7 +130,7 @@ func BuildControllerManagerOverview(project string, datasource string, clusterLa
 		withCMStatsGroup(datasource, clusterLabelMatcher),
 		withCMWorkQueueGroup(datasource, clusterLabelMatcher),
 		withCMKubeAPIRequestsGroup(datasource, clusterLabelMatcher),
-		withCMResources(datasource, clusterLabelMatcherV2),
+		withCMResources(datasource, clusterLabelMatcher),
 	)
 	return dashboards.NewDashboardResult(
 		dashboard.New("controller-manager-overview", options...),

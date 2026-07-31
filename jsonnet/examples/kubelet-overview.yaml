@@ -364,7 +364,9 @@ spec:
                     name: custom-datasource
                   query: |-
                     sum(
-                      rate(kubelet_node_config_error{cluster=~"$cluster",instance=~"$instance",job="kubelet"}[$__rate_interval])
+                      rate(
+                        kubelet_node_config_error{cluster=~"$cluster",instance=~"$instance",job="kubelet"}[$__rate_interval]
+                      )
                     )
       "1_0":
         kind: Panel

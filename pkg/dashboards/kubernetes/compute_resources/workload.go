@@ -22,9 +22,10 @@ import (
 
 	listVar "github.com/perses/perses/go-sdk/variable/list-variable"
 	labelValuesVar "github.com/perses/plugins/prometheus/sdk/go/variable/label-values"
+	"github.com/prometheus/prometheus/model/labels"
 )
 
-func withWorkloadCPUUsageGroup(datasource string, labelMatcher promql.LabelMatcher) dashboard.Option {
+func withWorkloadCPUUsageGroup(datasource string, labelMatcher *labels.Matcher) dashboard.Option {
 	return dashboard.AddPanelGroup("CPU Usage",
 		panelgroup.PanelsPerLine(1),
 		panelgroup.PanelHeight(8),
@@ -32,7 +33,7 @@ func withWorkloadCPUUsageGroup(datasource string, labelMatcher promql.LabelMatch
 	)
 }
 
-func withWorkloadCPUUsageQuotaGroup(datasource string, labelMatcher promql.LabelMatcher) dashboard.Option {
+func withWorkloadCPUUsageQuotaGroup(datasource string, labelMatcher *labels.Matcher) dashboard.Option {
 	return dashboard.AddPanelGroup("CPU Usage Quota",
 		panelgroup.PanelsPerLine(1),
 		panelgroup.PanelHeight(10),
@@ -40,7 +41,7 @@ func withWorkloadCPUUsageQuotaGroup(datasource string, labelMatcher promql.Label
 	)
 }
 
-func withWorkloadMemoryUsageGroup(datasource string, labelMatcher promql.LabelMatcher) dashboard.Option {
+func withWorkloadMemoryUsageGroup(datasource string, labelMatcher *labels.Matcher) dashboard.Option {
 	return dashboard.AddPanelGroup("Memory Usage",
 		panelgroup.PanelsPerLine(1),
 		panelgroup.PanelHeight(8),
@@ -48,7 +49,7 @@ func withWorkloadMemoryUsageGroup(datasource string, labelMatcher promql.LabelMa
 	)
 }
 
-func withWorkloadMemoryUsageQuotaGroup(datasource string, labelMatcher promql.LabelMatcher) dashboard.Option {
+func withWorkloadMemoryUsageQuotaGroup(datasource string, labelMatcher *labels.Matcher) dashboard.Option {
 	return dashboard.AddPanelGroup("Memory Usage Quota",
 		panelgroup.PanelsPerLine(1),
 		panelgroup.PanelHeight(10),
@@ -56,7 +57,7 @@ func withWorkloadMemoryUsageQuotaGroup(datasource string, labelMatcher promql.La
 	)
 }
 
-func withWorkloadNetworkUsageGroup(datasource string, labelMatcher promql.LabelMatcher) dashboard.Option {
+func withWorkloadNetworkUsageGroup(datasource string, labelMatcher *labels.Matcher) dashboard.Option {
 	return dashboard.AddPanelGroup("Network Usage",
 		panelgroup.PanelsPerLine(1),
 		panelgroup.PanelHeight(10),
@@ -64,7 +65,7 @@ func withWorkloadNetworkUsageGroup(datasource string, labelMatcher promql.LabelM
 	)
 }
 
-func withWorkloadBandwidthGroup(datasource string, labelMatcher promql.LabelMatcher) dashboard.Option {
+func withWorkloadBandwidthGroup(datasource string, labelMatcher *labels.Matcher) dashboard.Option {
 	return dashboard.AddPanelGroup("Bandwidth",
 		panelgroup.PanelsPerLine(2),
 		panelgroup.PanelHeight(8),
@@ -73,7 +74,7 @@ func withWorkloadBandwidthGroup(datasource string, labelMatcher promql.LabelMatc
 	)
 }
 
-func withWorkloadAvgContainerBandwidthGroup(datasource string, labelMatcher promql.LabelMatcher) dashboard.Option {
+func withWorkloadAvgContainerBandwidthGroup(datasource string, labelMatcher *labels.Matcher) dashboard.Option {
 	return dashboard.AddPanelGroup("Average Container Bandwidth",
 		panelgroup.PanelsPerLine(2),
 		panelgroup.PanelHeight(8),
@@ -82,7 +83,7 @@ func withWorkloadAvgContainerBandwidthGroup(datasource string, labelMatcher prom
 	)
 }
 
-func withWorkloadRateOfPacketsGroup(datasource string, labelMatcher promql.LabelMatcher) dashboard.Option {
+func withWorkloadRateOfPacketsGroup(datasource string, labelMatcher *labels.Matcher) dashboard.Option {
 	return dashboard.AddPanelGroup("Rate of Packets",
 		panelgroup.PanelsPerLine(2),
 		panelgroup.PanelHeight(8),
@@ -91,7 +92,7 @@ func withWorkloadRateOfPacketsGroup(datasource string, labelMatcher promql.Label
 	)
 }
 
-func withWorkloadRateOfPacketsDroppedGroup(datasource string, labelMatcher promql.LabelMatcher) dashboard.Option {
+func withWorkloadRateOfPacketsDroppedGroup(datasource string, labelMatcher *labels.Matcher) dashboard.Option {
 	return dashboard.AddPanelGroup("Rate of Packets Dropped",
 		panelgroup.PanelsPerLine(2),
 		panelgroup.PanelHeight(8),
@@ -162,7 +163,7 @@ func BuildKubernetesWorkloadOverview(project string, datasource string, clusterL
 		),
 	}
 
-	clusterLabelMatcher := dashboards.GetClusterLabelMatcher(clusterLabelName)
+	clusterLabelMatcher := dashboards.GetClusterLabelMatcherV2(clusterLabelName)
 
 	vars := defaultVars
 	if len(variableOverrides) > 0 {
