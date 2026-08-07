@@ -15,8 +15,8 @@ require (
 	github.com/perses/plugins/table v0.13.0
 	github.com/perses/plugins/timeserieschart v0.13.0
 	github.com/perses/promql-builder v0.2.1-0.20260729085143-2ecc15b73750
-	github.com/prometheus-operator/prometheus-operator/pkg/apis/monitoring v0.92.1
-	github.com/prometheus/prometheus v0.313.1
+	github.com/prometheus-operator/prometheus-operator/pkg/apis/monitoring v0.93.0
+	github.com/prometheus/prometheus v0.313.2
 	github.com/stretchr/testify v1.11.1
 	gopkg.in/yaml.v3 v3.0.1
 	k8s.io/apimachinery v0.36.3
