@@ -200,6 +200,7 @@ func main() {
 		dashboardWriter.Add(istio.BuildIstioService(project, datasource, clusterLabelName))
 		dashboardWriter.Add(istio.BuildIstioPerformance(project, datasource, clusterLabelName))
 		dashboardWriter.Add(istio.BuildIstioZtunnel(project, datasource, clusterLabelName))
+		dashboardWriter.Add(istio.BuildIstioExtension(project, datasource, clusterLabelName))
 
 		if lokiDatasource != "" {
 			dashboardWriter.Add(openshiftlogging.BuildAuditLogViewer(project, lokiDatasource))

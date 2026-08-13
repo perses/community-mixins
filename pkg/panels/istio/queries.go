@@ -4926,6 +4926,91 @@ var IstioCommonPanelQueries = map[string]parser.Expr{
 			),
 		),
 	).By("tag"),
+	"ZtunnelResourceUsageTCPConnections": promqlbuilder.Sub(
+		promqlbuilder.Sum(
+			vector.New(
+				vector.WithMetricName("istio_tcp_connections_opened_total"),
+				vector.WithLabelMatchers(
+					label.New("app").Equal("ztunnel"),
+				),
+			),
+		).By("pod"),
+		promqlbuilder.Sum(
+			vector.New(
+				vector.WithMetricName("istio_tcp_connections_closed_total"),
+				vector.WithLabelMatchers(
+					label.New("app").Equal("ztunnel"),
+				),
+			),
+		).By("pod"),
+	),
+	"ZtunnelResourceUsageOpenFDs": promqlbuilder.Sum(
+		vector.New(
+			vector.WithMetricName("process_open_fds"),
+			vector.WithLabelMatchers(
+				label.New("app").Equal("ztunnel"),
+			),
+		),
+	).By("pod"),
+	"ZtunnelResourceUsageOpenSockets": promqlbuilder.Sum(
+		vector.New(
+			vector.WithMetricName("istio_tcp_sockets_open"),
+			vector.WithLabelMatchers(
+				label.New("app").Equal("ztunnel"),
+			),
+		),
+	).By("pod"),
+	// istio wasm extension
+	"WasmRuntimeNullActive": promqlbuilder.Avg(
+		vector.New(
+			vector.WithMetricName("envoy_wasm_envoy_wasm_runtime_null_active"),
+		),
+	),
+	"WasmRuntimeV8Active": promqlbuilder.Avg(
+		vector.New(
+			vector.WithMetricName("envoy_wasm_envoy_wasm_runtime_v8_active"),
+		),
+	),
+	"WasmRuntimeNullCreated": promqlbuilder.Avg(
+		vector.New(
+			vector.WithMetricName("envoy_wasm_envoy_wasm_runtime_null_created"),
+		),
+	),
+	"WasmRuntimeV8Created": promqlbuilder.Avg(
+		vector.New(
+			vector.WithMetricName("envoy_wasm_envoy_wasm_runtime_v8_created"),
+		),
+	),
+	"WasmRemoteLoadCacheEntries": promqlbuilder.Avg(
+		vector.New(
+			vector.WithMetricName("envoy_wasm_remote_load_cache_entries"),
+		),
+	),
+	"WasmRemoteLoadCacheHits": promqlbuilder.Avg(
+		vector.New(
+			vector.WithMetricName("envoy_wasm_remote_load_cache_hits"),
+		),
+	),
+	"WasmRemoteLoadCacheMisses": promqlbuilder.Avg(
+		vector.New(
+			vector.WithMetricName("envoy_wasm_remote_load_cache_misses"),
+		),
+	),
+	"WasmRemoteLoadCacheNegativeHits": promqlbuilder.Avg(
+		vector.New(
+			vector.WithMetricName("envoy_wasm_remote_load_cache_negative_hits"),
+		),
+	),
+	"WasmRemoteLoadFetchFailures": promqlbuilder.Avg(
+		vector.New(
+			vector.WithMetricName("envoy_wasm_remote_load_fetch_failures"),
+		),
+	),
+	"WasmRemoteLoadFetchSuccesses": promqlbuilder.Avg(
+		vector.New(
+			vector.WithMetricName("envoy_wasm_remote_load_fetch_successes"),
+		),
+	),
 }
 
 // OverrideIstionPanelQueries overrides the IstioCommonPanelQueries global.
