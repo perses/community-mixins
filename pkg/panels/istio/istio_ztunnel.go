@@ -301,6 +301,55 @@ func ZtunnelXDSPushes(datasourceName string, labelMatchers ...*labels.Matcher) p
 	)
 }
 
+func ZtunnelResourceUsage(datasourceName string, labelMatchers ...*labels.Matcher) panelgroup.Option {
+	return panelgroup.AddPanel("Resource Usage",
+		panel.Description("Active TCP connections, open file descriptors, and open sockets per instance"),
+		timeSeriesPanel.Chart(
+			timeSeriesPanel.WithLegend(timeSeriesPanel.Legend{
+				Position: timeSeriesPanel.BottomPosition,
+				Mode:     timeSeriesPanel.TableMode,
+				Values:   []commonSdk.Calculation{commonSdk.LastCalculation, commonSdk.MaxCalculation},
+			}),
+			timeSeriesPanel.WithVisual(timeSeriesPanel.Visual{
+				Display:      timeSeriesPanel.LineDisplay,
+				ConnectNulls: false,
+				LineWidth:    1,
+				AreaOpacity:  0.1,
+			}),
+		),
+		panel.AddQuery(
+			query.PromQL(
+				promql.SetLabelMatchersV2(
+					IstioCommonPanelQueries["ZtunnelResourceUsageTCPConnections"],
+					labelMatchers,
+				).Pretty(0),
+				dashboards.AddQueryDataSource(datasourceName),
+				query.SeriesNameFormat("TCP Connections ({{pod}})"),
+			),
+		),
+		panel.AddQuery(
+			query.PromQL(
+				promql.SetLabelMatchersV2(
+					IstioCommonPanelQueries["ZtunnelResourceUsageOpenFDs"],
+					labelMatchers,
+				).Pretty(0),
+				dashboards.AddQueryDataSource(datasourceName),
+				query.SeriesNameFormat("Open File Descriptors ({{pod}})"),
+			),
+		),
+		panel.AddQuery(
+			query.PromQL(
+				promql.SetLabelMatchersV2(
+					IstioCommonPanelQueries["ZtunnelResourceUsageOpenSockets"],
+					labelMatchers,
+				).Pretty(0),
+				dashboards.AddQueryDataSource(datasourceName),
+				query.SeriesNameFormat("Open Sockets ({{pod}})"),
+			),
+		),
+	)
+}
+
 func ZtunnelVersions(datasourceName string, labelMatchers ...*labels.Matcher) panelgroup.Option {
 	return panelgroup.AddPanel("Ztunnel Versions",
 		panel.Description("Version number of each running instance"),

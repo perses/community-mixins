@@ -51,6 +51,14 @@ func withOperationsGroup(datasource string, labelMatcher *labels.Matcher) dashbo
 	)
 }
 
+func withNetworkResourcesGroup(datasource string, labelMatcher *labels.Matcher) dashboard.Option {
+	return dashboard.AddPanelGroup("Network Resources",
+		panelgroup.PanelsPerLine(1),
+		panelgroup.PanelHeight(8),
+		panels.ZtunnelResourceUsage(datasource, labelMatcher),
+	)
+}
+
 func BuildIstioZtunnel(project string, datasource string, clusterLabelName string) dashboards.DashboardResult {
 	emptyLabelMatcher := &labels.Matcher{}
 	return dashboards.NewDashboardResult(
@@ -60,6 +68,7 @@ func BuildIstioZtunnel(project string, datasource string, clusterLabelName strin
 			withProcessGroup(datasource, emptyLabelMatcher),
 			withNetworkGroup(datasource, emptyLabelMatcher),
 			withOperationsGroup(datasource, emptyLabelMatcher),
+			withNetworkResourcesGroup(datasource, emptyLabelMatcher),
 		),
 	).Component("istio")
 }
