@@ -324,6 +324,59 @@ spec:
                                     name: prometheus-datasource
                                 query: sum by (pod) (workload_manager_pending_proxy_count{pod=~"ztunnel-.*"})
                                 seriesNameFormat: Pending Proxies ({{pod}})
+        "3_0":
+            kind: Panel
+            spec:
+                display:
+                    name: Resource Usage
+                    description: Active TCP connections, open file descriptors, and open sockets per instance
+                plugin:
+                    kind: TimeSeriesChart
+                    spec:
+                        legend:
+                            position: bottom
+                            mode: table
+                            values:
+                                - last
+                                - max
+                        visual:
+                            display: line
+                            lineWidth: 1
+                            areaOpacity: 0.1
+                queries:
+                    - kind: TimeSeriesQuery
+                      spec:
+                        plugin:
+                            kind: PrometheusTimeSeriesQuery
+                            spec:
+                                datasource:
+                                    kind: PrometheusDatasource
+                                    name: prometheus-datasource
+                                query: |4-
+                                      sum by (pod) (istio_tcp_connections_opened_total{app="ztunnel"})
+                                    -
+                                      sum by (pod) (istio_tcp_connections_closed_total{app="ztunnel"})
+                                seriesNameFormat: TCP Connections ({{pod}})
+                    - kind: TimeSeriesQuery
+                      spec:
+                        plugin:
+                            kind: PrometheusTimeSeriesQuery
+                            spec:
+                                datasource:
+                                    kind: PrometheusDatasource
+                                    name: prometheus-datasource
+                                query: sum by (pod) (process_open_fds{app="ztunnel"})
+                                seriesNameFormat: Open File Descriptors ({{pod}})
+                    - kind: TimeSeriesQuery
+                      spec:
+                        plugin:
+                            kind: PrometheusTimeSeriesQuery
+                            spec:
+                                datasource:
+                                    kind: PrometheusDatasource
+                                    name: prometheus-datasource
+                                query: sum by (pod) (istio_tcp_sockets_open{app="ztunnel"})
+                                seriesNameFormat: Open Sockets ({{pod}})
     layouts:
         - kind: Grid
           spec:
@@ -394,4 +447,15 @@ spec:
                   height: 8
                   content:
                     $ref: '#/spec/panels/2_2'
+        - kind: Grid
+          spec:
+            display:
+                title: Network Resources
+            items:
+                - x: 0
+                  "y": 0
+                  width: 24
+                  height: 8
+                  content:
+                    $ref: '#/spec/panels/3_0'
     duration: 1h
