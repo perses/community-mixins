@@ -10,12 +10,12 @@ require (
 	github.com/perses/plugins/loki v0.6.0
 	github.com/perses/plugins/markdown v0.12.0
 	github.com/perses/plugins/prometheus v0.58.0
-	github.com/perses/plugins/statchart v0.13.0
+	github.com/perses/plugins/statchart v0.14.0
 	github.com/perses/plugins/staticlistvariable v0.9.0
 	github.com/perses/plugins/table v0.13.0
 	github.com/perses/plugins/timeserieschart v0.13.0
 	github.com/perses/promql-builder v0.2.1-0.20260729085143-2ecc15b73750
-	github.com/prometheus-operator/prometheus-operator/pkg/apis/monitoring v0.93.0
+	github.com/prometheus-operator/prometheus-operator/pkg/apis/monitoring v0.93.1
 	github.com/prometheus/prometheus v0.313.2
 	github.com/stretchr/testify v1.11.1
 	gopkg.in/yaml.v3 v3.0.1
