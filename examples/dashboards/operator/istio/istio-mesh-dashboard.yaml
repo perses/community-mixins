@@ -3,10 +3,10 @@ kind: PersesDashboard
 metadata:
   labels:
     app.kubernetes.io/component: dashboard
-    app.kubernetes.io/instance: istio-mesh
+    app.kubernetes.io/instance: istio-mesh-dashboard
     app.kubernetes.io/name: perses-dashboard
     app.kubernetes.io/part-of: perses-operator
-  name: istio-mesh
+  name: istio-mesh-dashboard
   namespace: perses-dev
 spec:
   config:
