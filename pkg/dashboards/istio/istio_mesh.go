@@ -52,7 +52,7 @@ func withIstioComponentVersions(datasource string, labelMatcher *labels.Matcher)
 func BuildIstioMesh(project string, datasource string, clusterLabelName string) dashboards.DashboardResult {
 	emptyLabelMatcher := &labels.Matcher{}
 	return dashboards.NewDashboardResult(
-		dashboard.New("istio-mesh",
+		dashboard.New("istio-mesh-dashboard",
 			dashboard.ProjectName(project),
 			dashboard.Name("Istio Mesh Dashboard"),
 			withMeshOverview(datasource, emptyLabelMatcher),

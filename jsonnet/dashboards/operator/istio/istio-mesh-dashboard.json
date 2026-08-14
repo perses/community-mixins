@@ -2,11 +2,11 @@
   "kind": "PersesDashboard",
   "apiVersion": "perses.dev/v1alpha2",
   "metadata": {
-    "name": "istio-mesh",
+    "name": "istio-mesh-dashboard",
     "namespace": "perses-dev",
     "labels": {
       "app.kubernetes.io/component": "dashboard",
-      "app.kubernetes.io/instance": "istio-mesh",
+      "app.kubernetes.io/instance": "istio-mesh-dashboard",
       "app.kubernetes.io/name": "perses-dashboard",
       "app.kubernetes.io/part-of": "perses-operator"
     }
