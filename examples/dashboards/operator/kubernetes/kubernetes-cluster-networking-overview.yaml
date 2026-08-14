@@ -381,7 +381,9 @@ spec:
                     name: prometheus-datasource
                   query: |-
                     sum by (namespace) (
-                        rate(container_network_receive_packets_dropped_total{cluster="$cluster",namespace!=""}[$__rate_interval])
+                        rate(
+                          container_network_receive_packets_dropped_total{cluster="$cluster",namespace!=""}[$__rate_interval]
+                        )
                       * on (cluster, namespace, pod) group_left ()
                         topk by (cluster, namespace, pod) (
                           1,
@@ -398,7 +400,9 @@ spec:
                     name: prometheus-datasource
                   query: |-
                     sum by (namespace) (
-                        rate(container_network_transmit_packets_dropped_total{cluster="$cluster",namespace!=""}[$__rate_interval])
+                        rate(
+                          container_network_transmit_packets_dropped_total{cluster="$cluster",namespace!=""}[$__rate_interval]
+                        )
                       * on (cluster, namespace, pod) group_left ()
                         topk by (cluster, namespace, pod) (
                           1,
@@ -689,7 +693,9 @@ spec:
                     name: prometheus-datasource
                   query: |-
                     sum by (namespace) (
-                        rate(container_network_receive_packets_dropped_total{cluster="$cluster",namespace!=""}[$__rate_interval])
+                        rate(
+                          container_network_receive_packets_dropped_total{cluster="$cluster",namespace!=""}[$__rate_interval]
+                        )
                       * on (cluster, namespace, pod) group_left ()
                         topk by (cluster, namespace, pod) (
                           1,
@@ -731,7 +737,9 @@ spec:
                     name: prometheus-datasource
                   query: |-
                     sum by (namespace) (
-                        rate(container_network_transmit_packets_dropped_total{cluster="$cluster",namespace!=""}[$__rate_interval])
+                        rate(
+                          container_network_transmit_packets_dropped_total{cluster="$cluster",namespace!=""}[$__rate_interval]
+                        )
                       * on (cluster, namespace, pod) group_left ()
                         topk by (cluster, namespace, pod) (
                           1,

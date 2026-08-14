@@ -22,9 +22,10 @@ import (
 
 	commonSdk "github.com/perses/perses/go-sdk/common"
 	timeSeriesPanel "github.com/perses/plugins/timeserieschart/sdk/go"
+	"github.com/prometheus/prometheus/model/labels"
 )
 
-func KubernetesReceiveBandwidth(granularity, datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
+func KubernetesReceiveBandwidth(granularity, datasourceName string, labelMatchers ...*labels.Matcher) panelgroup.Option {
 	var queries []panel.Option
 	var description string
 
@@ -34,10 +35,10 @@ func KubernetesReceiveBandwidth(granularity, datasourceName string, labelMatcher
 		queries = []panel.Option{
 			panel.AddQuery(
 				query.PromQL(
-					promql.SetLabelMatchers(
-						"sum(rate(container_network_receive_bytes_total{"+GetCAdvisorMatcher()+", cluster=\"$cluster\", namespace=~\".+\"}[$__rate_interval])) by (namespace)",
+					promql.SetLabelMatchersV2(
+						KubernetesCommonPanelQueries["KubernetesReceiveBandwidth1"],
 						labelMatchers,
-					),
+					).Pretty(0),
 					dashboards.AddQueryDataSource(datasourceName),
 					query.SeriesNameFormat("{{namespace}}"),
 				),
@@ -48,10 +49,10 @@ func KubernetesReceiveBandwidth(granularity, datasourceName string, labelMatcher
 		queries = []panel.Option{
 			panel.AddQuery(
 				query.PromQL(
-					promql.SetLabelMatchers(
-						"sum by (namespace) (\n    rate(container_network_receive_bytes_total{cluster=\"$cluster\",namespace!=\"\"}[$__rate_interval])\n  * on (cluster,namespace,pod) group_left ()\n    topk by (cluster,namespace,pod) (\n      1,\n      max by (cluster,namespace,pod) (kube_pod_info{host_network=\"false\"})\n    )\n)\n",
+					promql.SetLabelMatchersV2(
+						KubernetesCommonPanelQueries["KubernetesReceiveBandwidth2"],
 						labelMatchers,
-					),
+					).Pretty(0),
 					dashboards.AddQueryDataSource(datasourceName),
 					query.SeriesNameFormat("{{namespace}}"),
 				),
@@ -62,10 +63,10 @@ func KubernetesReceiveBandwidth(granularity, datasourceName string, labelMatcher
 		queries = []panel.Option{
 			panel.AddQuery(
 				query.PromQL(
-					promql.SetLabelMatchers(
-						"sum(rate(container_network_receive_bytes_total{cluster=\"$cluster\", namespace=\"$namespace\"}[$__rate_interval])) by (pod)",
+					promql.SetLabelMatchersV2(
+						KubernetesCommonPanelQueries["KubernetesReceiveBandwidth3"],
 						labelMatchers,
-					),
+					).Pretty(0),
 					dashboards.AddQueryDataSource(datasourceName),
 					query.SeriesNameFormat("{{pod}}"),
 				),
@@ -76,10 +77,10 @@ func KubernetesReceiveBandwidth(granularity, datasourceName string, labelMatcher
 		queries = []panel.Option{
 			panel.AddQuery(
 				query.PromQL(
-					promql.SetLabelMatchers(
-						"(sum(rate(container_network_receive_bytes_total{"+GetCAdvisorMatcher()+", cluster=\"$cluster\", namespace=\"$namespace\"}[$__rate_interval])\n* on (namespace,pod)\ngroup_left(workload,workload_type) namespace_workload_pod:kube_pod_owner:relabel{cluster=\"$cluster\", namespace=\"$namespace\", workload=~\".+\", workload_type=~\"$type\"}) by (workload))\n",
+					promql.SetLabelMatchersV2(
+						KubernetesCommonPanelQueries["KubernetesReceiveBandwidth4"],
 						labelMatchers,
-					),
+					).Pretty(0),
 					dashboards.AddQueryDataSource(datasourceName),
 					query.SeriesNameFormat("{{workload}}"),
 				),
@@ -90,10 +91,10 @@ func KubernetesReceiveBandwidth(granularity, datasourceName string, labelMatcher
 		queries = []panel.Option{
 			panel.AddQuery(
 				query.PromQL(
-					promql.SetLabelMatchers(
-						"sort_desc(sum(rate(container_network_receive_bytes_total{cluster=\"$cluster\",namespace=\"$namespace\"}[$__rate_interval])\n* on (cluster,namespace,pod) group_left ()\n    topk by (cluster,namespace,pod) (\n      1,\n      max by (cluster,namespace,pod) (kube_pod_info{host_network=\"false\"})\n    )\n* on (cluster,namespace,pod)\ngroup_left(workload,workload_type) namespace_workload_pod:kube_pod_owner:relabel{cluster=\"$cluster\",namespace=\"$namespace\", workload=~\".+\", workload_type=~\"$type\"}) by (workload))\n",
+					promql.SetLabelMatchersV2(
+						KubernetesCommonPanelQueries["KubernetesReceiveBandwidth5"],
 						labelMatchers,
-					),
+					).Pretty(0),
 					dashboards.AddQueryDataSource(datasourceName),
 					query.SeriesNameFormat("{{workload}}"),
 				),
@@ -104,10 +105,10 @@ func KubernetesReceiveBandwidth(granularity, datasourceName string, labelMatcher
 		queries = []panel.Option{
 			panel.AddQuery(
 				query.PromQL(
-					promql.SetLabelMatchers(
-						"sum by (pod) (\n    rate(container_network_receive_bytes_total{cluster=\"$cluster\",namespace=~\"$namespace\"}[$__rate_interval])\n  * on (cluster,namespace,pod) group_left ()\n    topk by (cluster,namespace,pod) (\n      1,\n      max by (cluster,namespace,pod) (kube_pod_info{host_network=\"false\"})\n    )\n)\n",
+					promql.SetLabelMatchersV2(
+						KubernetesCommonPanelQueries["KubernetesReceiveBandwidth6"],
 						labelMatchers,
-					),
+					).Pretty(0),
 					dashboards.AddQueryDataSource(datasourceName),
 					query.SeriesNameFormat("{{pod}}"),
 				),
@@ -118,10 +119,10 @@ func KubernetesReceiveBandwidth(granularity, datasourceName string, labelMatcher
 		queries = []panel.Option{
 			panel.AddQuery(
 				query.PromQL(
-					promql.SetLabelMatchers(
-						"(sum(rate(container_network_receive_bytes_total{"+GetCAdvisorMatcher()+", cluster=\"$cluster\", namespace=\"$namespace\"}[$__rate_interval])\n* on (namespace,pod)\ngroup_left(workload,workload_type) namespace_workload_pod:kube_pod_owner:relabel{cluster=\"$cluster\", namespace=\"$namespace\", workload=~\"$workload\", workload_type=~\"$type\"}) by (pod))\n",
+					promql.SetLabelMatchersV2(
+						KubernetesCommonPanelQueries["KubernetesReceiveBandwidth7"],
 						labelMatchers,
-					),
+					).Pretty(0),
 					dashboards.AddQueryDataSource(datasourceName),
 					query.SeriesNameFormat("{{pod}}"),
 				),
@@ -132,10 +133,10 @@ func KubernetesReceiveBandwidth(granularity, datasourceName string, labelMatcher
 		queries = []panel.Option{
 			panel.AddQuery(
 				query.PromQL(
-					promql.SetLabelMatchers(
-						"sort_desc(sum(rate(container_network_receive_bytes_total{"+GetCAdvisorMatcher()+", cluster=\"$cluster\",namespace=~\"$namespace\"}[$__rate_interval])\n* on (namespace,pod)\ngroup_left(workload,workload_type) namespace_workload_pod:kube_pod_owner:relabel{cluster=\"$cluster\",namespace=~\"$namespace\", workload=~\"$workload\", workload_type=~\"$type\"}) by (pod))\n",
+					promql.SetLabelMatchersV2(
+						KubernetesCommonPanelQueries["KubernetesReceiveBandwidth8"],
 						labelMatchers,
-					),
+					).Pretty(0),
 					dashboards.AddQueryDataSource(datasourceName),
 					query.SeriesNameFormat("{{pod}}"),
 				),
@@ -146,10 +147,10 @@ func KubernetesReceiveBandwidth(granularity, datasourceName string, labelMatcher
 		queries = []panel.Option{
 			panel.AddQuery(
 				query.PromQL(
-					promql.SetLabelMatchers(
-						"sum(irate(container_network_receive_bytes_total{"+GetCAdvisorMatcher()+", cluster=\"$cluster\", namespace=\"$namespace\", pod=~\"$pod\"}[$__rate_interval])) by (pod)",
+					promql.SetLabelMatchersV2(
+						KubernetesCommonPanelQueries["KubernetesReceiveBandwidth9"],
 						labelMatchers,
-					),
+					).Pretty(0),
 					dashboards.AddQueryDataSource(datasourceName),
 					query.SeriesNameFormat("{{pod}}"),
 				),
@@ -160,10 +161,10 @@ func KubernetesReceiveBandwidth(granularity, datasourceName string, labelMatcher
 		queries = []panel.Option{
 			panel.AddQuery(
 				query.PromQL(
-					promql.SetLabelMatchers(
-						"sum(rate(container_network_receive_bytes_total{cluster=\"$cluster\",namespace=~\"$namespace\", pod=~\"$pod\"}[$__rate_interval])) by (pod)",
+					promql.SetLabelMatchersV2(
+						KubernetesCommonPanelQueries["KubernetesReceiveBandwidth10"],
 						labelMatchers,
-					),
+					).Pretty(0),
 					dashboards.AddQueryDataSource(datasourceName),
 					query.SeriesNameFormat("{{pod}}"),
 				),
@@ -199,7 +200,7 @@ func KubernetesReceiveBandwidth(granularity, datasourceName string, labelMatcher
 	return panelgroup.AddPanel("Receive Bandwidth", panelOpts...)
 }
 
-func KubernetesTransmitBandwidth(granularity, datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
+func KubernetesTransmitBandwidth(granularity, datasourceName string, labelMatchers ...*labels.Matcher) panelgroup.Option {
 	var queries []panel.Option
 	var description string
 
@@ -209,10 +210,10 @@ func KubernetesTransmitBandwidth(granularity, datasourceName string, labelMatche
 		queries = []panel.Option{
 			panel.AddQuery(
 				query.PromQL(
-					promql.SetLabelMatchers(
-						"sum(rate(container_network_transmit_bytes_total{"+GetCAdvisorMatcher()+", cluster=\"$cluster\", namespace=~\".+\"}[$__rate_interval])) by (namespace)",
+					promql.SetLabelMatchersV2(
+						KubernetesCommonPanelQueries["KubernetesTransmitBandwidth1"],
 						labelMatchers,
-					),
+					).Pretty(0),
 					dashboards.AddQueryDataSource(datasourceName),
 					query.SeriesNameFormat("{{namespace}}"),
 				),
@@ -223,10 +224,10 @@ func KubernetesTransmitBandwidth(granularity, datasourceName string, labelMatche
 		queries = []panel.Option{
 			panel.AddQuery(
 				query.PromQL(
-					promql.SetLabelMatchers(
-						"sum by (namespace) (\n    rate(container_network_transmit_bytes_total{cluster=\"$cluster\",namespace!=\"\"}[$__rate_interval])\n  * on (cluster,namespace,pod) group_left ()\n    topk by (cluster,namespace,pod) (\n      1,\n      max by (cluster,namespace,pod) (kube_pod_info{host_network=\"false\"})\n    )\n)\n",
+					promql.SetLabelMatchersV2(
+						KubernetesCommonPanelQueries["KubernetesTransmitBandwidth2"],
 						labelMatchers,
-					),
+					).Pretty(0),
 					dashboards.AddQueryDataSource(datasourceName),
 					query.SeriesNameFormat("{{namespace}}"),
 				),
@@ -237,10 +238,10 @@ func KubernetesTransmitBandwidth(granularity, datasourceName string, labelMatche
 		queries = []panel.Option{
 			panel.AddQuery(
 				query.PromQL(
-					promql.SetLabelMatchers(
-						"sum(rate(container_network_transmit_bytes_total{cluster=\"$cluster\", namespace=\"$namespace\"}[$__rate_interval])) by (pod)",
+					promql.SetLabelMatchersV2(
+						KubernetesCommonPanelQueries["KubernetesTransmitBandwidth3"],
 						labelMatchers,
-					),
+					).Pretty(0),
 					dashboards.AddQueryDataSource(datasourceName),
 					query.SeriesNameFormat("{{pod}}"),
 				),
@@ -251,10 +252,10 @@ func KubernetesTransmitBandwidth(granularity, datasourceName string, labelMatche
 		queries = []panel.Option{
 			panel.AddQuery(
 				query.PromQL(
-					promql.SetLabelMatchers(
-						"(sum(rate(container_network_transmit_bytes_total{"+GetCAdvisorMatcher()+", cluster=\"$cluster\", namespace=\"$namespace\"}[$__rate_interval])\n* on (namespace,pod)\ngroup_left(workload,workload_type) namespace_workload_pod:kube_pod_owner:relabel{cluster=\"$cluster\", namespace=\"$namespace\", workload=~\".+\", workload_type=~\"$type\"}) by (workload))\n",
+					promql.SetLabelMatchersV2(
+						KubernetesCommonPanelQueries["KubernetesTransmitBandwidth4"],
 						labelMatchers,
-					),
+					).Pretty(0),
 					dashboards.AddQueryDataSource(datasourceName),
 					query.SeriesNameFormat("{{workload}}"),
 				),
@@ -265,10 +266,10 @@ func KubernetesTransmitBandwidth(granularity, datasourceName string, labelMatche
 		queries = []panel.Option{
 			panel.AddQuery(
 				query.PromQL(
-					promql.SetLabelMatchers(
-						"sort_desc(sum(rate(container_network_transmit_bytes_total{cluster=\"$cluster\",namespace=\"$namespace\"}[$__rate_interval])\n* on (cluster,namespace,pod) group_left ()\n    topk by (cluster,namespace,pod) (\n      1,\n      max by (cluster,namespace,pod) (kube_pod_info{host_network=\"false\"})\n    )\n* on (cluster,namespace,pod)\ngroup_left(workload,workload_type) namespace_workload_pod:kube_pod_owner:relabel{cluster=\"$cluster\",namespace=\"$namespace\", workload=~\".+\", workload_type=~\"$type\"}) by (workload))\n",
+					promql.SetLabelMatchersV2(
+						KubernetesCommonPanelQueries["KubernetesTransmitBandwidth5"],
 						labelMatchers,
-					),
+					).Pretty(0),
 					dashboards.AddQueryDataSource(datasourceName),
 					query.SeriesNameFormat("{{workload}}"),
 				),
@@ -279,10 +280,10 @@ func KubernetesTransmitBandwidth(granularity, datasourceName string, labelMatche
 		queries = []panel.Option{
 			panel.AddQuery(
 				query.PromQL(
-					promql.SetLabelMatchers(
-						"sum by (pod) (\n    rate(container_network_transmit_bytes_total{cluster=\"$cluster\",namespace=~\"$namespace\"}[$__rate_interval])\n  * on (cluster,namespace,pod) group_left ()\n    topk by (cluster,namespace,pod) (\n      1,\n      max by (cluster,namespace,pod) (kube_pod_info{host_network=\"false\"})\n    )\n)\n",
+					promql.SetLabelMatchersV2(
+						KubernetesCommonPanelQueries["KubernetesTransmitBandwidth6"],
 						labelMatchers,
-					),
+					).Pretty(0),
 					dashboards.AddQueryDataSource(datasourceName),
 					query.SeriesNameFormat("{{pod}}"),
 				),
@@ -293,10 +294,10 @@ func KubernetesTransmitBandwidth(granularity, datasourceName string, labelMatche
 		queries = []panel.Option{
 			panel.AddQuery(
 				query.PromQL(
-					promql.SetLabelMatchers(
-						"(sum(rate(container_network_transmit_bytes_total{"+GetCAdvisorMatcher()+", cluster=\"$cluster\", namespace=\"$namespace\"}[$__rate_interval])\n* on (namespace,pod)\ngroup_left(workload,workload_type) namespace_workload_pod:kube_pod_owner:relabel{cluster=\"$cluster\", namespace=\"$namespace\", workload=~\"$workload\", workload_type=~\"$type\"}) by (pod))\n",
+					promql.SetLabelMatchersV2(
+						KubernetesCommonPanelQueries["KubernetesTransmitBandwidth7"],
 						labelMatchers,
-					),
+					).Pretty(0),
 					dashboards.AddQueryDataSource(datasourceName),
 					query.SeriesNameFormat("{{pod}}"),
 				),
@@ -307,10 +308,10 @@ func KubernetesTransmitBandwidth(granularity, datasourceName string, labelMatche
 		queries = []panel.Option{
 			panel.AddQuery(
 				query.PromQL(
-					promql.SetLabelMatchers(
-						"sort_desc(sum(rate(container_network_transmit_bytes_total{"+GetCAdvisorMatcher()+", cluster=\"$cluster\",namespace=~\"$namespace\"}[$__rate_interval])\n* on (namespace,pod)\ngroup_left(workload,workload_type) namespace_workload_pod:kube_pod_owner:relabel{cluster=\"$cluster\",namespace=~\"$namespace\", workload=~\"$workload\", workload_type=~\"$type\"}) by (pod))\n",
+					promql.SetLabelMatchersV2(
+						KubernetesCommonPanelQueries["KubernetesTransmitBandwidth8"],
 						labelMatchers,
-					),
+					).Pretty(0),
 					dashboards.AddQueryDataSource(datasourceName),
 					query.SeriesNameFormat("{{pod}}"),
 				),
@@ -321,10 +322,10 @@ func KubernetesTransmitBandwidth(granularity, datasourceName string, labelMatche
 		queries = []panel.Option{
 			panel.AddQuery(
 				query.PromQL(
-					promql.SetLabelMatchers(
-						"sum(rate(container_network_transmit_bytes_total{"+GetCAdvisorMatcher()+", cluster=\"$cluster\", namespace=\"$namespace\", pod=~\"$pod\"}[$__rate_interval])) by (pod)",
+					promql.SetLabelMatchersV2(
+						KubernetesCommonPanelQueries["KubernetesTransmitBandwidth9"],
 						labelMatchers,
-					),
+					).Pretty(0),
 					dashboards.AddQueryDataSource(datasourceName),
 					query.SeriesNameFormat("{{pod}}"),
 				),
@@ -335,10 +336,10 @@ func KubernetesTransmitBandwidth(granularity, datasourceName string, labelMatche
 		queries = []panel.Option{
 			panel.AddQuery(
 				query.PromQL(
-					promql.SetLabelMatchers(
-						"sum(rate(container_network_transmit_bytes_total{cluster=\"$cluster\",namespace=~\"$namespace\", pod=~\"$pod\"}[$__rate_interval])) by (pod)",
+					promql.SetLabelMatchersV2(
+						KubernetesCommonPanelQueries["KubernetesTransmitBandwidth10"],
 						labelMatchers,
-					),
+					).Pretty(0),
 					dashboards.AddQueryDataSource(datasourceName),
 					query.SeriesNameFormat("{{pod}}"),
 				),
@@ -374,7 +375,7 @@ func KubernetesTransmitBandwidth(granularity, datasourceName string, labelMatche
 	return panelgroup.AddPanel("Transmit Bandwidth", panelOpts...)
 }
 
-func KubernetesAvgContainerBandwidthTransmitted(granularity, datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
+func KubernetesAvgContainerBandwidthTransmitted(granularity, datasourceName string, labelMatchers ...*labels.Matcher) panelgroup.Option {
 	var panelName, description string
 	var queries []panel.Option
 
@@ -385,10 +386,10 @@ func KubernetesAvgContainerBandwidthTransmitted(granularity, datasourceName stri
 		queries = []panel.Option{
 			panel.AddQuery(
 				query.PromQL(
-					promql.SetLabelMatchers(
-						"avg(irate(container_network_transmit_bytes_total{"+GetCAdvisorMatcher()+", cluster=\"$cluster\", namespace=~\".+\"}[$__rate_interval])) by (namespace)",
+					promql.SetLabelMatchersV2(
+						KubernetesCommonPanelQueries["KubernetesAvgContainerBandwidthTransmitted1"],
 						labelMatchers,
-					),
+					).Pretty(0),
 					dashboards.AddQueryDataSource(datasourceName),
 					query.SeriesNameFormat("{{namespace}}"),
 				),
@@ -400,10 +401,10 @@ func KubernetesAvgContainerBandwidthTransmitted(granularity, datasourceName stri
 		queries = []panel.Option{
 			panel.AddQuery(
 				query.PromQL(
-					promql.SetLabelMatchers(
-						"(avg(rate(container_network_transmit_bytes_total{"+GetCAdvisorMatcher()+", cluster=\"$cluster\", namespace=\"$namespace\"}[$__rate_interval])\n* on (namespace,pod)\ngroup_left(workload,workload_type) namespace_workload_pod:kube_pod_owner:relabel{cluster=\"$cluster\", namespace=\"$namespace\", workload=~\".+\", workload_type=~\"$type\"}) by (workload))\n",
+					promql.SetLabelMatchersV2(
+						KubernetesCommonPanelQueries["KubernetesAvgContainerBandwidthTransmitted2"],
 						labelMatchers,
-					),
+					).Pretty(0),
 					dashboards.AddQueryDataSource(datasourceName),
 					query.SeriesNameFormat("{{workload}}"),
 				),
@@ -415,10 +416,10 @@ func KubernetesAvgContainerBandwidthTransmitted(granularity, datasourceName stri
 		queries = []panel.Option{
 			panel.AddQuery(
 				query.PromQL(
-					promql.SetLabelMatchers(
-						"sort_desc(avg(rate(container_network_transmit_bytes_total{cluster=\"$cluster\",namespace=\"$namespace\"}[$__rate_interval])\n* on (cluster,namespace,pod) group_left ()\n    topk by (cluster,namespace,pod) (\n      1,\n      max by (cluster,namespace,pod) (kube_pod_info{host_network=\"false\"})\n    )\n* on (cluster,namespace,pod)\ngroup_left(workload,workload_type) namespace_workload_pod:kube_pod_owner:relabel{cluster=\"$cluster\",namespace=\"$namespace\", workload=~\".+\", workload_type=~\"$type\"}) by (workload))\n",
+					promql.SetLabelMatchersV2(
+						KubernetesCommonPanelQueries["KubernetesAvgContainerBandwidthTransmitted3"],
 						labelMatchers,
-					),
+					).Pretty(0),
 					dashboards.AddQueryDataSource(datasourceName),
 					query.SeriesNameFormat("{{workload}}"),
 				),
@@ -430,10 +431,10 @@ func KubernetesAvgContainerBandwidthTransmitted(granularity, datasourceName stri
 		queries = []panel.Option{
 			panel.AddQuery(
 				query.PromQL(
-					promql.SetLabelMatchers(
-						"(avg(rate(container_network_transmit_bytes_total{"+GetCAdvisorMatcher()+", cluster=\"$cluster\", namespace=\"$namespace\"}[$__rate_interval])\n* on (namespace,pod)\ngroup_left(workload,workload_type) namespace_workload_pod:kube_pod_owner:relabel{cluster=\"$cluster\", namespace=\"$namespace\", workload=~\"$workload\", workload_type=~\"$type\"}) by (pod))\n",
+					promql.SetLabelMatchersV2(
+						KubernetesCommonPanelQueries["KubernetesAvgContainerBandwidthTransmitted4"],
 						labelMatchers,
-					),
+					).Pretty(0),
 					dashboards.AddQueryDataSource(datasourceName),
 					query.SeriesNameFormat("{{pod}}"),
 				),
@@ -468,7 +469,7 @@ func KubernetesAvgContainerBandwidthTransmitted(granularity, datasourceName stri
 	return panelgroup.AddPanel(panelName, panelOpts...)
 }
 
-func KubernetesAvgContainerBandwidthReceived(granularity, datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
+func KubernetesAvgContainerBandwidthReceived(granularity, datasourceName string, labelMatchers ...*labels.Matcher) panelgroup.Option {
 	var panelName, description string
 	var queries []panel.Option
 
@@ -479,10 +480,10 @@ func KubernetesAvgContainerBandwidthReceived(granularity, datasourceName string,
 		queries = []panel.Option{
 			panel.AddQuery(
 				query.PromQL(
-					promql.SetLabelMatchers(
-						"avg(irate(container_network_receive_bytes_total{"+GetCAdvisorMatcher()+", cluster=\"$cluster\", namespace=~\".+\"}[$__rate_interval])) by (namespace)",
+					promql.SetLabelMatchersV2(
+						KubernetesCommonPanelQueries["KubernetesAvgContainerBandwidthReceived1"],
 						labelMatchers,
-					),
+					).Pretty(0),
 					dashboards.AddQueryDataSource(datasourceName),
 					query.SeriesNameFormat("{{namespace}}"),
 				),
@@ -494,10 +495,10 @@ func KubernetesAvgContainerBandwidthReceived(granularity, datasourceName string,
 		queries = []panel.Option{
 			panel.AddQuery(
 				query.PromQL(
-					promql.SetLabelMatchers(
-						"(avg(rate(container_network_receive_bytes_total{"+GetCAdvisorMatcher()+", cluster=\"$cluster\", namespace=\"$namespace\"}[$__rate_interval])\n* on (namespace,pod)\ngroup_left(workload,workload_type) namespace_workload_pod:kube_pod_owner:relabel{cluster=\"$cluster\", namespace=\"$namespace\", workload=~\".+\", workload_type=~\"$type\"}) by (workload))\n",
+					promql.SetLabelMatchersV2(
+						KubernetesCommonPanelQueries["KubernetesAvgContainerBandwidthReceived2"],
 						labelMatchers,
-					),
+					).Pretty(0),
 					dashboards.AddQueryDataSource(datasourceName),
 					query.SeriesNameFormat("{{workload}}"),
 				),
@@ -509,10 +510,10 @@ func KubernetesAvgContainerBandwidthReceived(granularity, datasourceName string,
 		queries = []panel.Option{
 			panel.AddQuery(
 				query.PromQL(
-					promql.SetLabelMatchers(
-						"sort_desc(avg(rate(container_network_receive_bytes_total{cluster=\"$cluster\",namespace=\"$namespace\"}[$__rate_interval])\n* on (cluster,namespace,pod) group_left ()\n    topk by (cluster,namespace,pod) (\n      1,\n      max by (cluster,namespace,pod) (kube_pod_info{host_network=\"false\"})\n    )\n* on (cluster,namespace,pod)\ngroup_left(workload,workload_type) namespace_workload_pod:kube_pod_owner:relabel{cluster=\"$cluster\",namespace=\"$namespace\", workload=~\".+\", workload_type=~\"$type\"}) by (workload))\n",
+					promql.SetLabelMatchersV2(
+						KubernetesCommonPanelQueries["KubernetesAvgContainerBandwidthReceived3"],
 						labelMatchers,
-					),
+					).Pretty(0),
 					dashboards.AddQueryDataSource(datasourceName),
 					query.SeriesNameFormat("{{workload}}"),
 				),
@@ -524,10 +525,10 @@ func KubernetesAvgContainerBandwidthReceived(granularity, datasourceName string,
 		queries = []panel.Option{
 			panel.AddQuery(
 				query.PromQL(
-					promql.SetLabelMatchers(
-						"(avg(rate(container_network_receive_bytes_total{"+GetCAdvisorMatcher()+", cluster=\"$cluster\", namespace=\"$namespace\"}[$__rate_interval])\n* on (namespace,pod)\ngroup_left(workload,workload_type) namespace_workload_pod:kube_pod_owner:relabel{cluster=\"$cluster\", namespace=\"$namespace\", workload=~\"$workload\", workload_type=~\"$type\"}) by (pod))\n",
+					promql.SetLabelMatchersV2(
+						KubernetesCommonPanelQueries["KubernetesAvgContainerBandwidthReceived4"],
 						labelMatchers,
-					),
+					).Pretty(0),
 					dashboards.AddQueryDataSource(datasourceName),
 					query.SeriesNameFormat("{{pod}}"),
 				),
@@ -562,7 +563,7 @@ func KubernetesAvgContainerBandwidthReceived(granularity, datasourceName string,
 	return panelgroup.AddPanel(panelName, panelOpts...)
 }
 
-func KubernetesReceivedPackets(granularity, datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
+func KubernetesReceivedPackets(granularity, datasourceName string, labelMatchers ...*labels.Matcher) panelgroup.Option {
 	var description string
 	var queries []panel.Option
 
@@ -572,10 +573,10 @@ func KubernetesReceivedPackets(granularity, datasourceName string, labelMatchers
 		queries = []panel.Option{
 			panel.AddQuery(
 				query.PromQL(
-					promql.SetLabelMatchers(
-						"sum(irate(container_network_receive_packets_total{"+GetCAdvisorMatcher()+", cluster=\"$cluster\", namespace=~\".+\"}[$__rate_interval])) by (namespace)",
+					promql.SetLabelMatchersV2(
+						KubernetesCommonPanelQueries["KubernetesReceivedPackets1"],
 						labelMatchers,
-					),
+					).Pretty(0),
 					dashboards.AddQueryDataSource(datasourceName),
 					query.SeriesNameFormat("{{namespace}}"),
 				),
@@ -586,10 +587,10 @@ func KubernetesReceivedPackets(granularity, datasourceName string, labelMatchers
 		queries = []panel.Option{
 			panel.AddQuery(
 				query.PromQL(
-					promql.SetLabelMatchers(
-						"sum(irate(container_network_receive_packets_total{cluster=\"$cluster\", namespace=\"$namespace\"}[$__rate_interval])) by (pod)",
+					promql.SetLabelMatchersV2(
+						KubernetesCommonPanelQueries["KubernetesReceivedPackets2"],
 						labelMatchers,
-					),
+					).Pretty(0),
 					dashboards.AddQueryDataSource(datasourceName),
 					query.SeriesNameFormat("{{pod}}"),
 				),
@@ -600,10 +601,10 @@ func KubernetesReceivedPackets(granularity, datasourceName string, labelMatchers
 		queries = []panel.Option{
 			panel.AddQuery(
 				query.PromQL(
-					promql.SetLabelMatchers(
-						"sum(rate(container_network_receive_packets_total{"+GetCAdvisorMatcher()+", cluster=\"$cluster\", namespace=\"$namespace\", pod=~\"$pod\"}[$__rate_interval])) by (pod)",
+					promql.SetLabelMatchersV2(
+						KubernetesCommonPanelQueries["KubernetesReceivedPackets3"],
 						labelMatchers,
-					),
+					).Pretty(0),
 					dashboards.AddQueryDataSource(datasourceName),
 					query.SeriesNameFormat("{{pod}}"),
 				),
@@ -614,10 +615,10 @@ func KubernetesReceivedPackets(granularity, datasourceName string, labelMatchers
 		queries = []panel.Option{
 			panel.AddQuery(
 				query.PromQL(
-					promql.SetLabelMatchers(
-						"(sum(rate(container_network_receive_packets_total{"+GetCAdvisorMatcher()+", cluster=\"$cluster\", namespace=\"$namespace\"}[$__rate_interval])\n* on (namespace,pod)\ngroup_left(workload,workload_type) namespace_workload_pod:kube_pod_owner:relabel{cluster=\"$cluster\", namespace=\"$namespace\", workload=~\"$workload\", workload_type=~\"$type\"}) by (pod))\n",
+					promql.SetLabelMatchersV2(
+						KubernetesCommonPanelQueries["KubernetesReceivedPackets4"],
 						labelMatchers,
-					),
+					).Pretty(0),
 					dashboards.AddQueryDataSource(datasourceName),
 					query.SeriesNameFormat("{{pod}}"),
 				),
@@ -628,10 +629,10 @@ func KubernetesReceivedPackets(granularity, datasourceName string, labelMatchers
 		queries = []panel.Option{
 			panel.AddQuery(
 				query.PromQL(
-					promql.SetLabelMatchers(
-						"(sum(rate(container_network_receive_packets_total{"+GetCAdvisorMatcher()+", cluster=\"$cluster\", namespace=\"$namespace\"}[$__rate_interval])\n* on (namespace,pod)\ngroup_left(workload,workload_type) namespace_workload_pod:kube_pod_owner:relabel{cluster=\"$cluster\", namespace=\"$namespace\", workload=~\".+\", workload_type=~\"$type\"}) by (workload))\n",
+					promql.SetLabelMatchersV2(
+						KubernetesCommonPanelQueries["KubernetesReceivedPackets5"],
 						labelMatchers,
-					),
+					).Pretty(0),
 					dashboards.AddQueryDataSource(datasourceName),
 					query.SeriesNameFormat("{{workload}}"),
 				),
@@ -642,10 +643,10 @@ func KubernetesReceivedPackets(granularity, datasourceName string, labelMatchers
 		queries = []panel.Option{
 			panel.AddQuery(
 				query.PromQL(
-					promql.SetLabelMatchers(
-						"sum by (namespace) (\n    rate(container_network_receive_packets_total{cluster=\"$cluster\",namespace!=\"\"}[$__rate_interval])\n  * on (cluster,namespace,pod) group_left ()\n    topk by (cluster,namespace,pod) (\n      1,\n      max by (cluster,namespace,pod) (kube_pod_info{host_network=\"false\"})\n    )\n)\n",
+					promql.SetLabelMatchersV2(
+						KubernetesCommonPanelQueries["KubernetesReceivedPackets6"],
 						labelMatchers,
-					),
+					).Pretty(0),
 					dashboards.AddQueryDataSource(datasourceName),
 					query.SeriesNameFormat("{{namespace}}"),
 				),
@@ -656,10 +657,10 @@ func KubernetesReceivedPackets(granularity, datasourceName string, labelMatchers
 		queries = []panel.Option{
 			panel.AddQuery(
 				query.PromQL(
-					promql.SetLabelMatchers(
-						"sum by (pod) (\n    rate(container_network_receive_packets_total{cluster=\"$cluster\",namespace=~\"$namespace\"}[$__rate_interval])\n  * on (cluster,namespace,pod) group_left ()\n    topk by (cluster,namespace,pod) (\n      1,\n      max by (cluster,namespace,pod) (kube_pod_info{host_network=\"false\"})\n    )\n)\n",
+					promql.SetLabelMatchersV2(
+						KubernetesCommonPanelQueries["KubernetesReceivedPackets7"],
 						labelMatchers,
-					),
+					).Pretty(0),
 					dashboards.AddQueryDataSource(datasourceName),
 					query.SeriesNameFormat("{{pod}}"),
 				),
@@ -670,10 +671,10 @@ func KubernetesReceivedPackets(granularity, datasourceName string, labelMatchers
 		queries = []panel.Option{
 			panel.AddQuery(
 				query.PromQL(
-					promql.SetLabelMatchers(
-						"sort_desc(sum(rate(container_network_receive_packets_total{cluster=\"$cluster\",namespace=\"$namespace\"}[$__rate_interval])\n* on (cluster,namespace,pod) group_left ()\n    topk by (cluster,namespace,pod) (\n      1,\n      max by (cluster,namespace,pod) (kube_pod_info{host_network=\"false\"})\n    )\n* on (cluster,namespace,pod)\ngroup_left(workload,workload_type) namespace_workload_pod:kube_pod_owner:relabel{cluster=\"$cluster\",namespace=\"$namespace\", workload=~\".+\", workload_type=~\"$type\"}) by (workload))\n",
+					promql.SetLabelMatchersV2(
+						KubernetesCommonPanelQueries["KubernetesReceivedPackets8"],
 						labelMatchers,
-					),
+					).Pretty(0),
 					dashboards.AddQueryDataSource(datasourceName),
 					query.SeriesNameFormat("{{workload}}"),
 				),
@@ -684,10 +685,10 @@ func KubernetesReceivedPackets(granularity, datasourceName string, labelMatchers
 		queries = []panel.Option{
 			panel.AddQuery(
 				query.PromQL(
-					promql.SetLabelMatchers(
-						"sort_desc(sum(rate(container_network_receive_packets_total{"+GetCAdvisorMatcher()+", cluster=\"$cluster\",namespace=~\"$namespace\"}[$__rate_interval])\n* on (namespace,pod)\ngroup_left(workload,workload_type) namespace_workload_pod:kube_pod_owner:relabel{cluster=\"$cluster\",namespace=~\"$namespace\", workload=~\"$workload\", workload_type=~\"$type\"}) by (pod))\n",
+					promql.SetLabelMatchersV2(
+						KubernetesCommonPanelQueries["KubernetesReceivedPackets9"],
 						labelMatchers,
-					),
+					).Pretty(0),
 					dashboards.AddQueryDataSource(datasourceName),
 					query.SeriesNameFormat("{{pod}}"),
 				),
@@ -698,10 +699,10 @@ func KubernetesReceivedPackets(granularity, datasourceName string, labelMatchers
 		queries = []panel.Option{
 			panel.AddQuery(
 				query.PromQL(
-					promql.SetLabelMatchers(
-						"sum(rate(container_network_receive_packets_total{cluster=\"$cluster\",namespace=~\"$namespace\", pod=~\"$pod\"}[$__rate_interval])) by (pod)",
+					promql.SetLabelMatchersV2(
+						KubernetesCommonPanelQueries["KubernetesReceivedPackets10"],
 						labelMatchers,
-					),
+					).Pretty(0),
 					dashboards.AddQueryDataSource(datasourceName),
 					query.SeriesNameFormat("{{pod}}"),
 				),
@@ -736,7 +737,7 @@ func KubernetesReceivedPackets(granularity, datasourceName string, labelMatchers
 	return panelgroup.AddPanel("Rate of Received Packets", panelOpts...)
 }
 
-func KubernetesReceivedPacketsDropped(granularity, datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
+func KubernetesReceivedPacketsDropped(granularity, datasourceName string, labelMatchers ...*labels.Matcher) panelgroup.Option {
 	var description string
 	var queries []panel.Option
 
@@ -746,10 +747,10 @@ func KubernetesReceivedPacketsDropped(granularity, datasourceName string, labelM
 		queries = []panel.Option{
 			panel.AddQuery(
 				query.PromQL(
-					promql.SetLabelMatchers(
-						"sum(irate(container_network_receive_packets_dropped_total{"+GetCAdvisorMatcher()+", cluster=\"$cluster\", namespace=~\".+\"}[$__rate_interval])) by (namespace)",
+					promql.SetLabelMatchersV2(
+						KubernetesCommonPanelQueries["KubernetesReceivedPacketsDropped1"],
 						labelMatchers,
-					),
+					).Pretty(0),
 					dashboards.AddQueryDataSource(datasourceName),
 					query.SeriesNameFormat("{{namespace}}"),
 				),
@@ -760,10 +761,10 @@ func KubernetesReceivedPacketsDropped(granularity, datasourceName string, labelM
 		queries = []panel.Option{
 			panel.AddQuery(
 				query.PromQL(
-					promql.SetLabelMatchers(
-						"sum(irate(container_network_receive_packets_dropped_total{cluster=\"$cluster\", namespace=\"$namespace\"}[$__rate_interval])) by (pod)",
+					promql.SetLabelMatchersV2(
+						KubernetesCommonPanelQueries["KubernetesReceivedPacketsDropped2"],
 						labelMatchers,
-					),
+					).Pretty(0),
 					dashboards.AddQueryDataSource(datasourceName),
 					query.SeriesNameFormat("{{pod}}"),
 				),
@@ -774,10 +775,10 @@ func KubernetesReceivedPacketsDropped(granularity, datasourceName string, labelM
 		queries = []panel.Option{
 			panel.AddQuery(
 				query.PromQL(
-					promql.SetLabelMatchers(
-						"sum(rate(container_network_receive_packets_dropped_total{"+GetCAdvisorMatcher()+", cluster=\"$cluster\", namespace=\"$namespace\", pod=~\"$pod\"}[$__rate_interval])) by (pod)",
+					promql.SetLabelMatchersV2(
+						KubernetesCommonPanelQueries["KubernetesReceivedPacketsDropped3"],
 						labelMatchers,
-					),
+					).Pretty(0),
 					dashboards.AddQueryDataSource(datasourceName),
 					query.SeriesNameFormat("{{pod}}"),
 				),
@@ -788,10 +789,10 @@ func KubernetesReceivedPacketsDropped(granularity, datasourceName string, labelM
 		queries = []panel.Option{
 			panel.AddQuery(
 				query.PromQL(
-					promql.SetLabelMatchers(
-						"(sum(rate(container_network_receive_packets_dropped_total{"+GetCAdvisorMatcher()+", cluster=\"$cluster\", namespace=\"$namespace\"}[$__rate_interval])\n* on (namespace,pod)\ngroup_left(workload,workload_type) namespace_workload_pod:kube_pod_owner:relabel{cluster=\"$cluster\", namespace=\"$namespace\", workload=~\"$workload\", workload_type=~\"$type\"}) by (pod))\n",
+					promql.SetLabelMatchersV2(
+						KubernetesCommonPanelQueries["KubernetesReceivedPacketsDropped4"],
 						labelMatchers,
-					),
+					).Pretty(0),
 					dashboards.AddQueryDataSource(datasourceName),
 					query.SeriesNameFormat("{{pod}}"),
 				),
@@ -802,10 +803,10 @@ func KubernetesReceivedPacketsDropped(granularity, datasourceName string, labelM
 		queries = []panel.Option{
 			panel.AddQuery(
 				query.PromQL(
-					promql.SetLabelMatchers(
-						"(sum(rate(container_network_receive_packets_dropped_total{"+GetCAdvisorMatcher()+", cluster=\"$cluster\", namespace=\"$namespace\"}[$__rate_interval])\n* on (namespace,pod)\ngroup_left(workload,workload_type) namespace_workload_pod:kube_pod_owner:relabel{cluster=\"$cluster\", namespace=\"$namespace\", workload=~\".+\", workload_type=~\"$type\"}) by (workload))\n",
+					promql.SetLabelMatchersV2(
+						KubernetesCommonPanelQueries["KubernetesReceivedPacketsDropped5"],
 						labelMatchers,
-					),
+					).Pretty(0),
 					dashboards.AddQueryDataSource(datasourceName),
 					query.SeriesNameFormat("{{workload}}"),
 				),
@@ -816,10 +817,10 @@ func KubernetesReceivedPacketsDropped(granularity, datasourceName string, labelM
 		queries = []panel.Option{
 			panel.AddQuery(
 				query.PromQL(
-					promql.SetLabelMatchers(
-						"sum by (namespace) (\n    rate(container_network_receive_packets_dropped_total{cluster=\"$cluster\",namespace!=\"\"}[$__rate_interval])\n  * on (cluster,namespace,pod) group_left ()\n    topk by (cluster,namespace,pod) (\n      1,\n      max by (cluster,namespace,pod) (kube_pod_info{host_network=\"false\"})\n    )\n)\n",
+					promql.SetLabelMatchersV2(
+						KubernetesCommonPanelQueries["KubernetesReceivedPacketsDropped6"],
 						labelMatchers,
-					),
+					).Pretty(0),
 					dashboards.AddQueryDataSource(datasourceName),
 					query.SeriesNameFormat("{{namespace}}"),
 				),
@@ -830,10 +831,10 @@ func KubernetesReceivedPacketsDropped(granularity, datasourceName string, labelM
 		queries = []panel.Option{
 			panel.AddQuery(
 				query.PromQL(
-					promql.SetLabelMatchers(
-						"sum by (pod) (\n    rate(container_network_receive_packets_dropped_total{cluster=\"$cluster\",namespace!=\"\"}[$__rate_interval])\n  * on (cluster,namespace,pod) group_left ()\n    topk by (cluster,namespace,pod) (\n      1,\n      max by (cluster,namespace,pod) (kube_pod_info{host_network=\"false\"})\n    )\n)\n",
+					promql.SetLabelMatchersV2(
+						KubernetesCommonPanelQueries["KubernetesReceivedPacketsDropped7"],
 						labelMatchers,
-					),
+					).Pretty(0),
 					dashboards.AddQueryDataSource(datasourceName),
 					query.SeriesNameFormat("{{pod}}"),
 				),
@@ -844,10 +845,10 @@ func KubernetesReceivedPacketsDropped(granularity, datasourceName string, labelM
 		queries = []panel.Option{
 			panel.AddQuery(
 				query.PromQL(
-					promql.SetLabelMatchers(
-						"sort_desc(sum(rate(container_network_receive_packets_dropped_total{cluster=\"$cluster\",namespace=\"$namespace\"}[$__rate_interval])\n* on (cluster,namespace,pod) group_left ()\n    topk by (cluster,namespace,pod) (\n      1,\n      max by (cluster,namespace,pod) (kube_pod_info{host_network=\"false\"})\n    )\n* on (cluster,namespace,pod)\ngroup_left(workload,workload_type) namespace_workload_pod:kube_pod_owner:relabel{cluster=\"$cluster\",namespace=\"$namespace\", workload=~\".+\", workload_type=~\"$type\"}) by (workload))\n",
+					promql.SetLabelMatchersV2(
+						KubernetesCommonPanelQueries["KubernetesReceivedPacketsDropped8"],
 						labelMatchers,
-					),
+					).Pretty(0),
 					dashboards.AddQueryDataSource(datasourceName),
 					query.SeriesNameFormat("{{workload}}"),
 				),
@@ -858,10 +859,10 @@ func KubernetesReceivedPacketsDropped(granularity, datasourceName string, labelM
 		queries = []panel.Option{
 			panel.AddQuery(
 				query.PromQL(
-					promql.SetLabelMatchers(
-						"sort_desc(sum(rate(container_network_receive_packets_dropped_total{"+GetCAdvisorMatcher()+", cluster=\"$cluster\",namespace=~\"$namespace\"}[$__rate_interval])\n* on (namespace,pod)\ngroup_left(workload,workload_type) namespace_workload_pod:kube_pod_owner:relabel{cluster=\"$cluster\",namespace=~\"$namespace\", workload=~\"$workload\", workload_type=~\"$type\"}) by (pod))\n",
+					promql.SetLabelMatchersV2(
+						KubernetesCommonPanelQueries["KubernetesReceivedPacketsDropped9"],
 						labelMatchers,
-					),
+					).Pretty(0),
 					dashboards.AddQueryDataSource(datasourceName),
 					query.SeriesNameFormat("{{pod}}"),
 				),
@@ -872,10 +873,10 @@ func KubernetesReceivedPacketsDropped(granularity, datasourceName string, labelM
 		queries = []panel.Option{
 			panel.AddQuery(
 				query.PromQL(
-					promql.SetLabelMatchers(
-						"sum(rate(container_network_receive_packets_dropped_total{cluster=\"$cluster\",namespace=~\"$namespace\", pod=~\"$pod\"}[$__rate_interval])) by (pod)",
+					promql.SetLabelMatchersV2(
+						KubernetesCommonPanelQueries["KubernetesReceivedPacketsDropped10"],
 						labelMatchers,
-					),
+					).Pretty(0),
 					dashboards.AddQueryDataSource(datasourceName),
 					query.SeriesNameFormat("{{pod}}"),
 				),
@@ -910,7 +911,7 @@ func KubernetesReceivedPacketsDropped(granularity, datasourceName string, labelM
 	return panelgroup.AddPanel("Rate of Received Packets Dropped", panelOpts...)
 }
 
-func KubernetesTransmittedPackets(granularity, datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
+func KubernetesTransmittedPackets(granularity, datasourceName string, labelMatchers ...*labels.Matcher) panelgroup.Option {
 	var description string
 	var queries []panel.Option
 
@@ -920,10 +921,10 @@ func KubernetesTransmittedPackets(granularity, datasourceName string, labelMatch
 		queries = []panel.Option{
 			panel.AddQuery(
 				query.PromQL(
-					promql.SetLabelMatchers(
-						"sum(irate(container_network_transmit_packets_total{"+GetCAdvisorMatcher()+", cluster=\"$cluster\", namespace=~\".+\"}[$__rate_interval])) by (namespace)",
+					promql.SetLabelMatchersV2(
+						KubernetesCommonPanelQueries["KubernetesTransmittedPackets1"],
 						labelMatchers,
-					),
+					).Pretty(0),
 					dashboards.AddQueryDataSource(datasourceName),
 					query.SeriesNameFormat("{{namespace}}"),
 				),
@@ -934,10 +935,10 @@ func KubernetesTransmittedPackets(granularity, datasourceName string, labelMatch
 		queries = []panel.Option{
 			panel.AddQuery(
 				query.PromQL(
-					promql.SetLabelMatchers(
-						"sum(irate(container_network_transmit_packets_total{cluster=\"$cluster\", namespace=\"$namespace\"}[$__rate_interval])) by (pod)",
+					promql.SetLabelMatchersV2(
+						KubernetesCommonPanelQueries["KubernetesTransmittedPackets2"],
 						labelMatchers,
-					),
+					).Pretty(0),
 					dashboards.AddQueryDataSource(datasourceName),
 					query.SeriesNameFormat("{{pod}}"),
 				),
@@ -948,10 +949,10 @@ func KubernetesTransmittedPackets(granularity, datasourceName string, labelMatch
 		queries = []panel.Option{
 			panel.AddQuery(
 				query.PromQL(
-					promql.SetLabelMatchers(
-						"sum(rate(container_network_transmit_packets_total{"+GetCAdvisorMatcher()+", cluster=\"$cluster\", namespace=\"$namespace\", pod=~\"$pod\"}[$__rate_interval])) by (pod)",
+					promql.SetLabelMatchersV2(
+						KubernetesCommonPanelQueries["KubernetesTransmittedPackets3"],
 						labelMatchers,
-					),
+					).Pretty(0),
 					dashboards.AddQueryDataSource(datasourceName),
 					query.SeriesNameFormat("{{pod}}"),
 				),
@@ -962,10 +963,10 @@ func KubernetesTransmittedPackets(granularity, datasourceName string, labelMatch
 		queries = []panel.Option{
 			panel.AddQuery(
 				query.PromQL(
-					promql.SetLabelMatchers(
-						"(sum(rate(container_network_transmit_packets_total{"+GetCAdvisorMatcher()+", cluster=\"$cluster\", namespace=\"$namespace\"}[$__rate_interval])\n* on (namespace,pod)\ngroup_left(workload,workload_type) namespace_workload_pod:kube_pod_owner:relabel{cluster=\"$cluster\", namespace=\"$namespace\", workload=~\"$workload\", workload_type=~\"$type\"}) by (pod))\n",
+					promql.SetLabelMatchersV2(
+						KubernetesCommonPanelQueries["KubernetesTransmittedPackets4"],
 						labelMatchers,
-					),
+					).Pretty(0),
 					dashboards.AddQueryDataSource(datasourceName),
 					query.SeriesNameFormat("{{pod}}"),
 				),
@@ -976,10 +977,10 @@ func KubernetesTransmittedPackets(granularity, datasourceName string, labelMatch
 		queries = []panel.Option{
 			panel.AddQuery(
 				query.PromQL(
-					promql.SetLabelMatchers(
-						"(sum(rate(container_network_transmit_packets_total{"+GetCAdvisorMatcher()+", cluster=\"$cluster\", namespace=\"$namespace\"}[$__rate_interval])\n* on (namespace,pod)\ngroup_left(workload,workload_type) namespace_workload_pod:kube_pod_owner:relabel{cluster=\"$cluster\", namespace=\"$namespace\", workload=~\".+\", workload_type=~\"$type\"}) by (workload))\n",
+					promql.SetLabelMatchersV2(
+						KubernetesCommonPanelQueries["KubernetesTransmittedPackets5"],
 						labelMatchers,
-					),
+					).Pretty(0),
 					dashboards.AddQueryDataSource(datasourceName),
 					query.SeriesNameFormat("{{workload}}"),
 				),
@@ -990,10 +991,10 @@ func KubernetesTransmittedPackets(granularity, datasourceName string, labelMatch
 		queries = []panel.Option{
 			panel.AddQuery(
 				query.PromQL(
-					promql.SetLabelMatchers(
-						"sum by (namespace) (\n    rate(container_network_transmit_packets_total{cluster=\"$cluster\",namespace!=\"\"}[$__rate_interval])\n  * on (cluster,namespace,pod) group_left ()\n    topk by (cluster,namespace,pod) (\n      1,\n      max by (cluster,namespace,pod) (kube_pod_info{host_network=\"false\"})\n    )\n)\n",
+					promql.SetLabelMatchersV2(
+						KubernetesCommonPanelQueries["KubernetesTransmittedPackets6"],
 						labelMatchers,
-					),
+					).Pretty(0),
 					dashboards.AddQueryDataSource(datasourceName),
 					query.SeriesNameFormat("{{namespace}}"),
 				),
@@ -1004,10 +1005,10 @@ func KubernetesTransmittedPackets(granularity, datasourceName string, labelMatch
 		queries = []panel.Option{
 			panel.AddQuery(
 				query.PromQL(
-					promql.SetLabelMatchers(
-						"sum by (pod) (\n    rate(container_network_transmit_packets_total{cluster=\"$cluster\",namespace=~\"$namespace\"}[$__rate_interval])\n  * on (cluster,namespace,pod) group_left ()\n    topk by (cluster,namespace,pod) (\n      1,\n      max by (cluster,namespace,pod) (kube_pod_info{host_network=\"false\"})\n    )\n)\n",
+					promql.SetLabelMatchersV2(
+						KubernetesCommonPanelQueries["KubernetesTransmittedPackets7"],
 						labelMatchers,
-					),
+					).Pretty(0),
 					dashboards.AddQueryDataSource(datasourceName),
 					query.SeriesNameFormat("{{pod}}"),
 				),
@@ -1018,10 +1019,10 @@ func KubernetesTransmittedPackets(granularity, datasourceName string, labelMatch
 		queries = []panel.Option{
 			panel.AddQuery(
 				query.PromQL(
-					promql.SetLabelMatchers(
-						"sort_desc(sum(rate(container_network_transmit_packets_total{cluster=\"$cluster\",namespace=\"$namespace\"}[$__rate_interval])\n* on (cluster,namespace,pod) group_left ()\n    topk by (cluster,namespace,pod) (\n      1,\n      max by (cluster,namespace,pod) (kube_pod_info{host_network=\"false\"})\n    )\n* on (cluster,namespace,pod)\ngroup_left(workload,workload_type) namespace_workload_pod:kube_pod_owner:relabel{cluster=\"$cluster\",namespace=\"$namespace\", workload=~\".+\", workload_type=~\"$type\"}) by (workload))\n",
+					promql.SetLabelMatchersV2(
+						KubernetesCommonPanelQueries["KubernetesTransmittedPackets8"],
 						labelMatchers,
-					),
+					).Pretty(0),
 					dashboards.AddQueryDataSource(datasourceName),
 					query.SeriesNameFormat("{{workload}}"),
 				),
@@ -1032,10 +1033,10 @@ func KubernetesTransmittedPackets(granularity, datasourceName string, labelMatch
 		queries = []panel.Option{
 			panel.AddQuery(
 				query.PromQL(
-					promql.SetLabelMatchers(
-						"sort_desc(sum(rate(container_network_transmit_packets_total{"+GetCAdvisorMatcher()+", cluster=\"$cluster\",namespace=~\"$namespace\"}[$__rate_interval])\n* on (namespace,pod)\ngroup_left(workload,workload_type) namespace_workload_pod:kube_pod_owner:relabel{cluster=\"$cluster\",namespace=~\"$namespace\", workload=~\"$workload\", workload_type=~\"$type\"}) by (pod))\n",
+					promql.SetLabelMatchersV2(
+						KubernetesCommonPanelQueries["KubernetesTransmittedPackets9"],
 						labelMatchers,
-					),
+					).Pretty(0),
 					dashboards.AddQueryDataSource(datasourceName),
 					query.SeriesNameFormat("{{pod}}"),
 				),
@@ -1046,10 +1047,10 @@ func KubernetesTransmittedPackets(granularity, datasourceName string, labelMatch
 		queries = []panel.Option{
 			panel.AddQuery(
 				query.PromQL(
-					promql.SetLabelMatchers(
-						"sum(rate(container_network_transmit_packets_total{cluster=\"$cluster\",namespace=~\"$namespace\", pod=~\"$pod\"}[$__rate_interval])) by (pod)",
+					promql.SetLabelMatchersV2(
+						KubernetesCommonPanelQueries["KubernetesTransmittedPackets10"],
 						labelMatchers,
-					),
+					).Pretty(0),
 					dashboards.AddQueryDataSource(datasourceName),
 					query.SeriesNameFormat("{{pod}}"),
 				),
@@ -1084,7 +1085,7 @@ func KubernetesTransmittedPackets(granularity, datasourceName string, labelMatch
 	return panelgroup.AddPanel("Rate of Transmitted Packets", panelOpts...)
 }
 
-func KubernetesTransmittedPacketsDropped(granularity, datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
+func KubernetesTransmittedPacketsDropped(granularity, datasourceName string, labelMatchers ...*labels.Matcher) panelgroup.Option {
 	var description string
 	var queries []panel.Option
 
@@ -1094,10 +1095,10 @@ func KubernetesTransmittedPacketsDropped(granularity, datasourceName string, lab
 		queries = []panel.Option{
 			panel.AddQuery(
 				query.PromQL(
-					promql.SetLabelMatchers(
-						"sum(irate(container_network_transmit_packets_dropped_total{"+GetCAdvisorMatcher()+", cluster=\"$cluster\", namespace=~\".+\"}[$__rate_interval])) by (namespace)",
+					promql.SetLabelMatchersV2(
+						KubernetesCommonPanelQueries["KubernetesTransmittedPacketsDropped1"],
 						labelMatchers,
-					),
+					).Pretty(0),
 					dashboards.AddQueryDataSource(datasourceName),
 					query.SeriesNameFormat("{{namespace}}"),
 				),
@@ -1108,10 +1109,10 @@ func KubernetesTransmittedPacketsDropped(granularity, datasourceName string, lab
 		queries = []panel.Option{
 			panel.AddQuery(
 				query.PromQL(
-					promql.SetLabelMatchers(
-						"sum(irate(container_network_transmit_packets_dropped_total{cluster=\"$cluster\", namespace=\"$namespace\"}[$__rate_interval])) by (pod)",
+					promql.SetLabelMatchersV2(
+						KubernetesCommonPanelQueries["KubernetesTransmittedPacketsDropped2"],
 						labelMatchers,
-					),
+					).Pretty(0),
 					dashboards.AddQueryDataSource(datasourceName),
 					query.SeriesNameFormat("{{pod}}"),
 				),
@@ -1122,10 +1123,10 @@ func KubernetesTransmittedPacketsDropped(granularity, datasourceName string, lab
 		queries = []panel.Option{
 			panel.AddQuery(
 				query.PromQL(
-					promql.SetLabelMatchers(
-						"sum(rate(container_network_transmit_packets_dropped_total{"+GetCAdvisorMatcher()+", cluster=\"$cluster\", namespace=\"$namespace\", pod=~\"$pod\"}[$__rate_interval])) by (pod)",
+					promql.SetLabelMatchersV2(
+						KubernetesCommonPanelQueries["KubernetesTransmittedPacketsDropped3"],
 						labelMatchers,
-					),
+					).Pretty(0),
 					dashboards.AddQueryDataSource(datasourceName),
 					query.SeriesNameFormat("{{pod}}"),
 				),
@@ -1136,10 +1137,10 @@ func KubernetesTransmittedPacketsDropped(granularity, datasourceName string, lab
 		queries = []panel.Option{
 			panel.AddQuery(
 				query.PromQL(
-					promql.SetLabelMatchers(
-						"(sum(rate(container_network_transmit_packets_dropped_total{"+GetCAdvisorMatcher()+", cluster=\"$cluster\", namespace=\"$namespace\"}[$__rate_interval])\n* on (namespace,pod)\ngroup_left(workload,workload_type) namespace_workload_pod:kube_pod_owner:relabel{cluster=\"$cluster\", namespace=\"$namespace\", workload=~\"$workload\", workload_type=~\"$type\"}) by (pod))\n",
+					promql.SetLabelMatchersV2(
+						KubernetesCommonPanelQueries["KubernetesTransmittedPacketsDropped4"],
 						labelMatchers,
-					),
+					).Pretty(0),
 					dashboards.AddQueryDataSource(datasourceName),
 					query.SeriesNameFormat("{{pod}}"),
 				),
@@ -1150,10 +1151,10 @@ func KubernetesTransmittedPacketsDropped(granularity, datasourceName string, lab
 		queries = []panel.Option{
 			panel.AddQuery(
 				query.PromQL(
-					promql.SetLabelMatchers(
-						"(sum(rate(container_network_transmit_packets_dropped_total{"+GetCAdvisorMatcher()+", cluster=\"$cluster\", namespace=\"$namespace\"}[$__rate_interval])\n* on (namespace,pod)\ngroup_left(workload,workload_type) namespace_workload_pod:kube_pod_owner:relabel{cluster=\"$cluster\", namespace=\"$namespace\", workload=~\".+\", workload_type=~\"$type\"}) by (workload))\n",
+					promql.SetLabelMatchersV2(
+						KubernetesCommonPanelQueries["KubernetesTransmittedPacketsDropped5"],
 						labelMatchers,
-					),
+					).Pretty(0),
 					dashboards.AddQueryDataSource(datasourceName),
 					query.SeriesNameFormat("{{workload}}"),
 				),
@@ -1164,10 +1165,10 @@ func KubernetesTransmittedPacketsDropped(granularity, datasourceName string, lab
 		queries = []panel.Option{
 			panel.AddQuery(
 				query.PromQL(
-					promql.SetLabelMatchers(
-						"sum by (namespace) (\n    rate(container_network_transmit_packets_dropped_total{cluster=\"$cluster\",namespace!=\"\"}[$__rate_interval])\n  * on (cluster,namespace,pod) group_left ()\n    topk by (cluster,namespace,pod) (\n      1,\n      max by (cluster,namespace,pod) (kube_pod_info{host_network=\"false\"})\n    )\n)\n",
+					promql.SetLabelMatchersV2(
+						KubernetesCommonPanelQueries["KubernetesTransmittedPacketsDropped6"],
 						labelMatchers,
-					),
+					).Pretty(0),
 					dashboards.AddQueryDataSource(datasourceName),
 					query.SeriesNameFormat("{{namespace}}"),
 				),
@@ -1178,10 +1179,10 @@ func KubernetesTransmittedPacketsDropped(granularity, datasourceName string, lab
 		queries = []panel.Option{
 			panel.AddQuery(
 				query.PromQL(
-					promql.SetLabelMatchers(
-						"sum by (pod) (\n    rate(container_network_transmit_packets_dropped_total{cluster=\"$cluster\",namespace=~\"$namespace\"}[$__rate_interval])\n  * on (cluster,namespace,pod) group_left ()\n    topk by (cluster,namespace,pod) (\n      1,\n      max by (cluster,namespace,pod) (kube_pod_info{host_network=\"false\"})\n    )\n)\n",
+					promql.SetLabelMatchersV2(
+						KubernetesCommonPanelQueries["KubernetesTransmittedPacketsDropped7"],
 						labelMatchers,
-					),
+					).Pretty(0),
 					dashboards.AddQueryDataSource(datasourceName),
 					query.SeriesNameFormat("{{pod}}"),
 				),
@@ -1192,10 +1193,10 @@ func KubernetesTransmittedPacketsDropped(granularity, datasourceName string, lab
 		queries = []panel.Option{
 			panel.AddQuery(
 				query.PromQL(
-					promql.SetLabelMatchers(
-						"sort_desc(sum(rate(container_network_transmit_packets_dropped_total{cluster=\"$cluster\",namespace=\"$namespace\"}[$__rate_interval])\n* on (cluster,namespace,pod) group_left ()\n    topk by (cluster,namespace,pod) (\n      1,\n      max by (cluster,namespace,pod) (kube_pod_info{host_network=\"false\"})\n    )\n* on (cluster,namespace,pod)\ngroup_left(workload,workload_type) namespace_workload_pod:kube_pod_owner:relabel{cluster=\"$cluster\",namespace=\"$namespace\", workload=~\".+\", workload_type=~\"$type\"}) by (workload))\n",
+					promql.SetLabelMatchersV2(
+						KubernetesCommonPanelQueries["KubernetesTransmittedPacketsDropped8"],
 						labelMatchers,
-					),
+					).Pretty(0),
 					dashboards.AddQueryDataSource(datasourceName),
 					query.SeriesNameFormat("{{workload}}"),
 				),
@@ -1206,10 +1207,10 @@ func KubernetesTransmittedPacketsDropped(granularity, datasourceName string, lab
 		queries = []panel.Option{
 			panel.AddQuery(
 				query.PromQL(
-					promql.SetLabelMatchers(
-						"sort_desc(sum(rate(container_network_transmit_packets_dropped_total{"+GetCAdvisorMatcher()+", cluster=\"$cluster\",namespace=~\"$namespace\"}[$__rate_interval])\n* on (namespace,pod)\ngroup_left(workload,workload_type) namespace_workload_pod:kube_pod_owner:relabel{cluster=\"$cluster\",namespace=~\"$namespace\", workload=~\"$workload\", workload_type=~\"$type\"}) by (pod))\n",
+					promql.SetLabelMatchersV2(
+						KubernetesCommonPanelQueries["KubernetesTransmittedPacketsDropped9"],
 						labelMatchers,
-					),
+					).Pretty(0),
 					dashboards.AddQueryDataSource(datasourceName),
 					query.SeriesNameFormat("{{pod}}"),
 				),
@@ -1220,10 +1221,10 @@ func KubernetesTransmittedPacketsDropped(granularity, datasourceName string, lab
 		queries = []panel.Option{
 			panel.AddQuery(
 				query.PromQL(
-					promql.SetLabelMatchers(
-						"sum(rate(container_network_transmit_packets_dropped_total{cluster=\"$cluster\",namespace=~\"$namespace\", pod=~\"$pod\"}[$__rate_interval])) by (pod)",
+					promql.SetLabelMatchersV2(
+						KubernetesCommonPanelQueries["KubernetesTransmittedPacketsDropped10"],
 						labelMatchers,
-					),
+					).Pretty(0),
 					dashboards.AddQueryDataSource(datasourceName),
 					query.SeriesNameFormat("{{pod}}"),
 				),
@@ -1258,7 +1259,7 @@ func KubernetesTransmittedPacketsDropped(granularity, datasourceName string, lab
 	return panelgroup.AddPanel("Rate of Transmitted Packets Dropped", panelOpts...)
 }
 
-func KubernetesCurrentRateOfBytesReceived(granularity, datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
+func KubernetesCurrentRateOfBytesReceived(granularity, datasourceName string, labelMatchers ...*labels.Matcher) panelgroup.Option {
 	var description string
 	var queries []panel.Option
 
@@ -1268,10 +1269,10 @@ func KubernetesCurrentRateOfBytesReceived(granularity, datasourceName string, la
 		queries = []panel.Option{
 			panel.AddQuery(
 				query.PromQL(
-					promql.SetLabelMatchers(
-						"sum by (namespace) (\n    rate(container_network_receive_bytes_total{cluster=\"$cluster\",namespace!=\"\"}[$__rate_interval])\n  * on (cluster,namespace,pod) group_left ()\n    topk by (cluster,namespace,pod) (\n      1,\n      max by (cluster,namespace,pod) (kube_pod_info{host_network=\"false\"})\n    )\n)\n",
+					promql.SetLabelMatchersV2(
+						KubernetesCommonPanelQueries["KubernetesCurrentRateOfBytesReceived1"],
 						labelMatchers,
-					),
+					).Pretty(0),
 					dashboards.AddQueryDataSource(datasourceName),
 					query.SeriesNameFormat("{{namespace}}"),
 				),
@@ -1282,10 +1283,10 @@ func KubernetesCurrentRateOfBytesReceived(granularity, datasourceName string, la
 		queries = []panel.Option{
 			panel.AddQuery(
 				query.PromQL(
-					promql.SetLabelMatchers(
-						"sum (\n    rate(container_network_receive_bytes_total{cluster=\"$cluster\",namespace=~\"$namespace\"}[$__rate_interval])\n  * on (cluster,namespace,pod) group_left ()\n    topk by (cluster,namespace,pod) (\n      1,\n      max by (cluster,namespace,pod) (kube_pod_info{host_network=\"false\"})\n    )\n)\n",
+					promql.SetLabelMatchersV2(
+						KubernetesCommonPanelQueries["KubernetesCurrentRateOfBytesReceived2"],
 						labelMatchers,
-					),
+					).Pretty(0),
 					dashboards.AddQueryDataSource(datasourceName),
 					query.SeriesNameFormat("{{pod}}"),
 				),
@@ -1296,10 +1297,10 @@ func KubernetesCurrentRateOfBytesReceived(granularity, datasourceName string, la
 		queries = []panel.Option{
 			panel.AddQuery(
 				query.PromQL(
-					promql.SetLabelMatchers(
-						"sort_desc(sum(rate(container_network_receive_bytes_total{cluster=\"$cluster\",namespace=\"$namespace\"}[$__rate_interval])\n* on (cluster,namespace,pod) group_left ()\n    topk by (cluster,namespace,pod) (\n      1,\n      max by (cluster,namespace,pod) (kube_pod_info{host_network=\"false\"})\n    )\n* on (cluster,namespace,pod)\ngroup_left(workload,workload_type) namespace_workload_pod:kube_pod_owner:relabel{cluster=\"$cluster\",namespace=\"$namespace\", workload=~\".+\", workload_type=~\"$type\"}) by (workload))\n",
+					promql.SetLabelMatchersV2(
+						KubernetesCommonPanelQueries["KubernetesCurrentRateOfBytesReceived3"],
 						labelMatchers,
-					),
+					).Pretty(0),
 					dashboards.AddQueryDataSource(datasourceName),
 					query.SeriesNameFormat("{{workload}}"),
 				),
@@ -1310,10 +1311,10 @@ func KubernetesCurrentRateOfBytesReceived(granularity, datasourceName string, la
 		queries = []panel.Option{
 			panel.AddQuery(
 				query.PromQL(
-					promql.SetLabelMatchers(
-						"sort_desc(sum(rate(container_network_receive_bytes_total{"+GetCAdvisorMatcher()+", cluster=\"$cluster\",namespace=~\"$namespace\"}[$__rate_interval])\n* on (namespace,pod)\ngroup_left(workload,workload_type) namespace_workload_pod:kube_pod_owner:relabel{cluster=\"$cluster\",namespace=~\"$namespace\", workload=~\"$workload\", workload_type=~\"$type\"}) by (pod))\n",
+					promql.SetLabelMatchersV2(
+						KubernetesCommonPanelQueries["KubernetesCurrentRateOfBytesReceived4"],
 						labelMatchers,
-					),
+					).Pretty(0),
 					dashboards.AddQueryDataSource(datasourceName),
 					query.SeriesNameFormat("{{pod}}"),
 				),
@@ -1324,10 +1325,10 @@ func KubernetesCurrentRateOfBytesReceived(granularity, datasourceName string, la
 		queries = []panel.Option{
 			panel.AddQuery(
 				query.PromQL(
-					promql.SetLabelMatchers(
-						"sum(rate(container_network_receive_bytes_total{cluster=\"$cluster\",namespace=~\"$namespace\", pod=~\"$pod\"}[$__rate_interval]))",
+					promql.SetLabelMatchersV2(
+						KubernetesCommonPanelQueries["KubernetesCurrentRateOfBytesReceived5"],
 						labelMatchers,
-					),
+					).Pretty(0),
 					dashboards.AddQueryDataSource(datasourceName),
 					query.SeriesNameFormat("{{pod}}"),
 				),
@@ -1362,7 +1363,7 @@ func KubernetesCurrentRateOfBytesReceived(granularity, datasourceName string, la
 	return panelgroup.AddPanel("Current Rate of Bytes Received", panelOpts...)
 }
 
-func KubernetesCurrentRateOfBytesTransmitted(granularity, datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
+func KubernetesCurrentRateOfBytesTransmitted(granularity, datasourceName string, labelMatchers ...*labels.Matcher) panelgroup.Option {
 	var description string
 	var queries []panel.Option
 
@@ -1372,10 +1373,10 @@ func KubernetesCurrentRateOfBytesTransmitted(granularity, datasourceName string,
 		queries = []panel.Option{
 			panel.AddQuery(
 				query.PromQL(
-					promql.SetLabelMatchers(
-						"sum by (namespace) (\n    rate(container_network_transmit_bytes_total{cluster=\"$cluster\",namespace!=\"\"}[$__rate_interval])\n  * on (cluster,namespace,pod) group_left ()\n    topk by (cluster,namespace,pod) (\n      1,\n      max by (cluster,namespace,pod) (kube_pod_info{host_network=\"false\"})\n    )\n)\n",
+					promql.SetLabelMatchersV2(
+						KubernetesCommonPanelQueries["KubernetesCurrentRateOfBytesTransmitted1"],
 						labelMatchers,
-					),
+					).Pretty(0),
 					dashboards.AddQueryDataSource(datasourceName),
 					query.SeriesNameFormat("{{namespace}}"),
 				),
@@ -1386,10 +1387,10 @@ func KubernetesCurrentRateOfBytesTransmitted(granularity, datasourceName string,
 		queries = []panel.Option{
 			panel.AddQuery(
 				query.PromQL(
-					promql.SetLabelMatchers(
-						"sum (\n    rate(container_network_transmit_bytes_total{cluster=\"$cluster\",namespace=~\"$namespace\"}[$__rate_interval])\n  * on (cluster,namespace,pod) group_left ()\n    topk by (cluster,namespace,pod) (\n      1,\n      max by (cluster,namespace,pod) (kube_pod_info{host_network=\"false\"})\n    )\n)\n",
+					promql.SetLabelMatchersV2(
+						KubernetesCommonPanelQueries["KubernetesCurrentRateOfBytesTransmitted2"],
 						labelMatchers,
-					),
+					).Pretty(0),
 					dashboards.AddQueryDataSource(datasourceName),
 					query.SeriesNameFormat("{{pod}}"),
 				),
@@ -1400,10 +1401,10 @@ func KubernetesCurrentRateOfBytesTransmitted(granularity, datasourceName string,
 		queries = []panel.Option{
 			panel.AddQuery(
 				query.PromQL(
-					promql.SetLabelMatchers(
-						"sort_desc(sum(rate(container_network_transmit_bytes_total{cluster=\"$cluster\",namespace=\"$namespace\"}[$__rate_interval])\n* on (cluster,namespace,pod) group_left ()\n    topk by (cluster,namespace,pod) (\n      1,\n      max by (cluster,namespace,pod) (kube_pod_info{host_network=\"false\"})\n    )\n* on (cluster,namespace,pod)\ngroup_left(workload,workload_type) namespace_workload_pod:kube_pod_owner:relabel{cluster=\"$cluster\",namespace=\"$namespace\", workload=~\".+\", workload_type=~\"$type\"}) by (workload))\n",
+					promql.SetLabelMatchersV2(
+						KubernetesCommonPanelQueries["KubernetesCurrentRateOfBytesTransmitted3"],
 						labelMatchers,
-					),
+					).Pretty(0),
 					dashboards.AddQueryDataSource(datasourceName),
 					query.SeriesNameFormat("{{workload}}"),
 				),
@@ -1414,10 +1415,10 @@ func KubernetesCurrentRateOfBytesTransmitted(granularity, datasourceName string,
 		queries = []panel.Option{
 			panel.AddQuery(
 				query.PromQL(
-					promql.SetLabelMatchers(
-						"sort_desc(sum(rate(container_network_transmit_bytes_total{"+GetCAdvisorMatcher()+", cluster=\"$cluster\",namespace=~\"$namespace\"}[$__rate_interval])\n* on (namespace,pod)\ngroup_left(workload,workload_type) namespace_workload_pod:kube_pod_owner:relabel{cluster=\"$cluster\",namespace=~\"$namespace\", workload=~\"$workload\", workload_type=~\"$type\"}) by (pod))\n",
+					promql.SetLabelMatchersV2(
+						KubernetesCommonPanelQueries["KubernetesCurrentRateOfBytesTransmitted4"],
 						labelMatchers,
-					),
+					).Pretty(0),
 					dashboards.AddQueryDataSource(datasourceName),
 					query.SeriesNameFormat("{{pod}}"),
 				),
@@ -1428,10 +1429,10 @@ func KubernetesCurrentRateOfBytesTransmitted(granularity, datasourceName string,
 		queries = []panel.Option{
 			panel.AddQuery(
 				query.PromQL(
-					promql.SetLabelMatchers(
-						"sum(rate(container_network_transmit_bytes_total{cluster=\"$cluster\",namespace=~\"$namespace\", pod=~\"$pod\"}[$__rate_interval]))",
+					promql.SetLabelMatchersV2(
+						KubernetesCommonPanelQueries["KubernetesCurrentRateOfBytesTransmitted5"],
 						labelMatchers,
-					),
+					).Pretty(0),
 					dashboards.AddQueryDataSource(datasourceName),
 					query.SeriesNameFormat("{{pod}}"),
 				),
@@ -1466,7 +1467,7 @@ func KubernetesCurrentRateOfBytesTransmitted(granularity, datasourceName string,
 	return panelgroup.AddPanel("Current Rate of Bytes Transmitted", panelOpts...)
 }
 
-func KubernetesAverageRateOfBytesReceived(granularity, datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
+func KubernetesAverageRateOfBytesReceived(granularity, datasourceName string, labelMatchers ...*labels.Matcher) panelgroup.Option {
 	var description string
 	var queries []panel.Option
 
@@ -1476,10 +1477,10 @@ func KubernetesAverageRateOfBytesReceived(granularity, datasourceName string, la
 		queries = []panel.Option{
 			panel.AddQuery(
 				query.PromQL(
-					promql.SetLabelMatchers(
-						"avg by (namespace) (\n    rate(container_network_receive_bytes_total{cluster=\"$cluster\",namespace!=\"\"}[$__rate_interval])\n  * on (cluster,namespace,pod) group_left ()\n    topk by (cluster,namespace,pod) (\n      1,\n      max by (cluster,namespace,pod) (kube_pod_info{host_network=\"false\"})\n    )\n)\n",
+					promql.SetLabelMatchersV2(
+						KubernetesCommonPanelQueries["KubernetesAverageRateOfBytesReceived1"],
 						labelMatchers,
-					),
+					).Pretty(0),
 					dashboards.AddQueryDataSource(datasourceName),
 					query.SeriesNameFormat("{{namespace}}"),
 				),
@@ -1491,10 +1492,10 @@ func KubernetesAverageRateOfBytesReceived(granularity, datasourceName string, la
 		queries = []panel.Option{
 			panel.AddQuery(
 				query.PromQL(
-					promql.SetLabelMatchers(
-						"sort_desc(avg(rate(container_network_receive_bytes_total{"+GetCAdvisorMatcher()+", cluster=\"$cluster\",namespace=~\"$namespace\"}[$__rate_interval])\n* on (namespace,pod)\ngroup_left(workload,workload_type) namespace_workload_pod:kube_pod_owner:relabel{cluster=\"$cluster\",namespace=~\"$namespace\", workload=~\"$workload\", workload_type=~\"$type\"}) by (pod))\n",
+					promql.SetLabelMatchersV2(
+						KubernetesCommonPanelQueries["KubernetesAverageRateOfBytesReceived2"],
 						labelMatchers,
-					),
+					).Pretty(0),
 					dashboards.AddQueryDataSource(datasourceName),
 					query.SeriesNameFormat("{{pod}}"),
 				),
@@ -1529,7 +1530,7 @@ func KubernetesAverageRateOfBytesReceived(granularity, datasourceName string, la
 	return panelgroup.AddPanel("Average Rate of Bytes Received", panelOpts...)
 }
 
-func KubernetesAverageRateOfBytesTransmitted(granularity, datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
+func KubernetesAverageRateOfBytesTransmitted(granularity, datasourceName string, labelMatchers ...*labels.Matcher) panelgroup.Option {
 	var description string
 	var queries []panel.Option
 
@@ -1539,10 +1540,10 @@ func KubernetesAverageRateOfBytesTransmitted(granularity, datasourceName string,
 		queries = []panel.Option{
 			panel.AddQuery(
 				query.PromQL(
-					promql.SetLabelMatchers(
-						"avg by (namespace) (\n    rate(container_network_transmit_bytes_total{cluster=\"$cluster\",namespace!=\"\"}[$__rate_interval])\n  * on (cluster,namespace,pod) group_left ()\n    topk by (cluster,namespace,pod) (\n      1,\n      max by (cluster,namespace,pod) (kube_pod_info{host_network=\"false\"})\n    )\n)\n",
+					promql.SetLabelMatchersV2(
+						KubernetesCommonPanelQueries["KubernetesAverageRateOfBytesTransmitted1"],
 						labelMatchers,
-					),
+					).Pretty(0),
 					dashboards.AddQueryDataSource(datasourceName),
 					query.SeriesNameFormat("{{namespace}}"),
 				),
@@ -1554,10 +1555,10 @@ func KubernetesAverageRateOfBytesTransmitted(granularity, datasourceName string,
 		queries = []panel.Option{
 			panel.AddQuery(
 				query.PromQL(
-					promql.SetLabelMatchers(
-						"sort_desc(avg(rate(container_network_transmit_bytes_total{"+GetCAdvisorMatcher()+", cluster=\"$cluster\",namespace=~\"$namespace\"}[$__rate_interval])\n* on (namespace,pod)\ngroup_left(workload,workload_type) namespace_workload_pod:kube_pod_owner:relabel{cluster=\"$cluster\",namespace=~\"$namespace\", workload=~\"$workload\", workload_type=~\"$type\"}) by (pod))\n",
+					promql.SetLabelMatchersV2(
+						KubernetesCommonPanelQueries["KubernetesAverageRateOfBytesTransmitted2"],
 						labelMatchers,
-					),
+					).Pretty(0),
 					dashboards.AddQueryDataSource(datasourceName),
 					query.SeriesNameFormat("{{pod}}"),
 				),

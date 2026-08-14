@@ -22,9 +22,10 @@ import (
 
 	listVar "github.com/perses/perses/go-sdk/variable/list-variable"
 	labelValuesVar "github.com/perses/plugins/prometheus/sdk/go/variable/label-values"
+	"github.com/prometheus/prometheus/model/labels"
 )
 
-func withNamespaceCurrentRateBytesGroup(datasource string, labelMatcher promql.LabelMatcher) dashboard.Option {
+func withNamespaceCurrentRateBytesGroup(datasource string, labelMatcher *labels.Matcher) dashboard.Option {
 	return dashboard.AddPanelGroup("Current Rate of Bytes",
 		panelgroup.PanelsPerLine(2),
 		panelgroup.PanelHeight(8),
@@ -33,7 +34,7 @@ func withNamespaceCurrentRateBytesGroup(datasource string, labelMatcher promql.L
 	)
 }
 
-func withNamespaceNetworkUsageGroup(datasource string, labelMatcher promql.LabelMatcher) dashboard.Option {
+func withNamespaceNetworkUsageGroup(datasource string, labelMatcher *labels.Matcher) dashboard.Option {
 	return dashboard.AddPanelGroup("Network Usage",
 		panelgroup.PanelsPerLine(1),
 		panelgroup.PanelHeight(10),
@@ -41,7 +42,7 @@ func withNamespaceNetworkUsageGroup(datasource string, labelMatcher promql.Label
 	)
 }
 
-func withNamespaceBandwidthGroup(datasource string, labelMatcher promql.LabelMatcher) dashboard.Option {
+func withNamespaceBandwidthGroup(datasource string, labelMatcher *labels.Matcher) dashboard.Option {
 	return dashboard.AddPanelGroup("Bandwidth",
 		panelgroup.PanelsPerLine(2),
 		panelgroup.PanelHeight(8),
@@ -50,7 +51,7 @@ func withNamespaceBandwidthGroup(datasource string, labelMatcher promql.LabelMat
 	)
 }
 
-func withNamespaceRateOfPacketsGroup(datasource string, labelMatcher promql.LabelMatcher) dashboard.Option {
+func withNamespaceRateOfPacketsGroup(datasource string, labelMatcher *labels.Matcher) dashboard.Option {
 	return dashboard.AddPanelGroup("Rate of Packets",
 		panelgroup.PanelsPerLine(2),
 		panelgroup.PanelHeight(8),
@@ -59,7 +60,7 @@ func withNamespaceRateOfPacketsGroup(datasource string, labelMatcher promql.Labe
 	)
 }
 
-func withNamespaceRateOfPacketsDroppedGroup(datasource string, labelMatcher promql.LabelMatcher) dashboard.Option {
+func withNamespaceRateOfPacketsDroppedGroup(datasource string, labelMatcher *labels.Matcher) dashboard.Option {
 	return dashboard.AddPanelGroup("Rate of Packets Dropped",
 		panelgroup.PanelsPerLine(2),
 		panelgroup.PanelHeight(8),
@@ -95,7 +96,7 @@ func BuildKubernetesNamespaceByPodOverview(project string, datasource string, cl
 		),
 	}
 
-	clusterLabelMatcher := dashboards.GetClusterLabelMatcher(clusterLabelName)
+	clusterLabelMatcher := dashboards.GetClusterLabelMatcherV2(clusterLabelName)
 
 	vars := defaultVars
 	if len(variableOverrides) > 0 {

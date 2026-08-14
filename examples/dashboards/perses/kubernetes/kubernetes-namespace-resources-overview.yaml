@@ -746,7 +746,9 @@ spec:
                                     name: prometheus-datasource
                                 query: |-
                                     sum by (pod) (
-                                      rate(container_network_receive_bytes_total{cluster="$cluster",namespace="$namespace"}[$__rate_interval])
+                                      rate(
+                                        container_network_receive_bytes_total{cluster="$cluster",namespace="$namespace"}[$__rate_interval]
+                                      )
                                     )
                                 seriesNameFormat: '{{pod}}'
         "6_1":
@@ -782,7 +784,9 @@ spec:
                                     name: prometheus-datasource
                                 query: |-
                                     sum by (pod) (
-                                      rate(container_network_transmit_bytes_total{cluster="$cluster",namespace="$namespace"}[$__rate_interval])
+                                      rate(
+                                        container_network_transmit_bytes_total{cluster="$cluster",namespace="$namespace"}[$__rate_interval]
+                                      )
                                     )
                                 seriesNameFormat: '{{pod}}'
         "7_0":
@@ -818,7 +822,9 @@ spec:
                                     name: prometheus-datasource
                                 query: |-
                                     sum by (pod) (
-                                      irate(container_network_receive_packets_total{cluster="$cluster",namespace="$namespace"}[$__rate_interval])
+                                      irate(
+                                        container_network_receive_packets_total{cluster="$cluster",namespace="$namespace"}[$__rate_interval]
+                                      )
                                     )
                                 seriesNameFormat: '{{pod}}'
         "7_1":

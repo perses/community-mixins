@@ -16,15 +16,15 @@ package networking
 import (
 	"github.com/perses/community-mixins/pkg/dashboards"
 	panels "github.com/perses/community-mixins/pkg/panels/kubernetes"
-	"github.com/perses/community-mixins/pkg/promql"
 	"github.com/perses/perses/go-sdk/dashboard"
 	panelgroup "github.com/perses/perses/go-sdk/panel-group"
 
 	listVar "github.com/perses/perses/go-sdk/variable/list-variable"
 	labelValuesVar "github.com/perses/plugins/prometheus/sdk/go/variable/label-values"
+	"github.com/prometheus/prometheus/model/labels"
 )
 
-func withClusterCurrentRateBytesGroup(datasource string, labelMatcher promql.LabelMatcher) dashboard.Option {
+func withClusterCurrentRateBytesGroup(datasource string, labelMatcher *labels.Matcher) dashboard.Option {
 	return dashboard.AddPanelGroup("Current Rate of Bytes",
 		panelgroup.PanelsPerLine(2),
 		panelgroup.PanelHeight(8),
@@ -33,7 +33,7 @@ func withClusterCurrentRateBytesGroup(datasource string, labelMatcher promql.Lab
 	)
 }
 
-func withClusterNetworkingCurrentStatusGroup(datasource string, labelMatcher promql.LabelMatcher) dashboard.Option {
+func withClusterNetworkingCurrentStatusGroup(datasource string, labelMatcher *labels.Matcher) dashboard.Option {
 	return dashboard.AddPanelGroup("Current Status",
 		panelgroup.PanelsPerLine(1),
 		panelgroup.PanelHeight(10),
@@ -41,7 +41,7 @@ func withClusterNetworkingCurrentStatusGroup(datasource string, labelMatcher pro
 	)
 }
 
-func withClusterAvgRateOfBytesGroup(datasource string, labelMatcher promql.LabelMatcher) dashboard.Option {
+func withClusterAvgRateOfBytesGroup(datasource string, labelMatcher *labels.Matcher) dashboard.Option {
 	return dashboard.AddPanelGroup("Average Rate of Bytes",
 		panelgroup.PanelsPerLine(2),
 		panelgroup.PanelHeight(8),
@@ -50,7 +50,7 @@ func withClusterAvgRateOfBytesGroup(datasource string, labelMatcher promql.Label
 	)
 }
 
-func withClusterBandwidthGroup(datasource string, labelMatcher promql.LabelMatcher) dashboard.Option {
+func withClusterBandwidthGroup(datasource string, labelMatcher *labels.Matcher) dashboard.Option {
 	return dashboard.AddPanelGroup("Bandwidth",
 		panelgroup.PanelsPerLine(2),
 		panelgroup.PanelHeight(8),
@@ -59,7 +59,7 @@ func withClusterBandwidthGroup(datasource string, labelMatcher promql.LabelMatch
 	)
 }
 
-func withClusterRateOfPacketsGroup(datasource string, labelMatcher promql.LabelMatcher) dashboard.Option {
+func withClusterRateOfPacketsGroup(datasource string, labelMatcher *labels.Matcher) dashboard.Option {
 	return dashboard.AddPanelGroup("Rate of Packets",
 		panelgroup.PanelsPerLine(2),
 		panelgroup.PanelHeight(8),
@@ -68,7 +68,7 @@ func withClusterRateOfPacketsGroup(datasource string, labelMatcher promql.LabelM
 	)
 }
 
-func withClusterRateOfPacketsDroppedGroup(datasource string, labelMatcher promql.LabelMatcher) dashboard.Option {
+func withClusterRateOfPacketsDroppedGroup(datasource string, labelMatcher *labels.Matcher) dashboard.Option {
 	return dashboard.AddPanelGroup("Rate of Packets Dropped",
 		panelgroup.PanelsPerLine(2),
 		panelgroup.PanelHeight(8),
@@ -77,7 +77,7 @@ func withClusterRateOfPacketsDroppedGroup(datasource string, labelMatcher promql
 	)
 }
 
-func withClusterTCPRetransmitRateGroup(datasource string, labelMatcher promql.LabelMatcher) dashboard.Option {
+func withClusterTCPRetransmitRateGroup(datasource string, labelMatcher *labels.Matcher) dashboard.Option {
 	return dashboard.AddPanelGroup("TCP Retransmit Rate",
 		panelgroup.PanelsPerLine(2),
 		panelgroup.PanelHeight(8),
@@ -98,7 +98,7 @@ func BuildKubernetesClusterOverview(project string, datasource string, clusterLa
 			),
 		),
 	}
-	clusterLabelMatcher := dashboards.GetClusterLabelMatcher(clusterLabelName)
+	clusterLabelMatcher := dashboards.GetClusterLabelMatcherV2(clusterLabelName)
 
 	vars := defaultVars
 	if len(variableOverrides) > 0 {
