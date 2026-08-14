@@ -23,9 +23,10 @@ import (
 	commonSdk "github.com/perses/perses/go-sdk/common"
 	tablePanel "github.com/perses/plugins/table/sdk/go"
 	timeSeriesPanel "github.com/perses/plugins/timeserieschart/sdk/go"
+	"github.com/prometheus/prometheus/model/labels"
 )
 
-func ClusterTCPRetransmitRate(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
+func ClusterTCPRetransmitRate(datasourceName string, labelMatchers ...*labels.Matcher) panelgroup.Option {
 	return panelgroup.AddPanel("Rate of TCP Retransmits out of all sent segments",
 		panel.Description("Shows the rate of TCP retransmits out of all sent segments in a cluster."),
 		timeSeriesPanel.Chart(
@@ -49,10 +50,10 @@ func ClusterTCPRetransmitRate(datasourceName string, labelMatchers ...promql.Lab
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchers(
-					"sum by (instance) (\n    rate(node_netstat_Tcp_RetransSegs{cluster=\"$cluster\"}[$__rate_interval]) / rate(node_netstat_Tcp_OutSegs{cluster=\"$cluster\"}[$__rate_interval])\n  * on (cluster,namespace,pod) group_left ()\n    topk by (cluster,namespace,pod) (\n      1,\n      max by (cluster,namespace,pod) (kube_pod_info{host_network=\"false\"})\n    )\n)\n",
+				promql.SetLabelMatchersV2(
+					KubernetesCommonPanelQueries["ClusterTCPRetransmitRate"],
 					labelMatchers,
-				),
+				).Pretty(0),
 				dashboards.AddQueryDataSource(datasourceName),
 				query.SeriesNameFormat("{{instance}}"),
 			),
@@ -60,7 +61,7 @@ func ClusterTCPRetransmitRate(datasourceName string, labelMatchers ...promql.Lab
 	)
 }
 
-func ClusterTCPSYNRetransmitRate(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
+func ClusterTCPSYNRetransmitRate(datasourceName string, labelMatchers ...*labels.Matcher) panelgroup.Option {
 	return panelgroup.AddPanel("Rate of TCP SYN Retransmits out of all sent segments",
 		panel.Description("Shows the rate of TCP SYN retransmits out of all sent segments in a cluster."),
 		timeSeriesPanel.Chart(
@@ -84,10 +85,10 @@ func ClusterTCPSYNRetransmitRate(datasourceName string, labelMatchers ...promql.
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchers(
-					"sum by (instance) (\n    rate(node_netstat_TcpExt_TCPSynRetrans{cluster=\"$cluster\"}[$__rate_interval]) / rate(node_netstat_Tcp_RetransSegs{cluster=\"$cluster\"}[$__rate_interval])\n  * on (cluster,namespace,pod) group_left ()\n    topk by (cluster,namespace,pod) (\n      1,\n      max by (cluster,namespace,pod) (kube_pod_info{host_network=\"false\"})\n    )\n)\n",
+				promql.SetLabelMatchersV2(
+					KubernetesCommonPanelQueries["ClusterTCPSYNRetransmitRate"],
 					labelMatchers,
-				),
+				).Pretty(0),
 				dashboards.AddQueryDataSource(datasourceName),
 				query.SeriesNameFormat("{{instance}}"),
 			),
@@ -95,7 +96,7 @@ func ClusterTCPSYNRetransmitRate(datasourceName string, labelMatchers ...promql.
 	)
 }
 
-func ClusterNetworkingCurrentStatus(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
+func ClusterNetworkingCurrentStatus(datasourceName string, labelMatchers ...*labels.Matcher) panelgroup.Option {
 	return panelgroup.AddPanel("Current Status",
 		panel.Description("Shows the current network status of the cluster by namespace."),
 		tablePanel.Table(
@@ -185,71 +186,73 @@ func ClusterNetworkingCurrentStatus(datasourceName string, labelMatchers ...prom
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchers(
-					"sum by (namespace) (\n    rate(container_network_receive_bytes_total{cluster=\"$cluster\",namespace!=\"\"}[$__rate_interval])\n  * on (cluster,namespace,pod) group_left ()\n    topk by (cluster,namespace,pod) (\n      1,\n      max by (cluster,namespace,pod) (kube_pod_info{host_network=\"false\"})\n    )\n)\n",
+				promql.SetLabelMatchersV2(
+					KubernetesCommonPanelQueries["ClusterNetworkingCurrentStatus1"],
 					labelMatchers,
-				),
+				).Pretty(0),
 				dashboards.AddQueryDataSource(datasourceName),
 			),
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchers(
-					"sum by (namespace) (\n    rate(container_network_transmit_bytes_total{cluster=\"$cluster\",namespace!=\"\"}[$__rate_interval])\n  * on (cluster,namespace,pod) group_left ()\n    topk by (cluster,namespace,pod) (\n      1,\n      max by (cluster,namespace,pod) (kube_pod_info{host_network=\"false\"})\n    )\n)\n",
+				promql.SetLabelMatchersV2(
+					KubernetesCommonPanelQueries["ClusterNetworkingCurrentStatus2"],
 					labelMatchers,
-				),
+				).Pretty(0),
 				dashboards.AddQueryDataSource(datasourceName),
 			),
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchers(
-					"avg by (namespace) (\n    rate(container_network_receive_bytes_total{cluster=\"$cluster\",namespace!=\"\"}[$__rate_interval])\n  * on (cluster,namespace,pod) group_left ()\n    topk by (cluster,namespace,pod) (\n      1,\n      max by (cluster,namespace,pod) (kube_pod_info{host_network=\"false\"})\n    )\n)\n",
+				promql.SetLabelMatchersV2(
+					KubernetesCommonPanelQueries["ClusterNetworkingCurrentStatus3"],
 					labelMatchers,
-				),
+				).Pretty(0),
 				dashboards.AddQueryDataSource(datasourceName),
 			),
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchers(
-					"avg by (namespace) (\n    rate(container_network_transmit_bytes_total{cluster=\"$cluster\",namespace!=\"\"}[$__rate_interval])\n  * on (cluster,namespace,pod) group_left ()\n    topk by (cluster,namespace,pod) (\n      1,\n      max by (cluster,namespace,pod) (kube_pod_info{host_network=\"false\"})\n    )\n)\n",
+				promql.SetLabelMatchersV2(
+					KubernetesCommonPanelQueries["ClusterNetworkingCurrentStatus4"],
 					labelMatchers,
-				),
+				).Pretty(0),
 				dashboards.AddQueryDataSource(datasourceName),
 			),
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchers(
-					"sum by (namespace) (\n    rate(container_network_receive_packets_total{cluster=\"$cluster\",namespace!=\"\"}[$__rate_interval])\n  * on (cluster,namespace,pod) group_left ()\n    topk by (cluster,namespace,pod) (\n      1,\n      max by (cluster,namespace,pod) (kube_pod_info{host_network=\"false\"})\n    )\n)\n",
+				promql.SetLabelMatchersV2(
+					KubernetesCommonPanelQueries["ClusterNetworkingCurrentStatus5"],
 					labelMatchers,
-				),
+				).Pretty(0),
 				dashboards.AddQueryDataSource(datasourceName),
 			),
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchers(
-					"sum by (namespace) (\n    rate(container_network_transmit_packets_total{cluster=\"$cluster\",namespace!=\"\"}[$__rate_interval])\n  * on (cluster,namespace,pod) group_left ()\n    topk by (cluster,namespace,pod) (\n      1,\n      max by (cluster,namespace,pod) (kube_pod_info{host_network=\"false\"})\n    )\n)\n",
+				promql.SetLabelMatchersV2(
+					KubernetesCommonPanelQueries["ClusterNetworkingCurrentStatus6"],
 					labelMatchers,
-				),
+				).Pretty(0),
 				dashboards.AddQueryDataSource(datasourceName),
 			),
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchers(
-					"sum by (namespace) (\n    rate(container_network_receive_packets_dropped_total{cluster=\"$cluster\",namespace!=\"\"}[$__rate_interval])\n  * on (cluster,namespace,pod) group_left ()\n    topk by (cluster,namespace,pod) (\n      1,\n      max by (cluster,namespace,pod) (kube_pod_info{host_network=\"false\"})\n    )\n)\n", labelMatchers,
-				),
+				promql.SetLabelMatchersV2(
+					KubernetesCommonPanelQueries["ClusterNetworkingCurrentStatus7"],
+					labelMatchers,
+				).Pretty(0),
 				dashboards.AddQueryDataSource(datasourceName),
 			),
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchers(
-					"sum by (namespace) (\n    rate(container_network_transmit_packets_dropped_total{cluster=\"$cluster\",namespace!=\"\"}[$__rate_interval])\n  * on (cluster,namespace,pod) group_left ()\n    topk by (cluster,namespace,pod) (\n      1,\n      max by (cluster,namespace,pod) (kube_pod_info{host_network=\"false\"})\n    )\n)\n", labelMatchers,
-				),
+				promql.SetLabelMatchersV2(
+					KubernetesCommonPanelQueries["ClusterNetworkingCurrentStatus8"],
+					labelMatchers,
+				).Pretty(0),
 				dashboards.AddQueryDataSource(datasourceName),
 			),
 		),

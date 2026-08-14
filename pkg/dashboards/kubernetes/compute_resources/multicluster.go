@@ -16,12 +16,12 @@ package compute_resources
 import (
 	"github.com/perses/community-mixins/pkg/dashboards"
 	panels "github.com/perses/community-mixins/pkg/panels/kubernetes"
-	"github.com/perses/community-mixins/pkg/promql"
 	"github.com/perses/perses/go-sdk/dashboard"
 	panelgroup "github.com/perses/perses/go-sdk/panel-group"
+	"github.com/prometheus/prometheus/model/labels"
 )
 
-func withMultiClusterStatsGroup(datasource string, labelMatcher promql.LabelMatcher) dashboard.Option {
+func withMultiClusterStatsGroup(datasource string, labelMatcher *labels.Matcher) dashboard.Option {
 	return dashboard.AddPanelGroup("Multi-Cluster Stats",
 		panelgroup.PanelsPerLine(6),
 		panelgroup.PanelHeight(4),
@@ -34,7 +34,7 @@ func withMultiClusterStatsGroup(datasource string, labelMatcher promql.LabelMatc
 	)
 }
 
-func withMultiClusterCPUUsageGroup(datasource string, labelMatcher promql.LabelMatcher) dashboard.Option {
+func withMultiClusterCPUUsageGroup(datasource string, labelMatcher *labels.Matcher) dashboard.Option {
 	return dashboard.AddPanelGroup("Multi-Cluster CPU Usage",
 		panelgroup.PanelsPerLine(1),
 		panelgroup.PanelHeight(8),
@@ -42,7 +42,7 @@ func withMultiClusterCPUUsageGroup(datasource string, labelMatcher promql.LabelM
 	)
 }
 
-func withMultiClusterCPUUsageQuotaGroup(datasource string, labelMatcher promql.LabelMatcher) dashboard.Option {
+func withMultiClusterCPUUsageQuotaGroup(datasource string, labelMatcher *labels.Matcher) dashboard.Option {
 	return dashboard.AddPanelGroup("Multi-Cluster CPU Usage Quota",
 		panelgroup.PanelsPerLine(1),
 		panelgroup.PanelHeight(10),
@@ -50,7 +50,7 @@ func withMultiClusterCPUUsageQuotaGroup(datasource string, labelMatcher promql.L
 	)
 }
 
-func withMultiClusterMemoryUsageGroup(datasource string, labelMatcher promql.LabelMatcher) dashboard.Option {
+func withMultiClusterMemoryUsageGroup(datasource string, labelMatcher *labels.Matcher) dashboard.Option {
 	return dashboard.AddPanelGroup("Multi-Cluster Memory Usage",
 		panelgroup.PanelsPerLine(1),
 		panelgroup.PanelHeight(8),
@@ -58,7 +58,7 @@ func withMultiClusterMemoryUsageGroup(datasource string, labelMatcher promql.Lab
 	)
 }
 
-func withMultiClusterMemoryUsageQuotaGroup(datasource string, labelMatcher promql.LabelMatcher) dashboard.Option {
+func withMultiClusterMemoryUsageQuotaGroup(datasource string, labelMatcher *labels.Matcher) dashboard.Option {
 	return dashboard.AddPanelGroup("Multi-Cluster Memory Usage Quota",
 		panelgroup.PanelsPerLine(1),
 		panelgroup.PanelHeight(10),
@@ -67,7 +67,7 @@ func withMultiClusterMemoryUsageQuotaGroup(datasource string, labelMatcher promq
 }
 
 func BuildKubernetesMultiClusterOverview(project string, datasource string, clusterLabelName string) dashboards.DashboardResult {
-	clusterLabelMatcher := dashboards.GetClusterLabelMatcher(clusterLabelName)
+	clusterLabelMatcher := dashboards.GetClusterLabelMatcherV2(clusterLabelName)
 	return dashboards.NewDashboardResult(
 		dashboard.New("kubernetes-multi-cluster-resources-overview",
 			dashboard.ProjectName(project),

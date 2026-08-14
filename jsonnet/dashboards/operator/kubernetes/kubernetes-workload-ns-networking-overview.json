@@ -135,7 +135,7 @@
                         "kind": "PrometheusDatasource",
                         "name": "prometheus-datasource"
                       },
-                      "query": "sort_desc(\n  sum by (workload) (\n        rate(container_network_receive_bytes_total{cluster=\"$cluster\",namespace=\"$namespace\"}[$__rate_interval])\n      * on (cluster, namespace, pod) group_left ()\n        topk by (cluster, namespace, pod) (\n          1,\n          max by (cluster, namespace, pod) (kube_pod_info{host_network=\"false\"})\n        )\n    * on (cluster, namespace, pod) group_left (workload, workload_type)\n      namespace_workload_pod:kube_pod_owner:relabel{cluster=\"$cluster\",namespace=\"$namespace\",workload=~\".+\",workload_type=~\"$type\"}\n  )\n)",
+                      "query": "sort_desc(\n  sum by (workload) (\n        rate(\n          container_network_receive_bytes_total{cluster=\"$cluster\",namespace=\"$namespace\"}[$__rate_interval]\n        )\n      * on (cluster, namespace, pod) group_left ()\n        topk by (cluster, namespace, pod) (\n          1,\n          max by (cluster, namespace, pod) (kube_pod_info{host_network=\"false\"})\n        )\n    * on (cluster, namespace, pod) group_left (workload, workload_type)\n      namespace_workload_pod:kube_pod_owner:relabel{cluster=\"$cluster\",namespace=\"$namespace\",workload=~\".+\",workload_type=~\"$type\"}\n  )\n)",
                       "seriesNameFormat": "{{workload}}"
                     }
                   }
@@ -185,7 +185,7 @@
                         "kind": "PrometheusDatasource",
                         "name": "prometheus-datasource"
                       },
-                      "query": "sort_desc(\n  sum by (workload) (\n        rate(container_network_transmit_bytes_total{cluster=\"$cluster\",namespace=\"$namespace\"}[$__rate_interval])\n      * on (cluster, namespace, pod) group_left ()\n        topk by (cluster, namespace, pod) (\n          1,\n          max by (cluster, namespace, pod) (kube_pod_info{host_network=\"false\"})\n        )\n    * on (cluster, namespace, pod) group_left (workload, workload_type)\n      namespace_workload_pod:kube_pod_owner:relabel{cluster=\"$cluster\",namespace=\"$namespace\",workload=~\".+\",workload_type=~\"$type\"}\n  )\n)",
+                      "query": "sort_desc(\n  sum by (workload) (\n        rate(\n          container_network_transmit_bytes_total{cluster=\"$cluster\",namespace=\"$namespace\"}[$__rate_interval]\n        )\n      * on (cluster, namespace, pod) group_left ()\n        topk by (cluster, namespace, pod) (\n          1,\n          max by (cluster, namespace, pod) (kube_pod_info{host_network=\"false\"})\n        )\n    * on (cluster, namespace, pod) group_left (workload, workload_type)\n      namespace_workload_pod:kube_pod_owner:relabel{cluster=\"$cluster\",namespace=\"$namespace\",workload=~\".+\",workload_type=~\"$type\"}\n  )\n)",
                       "seriesNameFormat": "{{workload}}"
                     }
                   }
@@ -303,7 +303,7 @@
                         "kind": "PrometheusDatasource",
                         "name": "prometheus-datasource"
                       },
-                      "query": "sort_desc(\n  sum by (workload, workload_type) (\n        rate(container_network_receive_bytes_total{cluster=\"$cluster\",namespace=\"$namespace\"}[$__rate_interval])\n      * on (namespace, pod)\n        kube_pod_info{cluster=\"$cluster\",host_network=\"false\",namespace=\"$namespace\"}\n    * on (namespace, pod) group_left (workload, workload_type)\n      namespace_workload_pod:kube_pod_owner:relabel{cluster=\"$cluster\",namespace=\"$namespace\",workload=~\".+\",workload_type=~\"$type\"}\n  )\n)"
+                      "query": "sort_desc(\n  sum by (workload, workload_type) (\n        rate(\n          container_network_receive_bytes_total{cluster=\"$cluster\",namespace=\"$namespace\"}[$__rate_interval]\n        )\n      * on (namespace, pod)\n        kube_pod_info{cluster=\"$cluster\",host_network=\"false\",namespace=\"$namespace\"}\n    * on (namespace, pod) group_left (workload, workload_type)\n      namespace_workload_pod:kube_pod_owner:relabel{cluster=\"$cluster\",namespace=\"$namespace\",workload=~\".+\",workload_type=~\"$type\"}\n  )\n)"
                     }
                   }
                 }
@@ -318,7 +318,7 @@
                         "kind": "PrometheusDatasource",
                         "name": "prometheus-datasource"
                       },
-                      "query": "sort_desc(\n  sum by (workload, workload_type) (\n        rate(container_network_transmit_bytes_total{cluster=\"$cluster\",namespace=\"$namespace\"}[$__rate_interval])\n      * on (namespace, pod)\n        kube_pod_info{cluster=\"$cluster\",host_network=\"false\",namespace=\"$namespace\"}\n    * on (namespace, pod) group_left (workload, workload_type)\n      namespace_workload_pod:kube_pod_owner:relabel{cluster=\"$cluster\",namespace=\"$namespace\",workload=~\".+\",workload_type=~\"$type\"}\n  )\n)"
+                      "query": "sort_desc(\n  sum by (workload, workload_type) (\n        rate(\n          container_network_transmit_bytes_total{cluster=\"$cluster\",namespace=\"$namespace\"}[$__rate_interval]\n        )\n      * on (namespace, pod)\n        kube_pod_info{cluster=\"$cluster\",host_network=\"false\",namespace=\"$namespace\"}\n    * on (namespace, pod) group_left (workload, workload_type)\n      namespace_workload_pod:kube_pod_owner:relabel{cluster=\"$cluster\",namespace=\"$namespace\",workload=~\".+\",workload_type=~\"$type\"}\n  )\n)"
                     }
                   }
                 }
@@ -333,7 +333,7 @@
                         "kind": "PrometheusDatasource",
                         "name": "prometheus-datasource"
                       },
-                      "query": "sort_desc(\n  avg by (workload, workload_type) (\n        rate(container_network_receive_bytes_total{cluster=\"$cluster\",namespace=\"$namespace\"}[$__rate_interval])\n      * on (namespace, pod)\n        kube_pod_info{cluster=\"$cluster\",host_network=\"false\",namespace=\"$namespace\"}\n    * on (namespace, pod) group_left (workload, workload_type)\n      namespace_workload_pod:kube_pod_owner:relabel{cluster=\"$cluster\",namespace=\"$namespace\",workload=~\".+\",workload_type=~\"$type\"}\n  )\n)"
+                      "query": "sort_desc(\n  avg by (workload, workload_type) (\n        rate(\n          container_network_receive_bytes_total{cluster=\"$cluster\",namespace=\"$namespace\"}[$__rate_interval]\n        )\n      * on (namespace, pod)\n        kube_pod_info{cluster=\"$cluster\",host_network=\"false\",namespace=\"$namespace\"}\n    * on (namespace, pod) group_left (workload, workload_type)\n      namespace_workload_pod:kube_pod_owner:relabel{cluster=\"$cluster\",namespace=\"$namespace\",workload=~\".+\",workload_type=~\"$type\"}\n  )\n)"
                     }
                   }
                 }
@@ -348,7 +348,7 @@
                         "kind": "PrometheusDatasource",
                         "name": "prometheus-datasource"
                       },
-                      "query": "sort_desc(\n  avg by (workload, workload_type) (\n        rate(container_network_transmit_bytes_total{cluster=\"$cluster\",namespace=\"$namespace\"}[$__rate_interval])\n      * on (namespace, pod)\n        kube_pod_info{cluster=\"$cluster\",host_network=\"false\",namespace=\"$namespace\"}\n    * on (namespace, pod) group_left (workload, workload_type)\n      namespace_workload_pod:kube_pod_owner:relabel{cluster=\"$cluster\",namespace=\"$namespace\",workload=~\".+\",workload_type=~\"$type\"}\n  )\n)"
+                      "query": "sort_desc(\n  avg by (workload, workload_type) (\n        rate(\n          container_network_transmit_bytes_total{cluster=\"$cluster\",namespace=\"$namespace\"}[$__rate_interval]\n        )\n      * on (namespace, pod)\n        kube_pod_info{cluster=\"$cluster\",host_network=\"false\",namespace=\"$namespace\"}\n    * on (namespace, pod) group_left (workload, workload_type)\n      namespace_workload_pod:kube_pod_owner:relabel{cluster=\"$cluster\",namespace=\"$namespace\",workload=~\".+\",workload_type=~\"$type\"}\n  )\n)"
                     }
                   }
                 }
@@ -363,7 +363,7 @@
                         "kind": "PrometheusDatasource",
                         "name": "prometheus-datasource"
                       },
-                      "query": "sort_desc(\n  sum by (workload, workload_type) (\n        rate(container_network_receive_packets_total{cluster=\"$cluster\",namespace=\"$namespace\"}[$__rate_interval])\n      * on (namespace, pod)\n        kube_pod_info{cluster=\"$cluster\",host_network=\"false\",namespace=\"$namespace\"}\n    * on (namespace, pod) group_left (workload, workload_type)\n      namespace_workload_pod:kube_pod_owner:relabel{cluster=\"$cluster\",namespace=\"$namespace\",workload=~\".+\",workload_type=~\"$type\"}\n  )\n)"
+                      "query": "sort_desc(\n  sum by (workload, workload_type) (\n        rate(\n          container_network_receive_packets_total{cluster=\"$cluster\",namespace=\"$namespace\"}[$__rate_interval]\n        )\n      * on (namespace, pod)\n        kube_pod_info{cluster=\"$cluster\",host_network=\"false\",namespace=\"$namespace\"}\n    * on (namespace, pod) group_left (workload, workload_type)\n      namespace_workload_pod:kube_pod_owner:relabel{cluster=\"$cluster\",namespace=\"$namespace\",workload=~\".+\",workload_type=~\"$type\"}\n  )\n)"
                     }
                   }
                 }
@@ -378,7 +378,7 @@
                         "kind": "PrometheusDatasource",
                         "name": "prometheus-datasource"
                       },
-                      "query": "sort_desc(\n  sum by (workload, workload_type) (\n        rate(container_network_transmit_packets_total{cluster=\"$cluster\",namespace=\"$namespace\"}[$__rate_interval])\n      * on (namespace, pod)\n        kube_pod_info{cluster=\"$cluster\",host_network=\"false\",namespace=\"$namespace\"}\n    * on (namespace, pod) group_left (workload, workload_type)\n      namespace_workload_pod:kube_pod_owner:relabel{cluster=\"$cluster\",namespace=\"$namespace\",workload=~\".+\",workload_type=~\"$type\"}\n  )\n)"
+                      "query": "sort_desc(\n  sum by (workload, workload_type) (\n        rate(\n          container_network_transmit_packets_total{cluster=\"$cluster\",namespace=\"$namespace\"}[$__rate_interval]\n        )\n      * on (namespace, pod)\n        kube_pod_info{cluster=\"$cluster\",host_network=\"false\",namespace=\"$namespace\"}\n    * on (namespace, pod) group_left (workload, workload_type)\n      namespace_workload_pod:kube_pod_owner:relabel{cluster=\"$cluster\",namespace=\"$namespace\",workload=~\".+\",workload_type=~\"$type\"}\n  )\n)"
                     }
                   }
                 }
@@ -457,7 +457,7 @@
                         "kind": "PrometheusDatasource",
                         "name": "prometheus-datasource"
                       },
-                      "query": "sort_desc(\n  sum by (workload) (\n        rate(container_network_receive_bytes_total{cluster=\"$cluster\",namespace=\"$namespace\"}[$__rate_interval])\n      * on (cluster, namespace, pod) group_left ()\n        topk by (cluster, namespace, pod) (\n          1,\n          max by (cluster, namespace, pod) (kube_pod_info{host_network=\"false\"})\n        )\n    * on (cluster, namespace, pod) group_left (workload, workload_type)\n      namespace_workload_pod:kube_pod_owner:relabel{cluster=\"$cluster\",namespace=\"$namespace\",workload=~\".+\",workload_type=~\"$type\"}\n  )\n)",
+                      "query": "sort_desc(\n  sum by (workload) (\n        rate(\n          container_network_receive_bytes_total{cluster=\"$cluster\",namespace=\"$namespace\"}[$__rate_interval]\n        )\n      * on (cluster, namespace, pod) group_left ()\n        topk by (cluster, namespace, pod) (\n          1,\n          max by (cluster, namespace, pod) (kube_pod_info{host_network=\"false\"})\n        )\n    * on (cluster, namespace, pod) group_left (workload, workload_type)\n      namespace_workload_pod:kube_pod_owner:relabel{cluster=\"$cluster\",namespace=\"$namespace\",workload=~\".+\",workload_type=~\"$type\"}\n  )\n)",
                       "seriesNameFormat": "{{workload}}"
                     }
                   }
@@ -507,7 +507,7 @@
                         "kind": "PrometheusDatasource",
                         "name": "prometheus-datasource"
                       },
-                      "query": "sort_desc(\n  sum by (workload) (\n        rate(container_network_transmit_bytes_total{cluster=\"$cluster\",namespace=\"$namespace\"}[$__rate_interval])\n      * on (cluster, namespace, pod) group_left ()\n        topk by (cluster, namespace, pod) (\n          1,\n          max by (cluster, namespace, pod) (kube_pod_info{host_network=\"false\"})\n        )\n    * on (cluster, namespace, pod) group_left (workload, workload_type)\n      namespace_workload_pod:kube_pod_owner:relabel{cluster=\"$cluster\",namespace=\"$namespace\",workload=~\".+\",workload_type=~\"$type\"}\n  )\n)",
+                      "query": "sort_desc(\n  sum by (workload) (\n        rate(\n          container_network_transmit_bytes_total{cluster=\"$cluster\",namespace=\"$namespace\"}[$__rate_interval]\n        )\n      * on (cluster, namespace, pod) group_left ()\n        topk by (cluster, namespace, pod) (\n          1,\n          max by (cluster, namespace, pod) (kube_pod_info{host_network=\"false\"})\n        )\n    * on (cluster, namespace, pod) group_left (workload, workload_type)\n      namespace_workload_pod:kube_pod_owner:relabel{cluster=\"$cluster\",namespace=\"$namespace\",workload=~\".+\",workload_type=~\"$type\"}\n  )\n)",
                       "seriesNameFormat": "{{workload}}"
                     }
                   }
@@ -557,7 +557,7 @@
                         "kind": "PrometheusDatasource",
                         "name": "prometheus-datasource"
                       },
-                      "query": "sort_desc(\n  avg by (workload) (\n        rate(container_network_receive_bytes_total{cluster=\"$cluster\",namespace=\"$namespace\"}[$__rate_interval])\n      * on (cluster, namespace, pod) group_left ()\n        topk by (cluster, namespace, pod) (\n          1,\n          max by (cluster, namespace, pod) (kube_pod_info{host_network=\"false\"})\n        )\n    * on (cluster, namespace, pod) group_left (workload, workload_type)\n      namespace_workload_pod:kube_pod_owner:relabel{cluster=\"$cluster\",namespace=\"$namespace\",workload=~\".+\",workload_type=~\"$type\"}\n  )\n)",
+                      "query": "sort_desc(\n  avg by (workload) (\n        rate(\n          container_network_receive_bytes_total{cluster=\"$cluster\",namespace=\"$namespace\"}[$__rate_interval]\n        )\n      * on (cluster, namespace, pod) group_left ()\n        topk by (cluster, namespace, pod) (\n          1,\n          max by (cluster, namespace, pod) (kube_pod_info{host_network=\"false\"})\n        )\n    * on (cluster, namespace, pod) group_left (workload, workload_type)\n      namespace_workload_pod:kube_pod_owner:relabel{cluster=\"$cluster\",namespace=\"$namespace\",workload=~\".+\",workload_type=~\"$type\"}\n  )\n)",
                       "seriesNameFormat": "{{workload}}"
                     }
                   }
@@ -607,7 +607,7 @@
                         "kind": "PrometheusDatasource",
                         "name": "prometheus-datasource"
                       },
-                      "query": "sort_desc(\n  avg by (workload) (\n        rate(container_network_transmit_bytes_total{cluster=\"$cluster\",namespace=\"$namespace\"}[$__rate_interval])\n      * on (cluster, namespace, pod) group_left ()\n        topk by (cluster, namespace, pod) (\n          1,\n          max by (cluster, namespace, pod) (kube_pod_info{host_network=\"false\"})\n        )\n    * on (cluster, namespace, pod) group_left (workload, workload_type)\n      namespace_workload_pod:kube_pod_owner:relabel{cluster=\"$cluster\",namespace=\"$namespace\",workload=~\".+\",workload_type=~\"$type\"}\n  )\n)",
+                      "query": "sort_desc(\n  avg by (workload) (\n        rate(\n          container_network_transmit_bytes_total{cluster=\"$cluster\",namespace=\"$namespace\"}[$__rate_interval]\n        )\n      * on (cluster, namespace, pod) group_left ()\n        topk by (cluster, namespace, pod) (\n          1,\n          max by (cluster, namespace, pod) (kube_pod_info{host_network=\"false\"})\n        )\n    * on (cluster, namespace, pod) group_left (workload, workload_type)\n      namespace_workload_pod:kube_pod_owner:relabel{cluster=\"$cluster\",namespace=\"$namespace\",workload=~\".+\",workload_type=~\"$type\"}\n  )\n)",
                       "seriesNameFormat": "{{workload}}"
                     }
                   }
@@ -657,7 +657,7 @@
                         "kind": "PrometheusDatasource",
                         "name": "prometheus-datasource"
                       },
-                      "query": "sort_desc(\n  sum by (workload) (\n        rate(container_network_receive_packets_total{cluster=\"$cluster\",namespace=\"$namespace\"}[$__rate_interval])\n      * on (cluster, namespace, pod) group_left ()\n        topk by (cluster, namespace, pod) (\n          1,\n          max by (cluster, namespace, pod) (kube_pod_info{host_network=\"false\"})\n        )\n    * on (cluster, namespace, pod) group_left (workload, workload_type)\n      namespace_workload_pod:kube_pod_owner:relabel{cluster=\"$cluster\",namespace=\"$namespace\",workload=~\".+\",workload_type=~\"$type\"}\n  )\n)",
+                      "query": "sort_desc(\n  sum by (workload) (\n        rate(\n          container_network_receive_packets_total{cluster=\"$cluster\",namespace=\"$namespace\"}[$__rate_interval]\n        )\n      * on (cluster, namespace, pod) group_left ()\n        topk by (cluster, namespace, pod) (\n          1,\n          max by (cluster, namespace, pod) (kube_pod_info{host_network=\"false\"})\n        )\n    * on (cluster, namespace, pod) group_left (workload, workload_type)\n      namespace_workload_pod:kube_pod_owner:relabel{cluster=\"$cluster\",namespace=\"$namespace\",workload=~\".+\",workload_type=~\"$type\"}\n  )\n)",
                       "seriesNameFormat": "{{workload}}"
                     }
                   }
@@ -707,7 +707,7 @@
                         "kind": "PrometheusDatasource",
                         "name": "prometheus-datasource"
                       },
-                      "query": "sort_desc(\n  sum by (workload) (\n        rate(container_network_transmit_packets_total{cluster=\"$cluster\",namespace=\"$namespace\"}[$__rate_interval])\n      * on (cluster, namespace, pod) group_left ()\n        topk by (cluster, namespace, pod) (\n          1,\n          max by (cluster, namespace, pod) (kube_pod_info{host_network=\"false\"})\n        )\n    * on (cluster, namespace, pod) group_left (workload, workload_type)\n      namespace_workload_pod:kube_pod_owner:relabel{cluster=\"$cluster\",namespace=\"$namespace\",workload=~\".+\",workload_type=~\"$type\"}\n  )\n)",
+                      "query": "sort_desc(\n  sum by (workload) (\n        rate(\n          container_network_transmit_packets_total{cluster=\"$cluster\",namespace=\"$namespace\"}[$__rate_interval]\n        )\n      * on (cluster, namespace, pod) group_left ()\n        topk by (cluster, namespace, pod) (\n          1,\n          max by (cluster, namespace, pod) (kube_pod_info{host_network=\"false\"})\n        )\n    * on (cluster, namespace, pod) group_left (workload, workload_type)\n      namespace_workload_pod:kube_pod_owner:relabel{cluster=\"$cluster\",namespace=\"$namespace\",workload=~\".+\",workload_type=~\"$type\"}\n  )\n)",
                       "seriesNameFormat": "{{workload}}"
                     }
                   }

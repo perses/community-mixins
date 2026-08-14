@@ -22,9 +22,10 @@ import (
 
 	listVar "github.com/perses/perses/go-sdk/variable/list-variable"
 	labelValuesVar "github.com/perses/plugins/prometheus/sdk/go/variable/label-values"
+	"github.com/prometheus/prometheus/model/labels"
 )
 
-func withPodCurrentRateOfBytesGroup(datasource string, labelMatcher promql.LabelMatcher) dashboard.Option {
+func withPodCurrentRateOfBytesGroup(datasource string, labelMatcher *labels.Matcher) dashboard.Option {
 	return dashboard.AddPanelGroup("Current Rate of Bytes",
 		panelgroup.PanelsPerLine(2),
 		panelgroup.PanelHeight(8),
@@ -33,7 +34,7 @@ func withPodCurrentRateOfBytesGroup(datasource string, labelMatcher promql.Label
 	)
 }
 
-func withPodBandwidthGroup(datasource string, labelMatcher promql.LabelMatcher) dashboard.Option {
+func withPodBandwidthGroup(datasource string, labelMatcher *labels.Matcher) dashboard.Option {
 	return dashboard.AddPanelGroup("Bandwidth",
 		panelgroup.PanelsPerLine(2),
 		panelgroup.PanelHeight(8),
@@ -42,7 +43,7 @@ func withPodBandwidthGroup(datasource string, labelMatcher promql.LabelMatcher) 
 	)
 }
 
-func withPodRateOfPacketsGroup(datasource string, labelMatcher promql.LabelMatcher) dashboard.Option {
+func withPodRateOfPacketsGroup(datasource string, labelMatcher *labels.Matcher) dashboard.Option {
 	return dashboard.AddPanelGroup("Rate of Packets",
 		panelgroup.PanelsPerLine(2),
 		panelgroup.PanelHeight(8),
@@ -51,7 +52,7 @@ func withPodRateOfPacketsGroup(datasource string, labelMatcher promql.LabelMatch
 	)
 }
 
-func withPodRateOfPacketsDroppedGroup(datasource string, labelMatcher promql.LabelMatcher) dashboard.Option {
+func withPodRateOfPacketsDroppedGroup(datasource string, labelMatcher *labels.Matcher) dashboard.Option {
 	return dashboard.AddPanelGroup("Rate of Packets Dropped",
 		panelgroup.PanelsPerLine(2),
 		panelgroup.PanelHeight(8),
@@ -103,7 +104,7 @@ func BuildKubernetesPodOverview(project string, datasource string, clusterLabelN
 			),
 		),
 	}
-	clusterLabelMatcher := dashboards.GetClusterLabelMatcher(clusterLabelName)
+	clusterLabelMatcher := dashboards.GetClusterLabelMatcherV2(clusterLabelName)
 
 	vars := defaultVars
 	if len(variableOverrides) > 0 {

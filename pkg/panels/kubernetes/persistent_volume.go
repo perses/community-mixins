@@ -23,9 +23,10 @@ import (
 	commonSdk "github.com/perses/perses/go-sdk/common"
 	gaugePanel "github.com/perses/plugins/gaugechart/sdk/go"
 	timeSeriesPanel "github.com/perses/plugins/timeserieschart/sdk/go"
+	"github.com/prometheus/prometheus/model/labels"
 )
 
-func VolumeSpaceUsage(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
+func VolumeSpaceUsage(datasourceName string, labelMatchers ...*labels.Matcher) panelgroup.Option {
 	return panelgroup.AddPanel("Volume Space Usage",
 		panel.Description("Shows the space usage of persistent volume in a namespace by a PV claim."),
 		timeSeriesPanel.Chart(
@@ -50,20 +51,20 @@ func VolumeSpaceUsage(datasourceName string, labelMatchers ...promql.LabelMatche
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchers(
-					"(\n  sum without(instance, node) (topk(1, (kubelet_volume_stats_capacity_bytes{cluster=\"$cluster\", "+GetKubeletMatcher()+", namespace=\"$namespace\", persistentvolumeclaim=\"$volume\"})))\n  -\n  sum without(instance, node) (topk(1, (kubelet_volume_stats_available_bytes{cluster=\"$cluster\", "+GetKubeletMatcher()+", namespace=\"$namespace\", persistentvolumeclaim=\"$volume\"})))\n)\n",
+				promql.SetLabelMatchersV2(
+					KubernetesCommonPanelQueries["VolumeSpaceUsage1"],
 					labelMatchers,
-				),
+				).Pretty(0),
 				dashboards.AddQueryDataSource(datasourceName),
 				query.SeriesNameFormat("Used Space"),
 			),
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchers(
-					"sum without(instance, node) (topk(1, (kubelet_volume_stats_available_bytes{cluster=\"$cluster\", "+GetKubeletMatcher()+", namespace=\"$namespace\", persistentvolumeclaim=\"$volume\"})))\n",
+				promql.SetLabelMatchersV2(
+					KubernetesCommonPanelQueries["VolumeSpaceUsage2"],
 					labelMatchers,
-				),
+				).Pretty(0),
 				dashboards.AddQueryDataSource(datasourceName),
 				query.SeriesNameFormat("Free Space"),
 			),
@@ -71,7 +72,7 @@ func VolumeSpaceUsage(datasourceName string, labelMatchers ...promql.LabelMatche
 	)
 }
 
-func VolumeSpaceUsageGauge(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
+func VolumeSpaceUsageGauge(datasourceName string, labelMatchers ...*labels.Matcher) panelgroup.Option {
 	return panelgroup.AddPanel("Volume Space Usage",
 		panel.Description("Shows the space usage of persistent volume in a namespace by a PV claim."),
 		gaugePanel.Chart(
@@ -100,17 +101,17 @@ func VolumeSpaceUsageGauge(datasourceName string, labelMatchers ...promql.LabelM
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchers(
-					"max without(instance,node) (\n(\n  topk(1, kubelet_volume_stats_capacity_bytes{cluster=\"$cluster\", "+GetKubeletMatcher()+", namespace=\"$namespace\", persistentvolumeclaim=\"$volume\"})\n  -\n  topk(1, kubelet_volume_stats_available_bytes{cluster=\"$cluster\", "+GetKubeletMatcher()+", namespace=\"$namespace\", persistentvolumeclaim=\"$volume\"})\n)\n/\ntopk(1, kubelet_volume_stats_capacity_bytes{cluster=\"$cluster\", "+GetKubeletMatcher()+", namespace=\"$namespace\", persistentvolumeclaim=\"$volume\"})\n* 100)\n",
+				promql.SetLabelMatchersV2(
+					KubernetesCommonPanelQueries["VolumeSpaceUsageGauge"],
 					labelMatchers,
-				),
+				).Pretty(0),
 				dashboards.AddQueryDataSource(datasourceName),
 			),
 		),
 	)
 }
 
-func VolumeInodesUsage(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
+func VolumeInodesUsage(datasourceName string, labelMatchers ...*labels.Matcher) panelgroup.Option {
 	return panelgroup.AddPanel("Volume inodes Usage",
 		panel.Description("Shows the inodes usage of persistent volume in a namespace by a PV claim."),
 		timeSeriesPanel.Chart(
@@ -135,20 +136,20 @@ func VolumeInodesUsage(datasourceName string, labelMatchers ...promql.LabelMatch
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchers(
-					"sum without(instance, node) (topk(1, (kubelet_volume_stats_inodes_used{cluster=\"$cluster\", "+GetKubeletMatcher()+", namespace=\"$namespace\", persistentvolumeclaim=\"$volume\"})))",
+				promql.SetLabelMatchersV2(
+					KubernetesCommonPanelQueries["VolumeInodesUsage1"],
 					labelMatchers,
-				),
+				).Pretty(0),
 				dashboards.AddQueryDataSource(datasourceName),
 				query.SeriesNameFormat("Used inodes"),
 			),
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchers(
-					"(\n  sum without(instance, node) (topk(1, (kubelet_volume_stats_inodes{cluster=\"$cluster\", "+GetKubeletMatcher()+", namespace=\"$namespace\", persistentvolumeclaim=\"$volume\"})))\n  -\n  sum without(instance, node) (topk(1, (kubelet_volume_stats_inodes_used{cluster=\"$cluster\", "+GetKubeletMatcher()+", namespace=\"$namespace\", persistentvolumeclaim=\"$volume\"})))\n)\n",
+				promql.SetLabelMatchersV2(
+					KubernetesCommonPanelQueries["VolumeInodesUsage2"],
 					labelMatchers,
-				),
+				).Pretty(0),
 				dashboards.AddQueryDataSource(datasourceName),
 				query.SeriesNameFormat("Free inodes"),
 			),
@@ -156,7 +157,7 @@ func VolumeInodesUsage(datasourceName string, labelMatchers ...promql.LabelMatch
 	)
 }
 
-func VolumeInodesUsageGauge(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
+func VolumeInodesUsageGauge(datasourceName string, labelMatchers ...*labels.Matcher) panelgroup.Option {
 	return panelgroup.AddPanel("Volume inodes Usage",
 		panel.Description("Shows the inodes usage of persistent volume in a namespace by a PV claim."),
 		gaugePanel.Chart(
@@ -185,10 +186,10 @@ func VolumeInodesUsageGauge(datasourceName string, labelMatchers ...promql.Label
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchers(
-					"max without(instance,node) (\ntopk(1, kubelet_volume_stats_inodes_used{cluster=\"$cluster\", "+GetKubeletMatcher()+", namespace=\"$namespace\", persistentvolumeclaim=\"$volume\"})\n/\ntopk(1, kubelet_volume_stats_inodes{cluster=\"$cluster\", "+GetKubeletMatcher()+", namespace=\"$namespace\", persistentvolumeclaim=\"$volume\"})\n* 100)\n",
+				promql.SetLabelMatchersV2(
+					KubernetesCommonPanelQueries["VolumeInodesUsageGauge"],
 					labelMatchers,
-				),
+				).Pretty(0),
 				dashboards.AddQueryDataSource(datasourceName),
 			),
 		),

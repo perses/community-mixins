@@ -23,9 +23,10 @@ import (
 	commonSdk "github.com/perses/perses/go-sdk/common"
 	statPanel "github.com/perses/plugins/statchart/sdk/go"
 	timeSeriesPanel "github.com/perses/plugins/timeserieschart/sdk/go"
+	"github.com/prometheus/prometheus/model/labels"
 )
 
-func ControllerManagerUpStatus(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
+func ControllerManagerUpStatus(datasourceName string, labelMatchers ...*labels.Matcher) panelgroup.Option {
 	return panelgroup.AddPanel("Up",
 		panel.Description("Shows the status of the controller manager."),
 		statPanel.Chart(
@@ -37,17 +38,17 @@ func ControllerManagerUpStatus(datasourceName string, labelMatchers ...promql.La
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchers(
-					"sum(up{cluster=\"$cluster\", "+GetControllerManagerMatcher()+"})",
+				promql.SetLabelMatchersV2(
+					KubernetesCommonPanelQueries["ControllerManagerUpStatus"],
 					labelMatchers,
-				),
+				).Pretty(0),
 				dashboards.AddQueryDataSource(datasourceName),
 			),
 		),
 	)
 }
 
-func WorkQueueAddRate(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
+func WorkQueueAddRate(datasourceName string, labelMatchers ...*labels.Matcher) panelgroup.Option {
 	return panelgroup.AddPanel("Work Queue Add Rate",
 		panel.Description("Shows the rate of work queue add events."),
 		timeSeriesPanel.Chart(
@@ -71,10 +72,10 @@ func WorkQueueAddRate(datasourceName string, labelMatchers ...promql.LabelMatche
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchers(
-					"sum(rate(workqueue_adds_total{cluster=\"$cluster\", "+GetControllerManagerMatcher()+", instance=~\"$instance\"}[$__rate_interval])) by (cluster, instance, name)",
+				promql.SetLabelMatchersV2(
+					KubernetesCommonPanelQueries["WorkQueueAddRate"],
 					labelMatchers,
-				),
+				).Pretty(0),
 				dashboards.AddQueryDataSource(datasourceName),
 				query.SeriesNameFormat("{{cluster}} {{instance}} {{name}}"),
 			),
@@ -82,7 +83,7 @@ func WorkQueueAddRate(datasourceName string, labelMatchers ...promql.LabelMatche
 	)
 }
 
-func WorkQueueDepth(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
+func WorkQueueDepth(datasourceName string, labelMatchers ...*labels.Matcher) panelgroup.Option {
 	return panelgroup.AddPanel("Work Queue Depth",
 		panel.Description("Shows the depth of the work queue."),
 		timeSeriesPanel.Chart(
@@ -106,10 +107,10 @@ func WorkQueueDepth(datasourceName string, labelMatchers ...promql.LabelMatcher)
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchers(
-					"sum(rate(workqueue_depth{cluster=\"$cluster\", "+GetControllerManagerMatcher()+", instance=~\"$instance\"}[$__rate_interval])) by (cluster, instance, name)",
+				promql.SetLabelMatchersV2(
+					KubernetesCommonPanelQueries["WorkQueueDepth"],
 					labelMatchers,
-				),
+				).Pretty(0),
 				dashboards.AddQueryDataSource(datasourceName),
 				query.SeriesNameFormat("{{cluster}} {{instance}} {{name}}"),
 			),
@@ -117,7 +118,7 @@ func WorkQueueDepth(datasourceName string, labelMatchers ...promql.LabelMatcher)
 	)
 }
 
-func WorkQueueLatency(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
+func WorkQueueLatency(datasourceName string, labelMatchers ...*labels.Matcher) panelgroup.Option {
 	return panelgroup.AddPanel("Work Queue Latency",
 		panel.Description("Shows the 99th percentile latency of items queued in the work queue."),
 		timeSeriesPanel.Chart(
@@ -141,10 +142,10 @@ func WorkQueueLatency(datasourceName string, labelMatchers ...promql.LabelMatche
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchers(
-					"histogram_quantile(0.99, sum(rate(workqueue_queue_duration_seconds_bucket{cluster=\"$cluster\", "+GetControllerManagerMatcher()+", instance=~\"$instance\"}[$__rate_interval])) by (cluster, instance, name, le))",
+				promql.SetLabelMatchersV2(
+					KubernetesCommonPanelQueries["WorkQueueLatency"],
 					labelMatchers,
-				),
+				).Pretty(0),
 				dashboards.AddQueryDataSource(datasourceName),
 				query.SeriesNameFormat("{{cluster}} {{instance}} {{name}}"),
 			),

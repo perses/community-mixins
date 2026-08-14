@@ -25,7 +25,7 @@ import (
 	"github.com/prometheus/prometheus/model/labels"
 )
 
-func withMarkdown(datasource string, labelMatcher promql.LabelMatcher) dashboard.Option {
+func withMarkdown(datasource string, labelMatcher *labels.Matcher) dashboard.Option {
 	return dashboard.AddPanelGroup("Notice",
 		panelgroup.PanelsPerLine(1),
 		panelgroup.PanelHeight(3),
@@ -33,7 +33,7 @@ func withMarkdown(datasource string, labelMatcher promql.LabelMatcher) dashboard
 	)
 }
 
-func withAllAvailabilityAndErrorBudget(datasource string, labelMatcher promql.LabelMatcher) dashboard.Option {
+func withAllAvailabilityAndErrorBudget(datasource string, labelMatcher *labels.Matcher) dashboard.Option {
 	return dashboard.AddPanelGroup("All Availability And Error Budget",
 		panelgroup.PanelsPerLine(2),
 		panelgroup.PanelHeight(8),
@@ -42,7 +42,7 @@ func withAllAvailabilityAndErrorBudget(datasource string, labelMatcher promql.La
 	)
 }
 
-func withReadStats(datasource string, labelMatcher promql.LabelMatcher) dashboard.Option {
+func withReadStats(datasource string, labelMatcher *labels.Matcher) dashboard.Option {
 	return dashboard.AddPanelGroup("API Server Read",
 		panelgroup.PanelsPerLine(4),
 		panelgroup.PanelHeight(8),
@@ -53,7 +53,7 @@ func withReadStats(datasource string, labelMatcher promql.LabelMatcher) dashboar
 	)
 }
 
-func withWriteStats(datasource string, labelMatcher promql.LabelMatcher) dashboard.Option {
+func withWriteStats(datasource string, labelMatcher *labels.Matcher) dashboard.Option {
 	return dashboard.AddPanelGroup("API Server Write",
 		panelgroup.PanelsPerLine(4),
 		panelgroup.PanelHeight(8),
@@ -64,7 +64,7 @@ func withWriteStats(datasource string, labelMatcher promql.LabelMatcher) dashboa
 	)
 }
 
-func withWorkQueueGroup(datasource string, labelMatcher promql.LabelMatcher) dashboard.Option {
+func withWorkQueueGroup(datasource string, labelMatcher *labels.Matcher) dashboard.Option {
 	return dashboard.AddPanelGroup("Work Queue",
 		panelgroup.PanelsPerLine(3),
 		panelgroup.PanelHeight(8),
@@ -124,8 +124,7 @@ func BuildAPIServerOverview(project string, datasource string, clusterLabelName 
 		),
 	}
 
-	clusterLabelMatcher := dashboards.GetClusterLabelMatcher(clusterLabelName)
-	clusterLabelMatcherV2 := dashboards.GetClusterLabelMatcherV2(clusterLabelName)
+	clusterLabelMatcher := dashboards.GetClusterLabelMatcherV2(clusterLabelName)
 
 	vars := defaultVars
 	if len(variableOverrides) > 0 {
@@ -141,7 +140,7 @@ func BuildAPIServerOverview(project string, datasource string, clusterLabelName 
 		withReadStats(datasource, clusterLabelMatcher),
 		withWriteStats(datasource, clusterLabelMatcher),
 		withWorkQueueGroup(datasource, clusterLabelMatcher),
-		withAPIServerResources(datasource, clusterLabelMatcherV2),
+		withAPIServerResources(datasource, clusterLabelMatcher),
 	)
 	return dashboards.NewDashboardResult(
 		dashboard.New("api-server-overview", options...),

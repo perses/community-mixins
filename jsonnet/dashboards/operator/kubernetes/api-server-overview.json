@@ -639,7 +639,7 @@
                         "kind": "PrometheusDatasource",
                         "name": "prometheus-datasource"
                       },
-                      "query": "sum by (instance, name) (\n  rate(workqueue_depth{cluster=~\"$cluster\",instance=~\"$instance\",job=\"kube-apiserver\"}[$__rate_interval])\n)",
+                      "query": "sum by (instance, name) (\n  rate(\n    workqueue_depth{cluster=~\"$cluster\",instance=~\"$instance\",job=\"kube-apiserver\"}[$__rate_interval]\n  )\n)",
                       "seriesNameFormat": "{{instance}} {{name}}"
                     }
                   }

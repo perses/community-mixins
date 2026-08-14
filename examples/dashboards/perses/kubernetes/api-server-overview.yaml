@@ -439,7 +439,9 @@ spec:
                                     name: prometheus-datasource
                                 query: |-
                                     sum by (instance, name) (
-                                      rate(workqueue_depth{cluster=~"$cluster",instance=~"$instance",job="kube-apiserver"}[$__rate_interval])
+                                      rate(
+                                        workqueue_depth{cluster=~"$cluster",instance=~"$instance",job="kube-apiserver"}[$__rate_interval]
+                                      )
                                     )
                                 seriesNameFormat: '{{instance}} {{name}}'
         "4_2":

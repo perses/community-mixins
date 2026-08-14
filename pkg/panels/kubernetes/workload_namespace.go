@@ -22,9 +22,10 @@ import (
 
 	commonSdk "github.com/perses/perses/go-sdk/common"
 	tablePanel "github.com/perses/plugins/table/sdk/go"
+	"github.com/prometheus/prometheus/model/labels"
 )
 
-func WorkloadNamespaceCPUUsageQuota(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
+func WorkloadNamespaceCPUUsageQuota(datasourceName string, labelMatchers ...*labels.Matcher) panelgroup.Option {
 	return panelgroup.AddPanel("CPU Quota",
 		panel.Description("Shows the CPU requests, limits, and usage of workloads in a namespace in tabular format."),
 		tablePanel.Table(
@@ -105,62 +106,62 @@ func WorkloadNamespaceCPUUsageQuota(datasourceName string, labelMatchers ...prom
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchers(
-					"count(namespace_workload_pod:kube_pod_owner:relabel{cluster=\"$cluster\", namespace=\"$namespace\", workload_type=~\"$type\"}) by (workload, workload_type)",
+				promql.SetLabelMatchersV2(
+					KubernetesCommonPanelQueries["WorkloadNamespaceCPUUsageQuota1"],
 					labelMatchers,
-				),
+				).Pretty(0),
 				dashboards.AddQueryDataSource(datasourceName),
 			),
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchers(
-					"sum(\n  "+GetNodeNSCPUSecondsRecordingRule()+"{cluster=\"$cluster\", namespace=\"$namespace\"}\n* on(namespace,pod)\n  group_left(workload, workload_type) namespace_workload_pod:kube_pod_owner:relabel{cluster=\"$cluster\", namespace=\"$namespace\", workload_type=~\"$type\"}\n) by (workload, workload_type)\n",
+				promql.SetLabelMatchersV2(
+					KubernetesCommonPanelQueries["WorkloadNamespaceCPUUsageQuota2"],
 					labelMatchers,
-				),
+				).Pretty(0),
 				dashboards.AddQueryDataSource(datasourceName),
 			),
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchers(
-					"sum(\n  kube_pod_container_resource_requests{"+GetKubeStateMetricsMatcher()+", cluster=\"$cluster\", namespace=\"$namespace\", resource=\"cpu\"}\n* on(namespace,pod)\n  group_left(workload, workload_type) namespace_workload_pod:kube_pod_owner:relabel{cluster=\"$cluster\", namespace=\"$namespace\", workload_type=~\"$type\"}\n) by (workload, workload_type)\n",
+				promql.SetLabelMatchersV2(
+					KubernetesCommonPanelQueries["WorkloadNamespaceCPUUsageQuota3"],
 					labelMatchers,
-				),
+				).Pretty(0),
 				dashboards.AddQueryDataSource(datasourceName),
 			),
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchers(
-					"sum(\n  "+GetNodeNSCPUSecondsRecordingRule()+"{cluster=\"$cluster\", namespace=\"$namespace\"}\n* on(namespace,pod)\n  group_left(workload, workload_type) namespace_workload_pod:kube_pod_owner:relabel{cluster=\"$cluster\", namespace=\"$namespace\", workload_type=~\"$type\"}\n) by (workload, workload_type)\n/sum(\n  kube_pod_container_resource_requests{"+GetKubeStateMetricsMatcher()+", cluster=\"$cluster\", namespace=\"$namespace\", resource=\"cpu\"}\n* on(namespace,pod)\n  group_left(workload, workload_type) namespace_workload_pod:kube_pod_owner:relabel{cluster=\"$cluster\", namespace=\"$namespace\", workload_type=~\"$type\"}\n) by (workload, workload_type)\n",
+				promql.SetLabelMatchersV2(
+					KubernetesCommonPanelQueries["WorkloadNamespaceCPUUsageQuota4"],
 					labelMatchers,
-				),
+				).Pretty(0),
 				dashboards.AddQueryDataSource(datasourceName),
 			),
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchers(
-					"sum(\n  kube_pod_container_resource_limits{"+GetKubeStateMetricsMatcher()+", cluster=\"$cluster\", namespace=\"$namespace\", resource=\"cpu\"}\n* on(namespace,pod)\n  group_left(workload, workload_type) namespace_workload_pod:kube_pod_owner:relabel{cluster=\"$cluster\", namespace=\"$namespace\", workload_type=~\"$type\"}\n) by (workload, workload_type)\n",
+				promql.SetLabelMatchersV2(
+					KubernetesCommonPanelQueries["WorkloadNamespaceCPUUsageQuota5"],
 					labelMatchers,
-				),
+				).Pretty(0),
 				dashboards.AddQueryDataSource(datasourceName),
 			),
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchers(
-					"sum(\n  "+GetNodeNSCPUSecondsRecordingRule()+"{cluster=\"$cluster\", namespace=\"$namespace\"}\n* on(namespace,pod)\n  group_left(workload, workload_type) namespace_workload_pod:kube_pod_owner:relabel{cluster=\"$cluster\", namespace=\"$namespace\", workload_type=~\"$type\"}\n) by (workload, workload_type)\n/sum(\n  kube_pod_container_resource_limits{"+GetKubeStateMetricsMatcher()+", cluster=\"$cluster\", namespace=\"$namespace\", resource=\"cpu\"}\n* on(namespace,pod)\n  group_left(workload, workload_type) namespace_workload_pod:kube_pod_owner:relabel{cluster=\"$cluster\", namespace=\"$namespace\", workload_type=~\"$type\"}\n) by (workload, workload_type)\n",
+				promql.SetLabelMatchersV2(
+					KubernetesCommonPanelQueries["WorkloadNamespaceCPUUsageQuota6"],
 					labelMatchers,
-				),
+				).Pretty(0),
 				dashboards.AddQueryDataSource(datasourceName),
 			),
 		),
 	)
 }
 
-func WorkloadNamespaceMemoryUsageQuota(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
+func WorkloadNamespaceMemoryUsageQuota(datasourceName string, labelMatchers ...*labels.Matcher) panelgroup.Option {
 	return panelgroup.AddPanel("Memory Quota",
 		panel.Description("Shows the memory requests, limits, and usage of workloads in a namespace in tabular format."),
 		tablePanel.Table(
@@ -238,62 +239,62 @@ func WorkloadNamespaceMemoryUsageQuota(datasourceName string, labelMatchers ...p
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchers(
-					"count(namespace_workload_pod:kube_pod_owner:relabel{cluster=\"$cluster\", namespace=\"$namespace\", workload_type=~\"$type\"}) by (workload, workload_type)",
+				promql.SetLabelMatchersV2(
+					KubernetesCommonPanelQueries["WorkloadNamespaceMemoryUsageQuota1"],
 					labelMatchers,
-				),
+				).Pretty(0),
 				dashboards.AddQueryDataSource(datasourceName),
 			),
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchers(
-					"sum(\n    container_memory_working_set_bytes{"+GetCAdvisorMatcher()+", cluster=\"$cluster\", namespace=\"$namespace\", container!=\"\", image!=\"\"}\n  * on(namespace,pod)\n    group_left(workload, workload_type) namespace_workload_pod:kube_pod_owner:relabel{cluster=\"$cluster\", namespace=\"$namespace\", workload_type=~\"$type\"}\n) by (workload, workload_type)\n",
+				promql.SetLabelMatchersV2(
+					KubernetesCommonPanelQueries["WorkloadNamespaceMemoryUsageQuota2"],
 					labelMatchers,
-				),
+				).Pretty(0),
 				dashboards.AddQueryDataSource(datasourceName),
 			),
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchers(
-					"sum(\n  kube_pod_container_resource_requests{"+GetKubeStateMetricsMatcher()+", cluster=\"$cluster\", namespace=\"$namespace\", resource=\"memory\"}\n* on(namespace,pod)\n  group_left(workload, workload_type) namespace_workload_pod:kube_pod_owner:relabel{cluster=\"$cluster\", namespace=\"$namespace\", workload_type=~\"$type\"}\n) by (workload, workload_type)\n",
+				promql.SetLabelMatchersV2(
+					KubernetesCommonPanelQueries["WorkloadNamespaceMemoryUsageQuota3"],
 					labelMatchers,
-				),
+				).Pretty(0),
 				dashboards.AddQueryDataSource(datasourceName),
 			),
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchers(
-					"sum(\n    container_memory_working_set_bytes{"+GetCAdvisorMatcher()+", cluster=\"$cluster\", namespace=\"$namespace\", container!=\"\", image!=\"\"}\n  * on(namespace,pod)\n    group_left(workload, workload_type) namespace_workload_pod:kube_pod_owner:relabel{cluster=\"$cluster\", namespace=\"$namespace\", workload_type=~\"$type\"}\n) by (workload, workload_type)\n/sum(\n  kube_pod_container_resource_requests{"+GetKubeStateMetricsMatcher()+", cluster=\"$cluster\", namespace=\"$namespace\", resource=\"memory\"}\n* on(namespace,pod)\n  group_left(workload, workload_type) namespace_workload_pod:kube_pod_owner:relabel{cluster=\"$cluster\", namespace=\"$namespace\", workload_type=~\"$type\"}\n) by (workload, workload_type)\n",
+				promql.SetLabelMatchersV2(
+					KubernetesCommonPanelQueries["WorkloadNamespaceMemoryUsageQuota4"],
 					labelMatchers,
-				),
+				).Pretty(0),
 				dashboards.AddQueryDataSource(datasourceName),
 			),
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchers(
-					"sum(\n  kube_pod_container_resource_limits{"+GetKubeStateMetricsMatcher()+", cluster=\"$cluster\", namespace=\"$namespace\", resource=\"memory\"}\n* on(namespace,pod)\n  group_left(workload, workload_type) namespace_workload_pod:kube_pod_owner:relabel{cluster=\"$cluster\", namespace=\"$namespace\", workload_type=~\"$type\"}\n) by (workload, workload_type)\n",
+				promql.SetLabelMatchersV2(
+					KubernetesCommonPanelQueries["WorkloadNamespaceMemoryUsageQuota5"],
 					labelMatchers,
-				),
+				).Pretty(0),
 				dashboards.AddQueryDataSource(datasourceName),
 			),
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchers(
-					"sum(\n    container_memory_working_set_bytes{"+GetCAdvisorMatcher()+", cluster=\"$cluster\", namespace=\"$namespace\", container!=\"\", image!=\"\"}\n  * on(namespace,pod)\n    group_left(workload, workload_type) namespace_workload_pod:kube_pod_owner:relabel{cluster=\"$cluster\", namespace=\"$namespace\", workload_type=~\"$type\"}\n) by (workload, workload_type)\n/sum(\n  kube_pod_container_resource_limits{"+GetKubeStateMetricsMatcher()+", cluster=\"$cluster\", namespace=\"$namespace\", resource=\"memory\"}\n* on(namespace,pod)\n  group_left(workload, workload_type) namespace_workload_pod:kube_pod_owner:relabel{cluster=\"$cluster\", namespace=\"$namespace\", workload_type=~\"$type\"}\n) by (workload, workload_type)\n",
+				promql.SetLabelMatchersV2(
+					KubernetesCommonPanelQueries["WorkloadNamespaceMemoryUsageQuota6"],
 					labelMatchers,
-				),
+				).Pretty(0),
 				dashboards.AddQueryDataSource(datasourceName),
 			),
 		),
 	)
 }
 
-func WorkloadNamespaceCurrentNetworkUsage(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
+func WorkloadNamespaceCurrentNetworkUsage(datasourceName string, labelMatchers ...*labels.Matcher) panelgroup.Option {
 	return panelgroup.AddPanel("Current Network Usage",
 		panel.Description("Shows the current network usage of the namespace by workloads."),
 		tablePanel.Table(
@@ -367,55 +368,55 @@ func WorkloadNamespaceCurrentNetworkUsage(datasourceName string, labelMatchers .
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchers(
-					"(sum(rate(container_network_receive_bytes_total{"+GetCAdvisorMatcher()+", cluster=\"$cluster\", namespace=\"$namespace\"}[$__rate_interval])\n* on (namespace,pod)\ngroup_left(workload,workload_type) namespace_workload_pod:kube_pod_owner:relabel{cluster=\"$cluster\", namespace=\"$namespace\", workload_type=~\"$type\"}) by (workload))\n",
+				promql.SetLabelMatchersV2(
+					KubernetesCommonPanelQueries["WorkloadNamespaceCurrentNetworkUsage1"],
 					labelMatchers,
-				),
+				).Pretty(0),
 				dashboards.AddQueryDataSource(datasourceName),
 			),
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchers(
-					"(sum(rate(container_network_transmit_bytes_total{"+GetCAdvisorMatcher()+", cluster=\"$cluster\", namespace=\"$namespace\"}[$__rate_interval])\n* on (namespace,pod)\ngroup_left(workload,workload_type) namespace_workload_pod:kube_pod_owner:relabel{cluster=\"$cluster\", namespace=\"$namespace\", workload_type=~\"$type\"}) by (workload))\n",
+				promql.SetLabelMatchersV2(
+					KubernetesCommonPanelQueries["WorkloadNamespaceCurrentNetworkUsage2"],
 					labelMatchers,
-				),
+				).Pretty(0),
 				dashboards.AddQueryDataSource(datasourceName),
 			),
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchers(
-					"(sum(rate(container_network_receive_packets_total{"+GetCAdvisorMatcher()+", cluster=\"$cluster\", namespace=\"$namespace\"}[$__rate_interval])\n* on (namespace,pod)\ngroup_left(workload,workload_type) namespace_workload_pod:kube_pod_owner:relabel{cluster=\"$cluster\", namespace=\"$namespace\", workload_type=~\"$type\"}) by (workload))\n",
+				promql.SetLabelMatchersV2(
+					KubernetesCommonPanelQueries["WorkloadNamespaceCurrentNetworkUsage3"],
 					labelMatchers,
-				),
+				).Pretty(0),
 				dashboards.AddQueryDataSource(datasourceName),
 			),
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchers(
-					"(sum(rate(container_network_transmit_packets_total{"+GetCAdvisorMatcher()+", cluster=\"$cluster\", namespace=\"$namespace\"}[$__rate_interval])\n* on (namespace,pod)\ngroup_left(workload,workload_type) namespace_workload_pod:kube_pod_owner:relabel{cluster=\"$cluster\", namespace=\"$namespace\", workload_type=~\"$type\"}) by (workload))\n",
+				promql.SetLabelMatchersV2(
+					KubernetesCommonPanelQueries["WorkloadNamespaceCurrentNetworkUsage4"],
 					labelMatchers,
-				),
+				).Pretty(0),
 				dashboards.AddQueryDataSource(datasourceName),
 			),
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchers(
-					"(sum(rate(container_network_receive_packets_dropped_total{"+GetCAdvisorMatcher()+", cluster=\"$cluster\", namespace=\"$namespace\"}[$__rate_interval])\n* on (namespace,pod)\ngroup_left(workload,workload_type) namespace_workload_pod:kube_pod_owner:relabel{cluster=\"$cluster\", namespace=\"$namespace\", workload_type=~\"$type\"}) by (workload))\n",
+				promql.SetLabelMatchersV2(
+					KubernetesCommonPanelQueries["WorkloadNamespaceCurrentNetworkUsage5"],
 					labelMatchers,
-				),
+				).Pretty(0),
 				dashboards.AddQueryDataSource(datasourceName),
 			),
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchers(
-					"(sum(rate(container_network_transmit_packets_dropped_total{"+GetCAdvisorMatcher()+", cluster=\"$cluster\", namespace=\"$namespace\"}[$__rate_interval])\n* on (namespace,pod)\ngroup_left(workload,workload_type) namespace_workload_pod:kube_pod_owner:relabel{cluster=\"$cluster\", namespace=\"$namespace\", workload_type=~\"$type\"}) by (workload))\n",
+				promql.SetLabelMatchersV2(
+					KubernetesCommonPanelQueries["WorkloadNamespaceCurrentNetworkUsage6"],
 					labelMatchers,
-				),
+				).Pretty(0),
 				dashboards.AddQueryDataSource(datasourceName),
 			),
 		),
