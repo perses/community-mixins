@@ -20,6 +20,7 @@ import (
 	"testing"
 
 	"k8s.io/client-go/kubernetes"
+	"k8s.io/client-go/rest"
 	"k8s.io/client-go/tools/clientcmd"
 )
 
@@ -32,12 +33,7 @@ func testMain(m *testing.M) int {
 		return m.Run()
 	}
 
-	kubeConfigPath, ok := os.LookupEnv("KUBECONFIG")
-	if !ok {
-		log.Fatal("failed to retrieve KUBECONFIG env var")
-	}
-
-	config, err := clientcmd.BuildConfigFromFlags("", kubeConfigPath)
+	config, err := loadKubeConfig()
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -49,4 +45,13 @@ func testMain(m *testing.M) int {
 	kubeClient = client
 
 	return m.Run()
+}
+
+func loadKubeConfig() (*rest.Config, error) {
+	if kubeConfigPath := os.Getenv("KUBECONFIG"); kubeConfigPath != "" {
+		return clientcmd.BuildConfigFromFlags("", kubeConfigPath)
+	}
+
+	loadingRules := clientcmd.NewDefaultClientConfigLoadingRules()
+	return clientcmd.NewNonInteractiveDeferredLoadingClientConfig(loadingRules, &clientcmd.ConfigOverrides{}).ClientConfig()
 }

@@ -66,14 +66,15 @@ func TestOperatorDashboardReconciliation(t *testing.T) {
 
 	t.Run("perses service responds", func(t *testing.T) {
 		err := pollCondition(5*time.Minute, func() error {
-			if err := persesServiceEndpointsReady(kubeClient); err != nil {
+			proxyName, err := persesPodProxyName(kubeClient)
+			if err != nil {
 				return err
 			}
 
-			_, err := kubeClient.CoreV1().RESTClient().Get().
+			_, err = kubeClient.CoreV1().RESTClient().Get().
 				Namespace(testNamespace).
-				Resource("services").
-				Name("perses:http").
+				Resource("pods").
+				Name(proxyName).
 				SubResource("proxy").
 				Suffix("/api/v1/health").
 				DoRaw(context.Background())

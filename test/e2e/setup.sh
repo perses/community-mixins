@@ -81,7 +81,6 @@ kind_up() {
       --image "${kind_node_image}"
   fi
 
-  export KUBECONFIG="$(kind get kubeconfig --name "${E2E_KIND_CLUSTER}")"
   install_stack
 }
 

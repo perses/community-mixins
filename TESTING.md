@@ -28,7 +28,8 @@ Version pins (operator, Perses, kind node image, etc.) live in [`.github/env`](.
 If the cluster is already up from a previous `make e2e`:
 
 ```sh
-make test-e2e-operator KUBECONFIG="$(kind get kubeconfig --name community-mixins-e2e)"
+make test-e2e-operator
 ```
 
 Tests require `OPERATOR_E2E=true` (set automatically by `make test-e2e-operator`).
+They use the same default kubeconfig as `kubectl` after `make e2e` / kind cluster creation.
