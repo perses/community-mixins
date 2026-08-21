@@ -27,6 +27,7 @@ jobs:
           version: ${{ env.kind-version }}
           node_image: ${{ env.kind-node-image }}
           config: test/e2e/kind/config.yml
+          cluster_name: community-mixins-e2e
           wait: 300s
 
       - uses: azure/setup-helm@v5
@@ -38,8 +39,6 @@ jobs:
 
       - name: Run operator e2e tests
         run: make test-e2e-operator
-        env:
-          KUBECONFIG: ${{ env.KUBECONFIG }}
 
       - name: Debug cluster state on failure
         if: failure()

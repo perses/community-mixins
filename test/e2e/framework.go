@@ -31,13 +31,14 @@ import (
 )
 
 const (
-	testNamespace              = "perses-dev"
-	persesInstanceName         = "perses"
-	operatorDeploymentName     = "perses-operator-controller-manager"
-	operatorPodLabelSelector   = "control-plane=controller-manager"
-	operatorManagerContainer   = "manager"
-	persesAvailableCondition   = "Available"
-	persesDegradedCondition    = "Degraded"
+	testNamespace            = "perses-dev"
+	persesInstanceName       = "perses"
+	operatorDeploymentName   = "perses-operator-controller-manager"
+	operatorPodLabelSelector = "control-plane=controller-manager"
+	operatorManagerContainer = "manager"
+	persesAvailableCondition = "Available"
+	persesDegradedCondition  = "Degraded"
+	persesContainerPort      = "8080"
 )
 
 var kubeClient kubernetes.Interface
@@ -114,19 +115,25 @@ func persesInstanceReady(kClient kubernetes.Interface) error {
 	return nil
 }
 
-func persesServiceEndpointsReady(kClient kubernetes.Interface) error {
-	endpoints, err := kClient.CoreV1().Endpoints(testNamespace).Get(context.Background(), persesInstanceName, metav1.GetOptions{})
-	if err != nil {
-		return err
+func persesPodProxyName(kClient kubernetes.Interface) (string, error) {
+	if _, err := kClient.AppsV1().StatefulSets(testNamespace).Get(context.Background(), persesInstanceName, metav1.GetOptions{}); err == nil {
+		return fmt.Sprintf("%s-0:%s", persesInstanceName, persesContainerPort), nil
 	}
 
-	for _, subset := range endpoints.Subsets {
-		if len(subset.Addresses) > 0 {
-			return nil
+	pods, err := kClient.CoreV1().Pods(testNamespace).List(context.Background(), metav1.ListOptions{
+		LabelSelector: "app.kubernetes.io/instance=perses,app.kubernetes.io/managed-by=perses-operator",
+	})
+	if err != nil {
+		return "", err
+	}
+
+	for _, pod := range pods.Items {
+		if pod.Status.Phase == corev1.PodRunning {
+			return fmt.Sprintf("%s:%s", pod.Name, persesContainerPort), nil
 		}
 	}
 
-	return fmt.Errorf("perses service has no ready endpoints")
+	return "", fmt.Errorf("no running perses pod found")
 }
 
 type persesDashboardItem struct {

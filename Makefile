@@ -85,7 +85,7 @@ vet:
 .PHONY: unit-test
 unit-test:
 	@echo ">> running unit tests"
-	$(GOCMD) test -v ./...
+	$(GOCMD) test -v $(shell $(GOCMD) list ./... | grep -v '/test/e2e$$')
 
 .PHONY: test-e2e-operator
 test-e2e-operator:
@@ -96,7 +96,7 @@ E2E_KIND_CLUSTER ?= community-mixins-e2e
 
 .PHONY: e2e e2e-up e2e-install e2e-down
 e2e: e2e-up
-	@KUBECONFIG="$$(kind get kubeconfig --name $(E2E_KIND_CLUSTER))" $(MAKE) test-e2e-operator
+	@$(MAKE) test-e2e-operator
 
 e2e-up:
 	@bash test/e2e/setup.sh up
