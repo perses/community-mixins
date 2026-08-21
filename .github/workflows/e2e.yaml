@@ -1,0 +1,50 @@
+name: e2e
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+jobs:
+  operator-e2e:
+    runs-on: ubuntu-latest
+    name: Operator dashboard reconciliation
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Import environment variables from file
+        run: cat ".github/env" >> $GITHUB_ENV
+
+      - uses: actions/setup-go@v7
+        with:
+          go-version: "${{ env.golang-version }}"
+          check-latest: false
+          cache: true
+
+      - name: Create kind cluster
+        uses: helm/kind-action@v1.14.0
+        with:
+          version: ${{ env.kind-version }}
+          node_image: ${{ env.kind-node-image }}
+          config: test/e2e/kind/config.yml
+          wait: 300s
+
+      - uses: azure/setup-helm@v5
+        with:
+          version: ${{ env.helm-version }}
+
+      - name: Install e2e stack
+        run: make e2e-install
+
+      - name: Run operator e2e tests
+        run: make test-e2e-operator
+        env:
+          KUBECONFIG: ${{ env.KUBECONFIG }}
+
+      - name: Debug cluster state on failure
+        if: failure()
+        run: |
+          kubectl get perses,persesdashboards -A
+          kubectl get pods,svc,endpoints -n perses-dev
+          kubectl describe pods -n perses-dev
+          kubectl get events -n perses-dev --sort-by=.lastTimestamp | tail -n 50
