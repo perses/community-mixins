@@ -16,15 +16,15 @@ package compute_resources
 import (
 	"github.com/perses/community-mixins/pkg/dashboards"
 	panels "github.com/perses/community-mixins/pkg/panels/kubernetes"
-	"github.com/perses/community-mixins/pkg/promql"
 	"github.com/perses/perses/go-sdk/dashboard"
 	panelgroup "github.com/perses/perses/go-sdk/panel-group"
 
 	listVar "github.com/perses/perses/go-sdk/variable/list-variable"
 	labelValuesVar "github.com/perses/plugins/prometheus/sdk/go/variable/label-values"
+	"github.com/prometheus/prometheus/model/labels"
 )
 
-func withClusterStatsGroup(datasource string, labelMatcher promql.LabelMatcher) dashboard.Option {
+func withClusterStatsGroup(datasource string, labelMatcher *labels.Matcher) dashboard.Option {
 	return dashboard.AddPanelGroup("Cluster Stats",
 		panelgroup.PanelsPerLine(6),
 		panelgroup.PanelHeight(4),
@@ -37,7 +37,7 @@ func withClusterStatsGroup(datasource string, labelMatcher promql.LabelMatcher) 
 	)
 }
 
-func withClusterCPUUsageGroup(datasource string, labelMatcher promql.LabelMatcher) dashboard.Option {
+func withClusterCPUUsageGroup(datasource string, labelMatcher *labels.Matcher) dashboard.Option {
 	return dashboard.AddPanelGroup("CPU Usage",
 		panelgroup.PanelsPerLine(1),
 		panelgroup.PanelHeight(8),
@@ -45,7 +45,7 @@ func withClusterCPUUsageGroup(datasource string, labelMatcher promql.LabelMatche
 	)
 }
 
-func withClusterCPUUsageQuotaGroup(datasource string, labelMatcher promql.LabelMatcher) dashboard.Option {
+func withClusterCPUUsageQuotaGroup(datasource string, labelMatcher *labels.Matcher) dashboard.Option {
 	return dashboard.AddPanelGroup("CPU Usage Quota",
 		panelgroup.PanelsPerLine(1),
 		panelgroup.PanelHeight(10),
@@ -53,7 +53,7 @@ func withClusterCPUUsageQuotaGroup(datasource string, labelMatcher promql.LabelM
 	)
 }
 
-func withClusterMemoryUsageGroup(datasource string, labelMatcher promql.LabelMatcher) dashboard.Option {
+func withClusterMemoryUsageGroup(datasource string, labelMatcher *labels.Matcher) dashboard.Option {
 	return dashboard.AddPanelGroup("Memory Usage",
 		panelgroup.PanelsPerLine(1),
 		panelgroup.PanelHeight(8),
@@ -61,7 +61,7 @@ func withClusterMemoryUsageGroup(datasource string, labelMatcher promql.LabelMat
 	)
 }
 
-func withClusterMemoryUsageQuotaGroup(datasource string, labelMatcher promql.LabelMatcher) dashboard.Option {
+func withClusterMemoryUsageQuotaGroup(datasource string, labelMatcher *labels.Matcher) dashboard.Option {
 	return dashboard.AddPanelGroup("Memory Usage Quota",
 		panelgroup.PanelsPerLine(1),
 		panelgroup.PanelHeight(10),
@@ -69,7 +69,7 @@ func withClusterMemoryUsageQuotaGroup(datasource string, labelMatcher promql.Lab
 	)
 }
 
-func withClusterNetworkUsageGroup(datasource string, labelMatcher promql.LabelMatcher) dashboard.Option {
+func withClusterNetworkUsageGroup(datasource string, labelMatcher *labels.Matcher) dashboard.Option {
 	return dashboard.AddPanelGroup("Network Usage",
 		panelgroup.PanelsPerLine(1),
 		panelgroup.PanelHeight(10),
@@ -77,7 +77,7 @@ func withClusterNetworkUsageGroup(datasource string, labelMatcher promql.LabelMa
 	)
 }
 
-func withClusterBandwidthGroup(datasource string, labelMatcher promql.LabelMatcher) dashboard.Option {
+func withClusterBandwidthGroup(datasource string, labelMatcher *labels.Matcher) dashboard.Option {
 	return dashboard.AddPanelGroup("Bandwidth",
 		panelgroup.PanelsPerLine(2),
 		panelgroup.PanelHeight(8),
@@ -86,7 +86,7 @@ func withClusterBandwidthGroup(datasource string, labelMatcher promql.LabelMatch
 	)
 }
 
-func withClusterAvgBandwidthGroup(datasource string, labelMatcher promql.LabelMatcher) dashboard.Option {
+func withClusterAvgBandwidthGroup(datasource string, labelMatcher *labels.Matcher) dashboard.Option {
 	return dashboard.AddPanelGroup("Average Container Bandwidth",
 		panelgroup.PanelsPerLine(2),
 		panelgroup.PanelHeight(8),
@@ -95,7 +95,7 @@ func withClusterAvgBandwidthGroup(datasource string, labelMatcher promql.LabelMa
 	)
 }
 
-func withClusterRateOfPacketsGroup(datasource string, labelMatcher promql.LabelMatcher) dashboard.Option {
+func withClusterRateOfPacketsGroup(datasource string, labelMatcher *labels.Matcher) dashboard.Option {
 	return dashboard.AddPanelGroup("Rate of Packets",
 		panelgroup.PanelsPerLine(2),
 		panelgroup.PanelHeight(8),
@@ -104,7 +104,7 @@ func withClusterRateOfPacketsGroup(datasource string, labelMatcher promql.LabelM
 	)
 }
 
-func withClusterRateOfPacketsDroppedGroup(datasource string, labelMatcher promql.LabelMatcher) dashboard.Option {
+func withClusterRateOfPacketsDroppedGroup(datasource string, labelMatcher *labels.Matcher) dashboard.Option {
 	return dashboard.AddPanelGroup("Rate of Packets Dropped",
 		panelgroup.PanelsPerLine(2),
 		panelgroup.PanelHeight(8),
@@ -113,7 +113,7 @@ func withClusterRateOfPacketsDroppedGroup(datasource string, labelMatcher promql
 	)
 }
 
-func withClusterStorageIOGroup(datasource string, labelMatcher promql.LabelMatcher) dashboard.Option {
+func withClusterStorageIOGroup(datasource string, labelMatcher *labels.Matcher) dashboard.Option {
 	return dashboard.AddPanelGroup("Storage IO",
 		panelgroup.PanelsPerLine(2),
 		panelgroup.PanelHeight(8),
@@ -122,7 +122,7 @@ func withClusterStorageIOGroup(datasource string, labelMatcher promql.LabelMatch
 	)
 }
 
-func withClusterCurrentStorageIOGroup(datasource string, labelMatcher promql.LabelMatcher) dashboard.Option {
+func withClusterCurrentStorageIOGroup(datasource string, labelMatcher *labels.Matcher) dashboard.Option {
 	return dashboard.AddPanelGroup("Storage IO - Distribution",
 		panelgroup.PanelsPerLine(1),
 		panelgroup.PanelHeight(10),
@@ -142,7 +142,7 @@ func BuildKubernetesClusterOverview(project string, datasource string, clusterLa
 			),
 		),
 	}
-	clusterLabelMatcher := dashboards.GetClusterLabelMatcher(clusterLabelName)
+	clusterLabelMatcher := dashboards.GetClusterLabelMatcherV2(clusterLabelName)
 	vars := defaultVars
 	if len(variableOverrides) > 0 {
 		vars = variableOverrides

@@ -22,9 +22,10 @@ import (
 
 	listVar "github.com/perses/perses/go-sdk/variable/list-variable"
 	labelValuesVar "github.com/perses/plugins/prometheus/sdk/go/variable/label-values"
+	"github.com/prometheus/prometheus/model/labels"
 )
 
-func withPVVolumeUsageGroup(datasource string, labelMatcher promql.LabelMatcher) dashboard.Option {
+func withPVVolumeUsageGroup(datasource string, labelMatcher *labels.Matcher) dashboard.Option {
 	return dashboard.AddPanelGroup("Volume Space Usage",
 		panelgroup.PanelsPerLine(2),
 		panelgroup.PanelHeight(8),
@@ -33,7 +34,7 @@ func withPVVolumeUsageGroup(datasource string, labelMatcher promql.LabelMatcher)
 	)
 }
 
-func withPVInodesUsageGroup(datasource string, labelMatcher promql.LabelMatcher) dashboard.Option {
+func withPVInodesUsageGroup(datasource string, labelMatcher *labels.Matcher) dashboard.Option {
 	return dashboard.AddPanelGroup("Volume Inodes Usage",
 		panelgroup.PanelsPerLine(2),
 		panelgroup.PanelHeight(8),
@@ -86,7 +87,7 @@ func BuildKubernetesPersistentVolumeOverview(project string, datasource string, 
 		),
 	}
 
-	clusterLabelMatcher := dashboards.GetClusterLabelMatcher(clusterLabelName)
+	clusterLabelMatcher := dashboards.GetClusterLabelMatcherV2(clusterLabelName)
 	vars := defaultVars
 	if len(variableOverrides) > 0 {
 		vars = variableOverrides

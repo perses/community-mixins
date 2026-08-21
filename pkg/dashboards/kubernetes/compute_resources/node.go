@@ -22,9 +22,10 @@ import (
 
 	listVar "github.com/perses/perses/go-sdk/variable/list-variable"
 	labelValuesVar "github.com/perses/plugins/prometheus/sdk/go/variable/label-values"
+	"github.com/prometheus/prometheus/model/labels"
 )
 
-func withNodeCPUUsageGroup(datasource string, labelMatcher promql.LabelMatcher) dashboard.Option {
+func withNodeCPUUsageGroup(datasource string, labelMatcher *labels.Matcher) dashboard.Option {
 	return dashboard.AddPanelGroup("CPU Usage",
 		panelgroup.PanelsPerLine(1),
 		panelgroup.PanelHeight(8),
@@ -32,7 +33,7 @@ func withNodeCPUUsageGroup(datasource string, labelMatcher promql.LabelMatcher) 
 	)
 }
 
-func withNodeCPUQuotaGroup(datasource string, labelMatcher promql.LabelMatcher) dashboard.Option {
+func withNodeCPUQuotaGroup(datasource string, labelMatcher *labels.Matcher) dashboard.Option {
 	return dashboard.AddPanelGroup("CPU Quota",
 		panelgroup.PanelsPerLine(1),
 		panelgroup.PanelHeight(12),
@@ -40,7 +41,7 @@ func withNodeCPUQuotaGroup(datasource string, labelMatcher promql.LabelMatcher) 
 	)
 }
 
-func withNodeMemoryUsageGroup(datasource string, labelMatcher promql.LabelMatcher) dashboard.Option {
+func withNodeMemoryUsageGroup(datasource string, labelMatcher *labels.Matcher) dashboard.Option {
 	return dashboard.AddPanelGroup("Memory Usage with Cache",
 		panelgroup.PanelsPerLine(1),
 		panelgroup.PanelHeight(8),
@@ -48,7 +49,7 @@ func withNodeMemoryUsageGroup(datasource string, labelMatcher promql.LabelMatche
 	)
 }
 
-func withNodeMemoryUsageWithoutCacheGroup(datasource string, labelMatcher promql.LabelMatcher) dashboard.Option {
+func withNodeMemoryUsageWithoutCacheGroup(datasource string, labelMatcher *labels.Matcher) dashboard.Option {
 	return dashboard.AddPanelGroup("Memory Usage without Cache",
 		panelgroup.PanelsPerLine(1),
 		panelgroup.PanelHeight(8),
@@ -56,7 +57,7 @@ func withNodeMemoryUsageWithoutCacheGroup(datasource string, labelMatcher promql
 	)
 }
 
-func withNodeMemoryQuotaGroup(datasource string, labelMatcher promql.LabelMatcher) dashboard.Option {
+func withNodeMemoryQuotaGroup(datasource string, labelMatcher *labels.Matcher) dashboard.Option {
 	return dashboard.AddPanelGroup("Memory Quota",
 		panelgroup.PanelsPerLine(1),
 		panelgroup.PanelHeight(12),
@@ -91,7 +92,7 @@ func BuildKubernetesNodeResourcesOverview(project string, datasource string, clu
 		),
 	}
 
-	clusterLabelMatcher := dashboards.GetClusterLabelMatcher(clusterLabelName)
+	clusterLabelMatcher := dashboards.GetClusterLabelMatcherV2(clusterLabelName)
 
 	vars := defaultVars
 	if len(variableOverrides) > 0 {

@@ -22,9 +22,10 @@ import (
 
 	commonSdk "github.com/perses/perses/go-sdk/common"
 	timeSeriesPanel "github.com/perses/plugins/timeserieschart/sdk/go"
+	"github.com/prometheus/prometheus/model/labels"
 )
 
-func KubernetesIOPS(granularity, datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
+func KubernetesIOPS(granularity, datasourceName string, labelMatchers ...*labels.Matcher) panelgroup.Option {
 	var panelName, description string
 	var queries []panel.Option
 
@@ -35,10 +36,10 @@ func KubernetesIOPS(granularity, datasourceName string, labelMatchers ...promql.
 		queries = []panel.Option{
 			panel.AddQuery(
 				query.PromQL(
-					promql.SetLabelMatchers(
-						"ceil(sum by(namespace) (rate(container_fs_reads_total{"+GetCAdvisorMatcher()+", container!=\"\", device=~\"(/dev.+)|mmcblk.p.+|nvme.+|rbd.+|sd.+|vd.+|xvd.+|dm-.+|dasd.+\", cluster=\"$cluster\", namespace!=\"\"}[$__rate_interval]) + rate(container_fs_writes_total{"+GetCAdvisorMatcher()+", container!=\"\", cluster=\"$cluster\", namespace!=\"\"}[$__rate_interval])))",
+					promql.SetLabelMatchersV2(
+						KubernetesCommonPanelQueries["KubernetesIOPS1"],
 						labelMatchers,
-					),
+					).Pretty(0),
 					dashboards.AddQueryDataSource(datasourceName),
 					query.SeriesNameFormat("{{namespace}}"),
 				),
@@ -50,10 +51,10 @@ func KubernetesIOPS(granularity, datasourceName string, labelMatchers ...promql.
 		queries = []panel.Option{
 			panel.AddQuery(
 				query.PromQL(
-					promql.SetLabelMatchers(
-						"ceil(sum by(pod) (rate(container_fs_reads_total{container!=\"\", device=~\"(/dev.+)|mmcblk.p.+|nvme.+|rbd.+|sd.+|vd.+|xvd.+|dm-.+|dasd.+\", cluster=\"$cluster\", namespace=\"$namespace\"}[$__rate_interval]) + rate(container_fs_writes_total{container!=\"\", device=~\"(/dev.+)|mmcblk.p.+|nvme.+|rbd.+|sd.+|vd.+|xvd.+|dm-.+|dasd.+\", cluster=\"$cluster\", namespace=\"$namespace\"}[$__rate_interval])))",
+					promql.SetLabelMatchersV2(
+						KubernetesCommonPanelQueries["KubernetesIOPS2"],
 						labelMatchers,
-					),
+					).Pretty(0),
 					dashboards.AddQueryDataSource(datasourceName),
 					query.SeriesNameFormat("{{pod}}"),
 				),
@@ -65,20 +66,20 @@ func KubernetesIOPS(granularity, datasourceName string, labelMatchers ...promql.
 		queries = []panel.Option{
 			panel.AddQuery(
 				query.PromQL(
-					promql.SetLabelMatchers(
-						"ceil(sum by(pod) (rate(container_fs_writes_total{"+GetCAdvisorMatcher()+", device=~\"(/dev.+)|mmcblk.p.+|nvme.+|rbd.+|sd.+|vd.+|xvd.+|dm-.+|dasd.+\", container!=\"\", cluster=\"$cluster\",namespace=\"$namespace\", pod=~\"$pod\"}[$__rate_interval])))",
+					promql.SetLabelMatchersV2(
+						KubernetesCommonPanelQueries["KubernetesIOPS3"],
 						labelMatchers,
-					),
+					).Pretty(0),
 					dashboards.AddQueryDataSource(datasourceName),
 					query.SeriesNameFormat("Writes"),
 				),
 			),
 			panel.AddQuery(
 				query.PromQL(
-					promql.SetLabelMatchers(
-						"ceil(sum by(pod) (rate(container_fs_reads_total{"+GetCAdvisorMatcher()+", device=~\"(/dev.+)|mmcblk.p.+|nvme.+|rbd.+|sd.+|vd.+|xvd.+|dm-.+|dasd.+\", container!=\"\", cluster=\"$cluster\", namespace=\"$namespace\", pod=~\"$pod\"}[$__rate_interval])))",
+					promql.SetLabelMatchersV2(
+						KubernetesCommonPanelQueries["KubernetesIOPS4"],
 						labelMatchers,
-					),
+					).Pretty(0),
 					dashboards.AddQueryDataSource(datasourceName),
 					query.SeriesNameFormat("Reads"),
 				),
@@ -90,10 +91,10 @@ func KubernetesIOPS(granularity, datasourceName string, labelMatchers ...promql.
 		queries = []panel.Option{
 			panel.AddQuery(
 				query.PromQL(
-					promql.SetLabelMatchers(
-						"ceil(sum by(container) (rate(container_fs_reads_total{"+GetCAdvisorMatcher()+", container!=\"\", cluster=\"$cluster\", namespace=\"$namespace\", pod=\"$pod\"}[$__rate_interval]) + rate(container_fs_writes_total{"+GetCAdvisorMatcher()+", container!=\"\", cluster=\"$cluster\", namespace=\"$namespace\", pod=\"$pod\"}[$__rate_interval])))",
+					promql.SetLabelMatchersV2(
+						KubernetesCommonPanelQueries["KubernetesIOPS5"],
 						labelMatchers,
-					),
+					).Pretty(0),
 					dashboards.AddQueryDataSource(datasourceName),
 					query.SeriesNameFormat("{{container}}"),
 				),
@@ -128,7 +129,7 @@ func KubernetesIOPS(granularity, datasourceName string, labelMatchers ...promql.
 	return panelgroup.AddPanel(panelName, panelOpts...)
 }
 
-func KubernetesThroughput(granularity, datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
+func KubernetesThroughput(granularity, datasourceName string, labelMatchers ...*labels.Matcher) panelgroup.Option {
 	var panelName, description string
 	var queries []panel.Option
 
@@ -139,10 +140,10 @@ func KubernetesThroughput(granularity, datasourceName string, labelMatchers ...p
 		queries = []panel.Option{
 			panel.AddQuery(
 				query.PromQL(
-					promql.SetLabelMatchers(
-						"sum by(namespace) (rate(container_fs_reads_bytes_total{"+GetCAdvisorMatcher()+", container!=\"\", device=~\"(/dev.+)|mmcblk.p.+|nvme.+|rbd.+|sd.+|vd.+|xvd.+|dm-.+|dasd.+\", cluster=\"$cluster\", namespace!=\"\"}[$__rate_interval]) + rate(container_fs_writes_bytes_total{"+GetCAdvisorMatcher()+", container!=\"\", cluster=\"$cluster\", namespace!=\"\"}[$__rate_interval]))",
+					promql.SetLabelMatchersV2(
+						KubernetesCommonPanelQueries["KubernetesThroughput1"],
 						labelMatchers,
-					),
+					).Pretty(0),
 					dashboards.AddQueryDataSource(datasourceName),
 					query.SeriesNameFormat("{{namespace}}"),
 				),
@@ -154,10 +155,10 @@ func KubernetesThroughput(granularity, datasourceName string, labelMatchers ...p
 		queries = []panel.Option{
 			panel.AddQuery(
 				query.PromQL(
-					promql.SetLabelMatchers(
-						"sum by(pod) (rate(container_fs_reads_bytes_total{container!=\"\", device=~\"(/dev.+)|mmcblk.p.+|nvme.+|rbd.+|sd.+|vd.+|xvd.+|dm-.+|dasd.+\", cluster=\"$cluster\", namespace=\"$namespace\"}[$__rate_interval]) + rate(container_fs_writes_bytes_total{container!=\"\", device=~\"(/dev.+)|mmcblk.p.+|nvme.+|rbd.+|sd.+|vd.+|xvd.+|dm-.+|dasd.+\", cluster=\"$cluster\", namespace=\"$namespace\"}[$__rate_interval]))",
+					promql.SetLabelMatchersV2(
+						KubernetesCommonPanelQueries["KubernetesThroughput2"],
 						labelMatchers,
-					),
+					).Pretty(0),
 					dashboards.AddQueryDataSource(datasourceName),
 					query.SeriesNameFormat("{{pod}}"),
 				),
@@ -169,20 +170,20 @@ func KubernetesThroughput(granularity, datasourceName string, labelMatchers ...p
 		queries = []panel.Option{
 			panel.AddQuery(
 				query.PromQL(
-					promql.SetLabelMatchers(
-						"sum by(pod) (rate(container_fs_writes_bytes_total{"+GetCAdvisorMatcher()+", device=~\"(/dev.+)|mmcblk.p.+|nvme.+|rbd.+|sd.+|vd.+|xvd.+|dm-.+|dasd.+\", container!=\"\", cluster=\"$cluster\", namespace=\"$namespace\", pod=~\"$pod\"}[$__rate_interval]))",
+					promql.SetLabelMatchersV2(
+						KubernetesCommonPanelQueries["KubernetesThroughput3"],
 						labelMatchers,
-					),
+					).Pretty(0),
 					dashboards.AddQueryDataSource(datasourceName),
 					query.SeriesNameFormat("Writes"),
 				),
 			),
 			panel.AddQuery(
 				query.PromQL(
-					promql.SetLabelMatchers(
-						"sum by(pod) (rate(container_fs_reads_bytes_total{"+GetCAdvisorMatcher()+", device=~\"(/dev.+)|mmcblk.p.+|nvme.+|rbd.+|sd.+|vd.+|xvd.+|dm-.+|dasd.+\", container!=\"\", cluster=\"$cluster\", namespace=\"$namespace\", pod=~\"$pod\"}[$__rate_interval]))",
+					promql.SetLabelMatchersV2(
+						KubernetesCommonPanelQueries["KubernetesThroughput4"],
 						labelMatchers,
-					),
+					).Pretty(0),
 					dashboards.AddQueryDataSource(datasourceName),
 					query.SeriesNameFormat("Reads"),
 				),
@@ -194,10 +195,10 @@ func KubernetesThroughput(granularity, datasourceName string, labelMatchers ...p
 		queries = []panel.Option{
 			panel.AddQuery(
 				query.PromQL(
-					promql.SetLabelMatchers(
-						"sum by(container) (rate(container_fs_reads_bytes_total{"+GetCAdvisorMatcher()+", container!=\"\", cluster=\"$cluster\", namespace=\"$namespace\", pod=\"$pod\"}[$__rate_interval]) + rate(container_fs_writes_bytes_total{"+GetCAdvisorMatcher()+", container!=\"\", cluster=\"$cluster\", namespace=\"$namespace\", pod=\"$pod\"}[$__rate_interval]))",
+					promql.SetLabelMatchersV2(
+						KubernetesCommonPanelQueries["KubernetesThroughput5"],
 						labelMatchers,
-					),
+					).Pretty(0),
 					dashboards.AddQueryDataSource(datasourceName),
 					query.SeriesNameFormat("{{container}}"),
 				),

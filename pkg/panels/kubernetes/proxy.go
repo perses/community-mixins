@@ -23,9 +23,10 @@ import (
 	commonSdk "github.com/perses/perses/go-sdk/common"
 	statPanel "github.com/perses/plugins/statchart/sdk/go"
 	timeSeriesPanel "github.com/perses/plugins/timeserieschart/sdk/go"
+	"github.com/prometheus/prometheus/model/labels"
 )
 
-func ProxyUpStatus(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
+func ProxyUpStatus(datasourceName string, labelMatchers ...*labels.Matcher) panelgroup.Option {
 	return panelgroup.AddPanel("Up",
 		panel.Description("Shows the status of the proxy."),
 		statPanel.Chart(
@@ -37,17 +38,17 @@ func ProxyUpStatus(datasourceName string, labelMatchers ...promql.LabelMatcher) 
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchers(
-					"sum(up{cluster=\"$cluster\", "+GetKubeProxyMatcher()+"})",
+				promql.SetLabelMatchersV2(
+					KubernetesCommonPanelQueries["ProxyUpStatus"],
 					labelMatchers,
-				),
+				).Pretty(0),
 				dashboards.AddQueryDataSource(datasourceName),
 			),
 		),
 	)
 }
 
-func RulesSyncRate(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
+func RulesSyncRate(datasourceName string, labelMatchers ...*labels.Matcher) panelgroup.Option {
 	return panelgroup.AddPanel("Rules Sync Rate",
 		panel.Description("Shows the rate of rules sync events."),
 		timeSeriesPanel.Chart(
@@ -71,10 +72,10 @@ func RulesSyncRate(datasourceName string, labelMatchers ...promql.LabelMatcher) 
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchers(
-					"sum(rate(kubeproxy_sync_proxy_rules_duration_seconds_count{cluster=\"$cluster\", "+GetKubeProxyMatcher()+", instance=~\"$instance\"}[$__rate_interval]))",
+				promql.SetLabelMatchersV2(
+					KubernetesCommonPanelQueries["RulesSyncRate"],
 					labelMatchers,
-				),
+				).Pretty(0),
 				dashboards.AddQueryDataSource(datasourceName),
 				query.SeriesNameFormat("{{instance}}"),
 			),
@@ -82,7 +83,7 @@ func RulesSyncRate(datasourceName string, labelMatchers ...promql.LabelMatcher) 
 	)
 }
 
-func RulesSyncLatency(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
+func RulesSyncLatency(datasourceName string, labelMatchers ...*labels.Matcher) panelgroup.Option {
 	return panelgroup.AddPanel("Rules Sync Latency 99th Quantile",
 		panel.Description("Shows the 99th quantile latency of rules sync events."),
 		timeSeriesPanel.Chart(
@@ -106,10 +107,10 @@ func RulesSyncLatency(datasourceName string, labelMatchers ...promql.LabelMatche
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchers(
-					"histogram_quantile(0.99,rate(kubeproxy_sync_proxy_rules_duration_seconds_bucket{cluster=\"$cluster\", "+GetKubeProxyMatcher()+", instance=~\"$instance\"}[$__rate_interval]))",
+				promql.SetLabelMatchersV2(
+					KubernetesCommonPanelQueries["RulesSyncLatency"],
 					labelMatchers,
-				),
+				).Pretty(0),
 				dashboards.AddQueryDataSource(datasourceName),
 				query.SeriesNameFormat("{{instance}}"),
 			),
@@ -117,7 +118,7 @@ func RulesSyncLatency(datasourceName string, labelMatchers ...promql.LabelMatche
 	)
 }
 
-func NetworkProgrammingRate(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
+func NetworkProgrammingRate(datasourceName string, labelMatchers ...*labels.Matcher) panelgroup.Option {
 	return panelgroup.AddPanel("Network Programming Rate",
 		panel.Description("Shows the rate of network programming events."),
 		timeSeriesPanel.Chart(
@@ -141,10 +142,10 @@ func NetworkProgrammingRate(datasourceName string, labelMatchers ...promql.Label
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchers(
-					"sum(rate(kubeproxy_network_programming_duration_seconds_count{cluster=\"$cluster\", "+GetKubeProxyMatcher()+", instance=~\"$instance\"}[$__rate_interval]))",
+				promql.SetLabelMatchersV2(
+					KubernetesCommonPanelQueries["NetworkProgrammingRate"],
 					labelMatchers,
-				),
+				).Pretty(0),
 				dashboards.AddQueryDataSource(datasourceName),
 				query.SeriesNameFormat("{{instance}}"),
 			),
@@ -152,7 +153,7 @@ func NetworkProgrammingRate(datasourceName string, labelMatchers ...promql.Label
 	)
 }
 
-func NetworkProgrammingLatency(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
+func NetworkProgrammingLatency(datasourceName string, labelMatchers ...*labels.Matcher) panelgroup.Option {
 	return panelgroup.AddPanel("Network Programming Latency 99th Quantile",
 		panel.Description("Shows the 99th quantile latency of network programming events."),
 		timeSeriesPanel.Chart(
@@ -176,10 +177,10 @@ func NetworkProgrammingLatency(datasourceName string, labelMatchers ...promql.La
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchers(
-					"histogram_quantile(0.99, sum(rate(kubeproxy_network_programming_duration_seconds_bucket{cluster=\"$cluster\", "+GetKubeProxyMatcher()+", instance=~\"$instance\"}[$__rate_interval])) by (instance, le))",
+				promql.SetLabelMatchersV2(
+					KubernetesCommonPanelQueries["NetworkProgrammingLatency"],
 					labelMatchers,
-				),
+				).Pretty(0),
 				dashboards.AddQueryDataSource(datasourceName),
 				query.SeriesNameFormat("{{instance}}"),
 			),

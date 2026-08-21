@@ -22,9 +22,10 @@ import (
 
 	commonSdk "github.com/perses/perses/go-sdk/common"
 	tablePanel "github.com/perses/plugins/table/sdk/go"
+	"github.com/prometheus/prometheus/model/labels"
 )
 
-func MultiClusterCPUUsageQuota(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
+func MultiClusterCPUUsageQuota(datasourceName string, labelMatchers ...*labels.Matcher) panelgroup.Option {
 	return panelgroup.AddPanel("CPU Quota",
 		panel.Description("Shows the CPU requests, limits, and usage of clusters in tabular format."),
 		tablePanel.Table(
@@ -95,53 +96,53 @@ func MultiClusterCPUUsageQuota(datasourceName string, labelMatchers ...promql.La
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchers(
-					"sum("+GetNodeNSCPUSecondsRecordingRule()+") by (cluster)",
+				promql.SetLabelMatchersV2(
+					KubernetesCommonPanelQueries["MultiClusterCPUUsageQuota1"],
 					labelMatchers,
-				),
+				).Pretty(0),
 				dashboards.AddQueryDataSource(datasourceName),
 			),
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchers(
-					"sum(kube_pod_container_resource_requests{"+GetKubeStateMetricsMatcher()+", resource=\"cpu\"}) by (cluster)",
+				promql.SetLabelMatchersV2(
+					KubernetesCommonPanelQueries["MultiClusterCPUUsageQuota2"],
 					labelMatchers,
-				),
+				).Pretty(0),
 				dashboards.AddQueryDataSource(datasourceName),
 			),
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchers(
-					"sum("+GetNodeNSCPUSecondsRecordingRule()+") by (cluster) / sum(kube_pod_container_resource_requests{"+GetKubeStateMetricsMatcher()+", resource=\"cpu\"}) by (cluster)",
+				promql.SetLabelMatchersV2(
+					KubernetesCommonPanelQueries["MultiClusterCPUUsageQuota3"],
 					labelMatchers,
-				),
+				).Pretty(0),
 				dashboards.AddQueryDataSource(datasourceName),
 			),
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchers(
-					"sum(kube_pod_container_resource_limits{"+GetKubeStateMetricsMatcher()+", resource=\"cpu\"}) by (cluster)",
+				promql.SetLabelMatchersV2(
+					KubernetesCommonPanelQueries["MultiClusterCPUUsageQuota4"],
 					labelMatchers,
-				),
+				).Pretty(0),
 				dashboards.AddQueryDataSource(datasourceName),
 			),
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchers(
-					"sum("+GetNodeNSCPUSecondsRecordingRule()+") by (cluster) / sum(kube_pod_container_resource_limits{"+GetKubeStateMetricsMatcher()+", resource=\"cpu\"}) by (cluster)",
+				promql.SetLabelMatchersV2(
+					KubernetesCommonPanelQueries["MultiClusterCPUUsageQuota5"],
 					labelMatchers,
-				),
+				).Pretty(0),
 				dashboards.AddQueryDataSource(datasourceName),
 			),
 		),
 	)
 }
 
-func MultiClusterMemoryUsageQuota(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
+func MultiClusterMemoryUsageQuota(datasourceName string, labelMatchers ...*labels.Matcher) panelgroup.Option {
 	return panelgroup.AddPanel("Memory Requests by Cluster",
 		panel.Description("Shows the memory requests, limits, and usage of clusters in tabular format."),
 		tablePanel.Table(
@@ -209,46 +210,46 @@ func MultiClusterMemoryUsageQuota(datasourceName string, labelMatchers ...promql
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchers(
-					"sum(container_memory_rss{"+GetCAdvisorMatcher()+", container!=\"\"}) by (cluster)",
+				promql.SetLabelMatchersV2(
+					KubernetesCommonPanelQueries["MultiClusterMemoryUsageQuota1"],
 					labelMatchers,
-				),
+				).Pretty(0),
 				dashboards.AddQueryDataSource(datasourceName),
 			),
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchers(
-					"sum(kube_pod_container_resource_requests{"+GetKubeStateMetricsMatcher()+", resource=\"memory\"}) by (cluster)",
+				promql.SetLabelMatchersV2(
+					KubernetesCommonPanelQueries["MultiClusterMemoryUsageQuota2"],
 					labelMatchers,
-				),
+				).Pretty(0),
 				dashboards.AddQueryDataSource(datasourceName),
 			),
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchers(
-					"sum(container_memory_rss{"+GetCAdvisorMatcher()+", container!=\"\"}) by (cluster) / sum(kube_pod_container_resource_requests{"+GetKubeStateMetricsMatcher()+", resource=\"memory\"}) by (cluster)",
+				promql.SetLabelMatchersV2(
+					KubernetesCommonPanelQueries["MultiClusterMemoryUsageQuota3"],
 					labelMatchers,
-				),
+				).Pretty(0),
 				dashboards.AddQueryDataSource(datasourceName),
 			),
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchers(
-					"sum(kube_pod_container_resource_limits{"+GetKubeStateMetricsMatcher()+", resource=\"memory\"}) by (cluster)",
+				promql.SetLabelMatchersV2(
+					KubernetesCommonPanelQueries["MultiClusterMemoryUsageQuota4"],
 					labelMatchers,
-				),
+				).Pretty(0),
 				dashboards.AddQueryDataSource(datasourceName),
 			),
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchers(
-					"sum(container_memory_rss{"+GetCAdvisorMatcher()+", container!=\"\"}) by (cluster) / sum(kube_pod_container_resource_limits{"+GetKubeStateMetricsMatcher()+", resource=\"memory\"}) by (cluster)",
+				promql.SetLabelMatchersV2(
+					KubernetesCommonPanelQueries["MultiClusterMemoryUsageQuota5"],
 					labelMatchers,
-				),
+				).Pretty(0),
 				dashboards.AddQueryDataSource(datasourceName),
 			),
 		),

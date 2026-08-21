@@ -4,7 +4,7 @@ Welcome to the **Perses Community Mixins** repository! This project is designed 
 
 This repo also offers Prometheus Operator format recording rules and alerts alongside these dashboards, also maintained in Go as a complete mixin solution!
 
-> **Note:** These dashboards are compatible with Perses version v0.53.0-beta.0 and onwards.
+> **Note:** These dashboards are compatible with Perses version v0.54.0 and onwards.
 
 ## Overview of Available Dashboards
 
@@ -192,6 +192,8 @@ This will deploy the dashboards from the `examples/dashboards/perses` directory 
 ### Applying Dashboards with Perses Operator
 
 Once you have installed Perses Operator, with a `Perses` instance and `PersesDatasource` object in your cluster (following the instructions [here](https://github.com/perses/perses-operator?tab=readme-ov-file#running-on-the-cluster)), you can apply the generated `PersesDashboard` objects using:
+
+> **Minimum operator version:** Generated dashboards under `examples/dashboards/operator/` use `apiVersion: perses.dev/v1alpha2` and require [perses-operator](https://github.com/perses/perses-operator/releases/tag/v0.3.0) **v0.3.0** or later.
 
 ```bash
 # Add the dashboard CRDs to Perses (component-wise)

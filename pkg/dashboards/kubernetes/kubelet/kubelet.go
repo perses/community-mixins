@@ -25,7 +25,7 @@ import (
 	"github.com/prometheus/prometheus/model/labels"
 )
 
-func withKubeletStats(datasource string, labelMatcher promql.LabelMatcher) dashboard.Option {
+func withKubeletStats(datasource string, labelMatcher *labels.Matcher) dashboard.Option {
 	return dashboard.AddPanelGroup("Kubelet Stats",
 		panelgroup.PanelsPerLine(6),
 		panels.RunningKubeletStat(datasource, labelMatcher),
@@ -37,7 +37,7 @@ func withKubeletStats(datasource string, labelMatcher promql.LabelMatcher) dashb
 	)
 }
 
-func withKubeletOperations(datasource string, labelMatcher promql.LabelMatcher) dashboard.Option {
+func withKubeletOperations(datasource string, labelMatcher *labels.Matcher) dashboard.Option {
 	return dashboard.AddPanelGroup("Operation Rate and Errors",
 		panelgroup.PanelsPerLine(2),
 		panels.OperationRate(datasource, labelMatcher),
@@ -45,14 +45,14 @@ func withKubeletOperations(datasource string, labelMatcher promql.LabelMatcher) 
 	)
 }
 
-func withKubeletOperationsQuantile(datasource string, labelMatcher promql.LabelMatcher) dashboard.Option {
+func withKubeletOperationsQuantile(datasource string, labelMatcher *labels.Matcher) dashboard.Option {
 	return dashboard.AddPanelGroup("Operation Duration 99th quantile",
 		panelgroup.PanelsPerLine(1),
 		panels.OperationDurationQuantile(datasource, labelMatcher),
 	)
 }
 
-func withPodStartRateAndDuration(datasource string, labelMatcher promql.LabelMatcher) dashboard.Option {
+func withPodStartRateAndDuration(datasource string, labelMatcher *labels.Matcher) dashboard.Option {
 	return dashboard.AddPanelGroup("Pod Start Rate and Duration",
 		panelgroup.PanelsPerLine(2),
 		panels.PodStartRate(datasource, labelMatcher),
@@ -60,7 +60,7 @@ func withPodStartRateAndDuration(datasource string, labelMatcher promql.LabelMat
 	)
 }
 
-func withStorageOperationsAndErrors(datasource string, labelMatcher promql.LabelMatcher) dashboard.Option {
+func withStorageOperationsAndErrors(datasource string, labelMatcher *labels.Matcher) dashboard.Option {
 	return dashboard.AddPanelGroup("Storage Operations Rate and Errors",
 		panelgroup.PanelsPerLine(2),
 		panels.StorageOperationRate(datasource, labelMatcher),
@@ -68,14 +68,14 @@ func withStorageOperationsAndErrors(datasource string, labelMatcher promql.Label
 	)
 }
 
-func withStorageOperationsQuantile(datasource string, labelMatcher promql.LabelMatcher) dashboard.Option {
+func withStorageOperationsQuantile(datasource string, labelMatcher *labels.Matcher) dashboard.Option {
 	return dashboard.AddPanelGroup("Storage Operation Duration 99th quantile",
 		panelgroup.PanelsPerLine(1),
 		panels.StorageOperationDuration(datasource, labelMatcher),
 	)
 }
 
-func withCgroupManager(datasource string, labelMatcher promql.LabelMatcher) dashboard.Option {
+func withCgroupManager(datasource string, labelMatcher *labels.Matcher) dashboard.Option {
 	return dashboard.AddPanelGroup("Cgroup manager",
 		panelgroup.PanelsPerLine(2),
 		panels.CgroupManagerOperationRate(datasource, labelMatcher),
@@ -83,7 +83,7 @@ func withCgroupManager(datasource string, labelMatcher promql.LabelMatcher) dash
 	)
 }
 
-func withPLEGRelist(datasource string, labelMatcher promql.LabelMatcher) dashboard.Option {
+func withPLEGRelist(datasource string, labelMatcher *labels.Matcher) dashboard.Option {
 	return dashboard.AddPanelGroup("PLEG relist",
 		panelgroup.PanelsPerLine(2),
 		panels.PLEGRelistRate(datasource, labelMatcher),
@@ -91,21 +91,21 @@ func withPLEGRelist(datasource string, labelMatcher promql.LabelMatcher) dashboa
 	)
 }
 
-func withPLEGRelistDuration(datasource string, labelMatcher promql.LabelMatcher) dashboard.Option {
+func withPLEGRelistDuration(datasource string, labelMatcher *labels.Matcher) dashboard.Option {
 	return dashboard.AddPanelGroup("PLEG relist duration",
 		panelgroup.PanelsPerLine(1),
 		panels.PLEGRelistDuration(datasource, labelMatcher),
 	)
 }
 
-func withRPCRate(datasource string, labelMatcher promql.LabelMatcher) dashboard.Option {
+func withRPCRate(datasource string, labelMatcher *labels.Matcher) dashboard.Option {
 	return dashboard.AddPanelGroup("RPC rate",
 		panelgroup.PanelsPerLine(1),
 		panels.RPCRate(datasource, labelMatcher),
 	)
 }
 
-func withRequestDurationQuantile(datasource string, labelMatcher promql.LabelMatcher) dashboard.Option {
+func withRequestDurationQuantile(datasource string, labelMatcher *labels.Matcher) dashboard.Option {
 	return dashboard.AddPanelGroup("Request duration 99th quantile",
 		panelgroup.PanelsPerLine(1),
 		panels.RequestDurationQuantile(datasource, labelMatcher),
@@ -163,8 +163,7 @@ func BuildKubeletOverview(project string, datasource string, clusterLabelName st
 		),
 	}
 
-	clusterLabelMatcher := dashboards.GetClusterLabelMatcher(clusterLabelName)
-	clusterLabelMatcherV2 := dashboards.GetClusterLabelMatcherV2(clusterLabelName)
+	clusterLabelMatcher := dashboards.GetClusterLabelMatcherV2(clusterLabelName)
 
 	vars := defaultVars
 	if len(variableOverrides) > 0 {
@@ -186,7 +185,7 @@ func BuildKubeletOverview(project string, datasource string, clusterLabelName st
 		withPLEGRelistDuration(datasource, clusterLabelMatcher),
 		withRPCRate(datasource, clusterLabelMatcher),
 		withRequestDurationQuantile(datasource, clusterLabelMatcher),
-		withKubeletResources(datasource, clusterLabelMatcherV2),
+		withKubeletResources(datasource, clusterLabelMatcher),
 	)
 	return dashboards.NewDashboardResult(
 		dashboard.New("kubelet-overview", options...),

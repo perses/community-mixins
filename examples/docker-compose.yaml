@@ -1,6 +1,6 @@
 services:
   perses:
-    image: persesdev/perses:v0.53-distroless-debug
+    image: persesdev/perses:v0.54.0
     container_name: perses
     command: "--config=/etc/perses/config/config.yaml"
     ports:

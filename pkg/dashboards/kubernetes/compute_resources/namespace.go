@@ -22,9 +22,10 @@ import (
 
 	listVar "github.com/perses/perses/go-sdk/variable/list-variable"
 	labelValuesVar "github.com/perses/plugins/prometheus/sdk/go/variable/label-values"
+	"github.com/prometheus/prometheus/model/labels"
 )
 
-func withNamespaceStatsGroup(datasource string, labelMatcher promql.LabelMatcher) dashboard.Option {
+func withNamespaceStatsGroup(datasource string, labelMatcher *labels.Matcher) dashboard.Option {
 	return dashboard.AddPanelGroup("Namespace Stats",
 		panelgroup.PanelsPerLine(4),
 		panelgroup.PanelHeight(4),
@@ -35,7 +36,7 @@ func withNamespaceStatsGroup(datasource string, labelMatcher promql.LabelMatcher
 	)
 }
 
-func withNamespaceCPUUsageGroup(datasource string, labelMatcher promql.LabelMatcher) dashboard.Option {
+func withNamespaceCPUUsageGroup(datasource string, labelMatcher *labels.Matcher) dashboard.Option {
 	return dashboard.AddPanelGroup("CPU Usage",
 		panelgroup.PanelsPerLine(1),
 		panelgroup.PanelHeight(8),
@@ -43,7 +44,7 @@ func withNamespaceCPUUsageGroup(datasource string, labelMatcher promql.LabelMatc
 	)
 }
 
-func withNamespaceCPUUsageQuotaGroup(datasource string, labelMatcher promql.LabelMatcher) dashboard.Option {
+func withNamespaceCPUUsageQuotaGroup(datasource string, labelMatcher *labels.Matcher) dashboard.Option {
 	return dashboard.AddPanelGroup("CPU Usage Quota",
 		panelgroup.PanelsPerLine(1),
 		panelgroup.PanelHeight(10),
@@ -51,7 +52,7 @@ func withNamespaceCPUUsageQuotaGroup(datasource string, labelMatcher promql.Labe
 	)
 }
 
-func withNamespaceMemoryUsageGroup(datasource string, labelMatcher promql.LabelMatcher) dashboard.Option {
+func withNamespaceMemoryUsageGroup(datasource string, labelMatcher *labels.Matcher) dashboard.Option {
 	return dashboard.AddPanelGroup("Memory Usage",
 		panelgroup.PanelsPerLine(1),
 		panelgroup.PanelHeight(8),
@@ -59,7 +60,7 @@ func withNamespaceMemoryUsageGroup(datasource string, labelMatcher promql.LabelM
 	)
 }
 
-func withNamespaceMemoryUsageQuotaGroup(datasource string, labelMatcher promql.LabelMatcher) dashboard.Option {
+func withNamespaceMemoryUsageQuotaGroup(datasource string, labelMatcher *labels.Matcher) dashboard.Option {
 	return dashboard.AddPanelGroup("Memory Usage Quota",
 		panelgroup.PanelsPerLine(1),
 		panelgroup.PanelHeight(10),
@@ -67,7 +68,7 @@ func withNamespaceMemoryUsageQuotaGroup(datasource string, labelMatcher promql.L
 	)
 }
 
-func withNamespaceNetworkUsageGroup(datasource string, labelMatcher promql.LabelMatcher) dashboard.Option {
+func withNamespaceNetworkUsageGroup(datasource string, labelMatcher *labels.Matcher) dashboard.Option {
 	return dashboard.AddPanelGroup("Network Usage",
 		panelgroup.PanelsPerLine(1),
 		panelgroup.PanelHeight(10),
@@ -75,7 +76,7 @@ func withNamespaceNetworkUsageGroup(datasource string, labelMatcher promql.Label
 	)
 }
 
-func withNamespaceBandwidthGroup(datasource string, labelMatcher promql.LabelMatcher) dashboard.Option {
+func withNamespaceBandwidthGroup(datasource string, labelMatcher *labels.Matcher) dashboard.Option {
 	return dashboard.AddPanelGroup("Bandwidth",
 		panelgroup.PanelsPerLine(2),
 		panelgroup.PanelHeight(8),
@@ -84,7 +85,7 @@ func withNamespaceBandwidthGroup(datasource string, labelMatcher promql.LabelMat
 	)
 }
 
-func withNamespaceRateOfPacketsGroup(datasource string, labelMatcher promql.LabelMatcher) dashboard.Option {
+func withNamespaceRateOfPacketsGroup(datasource string, labelMatcher *labels.Matcher) dashboard.Option {
 	return dashboard.AddPanelGroup("Rate of Packets",
 		panelgroup.PanelsPerLine(2),
 		panelgroup.PanelHeight(8),
@@ -93,7 +94,7 @@ func withNamespaceRateOfPacketsGroup(datasource string, labelMatcher promql.Labe
 	)
 }
 
-func withNamespaceRateOfPacketsDroppedGroup(datasource string, labelMatcher promql.LabelMatcher) dashboard.Option {
+func withNamespaceRateOfPacketsDroppedGroup(datasource string, labelMatcher *labels.Matcher) dashboard.Option {
 	return dashboard.AddPanelGroup("Rate of Packets Dropped",
 		panelgroup.PanelsPerLine(2),
 		panelgroup.PanelHeight(8),
@@ -102,7 +103,7 @@ func withNamespaceRateOfPacketsDroppedGroup(datasource string, labelMatcher prom
 	)
 }
 
-func withNamespaceStorageIOGroup(datasource string, labelMatcher promql.LabelMatcher) dashboard.Option {
+func withNamespaceStorageIOGroup(datasource string, labelMatcher *labels.Matcher) dashboard.Option {
 	return dashboard.AddPanelGroup("Storage IO",
 		panelgroup.PanelsPerLine(2),
 		panelgroup.PanelHeight(8),
@@ -111,7 +112,7 @@ func withNamespaceStorageIOGroup(datasource string, labelMatcher promql.LabelMat
 	)
 }
 
-func withNamespaceCurrentStorageIOGroup(datasource string, labelMatcher promql.LabelMatcher) dashboard.Option {
+func withNamespaceCurrentStorageIOGroup(datasource string, labelMatcher *labels.Matcher) dashboard.Option {
 	return dashboard.AddPanelGroup("Storage IO - Distribution",
 		panelgroup.PanelsPerLine(1),
 		panelgroup.PanelHeight(10),
@@ -150,7 +151,7 @@ func BuildKubernetesNamespaceOverview(project string,
 		),
 	}
 
-	clusterLabelMatcher := dashboards.GetClusterLabelMatcher(clusterLabelName)
+	clusterLabelMatcher := dashboards.GetClusterLabelMatcherV2(clusterLabelName)
 
 	vars := defaultVars
 	if len(variableOverrides) > 0 {

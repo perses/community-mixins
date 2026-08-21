@@ -22,9 +22,10 @@ import (
 
 	listVar "github.com/perses/perses/go-sdk/variable/list-variable"
 	labelValuesVar "github.com/perses/plugins/prometheus/sdk/go/variable/label-values"
+	"github.com/prometheus/prometheus/model/labels"
 )
 
-func withPodCPUUsageGroup(datasource string, labelMatcher promql.LabelMatcher) dashboard.Option {
+func withPodCPUUsageGroup(datasource string, labelMatcher *labels.Matcher) dashboard.Option {
 	return dashboard.AddPanelGroup("CPU Usage",
 		panelgroup.PanelsPerLine(1),
 		panelgroup.PanelHeight(8),
@@ -32,7 +33,7 @@ func withPodCPUUsageGroup(datasource string, labelMatcher promql.LabelMatcher) d
 	)
 }
 
-func withPodCPUThrottlingGroup(datasource string, labelMatcher promql.LabelMatcher) dashboard.Option {
+func withPodCPUThrottlingGroup(datasource string, labelMatcher *labels.Matcher) dashboard.Option {
 	return dashboard.AddPanelGroup("CPU Throttling",
 		panelgroup.PanelsPerLine(1),
 		panelgroup.PanelHeight(8),
@@ -40,7 +41,7 @@ func withPodCPUThrottlingGroup(datasource string, labelMatcher promql.LabelMatch
 	)
 }
 
-func withPodCPUUsageQuotaGroup(datasource string, labelMatcher promql.LabelMatcher) dashboard.Option {
+func withPodCPUUsageQuotaGroup(datasource string, labelMatcher *labels.Matcher) dashboard.Option {
 	return dashboard.AddPanelGroup("CPU Usage Quota",
 		panelgroup.PanelsPerLine(1),
 		panelgroup.PanelHeight(10),
@@ -48,7 +49,7 @@ func withPodCPUUsageQuotaGroup(datasource string, labelMatcher promql.LabelMatch
 	)
 }
 
-func withPodMemoryUsageGroup(datasource string, labelMatcher promql.LabelMatcher) dashboard.Option {
+func withPodMemoryUsageGroup(datasource string, labelMatcher *labels.Matcher) dashboard.Option {
 	return dashboard.AddPanelGroup("Memory Usage",
 		panelgroup.PanelsPerLine(1),
 		panelgroup.PanelHeight(8),
@@ -56,7 +57,7 @@ func withPodMemoryUsageGroup(datasource string, labelMatcher promql.LabelMatcher
 	)
 }
 
-func withPodMemoryUsageQuotaGroup(datasource string, labelMatcher promql.LabelMatcher) dashboard.Option {
+func withPodMemoryUsageQuotaGroup(datasource string, labelMatcher *labels.Matcher) dashboard.Option {
 	return dashboard.AddPanelGroup("Memory Usage Quota",
 		panelgroup.PanelsPerLine(1),
 		panelgroup.PanelHeight(10),
@@ -64,7 +65,7 @@ func withPodMemoryUsageQuotaGroup(datasource string, labelMatcher promql.LabelMa
 	)
 }
 
-func withPodBandwidthGroup(datasource string, labelMatcher promql.LabelMatcher) dashboard.Option {
+func withPodBandwidthGroup(datasource string, labelMatcher *labels.Matcher) dashboard.Option {
 	return dashboard.AddPanelGroup("Bandwidth",
 		panelgroup.PanelsPerLine(2),
 		panelgroup.PanelHeight(8),
@@ -73,7 +74,7 @@ func withPodBandwidthGroup(datasource string, labelMatcher promql.LabelMatcher) 
 	)
 }
 
-func withPodRateOfPacketsGroup(datasource string, labelMatcher promql.LabelMatcher) dashboard.Option {
+func withPodRateOfPacketsGroup(datasource string, labelMatcher *labels.Matcher) dashboard.Option {
 	return dashboard.AddPanelGroup("Rate of Packets",
 		panelgroup.PanelsPerLine(2),
 		panelgroup.PanelHeight(8),
@@ -82,7 +83,7 @@ func withPodRateOfPacketsGroup(datasource string, labelMatcher promql.LabelMatch
 	)
 }
 
-func withPodRateOfPacketsDroppedGroup(datasource string, labelMatcher promql.LabelMatcher) dashboard.Option {
+func withPodRateOfPacketsDroppedGroup(datasource string, labelMatcher *labels.Matcher) dashboard.Option {
 	return dashboard.AddPanelGroup("Rate of Packets Dropped",
 		panelgroup.PanelsPerLine(2),
 		panelgroup.PanelHeight(8),
@@ -91,7 +92,7 @@ func withPodRateOfPacketsDroppedGroup(datasource string, labelMatcher promql.Lab
 	)
 }
 
-func withPodStorageIOGroup(datasource string, labelMatcher promql.LabelMatcher) dashboard.Option {
+func withPodStorageIOGroup(datasource string, labelMatcher *labels.Matcher) dashboard.Option {
 	return dashboard.AddPanelGroup("Storage IO",
 		panelgroup.PanelsPerLine(2),
 		panelgroup.PanelHeight(8),
@@ -100,7 +101,7 @@ func withPodStorageIOGroup(datasource string, labelMatcher promql.LabelMatcher) 
 	)
 }
 
-func withPodStorageIOContainerGroup(datasource string, labelMatcher promql.LabelMatcher) dashboard.Option {
+func withPodStorageIOContainerGroup(datasource string, labelMatcher *labels.Matcher) dashboard.Option {
 	return dashboard.AddPanelGroup("Storage IO - Container",
 		panelgroup.PanelsPerLine(2),
 		panelgroup.PanelHeight(8),
@@ -109,7 +110,7 @@ func withPodStorageIOContainerGroup(datasource string, labelMatcher promql.Label
 	)
 }
 
-func withPodCurrentStorageIOGroup(datasource string, labelMatcher promql.LabelMatcher) dashboard.Option {
+func withPodCurrentStorageIOGroup(datasource string, labelMatcher *labels.Matcher) dashboard.Option {
 	return dashboard.AddPanelGroup("Storage IO - Distribution",
 		panelgroup.PanelsPerLine(1),
 		panelgroup.PanelHeight(10),
@@ -161,7 +162,7 @@ func BuildKubernetesPodOverview(project string, datasource string, clusterLabelN
 		),
 	}
 
-	clusterLabelMatcher := dashboards.GetClusterLabelMatcher(clusterLabelName)
+	clusterLabelMatcher := dashboards.GetClusterLabelMatcherV2(clusterLabelName)
 
 	vars := defaultVars
 	if len(variableOverrides) > 0 {

@@ -9,11 +9,11 @@ jobs:
     runs-on: ubuntu-latest
     name: Golang Linting
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
       - name: Import environment variables from file
         run: cat ".github/env" >> $GITHUB_ENV
 
-      - uses: actions/setup-go@v6
+      - uses: actions/setup-go@v7
         with:
           go-version: "${{ env.golang-version }}"
           check-latest: true
@@ -23,7 +23,7 @@ jobs:
         run: make generate
 
       - name: Run GolangCI Lint
-        uses: golangci/golangci-lint-action@v9.2.1
+        uses: golangci/golangci-lint-action@v9.3.0
         with:
           version: v2.11.3
           args: --timeout 10m0s
@@ -32,11 +32,11 @@ jobs:
     runs-on: ubuntu-latest
     name: Unit Tests
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
       - name: Import environment variables from file
         run: cat ".github/env" >> $GITHUB_ENV
 
-      - uses: actions/setup-go@v6
+      - uses: actions/setup-go@v7
         with:
           go-version: "${{ env.golang-version }}"
           check-latest: true
@@ -49,7 +49,7 @@ jobs:
     runs-on: ubuntu-latest
     name: Dashboards Linting
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
 
       - name: Import environment variables from file
         run: cat ".github/env" >> $GITHUB_ENV
@@ -71,19 +71,19 @@ jobs:
     runs-on: ubuntu-latest
     name: Documentation Formatting Check
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
 
       - name: Import environment variables from file
         run: cat ".github/env" >> $GITHUB_ENV
 
-      - uses: actions/setup-go@v6
+      - uses: actions/setup-go@v7
         with:
           go-version: "${{ env.golang-version }}"
           check-latest: true
           cache: true
 
       - name: Set up Go
-        uses: actions/setup-go@v6
+        uses: actions/setup-go@v7
         with:
           go-version: "${{ env.golang-version }}"
           check-latest: true
@@ -98,18 +98,18 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
       - name: Import environment variables from file
         run: cat ".github/env" >> $GITHUB_ENV
 
-      - uses: actions/setup-go@v6
+      - uses: actions/setup-go@v7
         with:
           go-version: "${{ env.golang-version }}"
           check-latest: true
           cache: true
 
       - name: Set up Go
-        uses: actions/setup-go@v6
+        uses: actions/setup-go@v7
         with:
           go-version: "${{ env.golang-version }}"
           check-latest: true
