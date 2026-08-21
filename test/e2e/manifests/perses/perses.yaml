@@ -1,0 +1,24 @@
+apiVersion: perses.dev/v1alpha2
+kind: Perses
+metadata:
+  name: perses
+  namespace: perses-dev
+  labels:
+    app.kubernetes.io/name: perses
+    app.kubernetes.io/instance: perses
+    app.kubernetes.io/part-of: perses-operator
+    app.kubernetes.io/created-by: controller-manager
+    app.kubernetes.io/managed-by: perses-operator
+spec:
+  containerPort: 8080
+  image: persesdev/perses:v0.54.0
+  config:
+    security:
+      readonly: false
+      enable_auth: false
+      cookie:
+        secure: false
+    database:
+      file:
+        folder: /perses/data
+        extension: json
