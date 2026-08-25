@@ -1,5 +1,8 @@
 # Perses Community Mixins
 
+[![checks](https://github.com/perses/community-mixins/actions/workflows/checks.yaml/badge.svg)](https://github.com/perses/community-mixins/actions/workflows/checks.yaml)
+[![e2e](https://github.com/perses/community-mixins/actions/workflows/e2e.yaml/badge.svg)](https://github.com/perses/community-mixins/actions/workflows/e2e.yaml)
+
 Welcome to the **Perses Community Mixins** repository! This project is designed to provide Prometheus mixins tailored for the Perses platform. Developed with the **Perses Go SDK**, these dashboards are modular, reusable, and simple to integrate into various observability setups.
 
 This repo also offers Prometheus Operator format recording rules and alerts alongside these dashboards, also maintained in Go as a complete mixin solution!
