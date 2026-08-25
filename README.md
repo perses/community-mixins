@@ -215,7 +215,7 @@ This will deploy the dashboards from the `examples/dashboards/perses` directory 
 
 Once you have installed Perses Operator, with a `Perses` instance and `PersesDatasource` object in your cluster (following the instructions [here](https://github.com/perses/perses-operator?tab=readme-ov-file#running-on-the-cluster)), you can apply the generated `PersesDashboard` objects using:
 
-> **Minimum operator version:** Generated dashboards under `examples/dashboards/operator/` use `apiVersion: perses.dev/v1alpha2` and require [perses-operator](https://github.com/perses/perses-operator/releases/tag/v0.3.0) **v0.3.0** or later. Operator e2e tests in this repo validate against the version pinned in [`.github/env`](.github/env) (currently **v0.5.0**).
+> **Minimum operator version:** Generated dashboards under `examples/dashboards/operator/` use `apiVersion: perses.dev/v1alpha2` and require [perses-operator](https://github.com/perses/perses-operator/releases/tag/v0.3.0) **v0.3.0** or later. Operator e2e tests in this repo validate against the version pinned in [`.github/env`](.github/env).
 
 ```bash
 # Add the dashboard CRDs to Perses (component-wise)
@@ -228,6 +228,8 @@ kubectl apply -f examples/dashboards/operator/ -R
 ### Dashboard Design Recommendations
 
 You can find dashboard design recommendations [here](docs/README.md).
+
+For background on the composable panel approach used in this repository, see [Composable Dashboards — Lessons from building Perses Community Dashboards](https://perses.dev/blog/2025/06/10/composable-dashboards----lessons-from-building-perses-community-dashboards/).
 
 ## Testing
 
