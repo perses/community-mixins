@@ -75,6 +75,16 @@ This repo also offers Prometheus Operator format recording rules and alerts alon
 - Istio Service Dashboard
 - Istio Workload Dashboard
 - Istio Ztunnel Dashboard
+- Istio Wasm Extension Dashboard
+
+### Tempo Dashboards
+
+- Tempo / Writes
+- Tempo / Tenant
+
+### OpenShift Dashboards
+
+- OCP Audit Log Viewer (requires a Loki datasource; built when `--loki-datasource` is set)
 
 ### OpenTelemetry Collector Dashboards
 
@@ -83,6 +93,8 @@ This repo also offers Prometheus Operator format recording rules and alerts alon
 ## Overview of Available PrometheusRules
 
 - Thanos
+- Thanos Operator
+- Alertmanager
 - Blackbox Exporter
 
 ## Library Panels
@@ -99,6 +111,8 @@ make build-dashboards
 
 The generated dashboard files will be stored as **YAML files** in the `examples/dashboards/` directory by default and split by component (both in native Perses and Perses Operator format). You can then import these files into your Perses instances.
 
+For local testing and CI (`make build-dashboards-local`), dashboards are written to `built/dashboards/` instead.
+
 ### Customizing Job Labels
 
 Some dashboards use hardcoded job label values in PromQL queries (e.g., `job="node"` for Node Exporter). If your monitoring stack uses different job names (e.g., kube-prometheus-stack uses `job="node-exporter"`), you can override them with CLI flags:
@@ -109,22 +123,27 @@ go run main.go \
   --output="yaml" \
   --project="default" \
   --datasource="prometheus-datasource" \
+  --loki-datasource="loki-datasource" \
   --node-exporter-job=node-exporter
 ```
 
-All available job label flags (defaults match the standard community conventions):
+All available CLI flags:
 
-| Flag                       | Default                   | Description                            |
-|----------------------------|---------------------------|----------------------------------------|
-| `--node-exporter-job`      | `node`                    | Node Exporter dashboard queries        |
-| `--apiserver-job`          | `kube-apiserver`          | Kubernetes API server                  |
-| `--kubelet-job`            | `kubelet`                 | Kubelet                                |
-| `--kube-state-metrics-job` | `kube-state-metrics`      | kube-state-metrics                     |
-| `--cadvisor-job`           | `cadvisor`                | cAdvisor                               |
-| `--node-exporter-k8s-job`  | `node-exporter`           | Node Exporter in Kubernetes dashboards |
-| `--controller-manager-job` | `kube-controller-manager` | Kube Controller Manager                |
-| `--scheduler-job`          | `kube-scheduler`          | Kube Scheduler                         |
-| `--kube-proxy-job`         | `kube-proxy`              | Kube Proxy                             |
+| Flag                       | Default                   | Description                                        |
+|----------------------------|---------------------------|----------------------------------------------------|
+| `--datasource`             | *(empty)*                 | Prometheus datasource name                         |
+| `--loki-datasource`        | *(empty)*                 | Loki datasource name; enables OCP Audit Log Viewer |
+| `--project`                | `default`                 | Perses project name                                |
+| `--cluster-label-name`     | *(empty)*                 | Cluster label name for multi-cluster variables     |
+| `--node-exporter-job`      | `node`                    | Node Exporter dashboard queries                    |
+| `--apiserver-job`          | `kube-apiserver`          | Kubernetes API server                              |
+| `--kubelet-job`            | `kubelet`                 | Kubelet                                            |
+| `--kube-state-metrics-job` | `kube-state-metrics`      | kube-state-metrics                                 |
+| `--cadvisor-job`           | `cadvisor`                | cAdvisor                                           |
+| `--node-exporter-k8s-job`  | `node-exporter`           | Node Exporter in Kubernetes dashboards             |
+| `--controller-manager-job` | `kube-controller-manager` | Kube Controller Manager                            |
+| `--scheduler-job`          | `kube-scheduler`          | Kube Scheduler                                     |
+| `--kube-proxy-job`         | `kube-proxy`              | Kube Proxy                                         |
 
 > **Note:** Dashboards for Prometheus, Thanos, Alertmanager, Perses, Blackbox, OpenTelemetry, and etcd already use a `$job` runtime variable, so users can select the job value directly in the Perses UI without needing a CLI flag.
 
