@@ -1,5 +1,8 @@
 # Perses Community Mixins
 
+[![checks](https://github.com/perses/community-mixins/actions/workflows/checks.yaml/badge.svg)](https://github.com/perses/community-mixins/actions/workflows/checks.yaml)
+[![e2e](https://github.com/perses/community-mixins/actions/workflows/e2e.yaml/badge.svg)](https://github.com/perses/community-mixins/actions/workflows/e2e.yaml)
+
 Welcome to the **Perses Community Mixins** repository! This project is designed to provide Prometheus mixins tailored for the Perses platform. Developed with the **Perses Go SDK**, these dashboards are modular, reusable, and simple to integrate into various observability setups.
 
 This repo also offers Prometheus Operator format recording rules and alerts alongside these dashboards, also maintained in Go as a complete mixin solution!
@@ -72,6 +75,16 @@ This repo also offers Prometheus Operator format recording rules and alerts alon
 - Istio Service Dashboard
 - Istio Workload Dashboard
 - Istio Ztunnel Dashboard
+- Istio Wasm Extension Dashboard
+
+### Tempo Dashboards
+
+- Tempo / Writes
+- Tempo / Tenant
+
+### OpenShift Dashboards
+
+- OCP Audit Log Viewer (requires a Loki datasource; built when `--loki-datasource` is set)
 
 ### OpenTelemetry Collector Dashboards
 
@@ -80,6 +93,8 @@ This repo also offers Prometheus Operator format recording rules and alerts alon
 ## Overview of Available PrometheusRules
 
 - Thanos
+- Thanos Operator
+- Alertmanager
 - Blackbox Exporter
 
 ## Library Panels
@@ -96,6 +111,8 @@ make build-dashboards
 
 The generated dashboard files will be stored as **YAML files** in the `examples/dashboards/` directory by default and split by component (both in native Perses and Perses Operator format). You can then import these files into your Perses instances.
 
+For local testing and CI (`make build-dashboards-local`), dashboards are written to `built/dashboards/` instead.
+
 ### Customizing Job Labels
 
 Some dashboards use hardcoded job label values in PromQL queries (e.g., `job="node"` for Node Exporter). If your monitoring stack uses different job names (e.g., kube-prometheus-stack uses `job="node-exporter"`), you can override them with CLI flags:
@@ -106,22 +123,27 @@ go run main.go \
   --output="yaml" \
   --project="default" \
   --datasource="prometheus-datasource" \
+  --loki-datasource="loki-datasource" \
   --node-exporter-job=node-exporter
 ```
 
-All available job label flags (defaults match the standard community conventions):
+All available CLI flags:
 
-| Flag                       | Default                   | Description                            |
-|----------------------------|---------------------------|----------------------------------------|
-| `--node-exporter-job`      | `node`                    | Node Exporter dashboard queries        |
-| `--apiserver-job`          | `kube-apiserver`          | Kubernetes API server                  |
-| `--kubelet-job`            | `kubelet`                 | Kubelet                                |
-| `--kube-state-metrics-job` | `kube-state-metrics`      | kube-state-metrics                     |
-| `--cadvisor-job`           | `cadvisor`                | cAdvisor                               |
-| `--node-exporter-k8s-job`  | `node-exporter`           | Node Exporter in Kubernetes dashboards |
-| `--controller-manager-job` | `kube-controller-manager` | Kube Controller Manager                |
-| `--scheduler-job`          | `kube-scheduler`          | Kube Scheduler                         |
-| `--kube-proxy-job`         | `kube-proxy`              | Kube Proxy                             |
+| Flag                       | Default                   | Description                                        |
+|----------------------------|---------------------------|----------------------------------------------------|
+| `--datasource`             | *(empty)*                 | Prometheus datasource name                         |
+| `--loki-datasource`        | *(empty)*                 | Loki datasource name; enables OCP Audit Log Viewer |
+| `--project`                | `default`                 | Perses project name                                |
+| `--cluster-label-name`     | *(empty)*                 | Cluster label name for multi-cluster variables     |
+| `--node-exporter-job`      | `node`                    | Node Exporter dashboard queries                    |
+| `--apiserver-job`          | `kube-apiserver`          | Kubernetes API server                              |
+| `--kubelet-job`            | `kubelet`                 | Kubelet                                            |
+| `--kube-state-metrics-job` | `kube-state-metrics`      | kube-state-metrics                                 |
+| `--cadvisor-job`           | `cadvisor`                | cAdvisor                                           |
+| `--node-exporter-k8s-job`  | `node-exporter`           | Node Exporter in Kubernetes dashboards             |
+| `--controller-manager-job` | `kube-controller-manager` | Kube Controller Manager                            |
+| `--scheduler-job`          | `kube-scheduler`          | Kube Scheduler                                     |
+| `--kube-proxy-job`         | `kube-proxy`              | Kube Proxy                                         |
 
 > **Note:** Dashboards for Prometheus, Thanos, Alertmanager, Perses, Blackbox, OpenTelemetry, and etcd already use a `$job` runtime variable, so users can select the job value directly in the Perses UI without needing a CLI flag.
 
@@ -193,7 +215,7 @@ This will deploy the dashboards from the `examples/dashboards/perses` directory 
 
 Once you have installed Perses Operator, with a `Perses` instance and `PersesDatasource` object in your cluster (following the instructions [here](https://github.com/perses/perses-operator?tab=readme-ov-file#running-on-the-cluster)), you can apply the generated `PersesDashboard` objects using:
 
-> **Minimum operator version:** Generated dashboards under `examples/dashboards/operator/` use `apiVersion: perses.dev/v1alpha2` and require [perses-operator](https://github.com/perses/perses-operator/releases/tag/v0.3.0) **v0.3.0** or later.
+> **Minimum operator version:** Generated dashboards under `examples/dashboards/operator/` use `apiVersion: perses.dev/v1alpha2` and require [perses-operator](https://github.com/perses/perses-operator/releases/tag/v0.3.0) **v0.3.0** or later. Operator e2e tests in this repo validate against the version pinned in [`.github/env`](.github/env).
 
 ```bash
 # Add the dashboard CRDs to Perses (component-wise)
@@ -205,4 +227,10 @@ kubectl apply -f examples/dashboards/operator/ -R
 
 ### Dashboard Design Recommendations
 
-You can find some recomendation for dashboard design [here](docs/README.md)
+You can find dashboard design recommendations [here](docs/README.md).
+
+For background on the composable panel approach used in this repository, see [Composable Dashboards — Lessons from building Perses Community Dashboards](https://perses.dev/blog/2025/06/10/composable-dashboards----lessons-from-building-perses-community-dashboards/).
+
+## Testing
+
+See [TESTING.md](TESTING.md).

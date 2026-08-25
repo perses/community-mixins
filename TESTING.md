@@ -10,9 +10,10 @@ make unit-test
 
 Validates that mixin-built `PersesDashboard` CRs reconcile through
 [perses-operator](https://github.com/perses/perses-operator) on a local kind cluster.
-CI runs via `.github/workflows/e2e.yaml`.
 
 **Prerequisites:** Docker, [kind](https://kind.sigs.k8s.io/), Helm 3, kubectl, Go.
+
+The default kind cluster name is `community-mixins-e2e` (override with `E2E_KIND_CLUSTER`).
 
 ### Local run
 
@@ -21,7 +22,15 @@ make e2e        # create cluster, install stack, run tests
 make e2e-down   # delete the kind cluster
 ```
 
-Version pins (operator, Perses, kind node image, etc.) live in [`.github/env`](.github/env).
+`make e2e` runs `test/e2e/setup.sh up`, which creates the cluster (if needed), installs the operator via Helm, applies Perses fixtures, builds dashboards to `built/dashboards/operator/`, and applies them.
+
+### Install stack without running tests
+
+If you already have the kind cluster but need to reinstall the operator, Perses, and dashboards:
+
+```sh
+make e2e-install
+```
 
 ### Re-run tests only
 
