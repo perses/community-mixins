@@ -19,12 +19,15 @@ import (
 	panelgroup "github.com/perses/perses/go-sdk/panel-group"
 	listVar "github.com/perses/perses/go-sdk/variable/list-variable"
 	labelValuesVar "github.com/perses/plugins/prometheus/sdk/go/variable/label-values"
+	"github.com/perses/promql-builder/label"
+	"github.com/perses/promql-builder/vector"
+	"github.com/prometheus/prometheus/model/labels"
 
 	"github.com/perses/community-mixins/pkg/dashboards"
 	"github.com/perses/community-mixins/pkg/promql"
 )
 
-func withWritesGateway(datasource string, labelMatcher promql.LabelMatcher) dashboard.Option {
+func withWritesGateway(datasource string, labelMatcher *labels.Matcher) dashboard.Option {
 	return dashboard.AddPanelGroup("Gateway",
 		panelgroup.PanelsPerLine(2),
 		panelgroup.PanelHeight(8),
@@ -33,7 +36,7 @@ func withWritesGateway(datasource string, labelMatcher promql.LabelMatcher) dash
 	)
 }
 
-func withWritesEnvoyProxy(datasource string, labelMatcher promql.LabelMatcher) dashboard.Option {
+func withWritesEnvoyProxy(datasource string, labelMatcher *labels.Matcher) dashboard.Option {
 	return dashboard.AddPanelGroup("Envoy Proxy",
 		panelgroup.PanelsPerLine(2),
 		panelgroup.PanelHeight(8),
@@ -42,7 +45,7 @@ func withWritesEnvoyProxy(datasource string, labelMatcher promql.LabelMatcher) d
 	)
 }
 
-func withWritesDistributor(datasource string, labelMatcher promql.LabelMatcher) dashboard.Option {
+func withWritesDistributor(datasource string, labelMatcher *labels.Matcher) dashboard.Option {
 	return dashboard.AddPanelGroup("Distributor",
 		panelgroup.PanelsPerLine(3),
 		panelgroup.PanelHeight(8),
@@ -52,7 +55,7 @@ func withWritesDistributor(datasource string, labelMatcher promql.LabelMatcher) 
 	)
 }
 
-func withWritesKafkaProducedRecords(datasource string, labelMatcher promql.LabelMatcher) dashboard.Option {
+func withWritesKafkaProducedRecords(datasource string, labelMatcher *labels.Matcher) dashboard.Option {
 	return dashboard.AddPanelGroup("Kafka produced records",
 		panelgroup.PanelsPerLine(2),
 		panelgroup.PanelHeight(8),
@@ -61,7 +64,7 @@ func withWritesKafkaProducedRecords(datasource string, labelMatcher promql.Label
 	)
 }
 
-func withWritesKafkaWrites(datasource string, labelMatcher promql.LabelMatcher) dashboard.Option {
+func withWritesKafkaWrites(datasource string, labelMatcher *labels.Matcher) dashboard.Option {
 	return dashboard.AddPanelGroup("Kafka Writes",
 		panelgroup.PanelsPerLine(2),
 		panelgroup.PanelHeight(8),
@@ -70,7 +73,7 @@ func withWritesKafkaWrites(datasource string, labelMatcher promql.LabelMatcher) 
 	)
 }
 
-func withWritesIngester(datasource string, labelMatcher promql.LabelMatcher) dashboard.Option {
+func withWritesIngester(datasource string, labelMatcher *labels.Matcher) dashboard.Option {
 	return dashboard.AddPanelGroup("Ingester",
 		panelgroup.PanelsPerLine(2),
 		panelgroup.PanelHeight(8),
@@ -79,7 +82,7 @@ func withWritesIngester(datasource string, labelMatcher promql.LabelMatcher) das
 	)
 }
 
-func withWritesMemcachedIngester(datasource string, labelMatcher promql.LabelMatcher) dashboard.Option {
+func withWritesMemcachedIngester(datasource string, labelMatcher *labels.Matcher) dashboard.Option {
 	return dashboard.AddPanelGroup("Memcached - Ingester",
 		panelgroup.PanelsPerLine(2),
 		panelgroup.PanelHeight(8),
@@ -88,7 +91,7 @@ func withWritesMemcachedIngester(datasource string, labelMatcher promql.LabelMat
 	)
 }
 
-func withWritesBackendIngester(datasource string, labelMatcher promql.LabelMatcher) dashboard.Option {
+func withWritesBackendIngester(datasource string, labelMatcher *labels.Matcher) dashboard.Option {
 	return dashboard.AddPanelGroup("Backend - Ingester",
 		panelgroup.PanelsPerLine(2),
 		panelgroup.PanelHeight(8),
@@ -97,7 +100,7 @@ func withWritesBackendIngester(datasource string, labelMatcher promql.LabelMatch
 	)
 }
 
-func withWritesMemcachedCompactor(datasource string, labelMatcher promql.LabelMatcher) dashboard.Option {
+func withWritesMemcachedCompactor(datasource string, labelMatcher *labels.Matcher) dashboard.Option {
 	return dashboard.AddPanelGroup("Memcached - Compactor",
 		panelgroup.PanelsPerLine(2),
 		panelgroup.PanelHeight(8),
@@ -106,7 +109,7 @@ func withWritesMemcachedCompactor(datasource string, labelMatcher promql.LabelMa
 	)
 }
 
-func withWritesBackendCompactor(datasource string, labelMatcher promql.LabelMatcher) dashboard.Option {
+func withWritesBackendCompactor(datasource string, labelMatcher *labels.Matcher) dashboard.Option {
 	return dashboard.AddPanelGroup("Backend - Compactor",
 		panelgroup.PanelsPerLine(2),
 		panelgroup.PanelHeight(8),
@@ -116,7 +119,7 @@ func withWritesBackendCompactor(datasource string, labelMatcher promql.LabelMatc
 }
 
 func BuildTempoWritesOverview(project string, datasource string, clusterLabelName string) dashboards.DashboardResult {
-	clusterLabelMatcher := dashboards.GetClusterLabelMatcher(clusterLabelName)
+	clusterLabelMatcher := dashboards.GetClusterLabelMatcherV2(clusterLabelName)
 	return dashboards.NewDashboardResult(
 		dashboard.New("tempo-writes-overview",
 			dashboard.ProjectName(project),
@@ -136,10 +139,15 @@ func BuildTempoWritesOverview(project string, datasource string, clusterLabelNam
 				listVar.List(
 					labelValuesVar.PrometheusLabelValues("namespace",
 						labelValuesVar.Matchers(
-							promql.SetLabelMatchers(
-								"tempo_build_info",
-								[]promql.LabelMatcher{clusterLabelMatcher, {Name: "cluster", Type: "=", Value: "$cluster"}},
-							),
+							promql.SetLabelMatchersV2(
+								vector.New(
+									vector.WithMetricName("tempo_build_info"),
+								),
+								[]*labels.Matcher{
+									clusterLabelMatcher,
+									label.New("cluster").Equal("$cluster"),
+								},
+							).Pretty(0),
 						),
 						dashboards.AddVariableDatasource(datasource),
 					),

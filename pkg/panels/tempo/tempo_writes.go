@@ -22,9 +22,10 @@ import (
 	markdown "github.com/perses/plugins/markdown/sdk/go"
 	"github.com/perses/plugins/prometheus/sdk/go/query"
 	timeSeriesPanel "github.com/perses/plugins/timeserieschart/sdk/go"
+	"github.com/prometheus/prometheus/model/labels"
 )
 
-func WritesGatewayQPS(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
+func WritesGatewayQPS(datasourceName string, labelMatchers ...*labels.Matcher) panelgroup.Option {
 	return panelgroup.AddPanel("QPS",
 		panel.Description("Rate of HTTP request durations for Tempo Gateway"),
 		timeSeriesPanel.Chart(
@@ -49,10 +50,10 @@ func WritesGatewayQPS(datasourceName string, labelMatchers ...promql.LabelMatche
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchers(
-					"sum by (status) (\n  label_replace(label_replace(rate(tempo_request_duration_seconds_count{cluster=~\"$cluster\", job=~\"($namespace)/cortex-gw(-internal)?\", route=~\"(opentelemetry_proto_collector_trace_v1_traceservice_export|otlp_v1_traces)\"}[$__rate_interval]),\n  \"status\", \"${1}xx\", \"status_code\", \"([0-9])..\"),\n  \"status\", \"${1}\", \"status_code\", \"([a-zA-Z]+)\"))\n",
+				promql.SetLabelMatchersV2(
+					TempoCommonPanelQueries["WritesGatewayQPS"],
 					labelMatchers,
-				),
+				).Pretty(0),
 				dashboards.AddQueryDataSource(datasourceName),
 				query.SeriesNameFormat("{{status}}"),
 			),
@@ -60,7 +61,7 @@ func WritesGatewayQPS(datasourceName string, labelMatchers ...promql.LabelMatche
 	)
 }
 
-func WritesGatewayLatency(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
+func WritesGatewayLatency(datasourceName string, labelMatchers ...*labels.Matcher) panelgroup.Option {
 	return panelgroup.AddPanel("Latency",
 		panel.Description("Shows the 99th and 50th quantile latency of Gateway."),
 		timeSeriesPanel.Chart(
@@ -84,30 +85,30 @@ func WritesGatewayLatency(datasourceName string, labelMatchers ...promql.LabelMa
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchers(
-					"histogram_quantile(0.99, sum(rate(tempo_request_duration_seconds_bucket{cluster=~\"$cluster\", job=~\"($namespace)/cortex-gw(-internal)?\", route=~\"(opentelemetry_proto_collector_trace_v1_traceservice_export|otlp_v1_traces)\"}[$__rate_interval])) by (le,)) * 1e3",
+				promql.SetLabelMatchersV2(
+					TempoCommonPanelQueries["WritesGatewayLatency_p99"],
 					labelMatchers,
-				),
+				).Pretty(0),
 				dashboards.AddQueryDataSource(datasourceName),
 				query.SeriesNameFormat("{{route}} 99th"),
 			),
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchers(
-					"histogram_quantile(0.50, sum(rate(tempo_request_duration_seconds_bucket{cluster=~\"$cluster\", job=~\"($namespace)/cortex-gw(-internal)?\", route=~\"(opentelemetry_proto_collector_trace_v1_traceservice_export|otlp_v1_traces)\"}[$__rate_interval])) by (le,)) * 1e3",
+				promql.SetLabelMatchersV2(
+					TempoCommonPanelQueries["WritesGatewayLatency_p50"],
 					labelMatchers,
-				),
+				).Pretty(0),
 				dashboards.AddQueryDataSource(datasourceName),
 				query.SeriesNameFormat("{{route}} 50th"),
 			),
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchers(
-					"sum(rate(tempo_request_duration_seconds_sum{cluster=~\"$cluster\", job=~\"($namespace)/cortex-gw(-internal)?\", route=~\"(opentelemetry_proto_collector_trace_v1_traceservice_export|otlp_v1_traces)\"}[$__rate_interval])) by () * 1e3 / sum(rate(tempo_request_duration_seconds_count{cluster=~\"$cluster\", job=~\"($namespace)/cortex-gw(-internal)?\", route=~\"(opentelemetry_proto_collector_trace_v1_traceservice_export|otlp_v1_traces)\"}[$__rate_interval])) by ()",
+				promql.SetLabelMatchersV2(
+					TempoCommonPanelQueries["WritesGatewayLatency_avg"],
 					labelMatchers,
-				),
+				).Pretty(0),
 				dashboards.AddQueryDataSource(datasourceName),
 				query.SeriesNameFormat("{{route}} Average"),
 			),
@@ -115,7 +116,7 @@ func WritesGatewayLatency(datasourceName string, labelMatchers ...promql.LabelMa
 	)
 }
 
-func WritesEnvoyProxyQPS(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
+func WritesEnvoyProxyQPS(datasourceName string, labelMatchers ...*labels.Matcher) panelgroup.Option {
 	return panelgroup.AddPanel("QPS",
 		panel.Description("Rate of gRPC response statuses from Envoy"),
 		timeSeriesPanel.Chart(
@@ -141,8 +142,8 @@ func WritesEnvoyProxyQPS(datasourceName string, labelMatchers ...promql.LabelMat
 		panel.AddQuery(
 			query.PromQL(
 				promql.SetLabelMatchers(
-					"sum by (grpc_status) (\n    rate(\n        label_replace(\n            {cluster=~\"$cluster\", job=~\"($namespace)/cortex-gw(-internal)?\", __name__=~\"envoy_cluster_grpc_proto_collector_trace_v1_TraceService_[0-9]+\"},\n            \"grpc_status\", \"$1\", \"__name__\", \"envoy_cluster_grpc_proto_collector_trace_v1_TraceService_(.+)\"\n        )\n        [$__rate_interval:30s]\n    )\n)\n",
-					labelMatchers,
+					WritesEnvoyProxyQPSQuery,
+					toLabelMatchersV1(labelMatchers),
 				),
 				dashboards.AddQueryDataSource(datasourceName),
 				query.SeriesNameFormat("{{grpc_status}}"),
@@ -151,7 +152,7 @@ func WritesEnvoyProxyQPS(datasourceName string, labelMatchers ...promql.LabelMat
 	)
 }
 
-func WritesEnvoygRPCStatusCodes(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
+func WritesEnvoygRPCStatusCodes(datasourceName string, labelMatchers ...*labels.Matcher) panelgroup.Option {
 	return panelgroup.AddPanel("gRPC status codes",
 		markdown.Markdown("gRPC status codes",
 			markdown.Text(`Visit [Status codes and their use in gRPC](https://github.com/grpc/grpc/blob/master/doc/statuscodes.md)
@@ -178,7 +179,7 @@ UNAUTHENTICATED | 16 | The request does not have valid authentication credential
 	)
 }
 
-func WritesDistributorSpansSecond(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
+func WritesDistributorSpansSecond(datasourceName string, labelMatchers ...*labels.Matcher) panelgroup.Option {
 	return panelgroup.AddPanel("Spans / sec",
 		panel.Description("Rate of Spans per Second for Tempo Distributor"),
 		timeSeriesPanel.Chart(
@@ -202,20 +203,20 @@ func WritesDistributorSpansSecond(datasourceName string, labelMatchers ...promql
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchers(
-					"sum(rate(tempo_receiver_accepted_spans{cluster=~\"$cluster\", job=~\"($namespace)/distributor\"}[$__rate_interval]))",
+				promql.SetLabelMatchersV2(
+					TempoCommonPanelQueries["WritesDistributorSpansSecond_accepted"],
 					labelMatchers,
-				),
+				).Pretty(0),
 				dashboards.AddQueryDataSource(datasourceName),
 				query.SeriesNameFormat("accepted"),
 			),
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchers(
-					"sum(rate(tempo_receiver_refused_spans{cluster=~\"$cluster\", job=~\"($namespace)/distributor\"}[$__rate_interval]))",
+				promql.SetLabelMatchersV2(
+					TempoCommonPanelQueries["WritesDistributorSpansSecond_refused"],
 					labelMatchers,
-				),
+				).Pretty(0),
 				dashboards.AddQueryDataSource(datasourceName),
 				query.SeriesNameFormat("refused"),
 			),
@@ -223,7 +224,7 @@ func WritesDistributorSpansSecond(datasourceName string, labelMatchers ...promql
 	)
 }
 
-func WritesDistributorBytesPerSecond(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
+func WritesDistributorBytesPerSecond(datasourceName string, labelMatchers ...*labels.Matcher) panelgroup.Option {
 	return panelgroup.AddPanel("Bytes / sec",
 		panel.Description("Rate of bytes received by Tempo distributors"),
 		timeSeriesPanel.Chart(
@@ -246,10 +247,10 @@ func WritesDistributorBytesPerSecond(datasourceName string, labelMatchers ...pro
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchers(
-					"sum(rate(tempo_distributor_bytes_received_total{cluster=~\"$cluster\", job=~\"($namespace)/distributor\"}[$__rate_interval])) by (status)",
+				promql.SetLabelMatchersV2(
+					TempoCommonPanelQueries["WritesDistributorBytesPerSecond"],
 					labelMatchers,
-				),
+				).Pretty(0),
 				dashboards.AddQueryDataSource(datasourceName),
 				query.SeriesNameFormat("received"),
 			),
@@ -257,7 +258,7 @@ func WritesDistributorBytesPerSecond(datasourceName string, labelMatchers ...pro
 	)
 }
 
-func WritesDistributorLatency(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
+func WritesDistributorLatency(datasourceName string, labelMatchers ...*labels.Matcher) panelgroup.Option {
 	return panelgroup.AddPanel("Latency",
 		panel.Description("Shows the 99th and 50th quantile latency of Distributor."),
 		timeSeriesPanel.Chart(
@@ -281,30 +282,30 @@ func WritesDistributorLatency(datasourceName string, labelMatchers ...promql.Lab
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchers(
-					"histogram_quantile(0.99, sum(rate(tempo_distributor_push_duration_seconds_bucket{cluster=~\"$cluster\", job=~\"($namespace)/distributor\"}[$__rate_interval])) by (le,)) * 1e3",
+				promql.SetLabelMatchersV2(
+					TempoCommonPanelQueries["WritesDistributorLatency_p99"],
 					labelMatchers,
-				),
+				).Pretty(0),
 				dashboards.AddQueryDataSource(datasourceName),
 				query.SeriesNameFormat("{{route}} 99th"),
 			),
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchers(
-					"histogram_quantile(0.5, sum(rate(tempo_distributor_push_duration_seconds_bucket{cluster=~\"$cluster\", job=~\"($namespace)/distributor\"}[$__rate_interval])) by (le,)) * 1e3",
+				promql.SetLabelMatchersV2(
+					TempoCommonPanelQueries["WritesDistributorLatency_p50"],
 					labelMatchers,
-				),
+				).Pretty(0),
 				dashboards.AddQueryDataSource(datasourceName),
 				query.SeriesNameFormat("{{route}} 50th"),
 			),
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchers(
-					"sum(rate(tempo_distributor_push_duration_seconds_sum{cluster=~\"$cluster\", job=~\"($namespace)/distributor\"}[$__rate_interval])) by () * 1e3 / sum(rate(tempo_distributor_push_duration_seconds_count{cluster=~\"$cluster\", job=~\"($namespace)/distributor\"}[$__rate_interval])) by ()",
+				promql.SetLabelMatchersV2(
+					TempoCommonPanelQueries["WritesDistributorLatency_avg"],
 					labelMatchers,
-				),
+				).Pretty(0),
 				dashboards.AddQueryDataSource(datasourceName),
 				query.SeriesNameFormat("{{route}} Average"),
 			),
@@ -312,7 +313,7 @@ func WritesDistributorLatency(datasourceName string, labelMatchers ...promql.Lab
 	)
 }
 
-func WritesDistributorKafkaAppendRecords(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
+func WritesDistributorKafkaAppendRecords(datasourceName string, labelMatchers ...*labels.Matcher) panelgroup.Option {
 	return panelgroup.AddPanel("Kafka append records / sec",
 		panel.Description("Rate of bytes received by Tempo Distributors"),
 		timeSeriesPanel.Chart(
@@ -336,10 +337,10 @@ func WritesDistributorKafkaAppendRecords(datasourceName string, labelMatchers ..
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchers(
-					"sum(rate(tempo_distributor_kafka_appends_total{cluster=~\"$cluster\", job=~\"($namespace)/distributor\", status=\"success\"}[$__rate_interval]))",
+				promql.SetLabelMatchersV2(
+					TempoCommonPanelQueries["WritesDistributorKafkaAppendRecords"],
 					labelMatchers,
-				),
+				).Pretty(0),
 				dashboards.AddQueryDataSource(datasourceName),
 				query.SeriesNameFormat("appends"),
 			),
@@ -347,7 +348,7 @@ func WritesDistributorKafkaAppendRecords(datasourceName string, labelMatchers ..
 	)
 }
 
-func WritesDistributorKafkaAppendFail(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
+func WritesDistributorKafkaAppendFail(datasourceName string, labelMatchers ...*labels.Matcher) panelgroup.Option {
 	return panelgroup.AddPanel("Kafka failed append records / sec",
 		panel.Description("Rate of failed bytes received by Tempo distributors"),
 		timeSeriesPanel.Chart(
@@ -371,10 +372,10 @@ func WritesDistributorKafkaAppendFail(datasourceName string, labelMatchers ...pr
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchers(
-					"sum(rate(tempo_distributor_kafka_appends_total{cluster=~\"$cluster\", job=~\"($namespace)/distributor\", status=\"fail\"}[$__rate_interval]))",
+				promql.SetLabelMatchersV2(
+					TempoCommonPanelQueries["WritesDistributorKafkaAppendFail"],
 					labelMatchers,
-				),
+				).Pretty(0),
 				dashboards.AddQueryDataSource(datasourceName),
 				query.SeriesNameFormat("failed"),
 			),
@@ -382,7 +383,7 @@ func WritesDistributorKafkaAppendFail(datasourceName string, labelMatchers ...pr
 	)
 }
 
-func WritesDistributorKafkaWrite(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
+func WritesDistributorKafkaWrite(datasourceName string, labelMatchers ...*labels.Matcher) panelgroup.Option {
 	return panelgroup.AddPanel("Kafka write bytes / sec",
 		panel.Description("Rate of append (write) operations the Tempo Distributor to Kafkas"),
 		timeSeriesPanel.Chart(
@@ -406,10 +407,10 @@ func WritesDistributorKafkaWrite(datasourceName string, labelMatchers ...promql.
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchers(
-					"sum(rate(tempo_distributor_kafka_write_bytes_total{cluster=~\"$cluster\", job=~\"($namespace)/distributor\"}[$__rate_interval]))",
+				promql.SetLabelMatchersV2(
+					TempoCommonPanelQueries["WritesDistributorKafkaWrite"],
 					labelMatchers,
-				),
+				).Pretty(0),
 				dashboards.AddQueryDataSource(datasourceName),
 				query.SeriesNameFormat("writes"),
 			),
@@ -417,7 +418,7 @@ func WritesDistributorKafkaWrite(datasourceName string, labelMatchers ...promql.
 	)
 }
 
-func WritesDistributorKafkaWriteLatency(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
+func WritesDistributorKafkaWriteLatency(datasourceName string, labelMatchers ...*labels.Matcher) panelgroup.Option {
 	return panelgroup.AddPanel("Kafka write latency (sec)",
 		panel.Description("Shows the 99th and 50th quantile latency of Distributor Kafka Write."),
 		timeSeriesPanel.Chart(
@@ -441,30 +442,30 @@ func WritesDistributorKafkaWriteLatency(datasourceName string, labelMatchers ...
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchers(
-					"histogram_quantile(0.50, sum by (le) (rate(tempo_distributor_kafka_write_latency_seconds_bucket{cluster=~\"$cluster\", job=~\"($namespace)/distributor\"}[$__rate_interval])))",
+				promql.SetLabelMatchersV2(
+					TempoCommonPanelQueries["WritesDistributorKafkaWriteLatency_p50"],
 					labelMatchers,
-				),
+				).Pretty(0),
 				dashboards.AddQueryDataSource(datasourceName),
 				query.SeriesNameFormat("50th percentile"),
 			),
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchers(
-					"histogram_quantile(0.99, sum by (le) (rate(tempo_distributor_kafka_write_latency_seconds_bucket{cluster=~\"$cluster\", job=~\"($namespace)/distributor\"}[$__rate_interval])))",
+				promql.SetLabelMatchersV2(
+					TempoCommonPanelQueries["WritesDistributorKafkaWriteLatency_p99"],
 					labelMatchers,
-				),
+				).Pretty(0),
 				dashboards.AddQueryDataSource(datasourceName),
 				query.SeriesNameFormat("99th percentile"),
 			),
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchers(
-					"sum(rate(tempo_distributor_kafka_write_latency_seconds_sum{cluster=~\"$cluster\", job=~\"($namespace)/distributor\"}[$__rate_interval])) / sum(rate(tempo_distributor_kafka_write_latency_seconds_count{cluster=~\"$cluster\", job=~\"($namespace)/distributor\"}[$__rate_interval]))",
+				promql.SetLabelMatchersV2(
+					TempoCommonPanelQueries["WritesDistributorKafkaWriteLatency_avg"],
 					labelMatchers,
-				),
+				).Pretty(0),
 				dashboards.AddQueryDataSource(datasourceName),
 				query.SeriesNameFormat("Average"),
 			),
@@ -472,7 +473,7 @@ func WritesDistributorKafkaWriteLatency(datasourceName string, labelMatchers ...
 	)
 }
 
-func WritesIngesterQPS(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
+func WritesIngesterQPS(datasourceName string, labelMatchers ...*labels.Matcher) panelgroup.Option {
 	return panelgroup.AddPanel("QPS",
 		panel.Description("Rate of HTTP request durations for Tempo Ingester"),
 		timeSeriesPanel.Chart(
@@ -497,10 +498,10 @@ func WritesIngesterQPS(datasourceName string, labelMatchers ...promql.LabelMatch
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchers(
-					"sum by (status) (\n  label_replace(label_replace(rate(tempo_request_duration_seconds_count{cluster=~\"$cluster\", job=~\"($namespace)/ingester\", route=~\"/tempopb.Pusher/Push.*\"}[$__rate_interval]),\n  \"status\", \"${1}xx\", \"status_code\", \"([0-9])..\"),\n  \"status\", \"${1}\", \"status_code\", \"([a-zA-Z]+)\"))\n",
+				promql.SetLabelMatchersV2(
+					TempoCommonPanelQueries["WritesIngesterQPS"],
 					labelMatchers,
-				),
+				).Pretty(0),
 				dashboards.AddQueryDataSource(datasourceName),
 				query.SeriesNameFormat("{{status}}"),
 			),
@@ -508,7 +509,7 @@ func WritesIngesterQPS(datasourceName string, labelMatchers ...promql.LabelMatch
 	)
 }
 
-func WritesIngesterLatency(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
+func WritesIngesterLatency(datasourceName string, labelMatchers ...*labels.Matcher) panelgroup.Option {
 	return panelgroup.AddPanel("Latency",
 		panel.Description("Shows the 99th and 50th quantile latency of Ingester."),
 		timeSeriesPanel.Chart(
@@ -532,30 +533,30 @@ func WritesIngesterLatency(datasourceName string, labelMatchers ...promql.LabelM
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchers(
-					"histogram_quantile(0.99, sum(rate(tempo_request_duration_seconds_bucket{cluster=~\"$cluster\", job=~\"($namespace)/ingester\",route=~\"/tempopb.Pusher/Push.*\"}[$__rate_interval])) by (le,)) * 1e3",
+				promql.SetLabelMatchersV2(
+					TempoCommonPanelQueries["WritesIngesterLatency_p99"],
 					labelMatchers,
-				),
+				).Pretty(0),
 				dashboards.AddQueryDataSource(datasourceName),
 				query.SeriesNameFormat("{{route}} 99th"),
 			),
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchers(
-					"histogram_quantile(0.50, sum(rate(tempo_request_duration_seconds_bucket{cluster=~\"$cluster\", job=~\"($namespace)/ingester\",route=~\"/tempopb.Pusher/Push.*\"}[$__rate_interval])) by (le,)) * 1e3",
+				promql.SetLabelMatchersV2(
+					TempoCommonPanelQueries["WritesIngesterLatency_p50"],
 					labelMatchers,
-				),
+				).Pretty(0),
 				dashboards.AddQueryDataSource(datasourceName),
 				query.SeriesNameFormat("{{route}} 50th"),
 			),
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchers(
-					"sum(rate(tempo_request_duration_seconds_sum{cluster=~\"$cluster\", job=~\"($namespace)/ingester\",route=~\"/tempopb.Pusher/Push.*\"}[$__rate_interval])) by () * 1e3 / sum(rate(tempo_request_duration_seconds_count{cluster=~\"$cluster\", job=~\"($namespace)/ingester\",route=~\"/tempopb.Pusher/Push.*\"}[$__rate_interval])) by ()",
+				promql.SetLabelMatchersV2(
+					TempoCommonPanelQueries["WritesIngesterLatency_avg"],
 					labelMatchers,
-				),
+				).Pretty(0),
 				dashboards.AddQueryDataSource(datasourceName),
 				query.SeriesNameFormat("{{route}} Average"),
 			),
@@ -563,7 +564,7 @@ func WritesIngesterLatency(datasourceName string, labelMatchers ...promql.LabelM
 	)
 }
 
-func WritesMemcachedIngesterQPS(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
+func WritesMemcachedIngesterQPS(datasourceName string, labelMatchers ...*labels.Matcher) panelgroup.Option {
 	return panelgroup.AddPanel("QPS",
 		panel.Description("Rate of HTTP request durations for Tempo Memcached Ingester"),
 		timeSeriesPanel.Chart(
@@ -588,10 +589,10 @@ func WritesMemcachedIngesterQPS(datasourceName string, labelMatchers ...promql.L
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchers(
-					"sum by (status) (\n  label_replace(label_replace(rate(tempo_memcache_request_duration_seconds_count{cluster=~\"$cluster\", job=~\"($namespace)/ingester\",method=\"Memcache.Put\"}[$__rate_interval]),\n  \"status\", \"${1}xx\", \"status_code\", \"([0-9])..\"),\n  \"status\", \"${1}\", \"status_code\", \"([a-zA-Z]+)\"))\n",
+				promql.SetLabelMatchersV2(
+					TempoCommonPanelQueries["WritesMemcachedIngesterQPS"],
 					labelMatchers,
-				),
+				).Pretty(0),
 				dashboards.AddQueryDataSource(datasourceName),
 				query.SeriesNameFormat("{{status}}"),
 			),
@@ -599,7 +600,7 @@ func WritesMemcachedIngesterQPS(datasourceName string, labelMatchers ...promql.L
 	)
 }
 
-func WritesMemcachedIngesterLatency(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
+func WritesMemcachedIngesterLatency(datasourceName string, labelMatchers ...*labels.Matcher) panelgroup.Option {
 	return panelgroup.AddPanel("Latency",
 		panel.Description("Shows the 99th and 50th quantile latency of Memcached Ingester."),
 		timeSeriesPanel.Chart(
@@ -623,30 +624,30 @@ func WritesMemcachedIngesterLatency(datasourceName string, labelMatchers ...prom
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchers(
-					"histogram_quantile(0.99, sum(rate(tempo_memcache_request_duration_seconds_bucket{cluster=~\"$cluster\", job=~\"($namespace)/ingester\",method=\"Memcache.Put\"}[$__rate_interval])) by (le,)) * 1e3",
+				promql.SetLabelMatchersV2(
+					TempoCommonPanelQueries["WritesMemcachedIngesterLatency_p99"],
 					labelMatchers,
-				),
+				).Pretty(0),
 				dashboards.AddQueryDataSource(datasourceName),
 				query.SeriesNameFormat("{{route}} 99th"),
 			),
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchers(
-					"histogram_quantile(0.50, sum(rate(tempo_memcache_request_duration_seconds_bucket{cluster=~\"$cluster\", job=~\"($namespace)/ingester\",method=\"Memcache.Put\"}[$__rate_interval])) by (le,)) * 1e3",
+				promql.SetLabelMatchersV2(
+					TempoCommonPanelQueries["WritesMemcachedIngesterLatency_p50"],
 					labelMatchers,
-				),
+				).Pretty(0),
 				dashboards.AddQueryDataSource(datasourceName),
 				query.SeriesNameFormat("{{route}} 50th"),
 			),
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchers(
-					"sum(rate(tempo_memcache_request_duration_seconds_sum{cluster=~\"$cluster\", job=~\"($namespace)/ingester\",method=\"Memcache.Put\"}[$__rate_interval])) by () * 1e3 / sum(rate(tempo_memcache_request_duration_seconds_count{cluster=~\"$cluster\", job=~\"($namespace)/ingester\",method=\"Memcache.Put\"}[$__rate_interval])) by ()",
+				promql.SetLabelMatchersV2(
+					TempoCommonPanelQueries["WritesMemcachedIngesterLatency_avg"],
 					labelMatchers,
-				),
+				).Pretty(0),
 				dashboards.AddQueryDataSource(datasourceName),
 				query.SeriesNameFormat("{{route}} Average"),
 			),
@@ -654,7 +655,7 @@ func WritesMemcachedIngesterLatency(datasourceName string, labelMatchers ...prom
 	)
 }
 
-func WritesBackendIngesterQPS(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
+func WritesBackendIngesterQPS(datasourceName string, labelMatchers ...*labels.Matcher) panelgroup.Option {
 	return panelgroup.AddPanel("QPS",
 		panel.Description("Rate of HTTP request durations for Tempo Backend Ingester"),
 		timeSeriesPanel.Chart(
@@ -679,10 +680,10 @@ func WritesBackendIngesterQPS(datasourceName string, labelMatchers ...promql.Lab
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchers(
-					"sum by (status) (\n  label_replace(label_replace(rate(tempodb_backend_request_duration_seconds_count{cluster=~\"$cluster\", job=~\"($namespace)/ingester\",operation=~\"(PUT|POST)\"}[$__rate_interval]),\n  \"status\", \"${1}xx\", \"status_code\", \"([0-9])..\"),\n  \"status\", \"${1}\", \"status_code\", \"([a-zA-Z]+)\"))\n",
+				promql.SetLabelMatchersV2(
+					TempoCommonPanelQueries["WritesBackendIngesterQPS"],
 					labelMatchers,
-				),
+				).Pretty(0),
 				dashboards.AddQueryDataSource(datasourceName),
 				query.SeriesNameFormat("{{status}}"),
 			),
@@ -690,7 +691,7 @@ func WritesBackendIngesterQPS(datasourceName string, labelMatchers ...promql.Lab
 	)
 }
 
-func WritesBackendIngesterLatency(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
+func WritesBackendIngesterLatency(datasourceName string, labelMatchers ...*labels.Matcher) panelgroup.Option {
 	return panelgroup.AddPanel("Latency",
 		panel.Description("Shows the 99th and 50th quantile latency of Backend Ingester."),
 		timeSeriesPanel.Chart(
@@ -714,30 +715,30 @@ func WritesBackendIngesterLatency(datasourceName string, labelMatchers ...promql
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchers(
-					"histogram_quantile(0.99, sum(rate(tempodb_backend_request_duration_seconds_bucket{cluster=~\"$cluster\", job=~\"($namespace)/ingester\",operation=~\"(PUT|POST)\"}[$__rate_interval])) by (le,)) * 1e3",
+				promql.SetLabelMatchersV2(
+					TempoCommonPanelQueries["WritesBackendIngesterLatency_p99"],
 					labelMatchers,
-				),
+				).Pretty(0),
 				dashboards.AddQueryDataSource(datasourceName),
 				query.SeriesNameFormat("{{route}} 99th"),
 			),
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchers(
-					"histogram_quantile(0.99, sum(rate(tempodb_backend_request_duration_seconds_bucket{cluster=~\"$cluster\", job=~\"($namespace)/ingester\",operation=~\"(PUT|POST)\"}[$__rate_interval])) by (le,)) * 1e3",
+				promql.SetLabelMatchersV2(
+					TempoCommonPanelQueries["WritesBackendIngesterLatency_p50"],
 					labelMatchers,
-				),
+				).Pretty(0),
 				dashboards.AddQueryDataSource(datasourceName),
 				query.SeriesNameFormat("{{route}} 50th"),
 			),
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchers(
-					"sum(rate(tempodb_backend_request_duration_seconds_sum{cluster=~\"$cluster\", job=~\"($namespace)/ingester\",operation=~\"(PUT|POST)\"}[$__rate_interval])) by () * 1e3 / sum(rate(tempodb_backend_request_duration_seconds_count{cluster=~\"$cluster\", job=~\"($namespace)/ingester\",operation=~\"(PUT|POST)\"}[$__rate_interval])) by ()",
+				promql.SetLabelMatchersV2(
+					TempoCommonPanelQueries["WritesBackendIngesterLatency_avg"],
 					labelMatchers,
-				),
+				).Pretty(0),
 				dashboards.AddQueryDataSource(datasourceName),
 				query.SeriesNameFormat("{{route}} Average"),
 			),
@@ -745,7 +746,7 @@ func WritesBackendIngesterLatency(datasourceName string, labelMatchers ...promql
 	)
 }
 
-func WritesMemcachedCompactorQPS(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
+func WritesMemcachedCompactorQPS(datasourceName string, labelMatchers ...*labels.Matcher) panelgroup.Option {
 	return panelgroup.AddPanel("QPS",
 		panel.Description("Rate of HTTP request durations for Memcached Compactor"),
 		timeSeriesPanel.Chart(
@@ -770,10 +771,10 @@ func WritesMemcachedCompactorQPS(datasourceName string, labelMatchers ...promql.
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchers(
-					"sum by (status) (\n  label_replace(label_replace(rate(tempo_memcache_request_duration_seconds_count{cluster=~\"$cluster\", job=~\"($namespace)/compactor\",method=\"Memcache.Put\"}[$__rate_interval]),\n  \"status\", \"${1}xx\", \"status_code\", \"([0-9])..\"),\n  \"status\", \"${1}\", \"status_code\", \"([a-zA-Z]+)\"))\n",
+				promql.SetLabelMatchersV2(
+					TempoCommonPanelQueries["WritesMemcachedCompactorQPS"],
 					labelMatchers,
-				),
+				).Pretty(0),
 				dashboards.AddQueryDataSource(datasourceName),
 				query.SeriesNameFormat("{{status}}"),
 			),
@@ -781,7 +782,7 @@ func WritesMemcachedCompactorQPS(datasourceName string, labelMatchers ...promql.
 	)
 }
 
-func WritesMemcachedCompactorLatency(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
+func WritesMemcachedCompactorLatency(datasourceName string, labelMatchers ...*labels.Matcher) panelgroup.Option {
 	return panelgroup.AddPanel("Latency",
 		panel.Description("Shows the 99th and 50th quantile latency of Backend Ingester."),
 		timeSeriesPanel.Chart(
@@ -805,30 +806,30 @@ func WritesMemcachedCompactorLatency(datasourceName string, labelMatchers ...pro
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchers(
-					"histogram_quantile(0.99, sum(rate(tempo_memcache_request_duration_seconds_bucket{cluster=~\"$cluster\", job=~\"($namespace)/compactor\",method=\"Memcache.Put\"}[$__rate_interval])) by (le,)) * 1e3",
+				promql.SetLabelMatchersV2(
+					TempoCommonPanelQueries["WritesMemcachedCompactorLatency_p99"],
 					labelMatchers,
-				),
+				).Pretty(0),
 				dashboards.AddQueryDataSource(datasourceName),
 				query.SeriesNameFormat("{{route}} 99th"),
 			),
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchers(
-					"histogram_quantile(0.50, sum(rate(tempo_memcache_request_duration_seconds_bucket{cluster=~\"$cluster\", job=~\"($namespace)/compactor\",method=\"Memcache.Put\"}[$__rate_interval])) by (le,)) * 1e3",
+				promql.SetLabelMatchersV2(
+					TempoCommonPanelQueries["WritesMemcachedCompactorLatency_p50"],
 					labelMatchers,
-				),
+				).Pretty(0),
 				dashboards.AddQueryDataSource(datasourceName),
 				query.SeriesNameFormat("{{route}} 50th"),
 			),
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchers(
-					"sum(rate(tempo_memcache_request_duration_seconds_sum{cluster=~\"$cluster\", job=~\"($namespace)/compactor\",method=\"Memcache.Put\"}[$__rate_interval])) by () * 1e3 / sum(rate(tempo_memcache_request_duration_seconds_count{cluster=~\"$cluster\", job=~\"($namespace)/compactor\",method=\"Memcache.Put\"}[$__rate_interval])) by ()",
+				promql.SetLabelMatchersV2(
+					TempoCommonPanelQueries["WritesMemcachedCompactorLatency_avg"],
 					labelMatchers,
-				),
+				).Pretty(0),
 				dashboards.AddQueryDataSource(datasourceName),
 				query.SeriesNameFormat("{{route}} Average"),
 			),
@@ -836,7 +837,7 @@ func WritesMemcachedCompactorLatency(datasourceName string, labelMatchers ...pro
 	)
 }
 
-func WritesBackendCompactorQPS(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
+func WritesBackendCompactorQPS(datasourceName string, labelMatchers ...*labels.Matcher) panelgroup.Option {
 	return panelgroup.AddPanel("QPS",
 		panel.Description("Rate of HTTP request durations for Backend Compactor"),
 		timeSeriesPanel.Chart(
@@ -861,10 +862,10 @@ func WritesBackendCompactorQPS(datasourceName string, labelMatchers ...promql.La
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchers(
-					"sum by (status) (\n  label_replace(label_replace(rate(tempodb_backend_request_duration_seconds_count{cluster=~\"$cluster\", job=~\"($namespace)/compactor\",operation=~\"(PUT|POST)\"}[$__rate_interval]),\n  \"status\", \"${1}xx\", \"status_code\", \"([0-9])..\"),\n  \"status\", \"${1}\", \"status_code\", \"([a-zA-Z]+)\"))\n",
+				promql.SetLabelMatchersV2(
+					TempoCommonPanelQueries["WritesBackendCompactorQPS"],
 					labelMatchers,
-				),
+				).Pretty(0),
 				dashboards.AddQueryDataSource(datasourceName),
 				query.SeriesNameFormat("{{status}}"),
 			),
@@ -872,7 +873,7 @@ func WritesBackendCompactorQPS(datasourceName string, labelMatchers ...promql.La
 	)
 }
 
-func WritesBackendCompactorLatency(datasourceName string, labelMatchers ...promql.LabelMatcher) panelgroup.Option {
+func WritesBackendCompactorLatency(datasourceName string, labelMatchers ...*labels.Matcher) panelgroup.Option {
 	return panelgroup.AddPanel("Latency",
 		panel.Description("Shows the 99th and 50th quantile latency of Backend Ingester."),
 		timeSeriesPanel.Chart(
@@ -896,30 +897,30 @@ func WritesBackendCompactorLatency(datasourceName string, labelMatchers ...promq
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchers(
-					"histogram_quantile(0.99, sum(rate(tempodb_backend_request_duration_seconds_bucket{cluster=~\"$cluster\", job=~\"($namespace)/compactor\",operation=~\"(PUT|POST)\"}[$__rate_interval])) by (le,)) * 1e3",
+				promql.SetLabelMatchersV2(
+					TempoCommonPanelQueries["WritesBackendCompactorLatency_p99"],
 					labelMatchers,
-				),
+				).Pretty(0),
 				dashboards.AddQueryDataSource(datasourceName),
 				query.SeriesNameFormat("{{route}} 99th"),
 			),
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchers(
-					"histogram_quantile(0.99, sum(rate(tempodb_backend_request_duration_seconds_bucket{cluster=~\"$cluster\", job=~\"($namespace)/compactor\",operation=~\"(PUT|POST)\"}[$__rate_interval])) by (le,)) * 1e3",
+				promql.SetLabelMatchersV2(
+					TempoCommonPanelQueries["WritesBackendCompactorLatency_p50"],
 					labelMatchers,
-				),
+				).Pretty(0),
 				dashboards.AddQueryDataSource(datasourceName),
 				query.SeriesNameFormat("{{route}} 50th"),
 			),
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchers(
-					"sum(rate(tempodb_backend_request_duration_seconds_sum{cluster=~\"$cluster\", job=~\"($namespace)/compactor\",operation=~\"(PUT|POST)\"}[$__rate_interval])) by () * 1e3 / sum(rate(tempodb_backend_request_duration_seconds_count{cluster=~\"$cluster\", job=~\"($namespace)/compactor\",operation=~\"(PUT|POST)\"}[$__rate_interval])) by ()",
+				promql.SetLabelMatchersV2(
+					TempoCommonPanelQueries["WritesBackendCompactorLatency_avg"],
 					labelMatchers,
-				),
+				).Pretty(0),
 				dashboards.AddQueryDataSource(datasourceName),
 				query.SeriesNameFormat("{{route}} Average"),
 			),

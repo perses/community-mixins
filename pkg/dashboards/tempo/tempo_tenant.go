@@ -19,12 +19,15 @@ import (
 	panelgroup "github.com/perses/perses/go-sdk/panel-group"
 	listVar "github.com/perses/perses/go-sdk/variable/list-variable"
 	labelValuesVar "github.com/perses/plugins/prometheus/sdk/go/variable/label-values"
+	"github.com/perses/promql-builder/label"
+	"github.com/perses/promql-builder/vector"
+	"github.com/prometheus/prometheus/model/labels"
 
 	"github.com/perses/community-mixins/pkg/dashboards"
 	"github.com/perses/community-mixins/pkg/promql"
 )
 
-func withTenantInfo(datasource string, labelMatcher promql.LabelMatcher) dashboard.Option {
+func withTenantInfo(datasource string, labelMatcher *labels.Matcher) dashboard.Option {
 	return dashboard.AddPanelGroup("Tenant Info",
 		panelgroup.PanelsPerLine(1),
 		panelgroup.PanelHeight(8),
@@ -32,7 +35,7 @@ func withTenantInfo(datasource string, labelMatcher promql.LabelMatcher) dashboa
 	)
 }
 
-func withTenantIngestion(datasource string, labelMatcher promql.LabelMatcher) dashboard.Option {
+func withTenantIngestion(datasource string, labelMatcher *labels.Matcher) dashboard.Option {
 	return dashboard.AddPanelGroup("Ingestion",
 		panelgroup.PanelsPerLine(3),
 		panelgroup.PanelHeight(8),
@@ -42,7 +45,7 @@ func withTenantIngestion(datasource string, labelMatcher promql.LabelMatcher) da
 	)
 }
 
-func withTenantReads(datasource string, labelMatcher promql.LabelMatcher) dashboard.Option {
+func withTenantReads(datasource string, labelMatcher *labels.Matcher) dashboard.Option {
 	return dashboard.AddPanelGroup("Reads",
 		panelgroup.PanelsPerLine(2),
 		panelgroup.PanelHeight(8),
@@ -51,7 +54,7 @@ func withTenantReads(datasource string, labelMatcher promql.LabelMatcher) dashbo
 	)
 }
 
-func withTenantStorage(datasource string, labelMatcher promql.LabelMatcher) dashboard.Option {
+func withTenantStorage(datasource string, labelMatcher *labels.Matcher) dashboard.Option {
 	return dashboard.AddPanelGroup("Storage",
 		panelgroup.PanelsPerLine(2),
 		panelgroup.PanelHeight(8),
@@ -60,7 +63,7 @@ func withTenantStorage(datasource string, labelMatcher promql.LabelMatcher) dash
 	)
 }
 
-func withTenantMetricGenerator(datasource string, labelMatcher promql.LabelMatcher) dashboard.Option {
+func withTenantMetricGenerator(datasource string, labelMatcher *labels.Matcher) dashboard.Option {
 	return dashboard.AddPanelGroup("Metrics Generator",
 		panelgroup.PanelsPerLine(2),
 		panelgroup.PanelHeight(8),
@@ -70,7 +73,7 @@ func withTenantMetricGenerator(datasource string, labelMatcher promql.LabelMatch
 }
 
 func BuildTempoTenantOverview(project string, datasource string, clusterLabelName string) dashboards.DashboardResult {
-	clusterLabelMatcher := dashboards.GetClusterLabelMatcher(clusterLabelName)
+	clusterLabelMatcher := dashboards.GetClusterLabelMatcherV2(clusterLabelName)
 	return dashboards.NewDashboardResult(
 		dashboard.New("tempo-tenant-overview",
 			dashboard.ProjectName(project),
@@ -90,10 +93,15 @@ func BuildTempoTenantOverview(project string, datasource string, clusterLabelNam
 				listVar.List(
 					labelValuesVar.PrometheusLabelValues("namespace",
 						labelValuesVar.Matchers(
-							promql.SetLabelMatchers(
-								"tempo_build_info",
-								[]promql.LabelMatcher{clusterLabelMatcher, {Name: "cluster", Type: "=", Value: "$cluster"}},
-							),
+							promql.SetLabelMatchersV2(
+								vector.New(
+									vector.WithMetricName("tempo_build_info"),
+								),
+								[]*labels.Matcher{
+									clusterLabelMatcher,
+									label.New("cluster").Equal("$cluster"),
+								},
+							).Pretty(0),
 						),
 						dashboards.AddVariableDatasource(datasource),
 					),
@@ -104,12 +112,15 @@ func BuildTempoTenantOverview(project string, datasource string, clusterLabelNam
 				listVar.List(
 					labelValuesVar.PrometheusLabelValues("tenant",
 						labelValuesVar.Matchers(
-							promql.SetLabelMatchers(
-								"tempodb_blocklist_length",
-								[]promql.LabelMatcher{
-									{Name: "cluster", Type: "=", Value: "$cluster"},
-									{Name: "job", Type: "=~", Value: "($namespace)/compactor"},
-								}),
+							promql.SetLabelMatchersV2(
+								vector.New(
+									vector.WithMetricName("tempodb_blocklist_length"),
+								),
+								[]*labels.Matcher{
+									label.New("cluster").Equal("$cluster"),
+									label.New("job").EqualRegexp("($namespace)/compactor"),
+								},
+							).Pretty(0),
 						),
 						dashboards.AddVariableDatasource(datasource),
 					),

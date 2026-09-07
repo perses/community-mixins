@@ -305,7 +305,7 @@
                         "kind": "PrometheusDatasource",
                         "name": "prometheus-datasource"
                       },
-                      "query": "sum(\n  rate(tempo_receiver_accepted_spans{cluster=~\"$cluster\",job=~\"($namespace)/distributor\"}[$__rate_interval])\n)",
+                      "query": "sum(\n  rate(\n    tempo_receiver_accepted_spans{cluster=~\"$cluster\",job=~\"($namespace)/distributor\"}[$__rate_interval]\n  )\n)",
                       "seriesNameFormat": "accepted"
                     }
                   }
@@ -321,7 +321,7 @@
                         "kind": "PrometheusDatasource",
                         "name": "prometheus-datasource"
                       },
-                      "query": "sum(\n  rate(tempo_receiver_refused_spans{cluster=~\"$cluster\",job=~\"($namespace)/distributor\"}[$__rate_interval])\n)",
+                      "query": "sum(\n  rate(\n    tempo_receiver_refused_spans{cluster=~\"$cluster\",job=~\"($namespace)/distributor\"}[$__rate_interval]\n  )\n)",
                       "seriesNameFormat": "refused"
                     }
                   }

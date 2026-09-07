@@ -286,7 +286,9 @@ spec:
                                     name: prometheus-datasource
                                 query: |-
                                     sum(
-                                      rate(tempo_receiver_accepted_spans{cluster=~"$cluster",job=~"($namespace)/distributor"}[$__rate_interval])
+                                      rate(
+                                        tempo_receiver_accepted_spans{cluster=~"$cluster",job=~"($namespace)/distributor"}[$__rate_interval]
+                                      )
                                     )
                                 seriesNameFormat: accepted
                     - kind: TimeSeriesQuery
@@ -299,7 +301,9 @@ spec:
                                     name: prometheus-datasource
                                 query: |-
                                     sum(
-                                      rate(tempo_receiver_refused_spans{cluster=~"$cluster",job=~"($namespace)/distributor"}[$__rate_interval])
+                                      rate(
+                                        tempo_receiver_refused_spans{cluster=~"$cluster",job=~"($namespace)/distributor"}[$__rate_interval]
+                                      )
                                     )
                                 seriesNameFormat: refused
         "2_1":
