@@ -17,6 +17,7 @@ import (
 	"flag"
 
 	"github.com/perses/community-mixins/pkg/dashboards"
+	"github.com/perses/community-mixins/pkg/dashboards/aisix"
 	"github.com/perses/community-mixins/pkg/dashboards/alertmanager"
 	"github.com/perses/community-mixins/pkg/dashboards/blackbox"
 	"github.com/perses/community-mixins/pkg/dashboards/etcd"
@@ -159,6 +160,7 @@ func main() {
 	} else {
 		dashboardWriter := dashboards.NewDashboardWriter()
 
+		dashboardWriter.Add(aisix.BuildAISIXOverview(project, datasource, clusterLabelName))
 		dashboardWriter.Add(perses.BuildPersesOverview(project, datasource, clusterLabelName))
 		dashboardWriter.Add(prometheus.BuildPrometheusOverview(project, datasource, clusterLabelName))
 		dashboardWriter.Add(prometheus.BuildPrometheusRemoteWrite(project, datasource, clusterLabelName))
