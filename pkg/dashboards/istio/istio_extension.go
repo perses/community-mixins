@@ -52,7 +52,7 @@ func withWasmProxyResourceUsageGroup(datasource string, labelMatcher *labels.Mat
 func BuildIstioExtension(project string, datasource string, clusterLabelName string) dashboards.DashboardResult {
 	emptyLabelMatcher := &labels.Matcher{}
 	return dashboards.NewDashboardResult(
-		dashboard.New("istio-extension-dashboard",
+		dashboard.New("istio-wasm-extension-dashboard",
 			dashboard.ProjectName(project),
 			dashboard.Name("Istio Wasm Extension Dashboard"),
 			withWasmVMsGroup(datasource, emptyLabelMatcher),

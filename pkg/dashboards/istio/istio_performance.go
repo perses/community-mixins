@@ -79,7 +79,7 @@ func withIstiodResourceUsage(datasource string, labelMatcher *labels.Matcher) da
 func BuildIstioPerformance(project string, datasource string, clusterLabelName string) dashboards.DashboardResult {
 	emptyLabelMatcher := &labels.Matcher{}
 	return dashboards.NewDashboardResult(
-		dashboard.New("istio-performance",
+		dashboard.New("istio-performance-dashboard",
 			dashboard.ProjectName(project),
 			dashboard.Name("Istio Performance Dashboard"),
 			withPerformanceNotes(datasource, emptyLabelMatcher),

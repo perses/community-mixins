@@ -260,7 +260,7 @@ var IstioCommonPanelQueries = map[string]parser.Expr{
 		promqlbuilder.HistogramQuantile(0.5,
 			promql.SumByRate(
 				"istio_request_duration_milliseconds_bucket",
-				[]string{"le", "destination_workload", "destination_workload_namespace"},
+				[]string{"le", "destination_workload", "destination_workload_namespace", "destination_service"},
 				label.New("reporter").EqualRegexp("source|waypoint"),
 			),
 		),
@@ -273,7 +273,7 @@ var IstioCommonPanelQueries = map[string]parser.Expr{
 		promqlbuilder.HistogramQuantile(0.9,
 			promql.SumByRate(
 				"istio_request_duration_milliseconds_bucket",
-				[]string{"le", "destination_workload", "destination_workload_namespace"},
+				[]string{"le", "destination_workload", "destination_workload_namespace", "destination_service"},
 				label.New("reporter").EqualRegexp("source|waypoint"),
 			),
 		),
@@ -286,7 +286,7 @@ var IstioCommonPanelQueries = map[string]parser.Expr{
 		promqlbuilder.HistogramQuantile(0.99,
 			promql.SumByRate(
 				"istio_request_duration_milliseconds_bucket",
-				[]string{"le", "destination_workload", "destination_workload_namespace"},
+				[]string{"le", "destination_workload", "destination_workload_namespace", "destination_service"},
 				label.New("reporter").EqualRegexp("source|waypoint"),
 			),
 		),
@@ -299,13 +299,13 @@ var IstioCommonPanelQueries = map[string]parser.Expr{
 		promqlbuilder.Div(
 			promql.SumByRate(
 				"istio_requests_total",
-				[]string{"destination_workload", "destination_workload_namespace"},
+				[]string{"destination_workload", "destination_workload_namespace", "destination_service"},
 				label.New("reporter").EqualRegexp("source|waypoint"),
 				label.New("response_code").NotEqualRegexp("5.."),
 			),
 			promql.SumByRate(
 				"istio_requests_total",
-				[]string{"destination_workload", "destination_workload_namespace"},
+				[]string{"destination_workload", "destination_workload_namespace", "destination_service"},
 				label.New("reporter").EqualRegexp("source|waypoint"),
 			),
 		),
