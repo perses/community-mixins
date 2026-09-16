@@ -32,41 +32,71 @@ func HTTPGRPCWorkloads(datasourceName string, labelMatchers ...*labels.Matcher) 
 		tablePanel.Table(
 			tablePanel.WithColumnSettings([]tablePanel.ColumnSettings{
 				{
-					Name:   "Value #requests",
-					Header: "Requests",
-				},
-				{
-					Name:   "Value #p50",
-					Header: "P50 Latency",
-				},
-				{
-					Name:   "Value #p90",
-					Header: "P90 Latency",
-				},
-				{
-					Name:   "Value #p99",
-					Header: "P99 Latency",
-				},
-				{
-					Name:   "Value #success",
-					Header: "Success Rate",
+					Name:   "destination_service",
+					Header: "Service",
+					Align:  tablePanel.LeftAlign,
 				},
 				{
 					Name:   "destination_workload_var",
 					Header: "Workload",
+					Align:  tablePanel.LeftAlign,
 				},
 				{
-					Name:   "destination_service",
-					Header: "Service",
+					Name:   "value #1",
+					Header: "Requests",
+					Align:  tablePanel.RightAlign,
+					Format: &commonSdk.Format{
+						Unit:          &dashboards.RequestsPerSecondsUnit,
+						DecimalPlaces: 2,
+					},
+				},
+				{
+					Name:   "value #2",
+					Header: "P50 Latency",
+					Align:  tablePanel.RightAlign,
+					Format: &commonSdk.Format{
+						Unit:          &dashboards.MilliSecondsUnit,
+						DecimalPlaces: 2,
+					},
+				},
+				{
+					Name:   "value #3",
+					Header: "P90 Latency",
+					Align:  tablePanel.RightAlign,
+					Format: &commonSdk.Format{
+						Unit:          &dashboards.MilliSecondsUnit,
+						DecimalPlaces: 2,
+					},
+				},
+				{
+					Name:   "value #4",
+					Header: "P99 Latency",
+					Align:  tablePanel.RightAlign,
+					Format: &commonSdk.Format{
+						Unit:          &dashboards.MilliSecondsUnit,
+						DecimalPlaces: 2,
+					},
+				},
+				{
+					Name:   "value #5",
+					Header: "Success Rate",
+					Align:  tablePanel.RightAlign,
+					Format: &commonSdk.Format{
+						Unit:          &dashboards.PercentDecimalUnit,
+						DecimalPlaces: 2,
+					},
 				},
 				{
 					Name: "destination_workload_namespace",
+					Hide: true,
 				},
 				{
 					Name: "destination_workload",
+					Hide: true,
 				},
 				{
 					Name: "timestamp",
+					Hide: true,
 				},
 			}),
 
@@ -138,29 +168,44 @@ func TCPServices(datasourceName string, labelMatchers ...*labels.Matcher) panelg
 		tablePanel.Table(
 			tablePanel.WithColumnSettings([]tablePanel.ColumnSettings{
 				{
-					Name:   "Value #recv",
-					Header: "Bytes Received",
-				},
-				{
-					Name:   "Value #sent",
-					Header: "Bytes Sent",
+					Name:   "destination_service",
+					Header: "Service",
+					Align:  tablePanel.LeftAlign,
 				},
 				{
 					Name:   "destination_workload_var",
 					Header: "Workload",
+					Align:  tablePanel.LeftAlign,
 				},
 				{
-					Name:   "destination_service",
-					Header: "Service",
+					Name:   "value #1",
+					Header: "Bytes Received",
+					Align:  tablePanel.RightAlign,
+					Format: &commonSdk.Format{
+						Unit:          &dashboards.BytesPerSecondsUnit,
+						DecimalPlaces: 2,
+					},
+				},
+				{
+					Name:   "value #2",
+					Header: "Bytes Sent",
+					Align:  tablePanel.RightAlign,
+					Format: &commonSdk.Format{
+						Unit:          &dashboards.BytesPerSecondsUnit,
+						DecimalPlaces: 2,
+					},
 				},
 				{
 					Name: "destination_workload_namespace",
+					Hide: true,
 				},
 				{
 					Name: "destination_workload",
+					Hide: true,
 				},
 				{
 					Name: "timestamp",
+					Hide: true,
 				},
 			}),
 

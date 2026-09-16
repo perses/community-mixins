@@ -65,7 +65,7 @@ func withWebhooks(datasource string, labelMatcher *labels.Matcher) dashboard.Opt
 func BuildIstioControlPlane(project string, datasource string, clusterLabelName string) dashboards.DashboardResult {
 	emptyLabelMatcher := &labels.Matcher{}
 	return dashboards.NewDashboardResult(
-		dashboard.New("istio-control-plane",
+		dashboard.New("istio-control-plane-dashboard",
 			dashboard.ProjectName(project),
 			dashboard.Name("Istio Control Plane Dashboard"),
 			withDeployedVersions(datasource, emptyLabelMatcher),
