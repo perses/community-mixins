@@ -9,12 +9,19 @@ local defaults = {
     'app.kubernetes.io/part-of': 'perses-operator',
   },
   datasource: 'prometheus-datasource',
-  components: ['kubernetes', 'thanos', 'etcd', 'blackbox-exporter', 'node-exporter', 'alertmanager', 'prometheus', 'perses'],
+  components: ['aisix', 'kubernetes', 'thanos', 'etcd', 'blackbox-exporter', 'node-exporter', 'alertmanager', 'prometheus', 'perses'],
 };
 
 function(params) {
   local cd = self,
   config:: defaults + params,
+
+  local aisixOverview = if std.member(cd.config.components, 'aisix') then overrides.overrideDashboard(
+    import 'dashboards/operator/aisix/aisix-ai-gateway-overview.json',
+    cd.config.namespace,
+    cd.config.commonLabels,
+    cd.config.datasource
+  ) else {},
 
   local alertmanagerOverview = if std.member(cd.config.components, 'alertmanager') then overrides.overrideDashboard(
     import 'dashboards/operator/alertmanager/alertmanager-overview.json',
@@ -241,6 +248,7 @@ function(params) {
   ) else {},
 
   local dashboardList = [
+    aisixOverview,
     alertmanagerOverview,
     blackboxExporter,
     etcdOverview,
