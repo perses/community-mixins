@@ -284,7 +284,7 @@ func ClientRequestVolumeStat(datasourceName string, labelMatchers ...*labels.Mat
 func ClientSuccessRateStat(datasourceName string, labelMatchers ...*labels.Matcher) panelgroup.Option {
 	return panelgroup.AddPanel("Client Success Rate (non-5xx responses)",
 		statPanel.Chart(
-			statPanel.Calculation(commonSdk.LastCalculation),
+			statPanel.Calculation(commonSdk.LastNumberCalculation),
 			statPanel.Format(commonSdk.Format{Unit: &dashboards.PercentDecimalUnit}),
 			statPanel.WithSparkline(statPanel.Sparkline{
 				Width: 1,
@@ -415,7 +415,7 @@ func ServerRequestVolumeStat(datasourceName string, labelMatchers ...*labels.Mat
 func ServerSuccessRateStat(datasourceName string, labelMatchers ...*labels.Matcher) panelgroup.Option {
 	return panelgroup.AddPanel("Server Success Rate (non-5xx responses)",
 		statPanel.Chart(
-			statPanel.Calculation(commonSdk.LastCalculation),
+			statPanel.Calculation(commonSdk.LastNumberCalculation),
 			statPanel.Format(commonSdk.Format{Unit: &dashboards.PercentDecimalUnit}),
 			statPanel.WithSparkline(statPanel.Sparkline{
 				Width: 1,
@@ -425,8 +425,8 @@ func ServerSuccessRateStat(datasourceName string, labelMatchers ...*labels.Match
 				DefaultColor: "green",
 				Steps: []commonSdk.StepOption{
 					{Color: "rgba(50, 172, 45, 0.97)", Value: 0},
-					{Color: "rgba(237, 129, 40, 0.89)", Value: 95},
-					{Color: "rgba(245, 54, 54, 0.9)", Value: 99},
+					{Color: "rgba(237, 129, 40, 0.89)", Value: 0.95},
+					{Color: "rgba(245, 54, 54, 0.9)", Value: 0.99},
 				},
 			}),
 		),

@@ -2226,7 +2226,7 @@ var IstioCommonPanelQueries = map[string]parser.Expr{
 							label.New("destination_service").EqualRegexp("$service"),
 							label.New("source_workload").EqualRegexp("$srcwl"),
 							label.New("source_workload_namespace").EqualRegexp("$srcns"),
-							label.New("response_code").NotEqual("5.*"),
+							label.New("response_code").NotEqualRegexp("5.*"),
 						),
 					),
 					matrix.WithRangeAsVariable("$__rate_interval"),
@@ -2378,40 +2378,45 @@ var IstioCommonPanelQueries = map[string]parser.Expr{
 		),
 		0.001,
 	),
-	"ClientSuccessRateStat": promqlbuilder.Div(
-		promqlbuilder.Sum(
-			promqlbuilder.IRate(
-				matrix.New(
-					vector.New(
-						vector.WithMetricName("istio_requests_total"),
-						vector.WithLabelMatchers(
-							label.New("reporter").EqualRegexp("$qrep"),
-							label.New("destination_service").EqualRegexp("$service"),
-							label.New("response_code").NotEqualRegexp("5.*"),
-						),
-					),
-					matrix.WithRangeAsVariable("5m"),
-				),
-			),
-		),
-		promqlbuilder.Or(
-			promqlbuilder.Sum(
-				promqlbuilder.IRate(
-					matrix.New(
-						vector.New(
-							vector.WithMetricName("istio_requests_total"),
-							vector.WithLabelMatchers(
-								label.New("reporter").EqualRegexp("$qrep"),
-								label.New("destination_service").EqualRegexp("$service"),
+	"ClientSuccessRateStat": promqlbuilder.Or(
+		promqlbuilder.Gtr(
+			promqlbuilder.Parenthesis(
+				promqlbuilder.Div(
+					promqlbuilder.Sum(
+						promqlbuilder.IRate(
+							matrix.New(
+								vector.New(
+									vector.WithMetricName("istio_requests_total"),
+									vector.WithLabelMatchers(
+										label.New("reporter").EqualRegexp("$qrep"),
+										label.New("destination_service").EqualRegexp("$service"),
+										label.New("response_code").NotEqualRegexp("5.*"),
+									),
+								),
+								matrix.WithRangeAsVariable("5m"),
 							),
 						),
-						matrix.WithRangeAsVariable("5m"),
+					),
+					promqlbuilder.Sum(
+						promqlbuilder.IRate(
+							matrix.New(
+								vector.New(
+									vector.WithMetricName("istio_requests_total"),
+									vector.WithLabelMatchers(
+										label.New("reporter").EqualRegexp("$qrep"),
+										label.New("destination_service").EqualRegexp("$service"),
+									),
+								),
+								matrix.WithRangeAsVariable("5m"),
+							),
+						),
 					),
 				),
 			),
-			promqlbuilder.Vector(1),
-		).On(),
-	),
+			&parser.NumberLiteral{Val: -1},
+		),
+		promqlbuilder.Vector(1),
+	).On(),
 	"ClientRequestDurationChart50": promqlbuilder.Or(
 		promqlbuilder.Div(
 			promqlbuilder.HistogramQuantile(0.50,
@@ -2554,40 +2559,45 @@ var IstioCommonPanelQueries = map[string]parser.Expr{
 		),
 		0.001,
 	),
-	"ServerSuccessRateStat": promqlbuilder.Div(
-		promqlbuilder.Sum(
-			promqlbuilder.IRate(
-				matrix.New(
-					vector.New(
-						vector.WithMetricName("istio_requests_total"),
-						vector.WithLabelMatchers(
-							label.New("reporter").Equal("destination"),
-							label.New("destination_service").EqualRegexp("$service"),
-							label.New("response_code").NotEqual("5.*"),
-						),
-					),
-					matrix.WithRangeAsVariable("5m"),
-				),
-			),
-		),
-		promqlbuilder.Or(
-			promqlbuilder.Sum(
-				promqlbuilder.IRate(
-					matrix.New(
-						vector.New(
-							vector.WithMetricName("istio_requests_total"),
-							vector.WithLabelMatchers(
-								label.New("reporter").Equal("destination"),
-								label.New("destination_service").EqualRegexp("$service"),
+	"ServerSuccessRateStat": promqlbuilder.Or(
+		promqlbuilder.Gtr(
+			promqlbuilder.Parenthesis(
+				promqlbuilder.Div(
+					promqlbuilder.Sum(
+						promqlbuilder.IRate(
+							matrix.New(
+								vector.New(
+									vector.WithMetricName("istio_requests_total"),
+									vector.WithLabelMatchers(
+										label.New("reporter").Equal("destination"),
+										label.New("destination_service").EqualRegexp("$service"),
+										label.New("response_code").NotEqualRegexp("5.*"),
+									),
+								),
+								matrix.WithRangeAsVariable("5m"),
 							),
 						),
-						matrix.WithRangeAsVariable("5m"),
+					),
+					promqlbuilder.Sum(
+						promqlbuilder.IRate(
+							matrix.New(
+								vector.New(
+									vector.WithMetricName("istio_requests_total"),
+									vector.WithLabelMatchers(
+										label.New("reporter").Equal("destination"),
+										label.New("destination_service").EqualRegexp("$service"),
+									),
+								),
+								matrix.WithRangeAsVariable("5m"),
+							),
+						),
 					),
 				),
 			),
-			promqlbuilder.Vector(1),
-		).On(),
-	),
+			&parser.NumberLiteral{Val: -1},
+		),
+		promqlbuilder.Vector(1),
+	).On(),
 	"ServerRequestDurationChart50": promqlbuilder.Or(
 		promqlbuilder.Div(
 			promqlbuilder.HistogramQuantile(0.50,
@@ -2763,7 +2773,7 @@ var IstioCommonPanelQueries = map[string]parser.Expr{
 							label.New("reporter").EqualRegexp("$qrep"),
 							label.New("connection_security_policy").Equal("mutual_tls"),
 							label.New("destination_service").EqualRegexp("$service"),
-							label.New("response_code").NotEqual("5.*"),
+							label.New("response_code").NotEqualRegexp("5.*"),
 							label.New("source_workload").EqualRegexp("$srcwl"),
 							label.New("source_workload_namespace").EqualRegexp("$srcns"),
 						),
@@ -2800,7 +2810,7 @@ var IstioCommonPanelQueries = map[string]parser.Expr{
 							label.New("reporter").EqualRegexp("$qrep"),
 							label.New("connection_security_policy").NotEqual("mutual_tls"),
 							label.New("destination_service").EqualRegexp("$service"),
-							label.New("response_code").NotEqual("5.*"),
+							label.New("response_code").NotEqualRegexp("5.*"),
 							label.New("source_workload").EqualRegexp("$srcwl"),
 							label.New("source_workload_namespace").EqualRegexp("$srcns"),
 						),

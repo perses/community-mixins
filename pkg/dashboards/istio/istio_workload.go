@@ -151,29 +151,31 @@ func BuildIstioWorkload(project string, datasource string, clusterLabelName stri
 			dashboard.AddVariable("namespace",
 				listVar.List(
 					promqlVar.PrometheusPromQL(
-						"sum(istio_requests_total) by (destination_workload_namespace) or sum(istio_tcp_sent_bytes_total) by (destination_workload_namespace)",
+						`label_replace(sum by (destination_workload_namespace) (istio_requests_total{destination_workload_namespace!="unknown"}), "namespace", "$1", "destination_workload_namespace", "(.*)") or label_replace(sum by (source_workload_namespace) (istio_requests_total{source_workload_namespace!="unknown"}), "namespace", "$1", "source_workload_namespace", "(.*)") or label_replace(sum by (destination_workload_namespace) (istio_tcp_sent_bytes_total{destination_workload_namespace!="unknown"}), "namespace", "$1", "destination_workload_namespace", "(.*)") or label_replace(sum by (source_workload_namespace) (istio_tcp_sent_bytes_total{source_workload_namespace!="unknown"}), "namespace", "$1", "source_workload_namespace", "(.*)")`,
 						promqlVar.Datasource(datasource),
-						promqlVar.LabelName("destination_workload_namespace"),
+						promqlVar.LabelName("namespace"),
 					),
 					listVar.DisplayName("Namespace"),
 					listVar.DefaultValue("bookinfo"),
+					listVar.AllowMultiple(false),
 				),
 			),
 			dashboard.AddVariable("workload",
 				listVar.List(
 					promqlVar.PrometheusPromQL(
-						"(sum(istio_requests_total{destination_workload_namespace=~\"$namespace\"}) by (destination_workload) or sum(istio_requests_total{source_workload_namespace=~\"$namespace\"}) by (source_workload)) or (sum(istio_tcp_sent_bytes_total{destination_workload_namespace=~\"$namespace\"}) by (destination_workload) or sum(istio_tcp_sent_bytes_total{source_workload_namespace=~\"$namespace\"}) by (source_workload))",
+						`label_replace(sum by (destination_workload) (istio_requests_total{destination_workload_namespace=~"$namespace",destination_workload!="unknown"}), "workload", "$1", "destination_workload", "(.*)") or label_replace(sum by (source_workload) (istio_requests_total{source_workload_namespace=~"$namespace",source_workload!="unknown"}), "workload", "$1", "source_workload", "(.*)") or label_replace(sum by (destination_workload) (istio_tcp_sent_bytes_total{destination_workload_namespace=~"$namespace",destination_workload!="unknown"}), "workload", "$1", "destination_workload", "(.*)") or label_replace(sum by (source_workload) (istio_tcp_sent_bytes_total{source_workload_namespace=~"$namespace",source_workload!="unknown"}), "workload", "$1", "source_workload", "(.*)")`,
 						promqlVar.Datasource(datasource),
-						promqlVar.LabelName("source_workload"),
+						promqlVar.LabelName("workload"),
 					),
 					listVar.DisplayName("Workload"),
 					listVar.DefaultValue("details-v1"),
+					listVar.AllowMultiple(false),
 				),
 			),
 			dashboard.AddVariable("qrep",
 				listVar.List(
 					promqlVar.PrometheusPromQL(
-						"sum(istio_requests_total) by (reporter)",
+						"group by (reporter) (istio_requests_total) or group by (reporter) (istio_tcp_sent_bytes_total)",
 						promqlVar.Datasource(datasource),
 						promqlVar.LabelName("reporter"),
 					),
