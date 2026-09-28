@@ -11,6 +11,14 @@ This repo also offers Prometheus Operator format recording rules and alerts alon
 
 ## Overview of Available Dashboards
 
+### AISIX AI Gateway
+
+- AISIX AI Gateway Overview
+
+The dashboard uses the Prometheus metrics exposed by the open-source
+[AISIX AI Gateway](https://github.com/api7/aisix). See the
+[AISIX metrics reference](https://docs.api7.ai/ai-gateway/reference/metrics) for metric semantics and configuration.
+
 ### Prometheus Dashboards
 
 - Prometheus Overview
