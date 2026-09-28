@@ -732,7 +732,7 @@ spec:
                   query: |2-
                       sum by (source_workload, source_workload_namespace) (
                         irate(
-                          istio_requests_total{connection_security_policy="mutual_tls",destination_service=~"$service",reporter=~"$qrep",response_code!="5.*",source_workload=~"$srcwl",source_workload_namespace=~"$srcns"}[5m]
+                          istio_requests_total{connection_security_policy="mutual_tls",destination_service=~"$service",reporter=~"$qrep",response_code!~"5.*",source_workload=~"$srcwl",source_workload_namespace=~"$srcns"}[5m]
                         )
                       )
                     /
@@ -754,7 +754,7 @@ spec:
                   query: |2-
                       sum by (source_workload, source_workload_namespace) (
                         irate(
-                          istio_requests_total{connection_security_policy!="mutual_tls",destination_service=~"$service",reporter=~"$qrep",response_code!="5.*",source_workload=~"$srcwl",source_workload_namespace=~"$srcns"}[5m]
+                          istio_requests_total{connection_security_policy!="mutual_tls",destination_service=~"$service",reporter=~"$qrep",response_code!~"5.*",source_workload=~"$srcwl",source_workload_namespace=~"$srcns"}[5m]
                         )
                       )
                     /

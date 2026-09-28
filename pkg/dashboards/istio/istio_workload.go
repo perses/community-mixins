@@ -151,7 +151,7 @@ func BuildIstioWorkload(project string, datasource string, clusterLabelName stri
 			dashboard.AddVariable("namespace",
 				listVar.List(
 					promqlVar.PrometheusPromQL(
-						`sum by (namespace) (label_replace(istio_requests_total{destination_workload_namespace!="unknown"}, "namespace", "$1", "destination_workload_namespace", "(.*)") or label_replace(istio_requests_total{source_workload_namespace!="unknown"}, "namespace", "$1", "source_workload_namespace", "(.*)") or label_replace(istio_tcp_sent_bytes_total{destination_workload_namespace!="unknown"}, "namespace", "$1", "destination_workload_namespace", "(.*)") or label_replace(istio_tcp_sent_bytes_total{source_workload_namespace!="unknown"}, "namespace", "$1", "source_workload_namespace", "(.*)"))`,
+						`label_replace(sum by (destination_workload_namespace) (istio_requests_total{destination_workload_namespace!="unknown"}), "namespace", "$1", "destination_workload_namespace", "(.*)") or label_replace(sum by (source_workload_namespace) (istio_requests_total{source_workload_namespace!="unknown"}), "namespace", "$1", "source_workload_namespace", "(.*)") or label_replace(sum by (destination_workload_namespace) (istio_tcp_sent_bytes_total{destination_workload_namespace!="unknown"}), "namespace", "$1", "destination_workload_namespace", "(.*)") or label_replace(sum by (source_workload_namespace) (istio_tcp_sent_bytes_total{source_workload_namespace!="unknown"}), "namespace", "$1", "source_workload_namespace", "(.*)")`,
 						promqlVar.Datasource(datasource),
 						promqlVar.LabelName("namespace"),
 					),
@@ -163,7 +163,7 @@ func BuildIstioWorkload(project string, datasource string, clusterLabelName stri
 			dashboard.AddVariable("workload",
 				listVar.List(
 					promqlVar.PrometheusPromQL(
-						`sum by (workload) (label_replace(istio_requests_total{destination_workload_namespace=~"$namespace",destination_workload!="unknown"}, "workload", "$1", "destination_workload", "(.*)") or label_replace(istio_requests_total{source_workload_namespace=~"$namespace",source_workload!="unknown"}, "workload", "$1", "source_workload", "(.*)") or label_replace(istio_tcp_sent_bytes_total{destination_workload_namespace=~"$namespace",destination_workload!="unknown"}, "workload", "$1", "destination_workload", "(.*)") or label_replace(istio_tcp_sent_bytes_total{source_workload_namespace=~"$namespace",source_workload!="unknown"}, "workload", "$1", "source_workload", "(.*)"))`,
+						`label_replace(sum by (destination_workload) (istio_requests_total{destination_workload_namespace=~"$namespace",destination_workload!="unknown"}), "workload", "$1", "destination_workload", "(.*)") or label_replace(sum by (source_workload) (istio_requests_total{source_workload_namespace=~"$namespace",source_workload!="unknown"}), "workload", "$1", "source_workload", "(.*)") or label_replace(sum by (destination_workload) (istio_tcp_sent_bytes_total{destination_workload_namespace=~"$namespace",destination_workload!="unknown"}), "workload", "$1", "destination_workload", "(.*)") or label_replace(sum by (source_workload) (istio_tcp_sent_bytes_total{source_workload_namespace=~"$namespace",source_workload!="unknown"}), "workload", "$1", "source_workload", "(.*)")`,
 						promqlVar.Datasource(datasource),
 						promqlVar.LabelName("workload"),
 					),
@@ -175,7 +175,7 @@ func BuildIstioWorkload(project string, datasource string, clusterLabelName stri
 			dashboard.AddVariable("qrep",
 				listVar.List(
 					promqlVar.PrometheusPromQL(
-						"sum(istio_requests_total) by (reporter)",
+						"group by (reporter) (istio_requests_total) or group by (reporter) (istio_tcp_sent_bytes_total)",
 						promqlVar.Datasource(datasource),
 						promqlVar.LabelName("reporter"),
 					),
