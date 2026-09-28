@@ -22,7 +22,7 @@ spec:
                     datasource:
                         kind: PrometheusDatasource
                         name: prometheus-datasource
-                    expr: sum(istio_requests_total{}) by (destination_service) or sum(istio_tcp_sent_bytes_total{}) by (destination_service)
+                    expr: sum by (destination_service) (istio_requests_total{destination_service!="unknown"}) or sum by (destination_service) (istio_tcp_sent_bytes_total{destination_service!="unknown"}) or sum by (destination_service) (istio_tcp_received_bytes_total{destination_service!="unknown"})
                     labelName: destination_service
             name: service
         - kind: ListVariable
@@ -39,7 +39,7 @@ spec:
                     datasource:
                         kind: PrometheusDatasource
                         name: prometheus-datasource
-                    expr: sum(istio_requests_total) by (reporter)
+                    expr: group by (reporter) (istio_requests_total) or group by (reporter) (istio_tcp_sent_bytes_total)
                     labelName: reporter
             name: qrep
         - kind: ListVariable
@@ -55,7 +55,7 @@ spec:
                     datasource:
                         kind: PrometheusDatasource
                         name: prometheus-datasource
-                    expr: sum(istio_requests_total{reporter=~"$qrep", destination_service="$service"}) by (source_cluster) or sum(istio_tcp_sent_bytes_total{reporter=~"$qrep", destination_service=~"$service"}) by (source_cluster)
+                    expr: sum(istio_requests_total{reporter=~"$qrep", destination_service=~"$service"}) by (source_cluster) or sum(istio_tcp_sent_bytes_total{reporter=~"$qrep", destination_service=~"$service"}) by (source_cluster)
                     labelName: source_cluster
             name: srccluster
         - kind: ListVariable
@@ -71,7 +71,7 @@ spec:
                     datasource:
                         kind: PrometheusDatasource
                         name: prometheus-datasource
-                    expr: sum(istio_requests_total{reporter=~"$qrep", destination_service="$service"}) by (source_workload_namespace) or sum(istio_tcp_sent_bytes_total{reporter=~"$qrep", destination_service=~"$service"}) by (source_workload_namespace)
+                    expr: sum(istio_requests_total{reporter=~"$qrep", destination_service=~"$service"}) by (source_workload_namespace) or sum(istio_tcp_sent_bytes_total{reporter=~"$qrep", destination_service=~"$service"}) by (source_workload_namespace)
                     labelName: source_workload_namespace
             name: srcns
         - kind: ListVariable
@@ -103,7 +103,7 @@ spec:
                     datasource:
                         kind: PrometheusDatasource
                         name: prometheus-datasource
-                    expr: sum(istio_requests_total{reporter="destination", destination_service="$service"}) by (destination_cluster) or sum(istio_tcp_sent_bytes_total{reporter="destination", destination_service=~"$service"}) by (destination_cluster)
+                    expr: sum(istio_requests_total{reporter="destination", destination_service=~"$service"}) by (destination_cluster) or sum(istio_tcp_sent_bytes_total{reporter="destination", destination_service=~"$service"}) by (destination_cluster)
                     labelName: destination_cluster
             name: dstcluster
         - kind: ListVariable
@@ -119,7 +119,7 @@ spec:
                     datasource:
                         kind: PrometheusDatasource
                         name: prometheus-datasource
-                    expr: sum(istio_requests_total{reporter="destination", destination_service="$service"}) by (destination_workload_namespace) or sum(istio_tcp_sent_bytes_total{reporter="destination", destination_service=~"$service"}) by (destination_workload_namespace)
+                    expr: sum(istio_requests_total{reporter="destination", destination_service=~"$service"}) by (destination_workload_namespace) or sum(istio_tcp_sent_bytes_total{reporter="destination", destination_service=~"$service"}) by (destination_workload_namespace)
                     labelName: destination_workload_namespace
             name: dstns
         - kind: ListVariable
@@ -192,7 +192,7 @@ spec:
                 plugin:
                     kind: StatChart
                     spec:
-                        calculation: last
+                        calculation: last-number
                         format:
                             unit: percent-decimal
                         thresholds:
@@ -217,15 +217,19 @@ spec:
                                     kind: PrometheusDatasource
                                     name: prometheus-datasource
                                 query: |4-
-                                      sum(
-                                        irate(
-                                          istio_requests_total{destination_service=~"$service",reporter=~"$qrep",response_code!~"5.*"}[5m]
+                                        (
+                                            sum(
+                                              irate(
+                                                istio_requests_total{destination_service=~"$service",reporter=~"$qrep",response_code!~"5.*"}[5m]
+                                              )
+                                            )
+                                          /
+                                            sum(irate(istio_requests_total{destination_service=~"$service",reporter=~"$qrep"}[5m]))
                                         )
-                                      )
-                                    /
-                                        sum(irate(istio_requests_total{destination_service=~"$service",reporter=~"$qrep"}[5m]))
-                                      or on ()
-                                        vector(1)
+                                      >
+                                        -1
+                                    or on ()
+                                      vector(1)
         "1_2":
             kind: Panel
             spec:
@@ -394,7 +398,7 @@ spec:
                 plugin:
                     kind: StatChart
                     spec:
-                        calculation: last
+                        calculation: last-number
                         format:
                             unit: percent-decimal
                         thresholds:
@@ -403,9 +407,9 @@ spec:
                             steps:
                                 - value: 0
                                   color: rgba(50, 172, 45, 0.97)
-                                - value: 95
+                                - value: 0.95
                                   color: rgba(237, 129, 40, 0.89)
-                                - value: 99
+                                - value: 0.99
                                   color: rgba(245, 54, 54, 0.9)
                         sparkline:
                             width: 1
@@ -419,15 +423,19 @@ spec:
                                     kind: PrometheusDatasource
                                     name: prometheus-datasource
                                 query: |4-
-                                      sum(
-                                        irate(
-                                          istio_requests_total{destination_service=~"$service",reporter="destination",response_code!="5.*"}[5m]
+                                        (
+                                            sum(
+                                              irate(
+                                                istio_requests_total{destination_service=~"$service",reporter="destination",response_code!~"5.*"}[5m]
+                                              )
+                                            )
+                                          /
+                                            sum(irate(istio_requests_total{destination_service=~"$service",reporter="destination"}[5m]))
                                         )
-                                      )
-                                    /
-                                        sum(irate(istio_requests_total{destination_service=~"$service",reporter="destination"}[5m]))
-                                      or on ()
-                                        vector(1)
+                                      >
+                                        -1
+                                    or on ()
+                                      vector(1)
         "1_6":
             kind: Panel
             spec:
