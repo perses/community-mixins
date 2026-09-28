@@ -33,7 +33,7 @@
                   "kind": "PrometheusDatasource",
                   "name": "prometheus-datasource"
                 },
-                "expr": "sum(istio_requests_total{}) by (destination_service) or sum(istio_tcp_sent_bytes_total{}) by (destination_service)",
+                "expr": "sum by (destination_service) (istio_requests_total{destination_service!=\"unknown\"}) or sum by (destination_service) (istio_tcp_sent_bytes_total{destination_service!=\"unknown\"}) or sum by (destination_service) (istio_tcp_received_bytes_total{destination_service!=\"unknown\"})",
                 "labelName": "destination_service"
               }
             },
@@ -57,7 +57,7 @@
                   "kind": "PrometheusDatasource",
                   "name": "prometheus-datasource"
                 },
-                "expr": "sum(istio_requests_total) by (reporter)",
+                "expr": "group by (reporter) (istio_requests_total) or group by (reporter) (istio_tcp_sent_bytes_total)",
                 "labelName": "reporter"
               }
             },
@@ -80,7 +80,7 @@
                   "kind": "PrometheusDatasource",
                   "name": "prometheus-datasource"
                 },
-                "expr": "sum(istio_requests_total{reporter=~\"$qrep\", destination_service=\"$service\"}) by (source_cluster) or sum(istio_tcp_sent_bytes_total{reporter=~\"$qrep\", destination_service=~\"$service\"}) by (source_cluster)",
+                "expr": "sum(istio_requests_total{reporter=~\"$qrep\", destination_service=~\"$service\"}) by (source_cluster) or sum(istio_tcp_sent_bytes_total{reporter=~\"$qrep\", destination_service=~\"$service\"}) by (source_cluster)",
                 "labelName": "source_cluster"
               }
             },
@@ -103,7 +103,7 @@
                   "kind": "PrometheusDatasource",
                   "name": "prometheus-datasource"
                 },
-                "expr": "sum(istio_requests_total{reporter=~\"$qrep\", destination_service=\"$service\"}) by (source_workload_namespace) or sum(istio_tcp_sent_bytes_total{reporter=~\"$qrep\", destination_service=~\"$service\"}) by (source_workload_namespace)",
+                "expr": "sum(istio_requests_total{reporter=~\"$qrep\", destination_service=~\"$service\"}) by (source_workload_namespace) or sum(istio_tcp_sent_bytes_total{reporter=~\"$qrep\", destination_service=~\"$service\"}) by (source_workload_namespace)",
                 "labelName": "source_workload_namespace"
               }
             },
@@ -149,7 +149,7 @@
                   "kind": "PrometheusDatasource",
                   "name": "prometheus-datasource"
                 },
-                "expr": "sum(istio_requests_total{reporter=\"destination\", destination_service=\"$service\"}) by (destination_cluster) or sum(istio_tcp_sent_bytes_total{reporter=\"destination\", destination_service=~\"$service\"}) by (destination_cluster)",
+                "expr": "sum(istio_requests_total{reporter=\"destination\", destination_service=~\"$service\"}) by (destination_cluster) or sum(istio_tcp_sent_bytes_total{reporter=\"destination\", destination_service=~\"$service\"}) by (destination_cluster)",
                 "labelName": "destination_cluster"
               }
             },
@@ -172,7 +172,7 @@
                   "kind": "PrometheusDatasource",
                   "name": "prometheus-datasource"
                 },
-                "expr": "sum(istio_requests_total{reporter=\"destination\", destination_service=\"$service\"}) by (destination_workload_namespace) or sum(istio_tcp_sent_bytes_total{reporter=\"destination\", destination_service=~\"$service\"}) by (destination_workload_namespace)",
+                "expr": "sum(istio_requests_total{reporter=\"destination\", destination_service=~\"$service\"}) by (destination_workload_namespace) or sum(istio_tcp_sent_bytes_total{reporter=\"destination\", destination_service=~\"$service\"}) by (destination_workload_namespace)",
                 "labelName": "destination_workload_namespace"
               }
             },
@@ -275,7 +275,7 @@
             "plugin": {
               "kind": "StatChart",
               "spec": {
-                "calculation": "last",
+                "calculation": "last-number",
                 "format": {
                   "unit": "percent-decimal"
                 },
@@ -313,7 +313,7 @@
                         "kind": "PrometheusDatasource",
                         "name": "prometheus-datasource"
                       },
-                      "query": "  sum(\n    irate(\n      istio_requests_total{destination_service=~\"$service\",reporter=~\"$qrep\",response_code!~\"5.*\"}[5m]\n    )\n  )\n/\n    sum(irate(istio_requests_total{destination_service=~\"$service\",reporter=~\"$qrep\"}[5m]))\n  or on ()\n    vector(1)"
+                      "query": "    (\n        sum(\n          irate(\n            istio_requests_total{destination_service=~\"$service\",reporter=~\"$qrep\",response_code!~\"5.*\"}[5m]\n          )\n        )\n      /\n        sum(irate(istio_requests_total{destination_service=~\"$service\",reporter=~\"$qrep\"}[5m]))\n    )\n  \u003e\n    -1\nor on ()\n  vector(1)"
                     }
                   }
                 }
@@ -501,7 +501,7 @@
             "plugin": {
               "kind": "StatChart",
               "spec": {
-                "calculation": "last",
+                "calculation": "last-number",
                 "format": {
                   "unit": "percent-decimal"
                 },
@@ -518,11 +518,11 @@
                     },
                     {
                       "color": "rgba(237, 129, 40, 0.89)",
-                      "value": 95
+                      "value": 0.95
                     },
                     {
                       "color": "rgba(245, 54, 54, 0.9)",
-                      "value": 99
+                      "value": 0.99
                     }
                   ]
                 }
@@ -539,7 +539,7 @@
                         "kind": "PrometheusDatasource",
                         "name": "prometheus-datasource"
                       },
-                      "query": "  sum(\n    irate(\n      istio_requests_total{destination_service=~\"$service\",reporter=\"destination\",response_code!=\"5.*\"}[5m]\n    )\n  )\n/\n    sum(irate(istio_requests_total{destination_service=~\"$service\",reporter=\"destination\"}[5m]))\n  or on ()\n    vector(1)"
+                      "query": "    (\n        sum(\n          irate(\n            istio_requests_total{destination_service=~\"$service\",reporter=\"destination\",response_code!~\"5.*\"}[5m]\n          )\n        )\n      /\n        sum(irate(istio_requests_total{destination_service=~\"$service\",reporter=\"destination\"}[5m]))\n    )\n  \u003e\n    -1\nor on ()\n  vector(1)"
                     }
                   }
                 }
@@ -777,7 +777,7 @@
                         "kind": "PrometheusDatasource",
                         "name": "prometheus-datasource"
                       },
-                      "query": "  sum by (source_workload, source_workload_namespace) (\n    irate(\n      istio_requests_total{connection_security_policy=\"mutual_tls\",destination_service=~\"$service\",reporter=~\"$qrep\",response_code!=\"5.*\",source_workload=~\"$srcwl\",source_workload_namespace=~\"$srcns\"}[5m]\n    )\n  )\n/\n  sum by (source_workload, source_workload_namespace) (\n    irate(\n      istio_requests_total{connection_security_policy=\"mutual_tls\",destination_service=~\"$service\",reporter=~\"$qrep\",source_workload=~\"$srcwl\",source_workload_namespace=~\"$srcns\"}[5m]\n    )\n  )",
+                      "query": "  sum by (source_workload, source_workload_namespace) (\n    irate(\n      istio_requests_total{connection_security_policy=\"mutual_tls\",destination_service=~\"$service\",reporter=~\"$qrep\",response_code!~\"5.*\",source_workload=~\"$srcwl\",source_workload_namespace=~\"$srcns\"}[5m]\n    )\n  )\n/\n  sum by (source_workload, source_workload_namespace) (\n    irate(\n      istio_requests_total{connection_security_policy=\"mutual_tls\",destination_service=~\"$service\",reporter=~\"$qrep\",source_workload=~\"$srcwl\",source_workload_namespace=~\"$srcns\"}[5m]\n    )\n  )",
                       "seriesNameFormat": "{{ source_workload }}.{{ source_workload_namespace }} (🔐mTLS)"
                     }
                   }
@@ -793,7 +793,7 @@
                         "kind": "PrometheusDatasource",
                         "name": "prometheus-datasource"
                       },
-                      "query": "  sum by (source_workload, source_workload_namespace) (\n    irate(\n      istio_requests_total{connection_security_policy!=\"mutual_tls\",destination_service=~\"$service\",reporter=~\"$qrep\",response_code!=\"5.*\",source_workload=~\"$srcwl\",source_workload_namespace=~\"$srcns\"}[5m]\n    )\n  )\n/\n  sum by (source_workload, source_workload_namespace) (\n    irate(\n      istio_requests_total{connection_security_policy!=\"mutual_tls\",destination_service=~\"$service\",reporter=~\"$qrep\",source_workload=~\"$srcwl\",source_workload_namespace=~\"$srcns\"}[5m]\n    )\n  )",
+                      "query": "  sum by (source_workload, source_workload_namespace) (\n    irate(\n      istio_requests_total{connection_security_policy!=\"mutual_tls\",destination_service=~\"$service\",reporter=~\"$qrep\",response_code!~\"5.*\",source_workload=~\"$srcwl\",source_workload_namespace=~\"$srcns\"}[5m]\n    )\n  )\n/\n  sum by (source_workload, source_workload_namespace) (\n    irate(\n      istio_requests_total{connection_security_policy!=\"mutual_tls\",destination_service=~\"$service\",reporter=~\"$qrep\",source_workload=~\"$srcwl\",source_workload_namespace=~\"$srcns\"}[5m]\n    )\n  )",
                       "seriesNameFormat": "{{ source_workload }}.{{ source_workload_namespace }}"
                     }
                   }

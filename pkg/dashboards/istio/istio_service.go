@@ -134,11 +134,11 @@ func BuildIstioService(project string, datasource string, clusterLabelName strin
 		dashboard.New("istio-service-dashboard",
 			dashboard.ProjectName(project),
 			dashboard.Name("Istio Service Dashboard"),
-			// Service variable
+			// Service variable (single-select; panels use destination_service=~"$service")
 			dashboard.AddVariable("service",
 				listVar.List(
 					promqlVar.PrometheusPromQL(
-						"sum(istio_requests_total{}) by (destination_service) or sum(istio_tcp_sent_bytes_total{}) by (destination_service)",
+						"sum by (destination_service) (istio_requests_total{destination_service!=\"unknown\"}) or sum by (destination_service) (istio_tcp_sent_bytes_total{destination_service!=\"unknown\"}) or sum by (destination_service) (istio_tcp_received_bytes_total{destination_service!=\"unknown\"})",
 						promqlVar.Datasource(datasource),
 						promqlVar.LabelName("destination_service"),
 					),
@@ -151,7 +151,7 @@ func BuildIstioService(project string, datasource string, clusterLabelName strin
 			dashboard.AddVariable("qrep",
 				listVar.List(
 					promqlVar.PrometheusPromQL(
-						"sum(istio_requests_total) by (reporter)",
+						"group by (reporter) (istio_requests_total) or group by (reporter) (istio_tcp_sent_bytes_total)",
 						promqlVar.Datasource(datasource),
 						promqlVar.LabelName("reporter"),
 					),
@@ -164,7 +164,7 @@ func BuildIstioService(project string, datasource string, clusterLabelName strin
 			dashboard.AddVariable("srccluster",
 				listVar.List(
 					promqlVar.PrometheusPromQL(
-						"sum(istio_requests_total{reporter=~\"$qrep\", destination_service=\"$service\"}) by (source_cluster) or sum(istio_tcp_sent_bytes_total{reporter=~\"$qrep\", destination_service=~\"$service\"}) by (source_cluster)",
+						"sum(istio_requests_total{reporter=~\"$qrep\", destination_service=~\"$service\"}) by (source_cluster) or sum(istio_tcp_sent_bytes_total{reporter=~\"$qrep\", destination_service=~\"$service\"}) by (source_cluster)",
 						promqlVar.Datasource(datasource),
 						promqlVar.LabelName("source_cluster"),
 					),
@@ -177,7 +177,7 @@ func BuildIstioService(project string, datasource string, clusterLabelName strin
 			dashboard.AddVariable("srcns",
 				listVar.List(
 					promqlVar.PrometheusPromQL(
-						"sum(istio_requests_total{reporter=~\"$qrep\", destination_service=\"$service\"}) by (source_workload_namespace) or sum(istio_tcp_sent_bytes_total{reporter=~\"$qrep\", destination_service=~\"$service\"}) by (source_workload_namespace)",
+						"sum(istio_requests_total{reporter=~\"$qrep\", destination_service=~\"$service\"}) by (source_workload_namespace) or sum(istio_tcp_sent_bytes_total{reporter=~\"$qrep\", destination_service=~\"$service\"}) by (source_workload_namespace)",
 						promqlVar.Datasource(datasource),
 						promqlVar.LabelName("source_workload_namespace"),
 					),
@@ -203,7 +203,7 @@ func BuildIstioService(project string, datasource string, clusterLabelName strin
 			dashboard.AddVariable("dstcluster",
 				listVar.List(
 					promqlVar.PrometheusPromQL(
-						"sum(istio_requests_total{reporter=\"destination\", destination_service=\"$service\"}) by (destination_cluster) or sum(istio_tcp_sent_bytes_total{reporter=\"destination\", destination_service=~\"$service\"}) by (destination_cluster)",
+						"sum(istio_requests_total{reporter=\"destination\", destination_service=~\"$service\"}) by (destination_cluster) or sum(istio_tcp_sent_bytes_total{reporter=\"destination\", destination_service=~\"$service\"}) by (destination_cluster)",
 						promqlVar.Datasource(datasource),
 						promqlVar.LabelName("destination_cluster"),
 					),
@@ -216,7 +216,7 @@ func BuildIstioService(project string, datasource string, clusterLabelName strin
 			dashboard.AddVariable("dstns",
 				listVar.List(
 					promqlVar.PrometheusPromQL(
-						"sum(istio_requests_total{reporter=\"destination\", destination_service=\"$service\"}) by (destination_workload_namespace) or sum(istio_tcp_sent_bytes_total{reporter=\"destination\", destination_service=~\"$service\"}) by (destination_workload_namespace)",
+						"sum(istio_requests_total{reporter=\"destination\", destination_service=~\"$service\"}) by (destination_workload_namespace) or sum(istio_tcp_sent_bytes_total{reporter=\"destination\", destination_service=~\"$service\"}) by (destination_workload_namespace)",
 						promqlVar.Datasource(datasource),
 						promqlVar.LabelName("destination_workload_namespace"),
 					),
