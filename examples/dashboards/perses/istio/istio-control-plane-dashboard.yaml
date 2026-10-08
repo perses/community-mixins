@@ -21,6 +21,7 @@ spec:
                         legend:
                             position: bottom
                             mode: list
+                            size: medium
                         yAxis:
                             format:
                                 unit: decimal
@@ -53,6 +54,7 @@ spec:
                         legend:
                             position: bottom
                             mode: table
+                            size: medium
                             values:
                                 - last
                                 - max
@@ -116,6 +118,7 @@ spec:
                         legend:
                             position: bottom
                             mode: table
+                            size: medium
                             values:
                                 - last
                                 - max
@@ -159,6 +162,7 @@ spec:
                         legend:
                             position: bottom
                             mode: table
+                            size: medium
                             values:
                                 - last
                                 - max
@@ -192,6 +196,7 @@ spec:
                         legend:
                             position: bottom
                             mode: table
+                            size: medium
                             values:
                                 - last
                                 - max
@@ -222,6 +227,7 @@ spec:
                         legend:
                             position: bottom
                             mode: list
+                            size: medium
                         yAxis:
                             format:
                                 unit: decimal
@@ -241,7 +247,7 @@ spec:
                                 datasource:
                                     kind: PrometheusDatasource
                                     name: prometheus-datasource
-                                query: sum by (type) (irate(pilot_xds_pushes[$__rate_interval]))
+                                query: sum by (type) (irate(label_replace(pilot_xds_pushes, "__name__", "$1_total", "__name__", "(.+)")[$__rate_interval:$__interval]))
                                 seriesNameFormat: '{{type}}'
         "2_1":
             kind: Panel
@@ -255,6 +261,7 @@ spec:
                         legend:
                             position: bottom
                             mode: list
+                            size: medium
                         yAxis:
                             format:
                                 unit: decimal
@@ -274,7 +281,7 @@ spec:
                                 datasource:
                                     kind: PrometheusDatasource
                                     name: prometheus-datasource
-                                query: sum by (type, event) (rate(pilot_k8s_reg_events[$__rate_interval]))
+                                query: sum by (type, event) (rate(label_replace(pilot_k8s_reg_events, "__name__", "$1_total", "__name__", "(.+)")[$__rate_interval:$__interval]))
                                 seriesNameFormat: '{{type}} {{event}}'
                     - kind: TimeSeriesQuery
                       spec:
@@ -284,7 +291,7 @@ spec:
                                 datasource:
                                     kind: PrometheusDatasource
                                     name: prometheus-datasource
-                                query: sum by (type, event) (rate(pilot_k8s_cfg_events[$__rate_interval]))
+                                query: sum by (type, event) (rate(label_replace(pilot_k8s_cfg_events, "__name__", "$1_total", "__name__", "(.+)")[$__rate_interval:$__interval]))
                                 seriesNameFormat: '{{type}} {{event}}'
                     - kind: TimeSeriesQuery
                       spec:
@@ -294,7 +301,7 @@ spec:
                                 datasource:
                                     kind: PrometheusDatasource
                                     name: prometheus-datasource
-                                query: sum by (type) (rate(pilot_push_triggers[$__rate_interval]))
+                                query: sum by (type) (rate(label_replace(pilot_push_triggers, "__name__", "$1_total", "__name__", "(.+)")[$__rate_interval:$__interval]))
                                 seriesNameFormat: '{{type}}'
         "2_2":
             kind: Panel
@@ -308,6 +315,7 @@ spec:
                         legend:
                             position: bottom
                             mode: list
+                            size: medium
                         yAxis:
                             format:
                                 unit: decimal
@@ -337,7 +345,7 @@ spec:
                                     kind: PrometheusDatasource
                                     name: prometheus-datasource
                                 query: sum(pilot_xds)
-                                seriesNameFormat: Connections ( reported)
+                                seriesNameFormat: Connections (server reported)
         "2_3":
             kind: Panel
             spec:
@@ -350,6 +358,7 @@ spec:
                         legend:
                             position: bottom
                             mode: list
+                            size: medium
                         yAxis:
                             format:
                                 unit: decimal
@@ -395,6 +404,7 @@ spec:
                         legend:
                             position: bottom
                             mode: list
+                            size: medium
                         yAxis:
                             format:
                                 unit: milliseconds
@@ -427,6 +437,7 @@ spec:
                         legend:
                             position: bottom
                             mode: list
+                            size: medium
                         yAxis:
                             format:
                                 unit: bytes
@@ -459,6 +470,7 @@ spec:
                         legend:
                             position: bottom
                             mode: list
+                            size: medium
                         yAxis:
                             format:
                                 unit: decimal
@@ -478,7 +490,7 @@ spec:
                                 datasource:
                                     kind: PrometheusDatasource
                                     name: prometheus-datasource
-                                query: sum(rate(galley_validation_passed[1m]))
+                                query: sum(rate(label_replace(galley_validation_passed, "__name__", "$1_total", "__name__", "(.+)")[$__rate_interval:$__interval]))
                                 seriesNameFormat: Success
                     - kind: TimeSeriesQuery
                       spec:
@@ -488,7 +500,7 @@ spec:
                                 datasource:
                                     kind: PrometheusDatasource
                                     name: prometheus-datasource
-                                query: sum(rate(galley_validation_failed[1m]))
+                                query: sum(rate(label_replace(galley_validation_failed, "__name__", "$1_total", "__name__", "(.+)")[$__rate_interval:$__interval]))
                                 seriesNameFormat: Failure
         "3_1":
             kind: Panel
@@ -502,6 +514,7 @@ spec:
                         legend:
                             position: bottom
                             mode: list
+                            size: medium
                         yAxis:
                             format:
                                 unit: decimal
@@ -582,37 +595,37 @@ spec:
                 - x: 0
                   "y": 0
                   width: 8
-                  height: 10
+                  height: 12
                   content:
                     $ref: '#/spec/panels/2_0'
                 - x: 8
                   "y": 0
                   width: 8
-                  height: 10
+                  height: 12
                   content:
                     $ref: '#/spec/panels/2_1'
                 - x: 16
                   "y": 0
                   width: 8
-                  height: 10
+                  height: 12
                   content:
                     $ref: '#/spec/panels/2_2'
                 - x: 0
-                  "y": 10
+                  "y": 12
                   width: 8
-                  height: 10
+                  height: 12
                   content:
                     $ref: '#/spec/panels/2_3'
                 - x: 8
-                  "y": 10
+                  "y": 12
                   width: 8
-                  height: 10
+                  height: 12
                   content:
                     $ref: '#/spec/panels/2_4'
                 - x: 16
-                  "y": 10
+                  "y": 12
                   width: 8
-                  height: 10
+                  height: 12
                   content:
                     $ref: '#/spec/panels/2_5'
         - kind: Grid
@@ -623,13 +636,13 @@ spec:
                 - x: 0
                   "y": 0
                   width: 12
-                  height: 8
+                  height: 10
                   content:
                     $ref: '#/spec/panels/3_0'
                 - x: 12
                   "y": 0
                   width: 12
-                  height: 8
+                  height: 10
                   content:
                     $ref: '#/spec/panels/3_1'
     duration: 1h

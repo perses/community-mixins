@@ -24,7 +24,17 @@ import (
 	tablePanel "github.com/perses/plugins/table/sdk/go"
 	timeSeriesPanel "github.com/perses/plugins/timeserieschart/sdk/go"
 	"github.com/prometheus/prometheus/model/labels"
+	"github.com/prometheus/prometheus/promql/parser"
 )
+
+func meshPanelPromQL(query parser.Expr, labelMatchers []*labels.Matcher) string {
+	for _, m := range labelMatchers {
+		if m != nil && m.Name != "" {
+			return promql.SetLabelMatchersV2(query, labelMatchers).Pretty(0)
+		}
+	}
+	return query.Pretty(0)
+}
 
 func HTTPGRPCWorkloads(datasourceName string, labelMatchers ...*labels.Matcher) panelgroup.Option {
 	return panelgroup.AddPanel("HTTP/gRPC Workloads",
@@ -111,50 +121,35 @@ func HTTPGRPCWorkloads(datasourceName string, labelMatchers ...*labels.Matcher) 
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchersV2(
-					IstioCommonPanelQueries["IstioHTTPGRPCWorkloads"],
-					labelMatchers,
-				).Pretty(0),
+				meshPanelPromQL(IstioCommonPanelQueries["IstioHTTPGRPCWorkloads"], labelMatchers),
 				dashboards.AddQueryDataSource(datasourceName),
 				query.SeriesNameFormat("{{ destination_workload}}.{{ destination_workload_namespace }}"),
 			),
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchersV2(
-					IstioCommonPanelQueries["IstioHTTPGRPCWorkloads50"],
-					labelMatchers,
-				).Pretty(0),
+				meshPanelPromQL(IstioCommonPanelQueries["IstioHTTPGRPCWorkloads50"], labelMatchers),
 				dashboards.AddQueryDataSource(datasourceName),
 				query.SeriesNameFormat("{{ destination_workload}}.{{ destination_workload_namespace }}"),
 			),
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchersV2(
-					IstioCommonPanelQueries["IstioHTTPGRPCWorkloads90"],
-					labelMatchers,
-				).Pretty(0),
+				meshPanelPromQL(IstioCommonPanelQueries["IstioHTTPGRPCWorkloads90"], labelMatchers),
 				dashboards.AddQueryDataSource(datasourceName),
 				query.SeriesNameFormat("{{ destination_workload}}.{{ destination_workload_namespace }}"),
 			),
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchersV2(
-					IstioCommonPanelQueries["IstioHTTPGRPCWorkloads99"],
-					labelMatchers,
-				).Pretty(0),
+				meshPanelPromQL(IstioCommonPanelQueries["IstioHTTPGRPCWorkloads99"], labelMatchers),
 				dashboards.AddQueryDataSource(datasourceName),
 				query.SeriesNameFormat("{{ destination_workload}}.{{ destination_workload_namespace }}"),
 			),
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchersV2(
-					IstioCommonPanelQueries["IstioHTTPGRPCWorkloadsReqTotal"],
-					labelMatchers,
-				).Pretty(0),
+				meshPanelPromQL(IstioCommonPanelQueries["IstioHTTPGRPCWorkloadsReqTotal"], labelMatchers),
 				dashboards.AddQueryDataSource(datasourceName),
 				query.SeriesNameFormat("{{ destination_workload}}.{{ destination_workload_namespace }}"),
 			),
@@ -164,7 +159,7 @@ func HTTPGRPCWorkloads(datasourceName string, labelMatchers ...*labels.Matcher) 
 
 func TCPServices(datasourceName string, labelMatchers ...*labels.Matcher) panelgroup.Option {
 	return panelgroup.AddPanel("TCP Workloads",
-		panel.Description("Bytes sent and recieived information for TCP services"),
+		panel.Description("Bytes sent and received information for TCP services"),
 		tablePanel.Table(
 			tablePanel.WithColumnSettings([]tablePanel.ColumnSettings{
 				{
@@ -220,20 +215,14 @@ func TCPServices(datasourceName string, labelMatchers ...*labels.Matcher) panelg
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchersV2(
-					IstioCommonPanelQueries["IstioTCPServicesBytesRecv"],
-					labelMatchers,
-				).Pretty(0),
+				meshPanelPromQL(IstioCommonPanelQueries["IstioTCPServicesBytesRecv"], labelMatchers),
 				dashboards.AddQueryDataSource(datasourceName),
 				query.SeriesNameFormat("{{ destination_workload}}.{{ destination_workload_namespace }}"),
 			),
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchersV2(
-					IstioCommonPanelQueries["IstioTCPServicesBytesSent"],
-					labelMatchers,
-				).Pretty(0),
+				meshPanelPromQL(IstioCommonPanelQueries["IstioTCPServicesBytesSent"], labelMatchers),
 				dashboards.AddQueryDataSource(datasourceName),
 				query.SeriesNameFormat("{{ destination_workload}}.{{ destination_workload_namespace }}"),
 			),
@@ -263,10 +252,7 @@ func GlobalRequestVolume(datasourceName string, labelMatchers ...*labels.Matcher
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchersV2(
-					IstioCommonPanelQueries["IstioGlobalRequestVolume"],
-					labelMatchers,
-				).Pretty(0),
+				IstioCommonPanelQueries["IstioGlobalRequestVolume"].Pretty(0),
 				dashboards.AddQueryDataSource(datasourceName),
 			),
 		),
@@ -295,10 +281,7 @@ func GlobalSuccessRate(datasourceName string, labelMatchers ...*labels.Matcher) 
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchersV2(
-					IstioCommonPanelQueries["IstionGlobalSuccessRate"],
-					labelMatchers,
-				).Pretty(0),
+				IstioCommonPanelQueries["IstionGlobalSuccessRate"].Pretty(0),
 				dashboards.AddQueryDataSource(datasourceName),
 			),
 		),
@@ -327,10 +310,7 @@ func Global4xxRate(datasourceName string, labelMatchers ...*labels.Matcher) pane
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchersV2(
-					IstioCommonPanelQueries["IstioGlobal4xxRate"],
-					labelMatchers,
-				).Pretty(0),
+				IstioCommonPanelQueries["IstioGlobal4xxRate"].Pretty(0),
 				dashboards.AddQueryDataSource(datasourceName),
 			),
 		),
@@ -359,10 +339,7 @@ func Global5xxRate(datasourceName string, labelMatchers ...*labels.Matcher) pane
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchersV2(
-					IstioCommonPanelQueries["IstioGlobal5xxRate"],
-					labelMatchers,
-				).Pretty(0),
+				IstioCommonPanelQueries["IstioGlobal5xxRate"].Pretty(0),
 				dashboards.AddQueryDataSource(datasourceName),
 			),
 		),
@@ -386,10 +363,7 @@ func IstioComponentVersions(datasourceName string, labelMatchers ...*labels.Matc
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchersV2(
-					IstioCommonPanelQueries["IstioComponentVersions"],
-					labelMatchers,
-				).Pretty(0),
+				meshPanelPromQL(IstioCommonPanelQueries["IstioComponentVersions"], labelMatchers),
 				dashboards.AddQueryDataSource(datasourceName),
 				query.SeriesNameFormat("{{component}} ({{tag}})"),
 			),

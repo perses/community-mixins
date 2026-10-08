@@ -36,6 +36,7 @@ func PushSize(datasourceName string, labelMatchers ...*labels.Matcher) panelgrou
 			timeSeriesPanel.WithLegend(timeSeriesPanel.Legend{
 				Position: timeSeriesPanel.BottomPosition,
 				Mode:     timeSeriesPanel.ListMode,
+				Size:     timeSeriesPanel.MediumSize,
 			}),
 			timeSeriesPanel.WithVisual(timeSeriesPanel.Visual{
 				Display:      timeSeriesPanel.LineDisplay,
@@ -70,6 +71,7 @@ func PushTime(datasourceName string, labelMatchers ...*labels.Matcher) panelgrou
 			timeSeriesPanel.WithLegend(timeSeriesPanel.Legend{
 				Position: timeSeriesPanel.BottomPosition,
 				Mode:     timeSeriesPanel.ListMode,
+				Size:     timeSeriesPanel.MediumSize,
 			}),
 			timeSeriesPanel.WithVisual(timeSeriesPanel.Visual{
 				Display:      timeSeriesPanel.LineDisplay,
@@ -105,6 +107,7 @@ func Connections(datasourceName string, labelMatchers ...*labels.Matcher) panelg
 			timeSeriesPanel.WithLegend(timeSeriesPanel.Legend{
 				Position: timeSeriesPanel.BottomPosition,
 				Mode:     timeSeriesPanel.ListMode,
+				Size:     timeSeriesPanel.MediumSize,
 			}),
 			timeSeriesPanel.WithVisual(timeSeriesPanel.Visual{
 				Display:      timeSeriesPanel.LineDisplay,
@@ -131,7 +134,7 @@ func Connections(datasourceName string, labelMatchers ...*labels.Matcher) panelg
 					labelMatchers,
 				).Pretty(0),
 				dashboards.AddQueryDataSource(datasourceName),
-				query.SeriesNameFormat("Connections ( reported)"),
+				query.SeriesNameFormat("Connections (server reported)"),
 			),
 		),
 	)
@@ -144,6 +147,7 @@ func CPUUsage(datasourceName string, labelMatchers ...*labels.Matcher) panelgrou
 			timeSeriesPanel.WithLegend(timeSeriesPanel.Legend{
 				Position: timeSeriesPanel.BottomPosition,
 				Mode:     timeSeriesPanel.TableMode,
+				Size:     timeSeriesPanel.MediumSize,
 				Values:   []commonSdk.Calculation{commonSdk.LastCalculation, commonSdk.MaxCalculation},
 			}),
 			timeSeriesPanel.WithVisual(timeSeriesPanel.Visual{
@@ -179,6 +183,7 @@ func Events(datasourceName string, labelMatchers ...*labels.Matcher) panelgroup.
 			timeSeriesPanel.WithLegend(timeSeriesPanel.Legend{
 				Position: timeSeriesPanel.BottomPosition,
 				Mode:     timeSeriesPanel.ListMode,
+				Size:     timeSeriesPanel.MediumSize,
 			}),
 			timeSeriesPanel.WithVisual(timeSeriesPanel.Visual{
 				Display:      timeSeriesPanel.LineDisplay,
@@ -191,30 +196,21 @@ func Events(datasourceName string, labelMatchers ...*labels.Matcher) panelgroup.
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchersV2(
-					IstioCommonPanelQueries["IstioEventsReg"],
-					labelMatchers,
-				).Pretty(0),
+				`sum by (type, event) (rate(label_replace(pilot_k8s_reg_events, "__name__", "$1_total", "__name__", "(.+)")[$__rate_interval:$__interval]))`,
 				dashboards.AddQueryDataSource(datasourceName),
 				query.SeriesNameFormat("{{type}} {{event}}"),
 			),
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchersV2(
-					IstioCommonPanelQueries["IstioEventsCfg"],
-					labelMatchers,
-				).Pretty(0),
+				`sum by (type, event) (rate(label_replace(pilot_k8s_cfg_events, "__name__", "$1_total", "__name__", "(.+)")[$__rate_interval:$__interval]))`,
 				dashboards.AddQueryDataSource(datasourceName),
 				query.SeriesNameFormat("{{type}} {{event}}"),
 			),
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchersV2(
-					IstioCommonPanelQueries["IstioEventsPilot"],
-					labelMatchers,
-				).Pretty(0),
+				`sum by (type) (rate(label_replace(pilot_push_triggers, "__name__", "$1_total", "__name__", "(.+)")[$__rate_interval:$__interval]))`,
 				dashboards.AddQueryDataSource(datasourceName),
 				query.SeriesNameFormat("{{type}}"),
 			),
@@ -229,6 +225,7 @@ func Goroutines(datasourceName string, labelMatchers ...*labels.Matcher) panelgr
 			timeSeriesPanel.WithLegend(timeSeriesPanel.Legend{
 				Position: timeSeriesPanel.BottomPosition,
 				Mode:     timeSeriesPanel.TableMode,
+				Size:     timeSeriesPanel.MediumSize,
 				Values:   []commonSdk.Calculation{commonSdk.LastCalculation, commonSdk.MaxCalculation},
 			}),
 			timeSeriesPanel.WithVisual(timeSeriesPanel.Visual{
@@ -263,6 +260,7 @@ func MemoryAllocations(datasourceName string, labelMatchers ...*labels.Matcher) 
 			timeSeriesPanel.WithLegend(timeSeriesPanel.Legend{
 				Position: timeSeriesPanel.BottomPosition,
 				Mode:     timeSeriesPanel.TableMode,
+				Size:     timeSeriesPanel.MediumSize,
 				Values:   []commonSdk.Calculation{commonSdk.LastCalculation, commonSdk.MaxCalculation},
 			}),
 			timeSeriesPanel.WithVisual(timeSeriesPanel.Visual{
@@ -307,6 +305,7 @@ func MemoryUsage(datasourceName string, labelMatchers ...*labels.Matcher) panelg
 			timeSeriesPanel.WithLegend(timeSeriesPanel.Legend{
 				Position: timeSeriesPanel.BottomPosition,
 				Mode:     timeSeriesPanel.TableMode,
+				Size:     timeSeriesPanel.MediumSize,
 				Values:   []commonSdk.Calculation{commonSdk.LastCalculation, commonSdk.MaxCalculation},
 			}),
 			timeSeriesPanel.WithVisual(timeSeriesPanel.Visual{
@@ -372,6 +371,7 @@ func PilotVersions(datasourceName string, labelMatchers ...*labels.Matcher) pane
 			timeSeriesPanel.WithLegend(timeSeriesPanel.Legend{
 				Position: timeSeriesPanel.BottomPosition,
 				Mode:     timeSeriesPanel.ListMode,
+				Size:     timeSeriesPanel.MediumSize,
 			}),
 			timeSeriesPanel.WithVisual(timeSeriesPanel.Visual{
 				Display:      timeSeriesPanel.LineDisplay,
@@ -407,6 +407,7 @@ func PushErrors(datasourceName string, labelMatchers ...*labels.Matcher) panelgr
 			timeSeriesPanel.WithLegend(timeSeriesPanel.Legend{
 				Position: timeSeriesPanel.BottomPosition,
 				Mode:     timeSeriesPanel.ListMode,
+				Size:     timeSeriesPanel.MediumSize,
 			}),
 			timeSeriesPanel.WithVisual(timeSeriesPanel.Visual{
 				Display:      timeSeriesPanel.LineDisplay,
@@ -453,6 +454,7 @@ func Injection(datasourceName string, labelMatchers ...*labels.Matcher) panelgro
 			timeSeriesPanel.WithLegend(timeSeriesPanel.Legend{
 				Position: timeSeriesPanel.BottomPosition,
 				Mode:     timeSeriesPanel.ListMode,
+				Size:     timeSeriesPanel.MediumSize,
 			}),
 			timeSeriesPanel.WithVisual(timeSeriesPanel.Visual{
 				Display:      timeSeriesPanel.LineDisplay,
@@ -499,6 +501,7 @@ func Validation(datasourceName string, labelMatchers ...*labels.Matcher) panelgr
 			timeSeriesPanel.WithLegend(timeSeriesPanel.Legend{
 				Position: timeSeriesPanel.BottomPosition,
 				Mode:     timeSeriesPanel.ListMode,
+				Size:     timeSeriesPanel.MediumSize,
 			}),
 			timeSeriesPanel.WithVisual(timeSeriesPanel.Visual{
 				Display:      timeSeriesPanel.LineDisplay,
@@ -511,20 +514,14 @@ func Validation(datasourceName string, labelMatchers ...*labels.Matcher) panelgr
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchersV2(
-					IstioCommonPanelQueries["IstioValidationPassed"],
-					labelMatchers,
-				).Pretty(0),
+				`sum(rate(label_replace(galley_validation_passed, "__name__", "$1_total", "__name__", "(.+)")[$__rate_interval:$__interval]))`,
 				dashboards.AddQueryDataSource(datasourceName),
 				query.SeriesNameFormat("Success"),
 			),
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchersV2(
-					IstioCommonPanelQueries["IstioValidationFailed"],
-					labelMatchers,
-				).Pretty(0),
+				`sum(rate(label_replace(galley_validation_failed, "__name__", "$1_total", "__name__", "(.+)")[$__rate_interval:$__interval]))`,
 				dashboards.AddQueryDataSource(datasourceName),
 				query.SeriesNameFormat("Failure"),
 			),
@@ -545,6 +542,7 @@ func XDSPushes(datasourceName string, labelMatchers ...*labels.Matcher) panelgro
 			timeSeriesPanel.WithLegend(timeSeriesPanel.Legend{
 				Position: timeSeriesPanel.BottomPosition,
 				Mode:     timeSeriesPanel.ListMode,
+				Size:     timeSeriesPanel.MediumSize,
 			}),
 			timeSeriesPanel.WithVisual(timeSeriesPanel.Visual{
 				Display:      timeSeriesPanel.LineDisplay,
@@ -557,10 +555,7 @@ func XDSPushes(datasourceName string, labelMatchers ...*labels.Matcher) panelgro
 		),
 		panel.AddQuery(
 			query.PromQL(
-				promql.SetLabelMatchersV2(
-					IstioCommonPanelQueries["IstioXDSPushes"],
-					labelMatchers,
-				).Pretty(0),
+				`sum by (type) (irate(label_replace(pilot_xds_pushes, "__name__", "$1_total", "__name__", "(.+)")[$__rate_interval:$__interval]))`,
 				dashboards.AddQueryDataSource(datasourceName),
 				query.SeriesNameFormat("{{type}}"),
 			),

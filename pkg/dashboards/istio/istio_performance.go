@@ -32,7 +32,7 @@ func withPerformanceNotes(datasource string, labelMatcher *labels.Matcher) dashb
 func withVCPUUsage(datasource string, labelMatcher *labels.Matcher) dashboard.Option {
 	return dashboard.AddPanelGroup("vCPU Usage",
 		panelgroup.PanelsPerLine(2),
-		panelgroup.PanelHeight(8),
+		panelgroup.PanelHeight(10),
 		panels.VCPUPer1kRPS(datasource, labelMatcher),
 		panels.VCPU(datasource, labelMatcher),
 	)
@@ -41,7 +41,7 @@ func withVCPUUsage(datasource string, labelMatcher *labels.Matcher) dashboard.Op
 func withMemoryAndDataRates(datasource string, labelMatcher *labels.Matcher) dashboard.Option {
 	return dashboard.AddPanelGroup("Memory and Data Rates",
 		panelgroup.PanelsPerLine(2),
-		panelgroup.PanelHeight(8),
+		panelgroup.PanelHeight(10),
 		panels.PerformanceMemoryUsage(datasource, labelMatcher),
 		panels.BytesTransferred(datasource, labelMatcher),
 	)
@@ -50,7 +50,7 @@ func withMemoryAndDataRates(datasource string, labelMatcher *labels.Matcher) das
 func withIstioComponentVersionsPerf(datasource string, labelMatcher *labels.Matcher) dashboard.Option {
 	return dashboard.AddPanelGroup("Istio Component Versions",
 		panelgroup.PanelsPerLine(1),
-		panelgroup.PanelHeight(8),
+		panelgroup.PanelHeight(10),
 		panels.IstioComponentsByVersion(datasource, labelMatcher),
 	)
 }
@@ -58,7 +58,7 @@ func withIstioComponentVersionsPerf(datasource string, labelMatcher *labels.Matc
 func withProxyResourceUsage(datasource string, labelMatcher *labels.Matcher) dashboard.Option {
 	return dashboard.AddPanelGroup("Proxy Resource Usage",
 		panelgroup.PanelsPerLine(3),
-		panelgroup.PanelHeight(7),
+		panelgroup.PanelHeight(9),
 		panels.ProxyMemory(datasource, labelMatcher),
 		panels.ProxyVCPU(datasource, labelMatcher),
 		panels.ProxyDisk(datasource, labelMatcher),
@@ -68,7 +68,7 @@ func withProxyResourceUsage(datasource string, labelMatcher *labels.Matcher) das
 func withIstiodResourceUsage(datasource string, labelMatcher *labels.Matcher) dashboard.Option {
 	return dashboard.AddPanelGroup("Istiod Resource Usage",
 		panelgroup.PanelsPerLine(4),
-		panelgroup.PanelHeight(7),
+		panelgroup.PanelHeight(9),
 		panels.IstiodMemory(datasource, labelMatcher),
 		panels.IstiodVCPU(datasource, labelMatcher),
 		panels.IstiodDisk(datasource, labelMatcher),

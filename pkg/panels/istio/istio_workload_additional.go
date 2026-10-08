@@ -37,6 +37,7 @@ func IncomingRequestSizeBySource(datasourceName string, labelMatchers ...*labels
 			timeSeriesPanel.WithLegend(timeSeriesPanel.Legend{
 				Position: timeSeriesPanel.BottomPosition,
 				Mode:     timeSeriesPanel.ListMode,
+				Size:     timeSeriesPanel.MediumSize,
 			}),
 			timeSeriesPanel.WithVisual(timeSeriesPanel.Visual{
 				Display:      timeSeriesPanel.LineDisplay,
@@ -74,16 +75,6 @@ func IncomingRequestSizeBySource(datasourceName string, labelMatchers ...*labels
 				).Pretty(0),
 				dashboards.AddQueryDataSource(datasourceName),
 				query.SeriesNameFormat("{{source_workload}}.{{source_workload_namespace}} P95 (🔐mTLS)"),
-			),
-		),
-		panel.AddQuery(
-			query.PromQL(
-				promql.SetLabelMatchersV2(
-					IstioCommonPanelQueries["IncomingRequestSizeBySource99"],
-					labelMatchers,
-				).Pretty(0),
-				dashboards.AddQueryDataSource(datasourceName),
-				query.SeriesNameFormat("{{source_workload}}.{{source_workload_namespace}}  P99 (🔐mTLS)"),
 			),
 		),
 		panel.AddQuery(
@@ -151,6 +142,7 @@ func IncomingResponseSizeBySource(datasourceName string, labelMatchers ...*label
 			timeSeriesPanel.WithLegend(timeSeriesPanel.Legend{
 				Position: timeSeriesPanel.BottomPosition,
 				Mode:     timeSeriesPanel.ListMode,
+				Size:     timeSeriesPanel.MediumSize,
 			}),
 			timeSeriesPanel.WithVisual(timeSeriesPanel.Visual{
 				Display:      timeSeriesPanel.LineDisplay,
@@ -255,6 +247,7 @@ func InboundTCPBytesReceived(datasourceName string, labelMatchers ...*labels.Mat
 			timeSeriesPanel.WithLegend(timeSeriesPanel.Legend{
 				Position: timeSeriesPanel.BottomPosition,
 				Mode:     timeSeriesPanel.ListMode,
+				Size:     timeSeriesPanel.MediumSize,
 			}),
 			timeSeriesPanel.WithVisual(timeSeriesPanel.Visual{
 				Display:      timeSeriesPanel.LineDisplay,
@@ -299,6 +292,7 @@ func InboundTCPBytesSent(datasourceName string, labelMatchers ...*labels.Matcher
 			timeSeriesPanel.WithLegend(timeSeriesPanel.Legend{
 				Position: timeSeriesPanel.BottomPosition,
 				Mode:     timeSeriesPanel.ListMode,
+				Size:     timeSeriesPanel.MediumSize,
 			}),
 			timeSeriesPanel.WithVisual(timeSeriesPanel.Visual{
 				Display:      timeSeriesPanel.LineDisplay,

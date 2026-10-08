@@ -35,7 +35,7 @@ func withControlPlaneResources(datasource string, labelMatcher *labels.Matcher) 
 func withPushInformation(datasource string, labelMatcher *labels.Matcher) dashboard.Option {
 	return dashboard.AddPanelGroup("Push Information",
 		panelgroup.PanelsPerLine(3),
-		panelgroup.PanelHeight(10),
+		panelgroup.PanelHeight(12),
 		panels.XDSPushes(datasource, labelMatcher),
 		panels.Events(datasource, labelMatcher),
 		panels.Connections(datasource, labelMatcher),
@@ -56,7 +56,7 @@ func withDeployedVersions(datasource string, labelMatcher *labels.Matcher) dashb
 func withWebhooks(datasource string, labelMatcher *labels.Matcher) dashboard.Option {
 	return dashboard.AddPanelGroup("Webhooks",
 		panelgroup.PanelsPerLine(2),
-		panelgroup.PanelHeight(8),
+		panelgroup.PanelHeight(10),
 		panels.Validation(datasource, labelMatcher),
 		panels.Injection(datasource, labelMatcher),
 	)

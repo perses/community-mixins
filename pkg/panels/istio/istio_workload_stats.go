@@ -30,6 +30,7 @@ func IncomingRequestVolumeStat(datasourceName string, labelMatchers ...*labels.M
 	return panelgroup.AddPanel("Incoming Request Volume",
 		statPanel.Chart(
 			statPanel.Calculation(commonSdk.LastCalculation),
+			statPanel.Format(commonSdk.Format{Unit: &dashboards.OpsPerSecondsUnit}),
 			statPanel.WithSparkline(statPanel.Sparkline{
 				Width: 1,
 			}),
@@ -57,18 +58,18 @@ func IncomingRequestVolumeStat(datasourceName string, labelMatchers ...*labels.M
 func IncomingSuccessRateStat(datasourceName string, labelMatchers ...*labels.Matcher) panelgroup.Option {
 	return panelgroup.AddPanel("Incoming Success Rate (non-5xx responses)",
 		statPanel.Chart(
-			statPanel.Calculation(commonSdk.MeanCalculation),
+			statPanel.Calculation(commonSdk.LastCalculation),
 			statPanel.Format(commonSdk.Format{Unit: &dashboards.PercentDecimalUnit}),
 			statPanel.WithSparkline(statPanel.Sparkline{
 				Width: 1,
 			}),
 			statPanel.Thresholds(commonSdk.Thresholds{
 				Mode:         commonSdk.AbsoluteMode,
-				DefaultColor: "green",
+				DefaultColor: "dark-red",
 				Steps: []commonSdk.StepOption{
-					{Color: "rgba(50, 172, 45, 0.97)", Value: 0},
-					{Color: "rgba(237, 129, 40, 0.89)", Value: 95},
-					{Color: "rgba(245, 54, 54, 0.9)", Value: 99},
+					{Color: "dark-red", Value: 0},
+					{Color: "dark-yellow", Value: 0.95},
+					{Color: "dark-green", Value: 0.99},
 				},
 			}),
 		),
@@ -93,8 +94,9 @@ func RequestDurationChart(datasourceName string, labelMatchers ...*labels.Matche
 				},
 			}),
 			timeSeriesPanel.WithLegend(timeSeriesPanel.Legend{
-				Position: timeSeriesPanel.RightPosition,
+				Position: timeSeriesPanel.BottomPosition,
 				Mode:     timeSeriesPanel.ListMode,
+				Size:     timeSeriesPanel.MediumSize,
 			}),
 			timeSeriesPanel.WithVisual(timeSeriesPanel.Visual{
 				Display:      timeSeriesPanel.LineDisplay,

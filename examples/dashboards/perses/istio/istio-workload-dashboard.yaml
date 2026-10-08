@@ -65,42 +65,52 @@ spec:
             display:
                 name: Inbound Workload Namespace
                 hidden: false
+            defaultValue:
+                - $__all
             allowAllValue: true
             allowMultiple: true
+            customAllValue: .*
+            sort: alphabetical-asc
             plugin:
-                kind: PrometheusLabelValuesVariable
+                kind: PrometheusPromQLVariable
                 spec:
                     datasource:
                         kind: PrometheusDatasource
                         name: prometheus-datasource
+                    expr: sum(istio_requests_total{reporter=~"$qrep", destination_workload=~"$workload", destination_workload_namespace=~"$namespace"}) by (source_workload_namespace) or sum(istio_tcp_sent_bytes_total{reporter=~"$qrep", destination_workload=~"$workload", destination_workload_namespace=~"$namespace"}) by (source_workload_namespace)
                     labelName: source_workload_namespace
-                    matchers:
-                        - istio_requests_total{reporter=~"$qrep", destination_workload="$workload", destination_workload_namespace=~"$namespace"}
-            name: srcns
+            name: src_namespace
         - kind: ListVariable
           spec:
             display:
                 name: Inbound Workload
                 hidden: false
+            defaultValue:
+                - $__all
             allowAllValue: true
             allowMultiple: true
+            customAllValue: .*
+            sort: alphabetical-asc
             plugin:
-                kind: PrometheusLabelValuesVariable
+                kind: PrometheusPromQLVariable
                 spec:
                     datasource:
                         kind: PrometheusDatasource
                         name: prometheus-datasource
+                    expr: sum(istio_requests_total{reporter=~"$qrep", destination_workload=~"$workload", destination_workload_namespace=~"$namespace", source_workload_namespace=~"$src_namespace"}) by (source_workload) or sum(istio_tcp_sent_bytes_total{reporter=~"$qrep", destination_workload=~"$workload", destination_workload_namespace=~"$namespace", source_workload_namespace=~"$src_namespace"}) by (source_workload)
                     labelName: source_workload
-                    matchers:
-                        - istio_requests_total{reporter=~"$qrep", destination_workload="$workload", destination_workload_namespace=~"$namespace", source_workload_namespace=~"$srcns"}
-            name: srcwl
+            name: src_workload
         - kind: ListVariable
           spec:
             display:
                 name: Destination Service
                 hidden: false
+            defaultValue:
+                - $__all
             allowAllValue: true
             allowMultiple: true
+            customAllValue: .*
+            sort: alphabetical-asc
             plugin:
                 kind: PrometheusPromQLVariable
                 spec:
@@ -132,6 +142,8 @@ spec:
                     kind: StatChart
                     spec:
                         calculation: last
+                        format:
+                            unit: ops/sec
                         thresholds:
                             mode: absolute
                             defaultColor: green
@@ -168,19 +180,19 @@ spec:
                 plugin:
                     kind: StatChart
                     spec:
-                        calculation: mean
+                        calculation: last
                         format:
                             unit: percent-decimal
                         thresholds:
                             mode: absolute
-                            defaultColor: green
+                            defaultColor: dark-red
                             steps:
                                 - value: 0
-                                  color: rgba(50, 172, 45, 0.97)
-                                - value: 95
-                                  color: rgba(237, 129, 40, 0.89)
-                                - value: 99
-                                  color: rgba(245, 54, 54, 0.9)
+                                  color: dark-red
+                                - value: 0.95
+                                  color: dark-yellow
+                                - value: 0.99
+                                  color: dark-green
                         sparkline:
                             width: 1
                 queries:
@@ -193,18 +205,22 @@ spec:
                                     kind: PrometheusDatasource
                                     name: prometheus-datasource
                                 query: |4-
-                                      sum(
-                                        irate(
-                                          istio_requests_total{destination_workload=~"$workload",destination_workload_namespace=~"$namespace",reporter=~"$qrep",response_code!~"5.*"}[5m]
-                                        )
-                                      )
-                                    /
-                                      sum(
-                                        irate(
-                                          istio_requests_total{destination_workload=~"$workload",destination_workload_namespace=~"$namespace",reporter=~"$qrep"}[5m]
-                                        )
-                                      )
-        "1_2":
+                                          sum(
+                                            rate(
+                                              istio_requests_total{destination_workload=~"$workload",destination_workload_namespace=~"$namespace",reporter=~"$qrep",response_code!~"5.*"}[5m]
+                                            )
+                                          )
+                                        /
+                                          sum(
+                                            rate(
+                                              istio_requests_total{destination_workload=~"$workload",destination_workload_namespace=~"$namespace",reporter=~"$qrep"}[5m]
+                                            )
+                                          )
+                                      >=
+                                        0
+                                    or on ()
+                                      vector(1)
+        "2_0":
             kind: Panel
             spec:
                 display:
@@ -213,8 +229,9 @@ spec:
                     kind: TimeSeriesChart
                     spec:
                         legend:
-                            position: right
+                            position: bottom
                             mode: list
+                            size: medium
                         yAxis:
                             format:
                                 unit: seconds
@@ -312,7 +329,7 @@ spec:
                                         )
                                       )
                                 seriesNameFormat: P99
-        "2_0":
+        "3_0":
             kind: Panel
             spec:
                 display:
@@ -354,7 +371,7 @@ spec:
                                           istio_tcp_received_bytes_total{destination_workload=~"$workload",destination_workload_namespace=~"$namespace",reporter=~"$qrep"}[1m]
                                         )
                                       )
-        "2_1":
+        "3_1":
             kind: Panel
             spec:
                 display:
@@ -396,7 +413,7 @@ spec:
                                           istio_tcp_received_bytes_total{reporter="source",source_workload=~"$workload",source_workload_namespace=~"$namespace"}[1m]
                                         )
                                       )
-        "3_0":
+        "4_0":
             kind: Panel
             spec:
                 display:
@@ -408,7 +425,7 @@ spec:
                             <div class="dashboard-header text-center">
                             <span>INBOUND WORKLOADS</span>
                             </div>
-        "4_0":
+        "5_0":
             kind: Panel
             spec:
                 display:
@@ -420,6 +437,7 @@ spec:
                         legend:
                             position: bottom
                             mode: list
+                            size: medium
                         yAxis:
                             format:
                                 unit: requests/sec
@@ -442,7 +460,7 @@ spec:
                                     round(
                                       sum by (source_workload, source_workload_namespace, response_code) (
                                         irate(
-                                          istio_requests_total{connection_security_policy="mutual_tls",destination_workload=~"$workload",destination_workload_namespace=~"$namespace",reporter=~"$qrep",source_workload=~"$srcwl",source_workload_namespace=~"$srcns"}[1m]
+                                          istio_requests_total{connection_security_policy="mutual_tls",destination_workload=~"$workload",destination_workload_namespace=~"$namespace",reporter=~"$qrep",source_workload=~"$src_workload",source_workload_namespace=~"$src_namespace"}[1m]
                                         )
                                       ),
                                       0.001
@@ -460,13 +478,13 @@ spec:
                                     round(
                                       sum by (source_workload, source_workload_namespace, response_code) (
                                         irate(
-                                          istio_requests_total{connection_security_policy!="mutual_tls",destination_workload=~"$workload",destination_workload_namespace=~"$namespace",reporter=~"$qrep",source_workload=~"$srcwl",source_workload_namespace=~"$srcns"}[1m]
+                                          istio_requests_total{connection_security_policy!="mutual_tls",destination_workload=~"$workload",destination_workload_namespace=~"$namespace",reporter=~"$qrep",source_workload=~"$src_workload",source_workload_namespace=~"$src_namespace"}[1m]
                                         )
                                       ),
                                       0.001
                                     )
                                 seriesNameFormat: '{{ source_workload }}.{{ source_workload_namespace }} : {{ response_code }}'
-        "4_1":
+        "5_1":
             kind: Panel
             spec:
                 display:
@@ -478,6 +496,7 @@ spec:
                         legend:
                             position: bottom
                             mode: list
+                            size: medium
                         yAxis:
                             format:
                                 unit: percent
@@ -500,13 +519,13 @@ spec:
                                 query: |4-
                                       sum by (source_workload, source_workload_namespace) (
                                         irate(
-                                          istio_requests_total{connection_security_policy="mutual_tls",destination_workload=~"$workload",destination_workload_namespace=~"$namespace",reporter=~"$qrep",response_code!~"5.*",source_workload=~"$srcwl",source_workload_namespace=~"$srcns"}[5m]
+                                          istio_requests_total{connection_security_policy="mutual_tls",destination_workload=~"$workload",destination_workload_namespace=~"$namespace",reporter=~"$qrep",response_code!~"5.*",source_workload=~"$src_workload",source_workload_namespace=~"$src_namespace"}[5m]
                                         )
                                       )
                                     /
                                       sum by (source_workload, source_workload_namespace) (
                                         irate(
-                                          istio_requests_total{connection_security_policy="mutual_tls",destination_workload=~"$workload",destination_workload_namespace=~"$namespace",reporter=~"$qrep",source_workload=~"$srcwl",source_workload_namespace=~"$srcns"}[5m]
+                                          istio_requests_total{connection_security_policy="mutual_tls",destination_workload=~"$workload",destination_workload_namespace=~"$namespace",reporter=~"$qrep",source_workload=~"$src_workload",source_workload_namespace=~"$src_namespace"}[5m]
                                         )
                                       )
                                 seriesNameFormat: "{{ source_workload }}.{{ source_workload_namespace }} (\U0001F510mTLS)"
@@ -521,17 +540,17 @@ spec:
                                 query: |4-
                                       sum by (source_workload, source_workload_namespace) (
                                         irate(
-                                          istio_requests_total{connection_security_policy!="mutual_tls",destination_workload=~"$workload",destination_workload_namespace=~"$namespace",reporter=~"$qrep",response_code!~"5.*",source_workload=~"$srcwl",source_workload_namespace=~"$srcns"}[5m]
+                                          istio_requests_total{connection_security_policy!="mutual_tls",destination_workload=~"$workload",destination_workload_namespace=~"$namespace",reporter=~"$qrep",response_code!~"5.*",source_workload=~"$src_workload",source_workload_namespace=~"$src_namespace"}[5m]
                                         )
                                       )
                                     /
                                       sum by (source_workload, source_workload_namespace) (
                                         irate(
-                                          istio_requests_total{connection_security_policy!="mutual_tls",destination_workload=~"$workload",destination_workload_namespace=~"$namespace",reporter=~"$qrep",source_workload=~"$srcwl",source_workload_namespace=~"$srcns"}[5m]
+                                          istio_requests_total{connection_security_policy!="mutual_tls",destination_workload=~"$workload",destination_workload_namespace=~"$namespace",reporter=~"$qrep",source_workload=~"$src_workload",source_workload_namespace=~"$src_namespace"}[5m]
                                         )
                                       )
                                 seriesNameFormat: '{{ source_workload }}.{{ source_workload_namespace }}'
-        "5_0":
+        "6_0":
             kind: Panel
             spec:
                 display:
@@ -543,6 +562,7 @@ spec:
                         legend:
                             position: bottom
                             mode: list
+                            size: medium
                         yAxis:
                             format:
                                 unit: milliseconds
@@ -566,7 +586,7 @@ spec:
                                           0.5,
                                           sum by (source_workload, source_workload_namespace, le) (
                                             irate(
-                                              istio_request_duration_milliseconds_bucket{connection_security_policy="mutual_tls",destination_workload=~"$workload",destination_workload_namespace=~"$namespace",reporter=~"$qrep",source_workload=~"$srcwl",source_workload_namespace=~"$srcns"}[1m]
+                                              istio_request_duration_milliseconds_bucket{connection_security_policy="mutual_tls",destination_workload=~"$workload",destination_workload_namespace=~"$namespace",reporter=~"$qrep",source_workload=~"$src_workload",source_workload_namespace=~"$src_namespace"}[1m]
                                             )
                                           )
                                         )
@@ -577,7 +597,7 @@ spec:
                                         0.5,
                                         sum by (source_workload, source_workload_namespace, le) (
                                           irate(
-                                            istio_request_duration_seconds_bucket{connection_security_policy="mutual_tls",destination_workload=~"$workload",destination_workload_namespace=~"$namespace",reporter=~"$qrep",source_workload=~"$srcwl",source_workload_namespace=~"$srcns"}[1m]
+                                            istio_request_duration_seconds_bucket{connection_security_policy="mutual_tls",destination_workload=~"$workload",destination_workload_namespace=~"$namespace",reporter=~"$qrep",source_workload=~"$src_workload",source_workload_namespace=~"$src_namespace"}[1m]
                                           )
                                         )
                                       )
@@ -595,7 +615,7 @@ spec:
                                           0.9,
                                           sum by (source_workload, source_workload_namespace, le) (
                                             irate(
-                                              istio_request_duration_milliseconds_bucket{connection_security_policy="mutual_tls",destination_workload=~"$workload",destination_workload_namespace=~"$namespace",reporter=~"$qrep",source_workload=~"$srcwl",source_workload_namespace=~"$srcns"}[1m]
+                                              istio_request_duration_milliseconds_bucket{connection_security_policy="mutual_tls",destination_workload=~"$workload",destination_workload_namespace=~"$namespace",reporter=~"$qrep",source_workload=~"$src_workload",source_workload_namespace=~"$src_namespace"}[1m]
                                             )
                                           )
                                         )
@@ -606,7 +626,7 @@ spec:
                                         0.9,
                                         sum by (source_workload, source_workload_namespace, le) (
                                           irate(
-                                            istio_request_duration_seconds_bucket{connection_security_policy="mutual_tls",destination_workload=~"$workload",destination_workload_namespace=~"$namespace",reporter=~"$qrep",source_workload=~"$srcwl",source_workload_namespace=~"$srcns"}[1m]
+                                            istio_request_duration_seconds_bucket{connection_security_policy="mutual_tls",destination_workload=~"$workload",destination_workload_namespace=~"$namespace",reporter=~"$qrep",source_workload=~"$src_workload",source_workload_namespace=~"$src_namespace"}[1m]
                                           )
                                         )
                                       )
@@ -624,7 +644,7 @@ spec:
                                           0.95,
                                           sum by (source_workload, source_workload_namespace, le) (
                                             irate(
-                                              istio_request_duration_milliseconds_bucket{connection_security_policy="mutual_tls",destination_workload=~"$workload",destination_workload_namespace=~"$namespace",reporter=~"$qrep",source_workload=~"$srcwl",source_workload_namespace=~"$srcns"}[1m]
+                                              istio_request_duration_milliseconds_bucket{connection_security_policy="mutual_tls",destination_workload=~"$workload",destination_workload_namespace=~"$namespace",reporter=~"$qrep",source_workload=~"$src_workload",source_workload_namespace=~"$src_namespace"}[1m]
                                             )
                                           )
                                         )
@@ -635,7 +655,7 @@ spec:
                                         0.95,
                                         sum by (source_workload, source_workload_namespace, le) (
                                           irate(
-                                            istio_request_duration_seconds_bucket{connection_security_policy="mutual_tls",destination_workload=~"$workload",destination_workload_namespace=~"$namespace",reporter=~"$qrep",source_workload=~"$srcwl",source_workload_namespace=~"$srcns"}[1m]
+                                            istio_request_duration_seconds_bucket{connection_security_policy="mutual_tls",destination_workload=~"$workload",destination_workload_namespace=~"$namespace",reporter=~"$qrep",source_workload=~"$src_workload",source_workload_namespace=~"$src_namespace"}[1m]
                                           )
                                         )
                                       )
@@ -653,7 +673,7 @@ spec:
                                           0.99,
                                           sum by (source_workload, source_workload_namespace, le) (
                                             irate(
-                                              istio_request_duration_milliseconds_bucket{connection_security_policy="mutual_tls",destination_workload=~"$workload",destination_workload_namespace=~"$namespace",reporter=~"$qrep",source_workload=~"$srcwl",source_workload_namespace=~"$srcns"}[1m]
+                                              istio_request_duration_milliseconds_bucket{connection_security_policy="mutual_tls",destination_workload=~"$workload",destination_workload_namespace=~"$namespace",reporter=~"$qrep",source_workload=~"$src_workload",source_workload_namespace=~"$src_namespace"}[1m]
                                             )
                                           )
                                         )
@@ -664,7 +684,7 @@ spec:
                                         0.99,
                                         sum by (source_workload, source_workload_namespace, le) (
                                           irate(
-                                            istio_request_duration_seconds_bucket{connection_security_policy="mutual_tls",destination_workload=~"$workload",destination_workload_namespace=~"$namespace",reporter=~"$qrep",source_workload=~"$srcwl",source_workload_namespace=~"$srcns"}[1m]
+                                            istio_request_duration_seconds_bucket{connection_security_policy="mutual_tls",destination_workload=~"$workload",destination_workload_namespace=~"$namespace",reporter=~"$qrep",source_workload=~"$src_workload",source_workload_namespace=~"$src_namespace"}[1m]
                                           )
                                         )
                                       )
@@ -682,7 +702,7 @@ spec:
                                           0.5,
                                           sum by (source_workload, source_workload_namespace, le) (
                                             irate(
-                                              istio_request_duration_milliseconds_bucket{connection_security_policy!="mutual_tls",destination_workload=~"$workload",destination_workload_namespace=~"$namespace",reporter=~"$qrep",source_workload=~"$srcwl",source_workload_namespace=~"$srcns"}[1m]
+                                              istio_request_duration_milliseconds_bucket{connection_security_policy!="mutual_tls",destination_workload=~"$workload",destination_workload_namespace=~"$namespace",reporter=~"$qrep",source_workload=~"$src_workload",source_workload_namespace=~"$src_namespace"}[1m]
                                             )
                                           )
                                         )
@@ -693,7 +713,7 @@ spec:
                                         0.5,
                                         sum by (source_workload, source_workload_namespace, le) (
                                           irate(
-                                            istio_request_duration_seconds_bucket{connection_security_policy!="mutual_tls",destination_workload=~"$workload",destination_workload_namespace=~"$namespace",reporter=~"$qrep",source_workload=~"$srcwl",source_workload_namespace=~"$srcns"}[1m]
+                                            istio_request_duration_seconds_bucket{connection_security_policy!="mutual_tls",destination_workload=~"$workload",destination_workload_namespace=~"$namespace",reporter=~"$qrep",source_workload=~"$src_workload",source_workload_namespace=~"$src_namespace"}[1m]
                                           )
                                         )
                                       )
@@ -711,7 +731,7 @@ spec:
                                           0.9,
                                           sum by (source_workload, source_workload_namespace, le) (
                                             irate(
-                                              istio_request_duration_milliseconds_bucket{connection_security_policy!="mutual_tls",destination_workload=~"$workload",destination_workload_namespace=~"$namespace",reporter=~"$qrep",source_workload=~"$srcwl",source_workload_namespace=~"$srcns"}[1m]
+                                              istio_request_duration_milliseconds_bucket{connection_security_policy!="mutual_tls",destination_workload=~"$workload",destination_workload_namespace=~"$namespace",reporter=~"$qrep",source_workload=~"$src_workload",source_workload_namespace=~"$src_namespace"}[1m]
                                             )
                                           )
                                         )
@@ -722,7 +742,7 @@ spec:
                                         0.9,
                                         sum by (source_workload, source_workload_namespace, le) (
                                           irate(
-                                            istio_request_duration_seconds_bucket{connection_security_policy!="mutual_tls",destination_workload=~"$workload",destination_workload_namespace=~"$namespace",reporter=~"$qrep",source_workload=~"$srcwl",source_workload_namespace=~"$srcns"}[1m]
+                                            istio_request_duration_seconds_bucket{connection_security_policy!="mutual_tls",destination_workload=~"$workload",destination_workload_namespace=~"$namespace",reporter=~"$qrep",source_workload=~"$src_workload",source_workload_namespace=~"$src_namespace"}[1m]
                                           )
                                         )
                                       )
@@ -740,7 +760,7 @@ spec:
                                           0.95,
                                           sum by (source_workload, source_workload_namespace, le) (
                                             irate(
-                                              istio_request_duration_milliseconds_bucket{connection_security_policy!="mutual_tls",destination_workload=~"$workload",destination_workload_namespace=~"$namespace",reporter=~"$qrep",source_workload=~"$srcwl",source_workload_namespace=~"$srcns"}[1m]
+                                              istio_request_duration_milliseconds_bucket{connection_security_policy!="mutual_tls",destination_workload=~"$workload",destination_workload_namespace=~"$namespace",reporter=~"$qrep",source_workload=~"$src_workload",source_workload_namespace=~"$src_namespace"}[1m]
                                             )
                                           )
                                         )
@@ -751,7 +771,7 @@ spec:
                                         0.95,
                                         sum by (source_workload, source_workload_namespace, le) (
                                           irate(
-                                            istio_request_duration_seconds_bucket{connection_security_policy!="mutual_tls",destination_workload=~"$workload",destination_workload_namespace=~"$namespace",reporter=~"$qrep",source_workload=~"$srcwl",source_workload_namespace=~"$srcns"}[1m]
+                                            istio_request_duration_seconds_bucket{connection_security_policy!="mutual_tls",destination_workload=~"$workload",destination_workload_namespace=~"$namespace",reporter=~"$qrep",source_workload=~"$src_workload",source_workload_namespace=~"$src_namespace"}[1m]
                                           )
                                         )
                                       )
@@ -769,7 +789,7 @@ spec:
                                           0.99,
                                           sum by (source_workload, source_workload_namespace, le) (
                                             irate(
-                                              istio_request_duration_milliseconds_bucket{connection_security_policy!="mutual_tls",destination_workload=~"$workload",destination_workload_namespace=~"$namespace",reporter=~"$qrep",source_workload=~"$srcwl",source_workload_namespace=~"$srcns"}[1m]
+                                              istio_request_duration_milliseconds_bucket{connection_security_policy!="mutual_tls",destination_workload=~"$workload",destination_workload_namespace=~"$namespace",reporter=~"$qrep",source_workload=~"$src_workload",source_workload_namespace=~"$src_namespace"}[1m]
                                             )
                                           )
                                         )
@@ -780,12 +800,12 @@ spec:
                                         0.99,
                                         sum by (source_workload, source_workload_namespace, le) (
                                           irate(
-                                            istio_request_duration_seconds_bucket{connection_security_policy!="mutual_tls",destination_workload=~"$workload",destination_workload_namespace=~"$namespace",reporter=~"$qrep",source_workload=~"$srcwl",source_workload_namespace=~"$srcns"}[1m]
+                                            istio_request_duration_seconds_bucket{connection_security_policy!="mutual_tls",destination_workload=~"$workload",destination_workload_namespace=~"$namespace",reporter=~"$qrep",source_workload=~"$src_workload",source_workload_namespace=~"$src_namespace"}[1m]
                                           )
                                         )
                                       )
                                 seriesNameFormat: '{{source_workload}}.{{source_workload_namespace}} P99'
-        "5_1":
+        "6_1":
             kind: Panel
             spec:
                 display:
@@ -796,6 +816,7 @@ spec:
                         legend:
                             position: bottom
                             mode: list
+                            size: medium
                         yAxis:
                             format:
                                 unit: bytes
@@ -819,7 +840,7 @@ spec:
                                       0.5,
                                       sum by (source_workload, source_workload_namespace, le) (
                                         irate(
-                                          istio_request_bytes_bucket{connection_security_policy="mutual_tls",destination_workload=~"$workload",destination_workload_namespace=~"$namespace",reporter=~"$qrep",source_workload=~"$srcwl",source_workload_namespace=~"$srcns"}[1m]
+                                          istio_request_bytes_bucket{connection_security_policy="mutual_tls",destination_workload=~"$workload",destination_workload_namespace=~"$namespace",reporter=~"$qrep",source_workload=~"$src_workload",source_workload_namespace=~"$src_namespace"}[1m]
                                         )
                                       )
                                     )
@@ -837,7 +858,7 @@ spec:
                                       0.9,
                                       sum by (source_workload, source_workload_namespace, le) (
                                         irate(
-                                          istio_request_bytes_bucket{connection_security_policy="mutual_tls",destination_workload=~"$workload",destination_workload_namespace=~"$namespace",reporter=~"$qrep",source_workload=~"$srcwl",source_workload_namespace=~"$srcns"}[1m]
+                                          istio_request_bytes_bucket{connection_security_policy="mutual_tls",destination_workload=~"$workload",destination_workload_namespace=~"$namespace",reporter=~"$qrep",source_workload=~"$src_workload",source_workload_namespace=~"$src_namespace"}[1m]
                                         )
                                       )
                                     )
@@ -855,7 +876,7 @@ spec:
                                       0.95,
                                       sum by (source_workload, source_workload_namespace, le) (
                                         irate(
-                                          istio_request_bytes_bucket{connection_security_policy="mutual_tls",destination_workload=~"$workload",destination_workload_namespace=~"$namespace",reporter=~"$qrep",source_workload=~"$srcwl",source_workload_namespace=~"$srcns"}[1m]
+                                          istio_request_bytes_bucket{connection_security_policy="mutual_tls",destination_workload=~"$workload",destination_workload_namespace=~"$namespace",reporter=~"$qrep",source_workload=~"$src_workload",source_workload_namespace=~"$src_namespace"}[1m]
                                         )
                                       )
                                     )
@@ -873,25 +894,7 @@ spec:
                                       0.99,
                                       sum by (source_workload, source_workload_namespace, le) (
                                         irate(
-                                          istio_request_bytes_bucket{connection_security_policy="mutual_tls",destination_workload=~"$workload",destination_workload_namespace=~"$namespace",reporter=~"$qrep",source_workload=~"$srcwl",source_workload_namespace=~"$srcns"}[1m]
-                                        )
-                                      )
-                                    )
-                                seriesNameFormat: "{{source_workload}}.{{source_workload_namespace}}  P99 (\U0001F510mTLS)"
-                    - kind: TimeSeriesQuery
-                      spec:
-                        plugin:
-                            kind: PrometheusTimeSeriesQuery
-                            spec:
-                                datasource:
-                                    kind: PrometheusDatasource
-                                    name: prometheus-datasource
-                                query: |-
-                                    histogram_quantile(
-                                      0.99,
-                                      sum by (source_workload, source_workload_namespace, le) (
-                                        irate(
-                                          istio_request_bytes_bucket{connection_security_policy="mutual_tls",destination_workload=~"$workload",destination_workload_namespace=~"$namespace",reporter=~"$qrep",source_workload=~"$srcwl",source_workload_namespace=~"$srcns"}[1m]
+                                          istio_request_bytes_bucket{connection_security_policy="mutual_tls",destination_workload=~"$workload",destination_workload_namespace=~"$namespace",reporter=~"$qrep",source_workload=~"$src_workload",source_workload_namespace=~"$src_namespace"}[1m]
                                         )
                                       )
                                     )
@@ -909,7 +912,7 @@ spec:
                                       0.5,
                                       sum by (source_workload, source_workload_namespace, le) (
                                         irate(
-                                          istio_request_bytes_bucket{connection_security_policy!="mutual_tls",destination_workload=~"$workload",destination_workload_namespace=~"$namespace",reporter=~"$qrep",source_workload=~"$srcwl",source_workload_namespace=~"$srcns"}[1m]
+                                          istio_request_bytes_bucket{connection_security_policy!="mutual_tls",destination_workload=~"$workload",destination_workload_namespace=~"$namespace",reporter=~"$qrep",source_workload=~"$src_workload",source_workload_namespace=~"$src_namespace"}[1m]
                                         )
                                       )
                                     )
@@ -927,7 +930,7 @@ spec:
                                       0.9,
                                       sum by (source_workload, source_workload_namespace, le) (
                                         irate(
-                                          istio_request_bytes_bucket{connection_security_policy!="mutual_tls",destination_workload=~"$workload",destination_workload_namespace=~"$namespace",reporter=~"$qrep",source_workload=~"$srcwl",source_workload_namespace=~"$srcns"}[1m]
+                                          istio_request_bytes_bucket{connection_security_policy!="mutual_tls",destination_workload=~"$workload",destination_workload_namespace=~"$namespace",reporter=~"$qrep",source_workload=~"$src_workload",source_workload_namespace=~"$src_namespace"}[1m]
                                         )
                                       )
                                     )
@@ -945,7 +948,7 @@ spec:
                                       0.95,
                                       sum by (source_workload, source_workload_namespace, le) (
                                         irate(
-                                          istio_request_bytes_bucket{connection_security_policy!="mutual_tls",destination_workload=~"$workload",destination_workload_namespace=~"$namespace",reporter=~"$qrep",source_workload=~"$srcwl",source_workload_namespace=~"$srcns"}[1m]
+                                          istio_request_bytes_bucket{connection_security_policy!="mutual_tls",destination_workload=~"$workload",destination_workload_namespace=~"$namespace",reporter=~"$qrep",source_workload=~"$src_workload",source_workload_namespace=~"$src_namespace"}[1m]
                                         )
                                       )
                                     )
@@ -963,12 +966,12 @@ spec:
                                       0.99,
                                       sum by (source_workload, source_workload_namespace, le) (
                                         irate(
-                                          istio_request_bytes_bucket{connection_security_policy!="mutual_tls",destination_workload=~"$workload",destination_workload_namespace=~"$namespace",reporter=~"$qrep",source_workload=~"$srcwl",source_workload_namespace=~"$srcns"}[1m]
+                                          istio_request_bytes_bucket{connection_security_policy!="mutual_tls",destination_workload=~"$workload",destination_workload_namespace=~"$namespace",reporter=~"$qrep",source_workload=~"$src_workload",source_workload_namespace=~"$src_namespace"}[1m]
                                         )
                                       )
                                     )
                                 seriesNameFormat: '{{source_workload}}.{{source_workload_namespace}} P99'
-        "5_2":
+        "6_2":
             kind: Panel
             spec:
                 display:
@@ -979,6 +982,7 @@ spec:
                         legend:
                             position: bottom
                             mode: list
+                            size: medium
                         yAxis:
                             format:
                                 unit: bytes
@@ -1002,7 +1006,7 @@ spec:
                                       0.5,
                                       sum by (source_workload, source_workload_namespace, le) (
                                         irate(
-                                          istio_response_bytes_bucket{connection_security_policy="mutual_tls",destination_workload=~"$workload",destination_workload_namespace=~"$namespace",reporter=~"$qrep",source_workload=~"$srcwl",source_workload_namespace=~"$srcns"}[1m]
+                                          istio_response_bytes_bucket{connection_security_policy="mutual_tls",destination_workload=~"$workload",destination_workload_namespace=~"$namespace",reporter=~"$qrep",source_workload=~"$src_workload",source_workload_namespace=~"$src_namespace"}[1m]
                                         )
                                       )
                                     )
@@ -1020,7 +1024,7 @@ spec:
                                       0.9,
                                       sum by (source_workload, source_workload_namespace, le) (
                                         irate(
-                                          istio_response_bytes_bucket{connection_security_policy="mutual_tls",destination_workload=~"$workload",destination_workload_namespace=~"$namespace",reporter=~"$qrep",source_workload=~"$srcwl",source_workload_namespace=~"$srcns"}[1m]
+                                          istio_response_bytes_bucket{connection_security_policy="mutual_tls",destination_workload=~"$workload",destination_workload_namespace=~"$namespace",reporter=~"$qrep",source_workload=~"$src_workload",source_workload_namespace=~"$src_namespace"}[1m]
                                         )
                                       )
                                     )
@@ -1038,7 +1042,7 @@ spec:
                                       0.95,
                                       sum by (source_workload, source_workload_namespace, le) (
                                         irate(
-                                          istio_response_bytes_bucket{connection_security_policy="mutual_tls",destination_workload=~"$workload",destination_workload_namespace=~"$namespace",reporter=~"$qrep",source_workload=~"$srcwl",source_workload_namespace=~"$srcns"}[1m]
+                                          istio_response_bytes_bucket{connection_security_policy="mutual_tls",destination_workload=~"$workload",destination_workload_namespace=~"$namespace",reporter=~"$qrep",source_workload=~"$src_workload",source_workload_namespace=~"$src_namespace"}[1m]
                                         )
                                       )
                                     )
@@ -1056,7 +1060,7 @@ spec:
                                       0.99,
                                       sum by (source_workload, source_workload_namespace, le) (
                                         irate(
-                                          istio_response_bytes_bucket{connection_security_policy="mutual_tls",destination_workload=~"$workload",destination_workload_namespace=~"$namespace",reporter=~"$qrep",source_workload=~"$srcwl",source_workload_namespace=~"$srcns"}[1m]
+                                          istio_response_bytes_bucket{connection_security_policy="mutual_tls",destination_workload=~"$workload",destination_workload_namespace=~"$namespace",reporter=~"$qrep",source_workload=~"$src_workload",source_workload_namespace=~"$src_namespace"}[1m]
                                         )
                                       )
                                     )
@@ -1074,7 +1078,7 @@ spec:
                                       0.5,
                                       sum by (source_workload, source_workload_namespace, le) (
                                         irate(
-                                          istio_response_bytes_bucket{connection_security_policy!="mutual_tls",destination_workload=~"$workload",destination_workload_namespace=~"$namespace",reporter=~"$qrep",source_workload=~"$srcwl",source_workload_namespace=~"$srcns"}[1m]
+                                          istio_response_bytes_bucket{connection_security_policy!="mutual_tls",destination_workload=~"$workload",destination_workload_namespace=~"$namespace",reporter=~"$qrep",source_workload=~"$src_workload",source_workload_namespace=~"$src_namespace"}[1m]
                                         )
                                       )
                                     )
@@ -1092,7 +1096,7 @@ spec:
                                       0.9,
                                       sum by (source_workload, source_workload_namespace, le) (
                                         irate(
-                                          istio_response_bytes_bucket{connection_security_policy!="mutual_tls",destination_workload=~"$workload",destination_workload_namespace=~"$namespace",reporter=~"$qrep",source_workload=~"$srcwl",source_workload_namespace=~"$srcns"}[1m]
+                                          istio_response_bytes_bucket{connection_security_policy!="mutual_tls",destination_workload=~"$workload",destination_workload_namespace=~"$namespace",reporter=~"$qrep",source_workload=~"$src_workload",source_workload_namespace=~"$src_namespace"}[1m]
                                         )
                                       )
                                     )
@@ -1110,7 +1114,7 @@ spec:
                                       0.95,
                                       sum by (source_workload, source_workload_namespace, le) (
                                         irate(
-                                          istio_response_bytes_bucket{connection_security_policy!="mutual_tls",destination_workload=~"$workload",destination_workload_namespace=~"$namespace",reporter=~"$qrep",source_workload=~"$srcwl",source_workload_namespace=~"$srcns"}[1m]
+                                          istio_response_bytes_bucket{connection_security_policy!="mutual_tls",destination_workload=~"$workload",destination_workload_namespace=~"$namespace",reporter=~"$qrep",source_workload=~"$src_workload",source_workload_namespace=~"$src_namespace"}[1m]
                                         )
                                       )
                                     )
@@ -1128,12 +1132,12 @@ spec:
                                       0.99,
                                       sum by (source_workload, source_workload_namespace, le) (
                                         irate(
-                                          istio_response_bytes_bucket{connection_security_policy!="mutual_tls",destination_workload=~"$workload",destination_workload_namespace=~"$namespace",reporter=~"$qrep",source_workload=~"$srcwl",source_workload_namespace=~"$srcns"}[1m]
+                                          istio_response_bytes_bucket{connection_security_policy!="mutual_tls",destination_workload=~"$workload",destination_workload_namespace=~"$namespace",reporter=~"$qrep",source_workload=~"$src_workload",source_workload_namespace=~"$src_namespace"}[1m]
                                         )
                                       )
                                     )
                                 seriesNameFormat: '{{source_workload}}.{{source_workload_namespace}} P99'
-        "6_0":
+        "7_0":
             kind: Panel
             spec:
                 display:
@@ -1144,6 +1148,7 @@ spec:
                         legend:
                             position: bottom
                             mode: list
+                            size: medium
                         yAxis:
                             format:
                                 unit: bytes/sec
@@ -1166,7 +1171,7 @@ spec:
                                     round(
                                       sum by (source_workload, source_workload_namespace) (
                                         irate(
-                                          istio_tcp_received_bytes_total{connection_security_policy="mutual_tls",destination_workload=~"$workload",destination_workload_namespace=~"$namespace",reporter=~"$qrep",source_workload=~"$srcwl",source_workload_namespace=~"$srcns"}[$__rate_interval]
+                                          istio_tcp_received_bytes_total{connection_security_policy="mutual_tls",destination_workload=~"$workload",destination_workload_namespace=~"$namespace",reporter=~"$qrep",source_workload=~"$src_workload",source_workload_namespace=~"$src_namespace"}[$__rate_interval]
                                         )
                                       ),
                                       0.001
@@ -1184,13 +1189,13 @@ spec:
                                     round(
                                       sum by (source_workload, source_workload_namespace) (
                                         irate(
-                                          istio_tcp_received_bytes_total{connection_security_policy!="mutual_tls",destination_workload=~"$workload",destination_workload_namespace=~"$namespace",reporter=~"$qrep",source_workload=~"$srcwl",source_workload_namespace=~"$srcns"}[$__rate_interval]
+                                          istio_tcp_received_bytes_total{connection_security_policy!="mutual_tls",destination_workload=~"$workload",destination_workload_namespace=~"$namespace",reporter=~"$qrep",source_workload=~"$src_workload",source_workload_namespace=~"$src_namespace"}[$__rate_interval]
                                         )
                                       ),
                                       0.001
                                     )
                                 seriesNameFormat: '{{ source_workload }}.{{ source_workload_namespace}}'
-        "6_1":
+        "7_1":
             kind: Panel
             spec:
                 display:
@@ -1201,6 +1206,7 @@ spec:
                         legend:
                             position: bottom
                             mode: list
+                            size: medium
                         yAxis:
                             format:
                                 unit: bytes/sec
@@ -1223,7 +1229,7 @@ spec:
                                     round(
                                       sum by (source_workload, source_workload_namespace) (
                                         irate(
-                                          istio_tcp_sent_bytes_total{connection_security_policy="mutual_tls",destination_workload=~"$workload",destination_workload_namespace=~"$namespace",reporter=~"$qrep",source_workload=~"$srcwl",source_workload_namespace=~"$srcns"}[$__rate_interval]
+                                          istio_tcp_sent_bytes_total{connection_security_policy="mutual_tls",destination_workload=~"$workload",destination_workload_namespace=~"$namespace",reporter=~"$qrep",source_workload=~"$src_workload",source_workload_namespace=~"$src_namespace"}[$__rate_interval]
                                         )
                                       ),
                                       0.001
@@ -1247,7 +1253,7 @@ spec:
                                       0.001
                                     )
                                 seriesNameFormat: '{{ destination_service }} : {{ response_code }}'
-        "7_0":
+        "8_0":
             kind: Panel
             spec:
                 display:
@@ -1259,7 +1265,7 @@ spec:
                             <div class="dashboard-header text-center">
                             <span>OUTBOUND SERVICES</span>
                             </div>
-        "8_0":
+        "9_0":
             kind: Panel
             spec:
                 display:
@@ -1271,6 +1277,7 @@ spec:
                         legend:
                             position: bottom
                             mode: list
+                            size: medium
                         yAxis: {}
                         visual:
                             display: line
@@ -1314,7 +1321,7 @@ spec:
                                       0.001
                                     )
                                 seriesNameFormat: '{{ destination_service }} : {{ response_code }}'
-        "8_1":
+        "9_1":
             kind: Panel
             spec:
                 display:
@@ -1326,6 +1333,7 @@ spec:
                         legend:
                             position: bottom
                             mode: list
+                            size: medium
                         yAxis:
                             format:
                                 unit: percent
@@ -1378,7 +1386,7 @@ spec:
                                         )
                                       )
                                 seriesNameFormat: '{{ destination_service }}'
-        "9_0":
+        "10_0":
             kind: Panel
             spec:
                 display:
@@ -1390,6 +1398,7 @@ spec:
                         legend:
                             position: bottom
                             mode: list
+                            size: medium
                         yAxis: {}
                         visual:
                             display: line
@@ -1629,7 +1638,7 @@ spec:
                                         )
                                       )
                                 seriesNameFormat: '{{ destination_service }} P99'
-        "9_1":
+        "10_1":
             kind: Panel
             spec:
                 display:
@@ -1641,6 +1650,7 @@ spec:
                         legend:
                             position: bottom
                             mode: list
+                            size: medium
                         yAxis: {}
                         visual:
                             display: line
@@ -1792,7 +1802,7 @@ spec:
                                       )
                                     )
                                 seriesNameFormat: '{{ destination_service }} P99'
-        "9_2":
+        "10_2":
             kind: Panel
             spec:
                 display:
@@ -1804,6 +1814,7 @@ spec:
                         legend:
                             position: bottom
                             mode: list
+                            size: medium
                         yAxis: {}
                         visual:
                             display: line
@@ -1955,7 +1966,7 @@ spec:
                                       )
                                     )
                                 seriesNameFormat: '{{ destination_service }} P99'
-        "10_0":
+        "11_0":
             kind: Panel
             spec:
                 display:
@@ -1967,6 +1978,7 @@ spec:
                         legend:
                             position: bottom
                             mode: list
+                            size: medium
                         yAxis:
                             format:
                                 unit: bytes/sec
@@ -2013,7 +2025,7 @@ spec:
                                       0.001
                                     )
                                 seriesNameFormat: '{{ destination_service }}'
-        "10_1":
+        "11_1":
             kind: Panel
             spec:
                 display:
@@ -2025,6 +2037,7 @@ spec:
                         legend:
                             position: bottom
                             mode: list
+                            size: medium
                         yAxis:
                             format:
                                 unit: bytes/sec
@@ -2090,22 +2103,27 @@ spec:
             items:
                 - x: 0
                   "y": 0
-                  width: 8
-                  height: 4
+                  width: 12
+                  height: 6
                   content:
                     $ref: '#/spec/panels/1_0'
-                - x: 8
+                - x: 12
                   "y": 0
-                  width: 8
-                  height: 4
+                  width: 12
+                  height: 6
                   content:
                     $ref: '#/spec/panels/1_1'
-                - x: 16
+        - kind: Grid
+          spec:
+            display:
+                title: General (II Duration)
+            items:
+                - x: 0
                   "y": 0
-                  width: 8
-                  height: 4
+                  width: 24
+                  height: 8
                   content:
-                    $ref: '#/spec/panels/1_2'
+                    $ref: '#/spec/panels/2_0'
         - kind: Grid
           spec:
             display:
@@ -2114,15 +2132,15 @@ spec:
                 - x: 0
                   "y": 0
                   width: 12
-                  height: 4
+                  height: 6
                   content:
-                    $ref: '#/spec/panels/2_0'
+                    $ref: '#/spec/panels/3_0'
                 - x: 12
                   "y": 0
                   width: 12
-                  height: 4
+                  height: 6
                   content:
-                    $ref: '#/spec/panels/2_1'
+                    $ref: '#/spec/panels/3_1'
         - kind: Grid
           spec:
             display:
@@ -2133,7 +2151,7 @@ spec:
                   width: 24
                   height: 3
                   content:
-                    $ref: '#/spec/panels/3_0'
+                    $ref: '#/spec/panels/4_0'
         - kind: Grid
           spec:
             display:
@@ -2142,15 +2160,15 @@ spec:
                 - x: 0
                   "y": 0
                   width: 12
-                  height: 6
+                  height: 9
                   content:
-                    $ref: '#/spec/panels/4_0'
+                    $ref: '#/spec/panels/5_0'
                 - x: 12
                   "y": 0
                   width: 12
-                  height: 6
+                  height: 9
                   content:
-                    $ref: '#/spec/panels/4_1'
+                    $ref: '#/spec/panels/5_1'
         - kind: Grid
           spec:
             display:
@@ -2159,21 +2177,21 @@ spec:
                 - x: 0
                   "y": 0
                   width: 8
-                  height: 6
+                  height: 9
                   content:
-                    $ref: '#/spec/panels/5_0'
+                    $ref: '#/spec/panels/6_0'
                 - x: 8
                   "y": 0
                   width: 8
-                  height: 6
+                  height: 9
                   content:
-                    $ref: '#/spec/panels/5_1'
+                    $ref: '#/spec/panels/6_1'
                 - x: 16
                   "y": 0
                   width: 8
-                  height: 6
+                  height: 9
                   content:
-                    $ref: '#/spec/panels/5_2'
+                    $ref: '#/spec/panels/6_2'
         - kind: Grid
           spec:
             display:
@@ -2182,15 +2200,15 @@ spec:
                 - x: 0
                   "y": 0
                   width: 12
-                  height: 6
+                  height: 9
                   content:
-                    $ref: '#/spec/panels/6_0'
+                    $ref: '#/spec/panels/7_0'
                 - x: 12
                   "y": 0
                   width: 12
-                  height: 6
+                  height: 9
                   content:
-                    $ref: '#/spec/panels/6_1'
+                    $ref: '#/spec/panels/7_1'
         - kind: Grid
           spec:
             display:
@@ -2201,7 +2219,7 @@ spec:
                   width: 24
                   height: 3
                   content:
-                    $ref: '#/spec/panels/7_0'
+                    $ref: '#/spec/panels/8_0'
         - kind: Grid
           spec:
             display:
@@ -2210,15 +2228,15 @@ spec:
                 - x: 0
                   "y": 0
                   width: 12
-                  height: 6
+                  height: 9
                   content:
-                    $ref: '#/spec/panels/8_0'
+                    $ref: '#/spec/panels/9_0'
                 - x: 12
                   "y": 0
                   width: 12
-                  height: 6
+                  height: 9
                   content:
-                    $ref: '#/spec/panels/8_1'
+                    $ref: '#/spec/panels/9_1'
         - kind: Grid
           spec:
             display:
@@ -2227,21 +2245,21 @@ spec:
                 - x: 0
                   "y": 0
                   width: 8
-                  height: 6
+                  height: 9
                   content:
-                    $ref: '#/spec/panels/9_0'
+                    $ref: '#/spec/panels/10_0'
                 - x: 8
                   "y": 0
                   width: 8
-                  height: 6
+                  height: 9
                   content:
-                    $ref: '#/spec/panels/9_1'
+                    $ref: '#/spec/panels/10_1'
                 - x: 16
                   "y": 0
                   width: 8
-                  height: 6
+                  height: 9
                   content:
-                    $ref: '#/spec/panels/9_2'
+                    $ref: '#/spec/panels/10_2'
         - kind: Grid
           spec:
             display:
@@ -2250,13 +2268,13 @@ spec:
                 - x: 0
                   "y": 0
                   width: 12
-                  height: 6
+                  height: 9
                   content:
-                    $ref: '#/spec/panels/10_0'
+                    $ref: '#/spec/panels/11_0'
                 - x: 12
                   "y": 0
                   width: 12
-                  height: 6
+                  height: 9
                   content:
-                    $ref: '#/spec/panels/10_1'
+                    $ref: '#/spec/panels/11_1'
     duration: 1h
