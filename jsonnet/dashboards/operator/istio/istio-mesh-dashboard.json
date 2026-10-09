@@ -61,7 +61,7 @@
                         "kind": "PrometheusDatasource",
                         "name": "prometheus-datasource"
                       },
-                      "query": "round(sum(rate(istio_requests_total{reporter=~\"source|waypoint\"}[$__rate_interval])), 0.01)"
+                      "query": "round(sum(rate(istio_requests_total{reporter=~\"source|destination|waypoint\"}[5m])), 0.01)"
                     }
                   }
                 }
@@ -113,7 +113,7 @@
                         "kind": "PrometheusDatasource",
                         "name": "prometheus-datasource"
                       },
-                      "query": "  sum(rate(istio_requests_total{reporter=~\"source|waypoint\",response_code!~\"5..\"}[$__rate_interval]))\n/\n  sum(rate(istio_requests_total{reporter=~\"source|waypoint\"}[$__rate_interval]))"
+                      "query": "      sum(rate(istio_requests_total{reporter=~\"source|destination|waypoint\",response_code!~\"5..\"}[5m]))\n    /\n      sum(rate(istio_requests_total{reporter=~\"source|destination|waypoint\"}[5m]))\n  and on ()\n    sum(rate(istio_requests_total{reporter=~\"source|destination|waypoint\"}[5m])) \u003e 0\nor on ()\n  (sum(rate(istio_requests_total{reporter=~\"source|destination|waypoint\"}[5m])) == bool 0 * 0 + 1)"
                     }
                   }
                 }
@@ -165,7 +165,7 @@
                         "kind": "PrometheusDatasource",
                         "name": "prometheus-datasource"
                       },
-                      "query": "  round(\n    sum(rate(istio_requests_total{reporter=~\"source|waypoint\",response_code=~\"4..\"}[$__rate_interval])),\n    0.01\n  )\nor\n  vector(0)"
+                      "query": "  round(\n    sum(rate(istio_requests_total{reporter=~\"source|destination|waypoint\",response_code=~\"4..\"}[5m])),\n    0.01\n  )\nor\n  vector(0)"
                     }
                   }
                 }
@@ -217,7 +217,7 @@
                         "kind": "PrometheusDatasource",
                         "name": "prometheus-datasource"
                       },
-                      "query": "  round(\n    sum(rate(istio_requests_total{reporter=~\"source|waypoint\",response_code=~\"5..\"}[$__rate_interval])),\n    0.01\n  )\nor\n  vector(0)"
+                      "query": "  round(\n    sum(rate(istio_requests_total{reporter=~\"source|destination|waypoint\",response_code=~\"5..\"}[5m])),\n    0.01\n  )\nor\n  vector(0)"
                     }
                   }
                 }
@@ -323,7 +323,7 @@
                         "kind": "PrometheusDatasource",
                         "name": "prometheus-datasource"
                       },
-                      "query": "label_join(\n  sum by (destination_workload, destination_workload_namespace, destination_service) (\n    rate(istio_requests_total{reporter=~\"source|waypoint\"}[$__rate_interval])\n  ),\n  \"destination_workload_var\",\n  \".\",\n  \"destination_workload\",\n  \"destination_workload_namespace\"\n)",
+                      "query": "label_join(\n  sum by (destination_workload, destination_workload_namespace, destination_service) (\n    rate(istio_requests_total{reporter=~\"source|destination|waypoint\"}[5m])\n  ),\n  \"destination_workload_var\",\n  \".\",\n  \"destination_workload\",\n  \"destination_workload_namespace\"\n)",
                       "seriesNameFormat": "{{ destination_workload}}.{{ destination_workload_namespace }}"
                     }
                   }
@@ -339,7 +339,7 @@
                         "kind": "PrometheusDatasource",
                         "name": "prometheus-datasource"
                       },
-                      "query": "label_join(\n  histogram_quantile(\n    0.5,\n    sum by (le, destination_workload, destination_workload_namespace, destination_service) (\n      rate(istio_request_duration_milliseconds_bucket{reporter=~\"source|waypoint\"}[$__rate_interval])\n    )\n  ),\n  \"destination_workload_var\",\n  \".\",\n  \"destination_workload\",\n  \"destination_workload_namespace\"\n)",
+                      "query": "label_join(\n    histogram_quantile(\n      0.5,\n      sum by (le, destination_workload, destination_workload_namespace, destination_service) (\n        rate(istio_request_duration_milliseconds_bucket{reporter=~\"source|destination|waypoint\"}[5m])\n      )\n    )\n  or\n      histogram_quantile(\n        0.5,\n        sum by (le, destination_workload, destination_workload_namespace, destination_service) (\n          rate(istio_request_duration_seconds_bucket{reporter=~\"source|destination|waypoint\"}[5m])\n        )\n      )\n    *\n      1000,\n  \"destination_workload_var\",\n  \".\",\n  \"destination_workload\",\n  \"destination_workload_namespace\"\n)",
                       "seriesNameFormat": "{{ destination_workload}}.{{ destination_workload_namespace }}"
                     }
                   }
@@ -355,7 +355,7 @@
                         "kind": "PrometheusDatasource",
                         "name": "prometheus-datasource"
                       },
-                      "query": "label_join(\n  histogram_quantile(\n    0.9,\n    sum by (le, destination_workload, destination_workload_namespace, destination_service) (\n      rate(istio_request_duration_milliseconds_bucket{reporter=~\"source|waypoint\"}[$__rate_interval])\n    )\n  ),\n  \"destination_workload_var\",\n  \".\",\n  \"destination_workload\",\n  \"destination_workload_namespace\"\n)",
+                      "query": "label_join(\n    histogram_quantile(\n      0.9,\n      sum by (le, destination_workload, destination_workload_namespace, destination_service) (\n        rate(istio_request_duration_milliseconds_bucket{reporter=~\"source|destination|waypoint\"}[5m])\n      )\n    )\n  or\n      histogram_quantile(\n        0.9,\n        sum by (le, destination_workload, destination_workload_namespace, destination_service) (\n          rate(istio_request_duration_seconds_bucket{reporter=~\"source|destination|waypoint\"}[5m])\n        )\n      )\n    *\n      1000,\n  \"destination_workload_var\",\n  \".\",\n  \"destination_workload\",\n  \"destination_workload_namespace\"\n)",
                       "seriesNameFormat": "{{ destination_workload}}.{{ destination_workload_namespace }}"
                     }
                   }
@@ -371,7 +371,7 @@
                         "kind": "PrometheusDatasource",
                         "name": "prometheus-datasource"
                       },
-                      "query": "label_join(\n  histogram_quantile(\n    0.99,\n    sum by (le, destination_workload, destination_workload_namespace, destination_service) (\n      rate(istio_request_duration_milliseconds_bucket{reporter=~\"source|waypoint\"}[$__rate_interval])\n    )\n  ),\n  \"destination_workload_var\",\n  \".\",\n  \"destination_workload\",\n  \"destination_workload_namespace\"\n)",
+                      "query": "label_join(\n    histogram_quantile(\n      0.99,\n      sum by (le, destination_workload, destination_workload_namespace, destination_service) (\n        rate(istio_request_duration_milliseconds_bucket{reporter=~\"source|destination|waypoint\"}[5m])\n      )\n    )\n  or\n      histogram_quantile(\n        0.99,\n        sum by (le, destination_workload, destination_workload_namespace, destination_service) (\n          rate(istio_request_duration_seconds_bucket{reporter=~\"source|destination|waypoint\"}[5m])\n        )\n      )\n    *\n      1000,\n  \"destination_workload_var\",\n  \".\",\n  \"destination_workload\",\n  \"destination_workload_namespace\"\n)",
                       "seriesNameFormat": "{{ destination_workload}}.{{ destination_workload_namespace }}"
                     }
                   }
@@ -387,7 +387,7 @@
                         "kind": "PrometheusDatasource",
                         "name": "prometheus-datasource"
                       },
-                      "query": "label_join(\n    sum by (destination_workload, destination_workload_namespace, destination_service) (\n      rate(istio_requests_total{reporter=~\"source|waypoint\",response_code!~\"5..\"}[$__rate_interval])\n    )\n  /\n    sum by (destination_workload, destination_workload_namespace, destination_service) (\n      rate(istio_requests_total{reporter=~\"source|waypoint\"}[$__rate_interval])\n    ),\n  \"destination_workload_var\",\n  \".\",\n  \"destination_workload\",\n  \"destination_workload_namespace\"\n)",
+                      "query": "label_join(\n        sum by (destination_workload, destination_workload_namespace, destination_service) (\n          rate(istio_requests_total{reporter=~\"source|destination|waypoint\",response_code!~\"5..\"}[5m])\n        )\n      /\n        sum by (destination_workload, destination_workload_namespace, destination_service) (\n          rate(istio_requests_total{reporter=~\"source|destination|waypoint\"}[5m])\n        )\n    and on (destination_workload, destination_workload_namespace, destination_service)\n        sum by (destination_workload, destination_workload_namespace, destination_service) (\n          rate(istio_requests_total{reporter=~\"source|destination|waypoint\"}[5m])\n        )\n      \u003e\n        0\n  or on (destination_workload, destination_workload_namespace, destination_service)\n    (\n            sum by (destination_workload, destination_workload_namespace, destination_service) (\n              rate(istio_requests_total{reporter=~\"source|destination|waypoint\"}[5m])\n            )\n          == bool\n            0\n        *\n          0\n      +\n        1\n    ),\n  \"destination_workload_var\",\n  \".\",\n  \"destination_workload\",\n  \"destination_workload_namespace\"\n)",
                       "seriesNameFormat": "{{ destination_workload}}.{{ destination_workload_namespace }}"
                     }
                   }
@@ -401,7 +401,7 @@
           "spec": {
             "display": {
               "name": "TCP Workloads",
-              "description": "Bytes sent and recieived information for TCP services"
+              "description": "Bytes sent and received information for TCP services"
             },
             "plugin": {
               "kind": "Table",
@@ -467,7 +467,7 @@
                         "kind": "PrometheusDatasource",
                         "name": "prometheus-datasource"
                       },
-                      "query": "label_join(\n  sum by (destination_workload, destination_workload_namespace, destination_service) (\n    rate(istio_tcp_received_bytes_total{reporter=~\"source|waypoint\"}[$__rate_interval])\n  ),\n  \"destination_workload_var\",\n  \".\",\n  \"destination_workload\",\n  \"destination_workload_namespace\"\n)",
+                      "query": "label_join(\n  sum by (destination_workload, destination_workload_namespace, destination_service) (\n    rate(istio_tcp_received_bytes_total{reporter=~\"source|destination|waypoint\"}[5m])\n  ),\n  \"destination_workload_var\",\n  \".\",\n  \"destination_workload\",\n  \"destination_workload_namespace\"\n)",
                       "seriesNameFormat": "{{ destination_workload}}.{{ destination_workload_namespace }}"
                     }
                   }
@@ -483,7 +483,7 @@
                         "kind": "PrometheusDatasource",
                         "name": "prometheus-datasource"
                       },
-                      "query": "label_join(\n  sum by (destination_workload, destination_workload_namespace, destination_service) (\n    rate(istio_tcp_sent_bytes_total{reporter=~\"source|waypoint\"}[$__rate_interval])\n  ),\n  \"destination_workload_var\",\n  \".\",\n  \"destination_workload\",\n  \"destination_workload_namespace\"\n)",
+                      "query": "label_join(\n  sum by (destination_workload, destination_workload_namespace, destination_service) (\n    rate(istio_tcp_sent_bytes_total{reporter=~\"source|destination|waypoint\"}[5m])\n  ),\n  \"destination_workload_var\",\n  \".\",\n  \"destination_workload\",\n  \"destination_workload_namespace\"\n)",
                       "seriesNameFormat": "{{ destination_workload}}.{{ destination_workload_namespace }}"
                     }
                   }

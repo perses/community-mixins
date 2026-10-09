@@ -28,12 +28,9 @@
               "kind": "TimeSeriesChart",
               "spec": {
                 "legend": {
-                  "mode": "table",
+                  "mode": "list",
                   "position": "bottom",
-                  "values": [
-                    "last",
-                    "max"
-                  ]
+                  "size": "medium"
                 },
                 "visual": {
                   "areaOpacity": 0.1,
@@ -73,12 +70,9 @@
               "kind": "TimeSeriesChart",
               "spec": {
                 "legend": {
-                  "mode": "table",
+                  "mode": "list",
                   "position": "bottom",
-                  "values": [
-                    "last",
-                    "max"
-                  ]
+                  "size": "medium"
                 },
                 "visual": {
                   "areaOpacity": 0.1,
@@ -123,12 +117,9 @@
               "kind": "TimeSeriesChart",
               "spec": {
                 "legend": {
-                  "mode": "table",
+                  "mode": "list",
                   "position": "bottom",
-                  "values": [
-                    "last",
-                    "max"
-                  ]
+                  "size": "medium"
                 },
                 "visual": {
                   "areaOpacity": 0.1,
@@ -168,12 +159,9 @@
               "kind": "TimeSeriesChart",
               "spec": {
                 "legend": {
-                  "mode": "table",
+                  "mode": "list",
                   "position": "bottom",
-                  "values": [
-                    "last",
-                    "max"
-                  ]
+                  "size": "medium"
                 },
                 "visual": {
                   "areaOpacity": 0.1,
@@ -234,12 +222,9 @@
               "kind": "TimeSeriesChart",
               "spec": {
                 "legend": {
-                  "mode": "table",
+                  "mode": "list",
                   "position": "bottom",
-                  "values": [
-                    "last",
-                    "max"
-                  ]
+                  "size": "medium"
                 },
                 "visual": {
                   "areaOpacity": 0.1,
@@ -300,12 +285,9 @@
               "kind": "TimeSeriesChart",
               "spec": {
                 "legend": {
-                  "mode": "table",
+                  "mode": "list",
                   "position": "bottom",
-                  "values": [
-                    "last",
-                    "max"
-                  ]
+                  "size": "medium"
                 },
                 "visual": {
                   "areaOpacity": 0.1,
@@ -345,12 +327,9 @@
               "kind": "TimeSeriesChart",
               "spec": {
                 "legend": {
-                  "mode": "table",
+                  "mode": "list",
                   "position": "bottom",
-                  "values": [
-                    "last",
-                    "max"
-                  ]
+                  "size": "medium"
                 },
                 "visual": {
                   "areaOpacity": 0.1,
@@ -431,12 +410,9 @@
               "kind": "TimeSeriesChart",
               "spec": {
                 "legend": {
-                  "mode": "table",
+                  "mode": "list",
                   "position": "bottom",
-                  "values": [
-                    "last",
-                    "max"
-                  ]
+                  "size": "medium"
                 },
                 "visual": {
                   "areaOpacity": 0.1,
@@ -492,12 +468,9 @@
               "kind": "TimeSeriesChart",
               "spec": {
                 "legend": {
-                  "mode": "table",
+                  "mode": "list",
                   "position": "bottom",
-                  "values": [
-                    "last",
-                    "max"
-                  ]
+                  "size": "medium"
                 },
                 "visual": {
                   "areaOpacity": 0.1,

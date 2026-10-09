@@ -25,7 +25,7 @@
               "hidden": false
             },
             "allowAllValue": false,
-            "allowMultiple": false,
+            "allowMultiple": true,
             "plugin": {
               "kind": "PrometheusPromQLVariable",
               "spec": {
@@ -63,144 +63,6 @@
             },
             "name": "qrep"
           }
-        },
-        {
-          "kind": "ListVariable",
-          "spec": {
-            "display": {
-              "name": "Client Cluster",
-              "hidden": false
-            },
-            "allowAllValue": true,
-            "allowMultiple": true,
-            "plugin": {
-              "kind": "PrometheusPromQLVariable",
-              "spec": {
-                "datasource": {
-                  "kind": "PrometheusDatasource",
-                  "name": "prometheus-datasource"
-                },
-                "expr": "sum(istio_requests_total{reporter=~\"$qrep\", destination_service=~\"$service\"}) by (source_cluster) or sum(istio_tcp_sent_bytes_total{reporter=~\"$qrep\", destination_service=~\"$service\"}) by (source_cluster)",
-                "labelName": "source_cluster"
-              }
-            },
-            "name": "srccluster"
-          }
-        },
-        {
-          "kind": "ListVariable",
-          "spec": {
-            "display": {
-              "name": "Client Workload Namespace",
-              "hidden": false
-            },
-            "allowAllValue": true,
-            "allowMultiple": true,
-            "plugin": {
-              "kind": "PrometheusPromQLVariable",
-              "spec": {
-                "datasource": {
-                  "kind": "PrometheusDatasource",
-                  "name": "prometheus-datasource"
-                },
-                "expr": "sum(istio_requests_total{reporter=~\"$qrep\", destination_service=~\"$service\"}) by (source_workload_namespace) or sum(istio_tcp_sent_bytes_total{reporter=~\"$qrep\", destination_service=~\"$service\"}) by (source_workload_namespace)",
-                "labelName": "source_workload_namespace"
-              }
-            },
-            "name": "srcns"
-          }
-        },
-        {
-          "kind": "ListVariable",
-          "spec": {
-            "display": {
-              "name": "Client Workload",
-              "hidden": false
-            },
-            "allowAllValue": true,
-            "allowMultiple": true,
-            "plugin": {
-              "kind": "PrometheusPromQLVariable",
-              "spec": {
-                "datasource": {
-                  "kind": "PrometheusDatasource",
-                  "name": "prometheus-datasource"
-                },
-                "expr": "sum(istio_requests_total{reporter=~\"$qrep\", destination_service=~\"$service\", source_workload_namespace=~\"$srcns\"}) by (source_workload) or sum(istio_tcp_sent_bytes_total{reporter=~\"$qrep\", destination_service=~\"$service\", source_workload_namespace=~\"$srcns\"}) by (source_workload)",
-                "labelName": "source_workload"
-              }
-            },
-            "name": "srcwl"
-          }
-        },
-        {
-          "kind": "ListVariable",
-          "spec": {
-            "display": {
-              "name": "Service Workload Cluster",
-              "hidden": false
-            },
-            "allowAllValue": true,
-            "allowMultiple": true,
-            "plugin": {
-              "kind": "PrometheusPromQLVariable",
-              "spec": {
-                "datasource": {
-                  "kind": "PrometheusDatasource",
-                  "name": "prometheus-datasource"
-                },
-                "expr": "sum(istio_requests_total{reporter=\"destination\", destination_service=~\"$service\"}) by (destination_cluster) or sum(istio_tcp_sent_bytes_total{reporter=\"destination\", destination_service=~\"$service\"}) by (destination_cluster)",
-                "labelName": "destination_cluster"
-              }
-            },
-            "name": "dstcluster"
-          }
-        },
-        {
-          "kind": "ListVariable",
-          "spec": {
-            "display": {
-              "name": "Service Workload Namespace",
-              "hidden": false
-            },
-            "allowAllValue": true,
-            "allowMultiple": true,
-            "plugin": {
-              "kind": "PrometheusPromQLVariable",
-              "spec": {
-                "datasource": {
-                  "kind": "PrometheusDatasource",
-                  "name": "prometheus-datasource"
-                },
-                "expr": "sum(istio_requests_total{reporter=\"destination\", destination_service=~\"$service\"}) by (destination_workload_namespace) or sum(istio_tcp_sent_bytes_total{reporter=\"destination\", destination_service=~\"$service\"}) by (destination_workload_namespace)",
-                "labelName": "destination_workload_namespace"
-              }
-            },
-            "name": "dstns"
-          }
-        },
-        {
-          "kind": "ListVariable",
-          "spec": {
-            "display": {
-              "name": "Service Workload",
-              "hidden": false
-            },
-            "allowAllValue": true,
-            "allowMultiple": true,
-            "plugin": {
-              "kind": "PrometheusPromQLVariable",
-              "spec": {
-                "datasource": {
-                  "kind": "PrometheusDatasource",
-                  "name": "prometheus-datasource"
-                },
-                "expr": "sum(istio_requests_total{reporter=\"destination\", destination_service=~\"$service\", destination_cluster=~\"$dstcluster\", destination_workload_namespace=~\"$dstns\"}) by (destination_workload) or sum(istio_tcp_sent_bytes_total{reporter=\"destination\", destination_service=~\"$service\", destination_cluster=~\"$dstcluster\", destination_workload_namespace=~\"$dstns\"}) by (destination_workload)",
-                "labelName": "destination_workload"
-              }
-            },
-            "name": "dstwl"
-          }
         }
       ],
       "panels": {
@@ -228,6 +90,9 @@
               "kind": "StatChart",
               "spec": {
                 "calculation": "last",
+                "format": {
+                  "unit": "ops/sec"
+                },
                 "sparkline": {
                   "width": 1
                 },
@@ -332,7 +197,8 @@
               "spec": {
                 "legend": {
                   "mode": "list",
-                  "position": "right"
+                  "position": "bottom",
+                  "size": "medium"
                 },
                 "yAxis": {
                   "format": {
@@ -352,7 +218,7 @@
                         "kind": "PrometheusDatasource",
                         "name": "prometheus-datasource"
                       },
-                      "query": "    histogram_quantile(\n      0.5,\n      sum by (le) (\n        irate(\n          istio_request_duration_milliseconds_bucket{destination_service=~\"$service\",reporter=~\"$qrep\"}[1m]\n        )\n      )\n    )\n  /\n    1000\nor\n  histogram_quantile(\n    0.5,\n    sum by (le) (\n      irate(istio_request_duration_seconds_bucket{destination_service=~\"$service\",reporter=~\"$qrep\"}[1m])\n    )\n  )",
+                      "query": "    histogram_quantile(\n      0.5,\n      sum by (le) (\n        irate(\n          istio_request_duration_milliseconds_bucket{destination_service=~\"$service\",reporter=~\"$qrep\"}[5m]\n        )\n      )\n    )\n  /\n    1000\nor\n  histogram_quantile(\n    0.5,\n    sum by (le) (\n      irate(istio_request_duration_seconds_bucket{destination_service=~\"$service\",reporter=~\"$qrep\"}[5m])\n    )\n  )",
                       "seriesNameFormat": "P50"
                     }
                   }
@@ -368,7 +234,7 @@
                         "kind": "PrometheusDatasource",
                         "name": "prometheus-datasource"
                       },
-                      "query": "    histogram_quantile(\n      0.9,\n      sum by (le) (\n        irate(\n          istio_request_duration_milliseconds_bucket{destination_service=~\"$service\",reporter=~\"$qrep\"}[1m]\n        )\n      )\n    )\n  /\n    1000\nor\n  histogram_quantile(\n    0.9,\n    sum by (le) (\n      irate(istio_request_duration_seconds_bucket{destination_service=~\"$service\",reporter=~\"$qrep\"}[1m])\n    )\n  )",
+                      "query": "    histogram_quantile(\n      0.9,\n      sum by (le) (\n        irate(\n          istio_request_duration_milliseconds_bucket{destination_service=~\"$service\",reporter=~\"$qrep\"}[5m]\n        )\n      )\n    )\n  /\n    1000\nor\n  histogram_quantile(\n    0.9,\n    sum by (le) (\n      irate(istio_request_duration_seconds_bucket{destination_service=~\"$service\",reporter=~\"$qrep\"}[5m])\n    )\n  )",
                       "seriesNameFormat": "P90"
                     }
                   }
@@ -384,7 +250,7 @@
                         "kind": "PrometheusDatasource",
                         "name": "prometheus-datasource"
                       },
-                      "query": "    histogram_quantile(\n      0.99,\n      sum by (le) (\n        irate(\n          istio_request_duration_milliseconds_bucket{destination_service=~\"$service\",reporter=~\"$qrep\"}[1m]\n        )\n      )\n    )\n  /\n    1000\nor\n  histogram_quantile(\n    0.99,\n    sum by (le) (\n      irate(istio_request_duration_seconds_bucket{destination_service=~\"$service\",reporter=~\"$qrep\"}[1m])\n    )\n  )",
+                      "query": "    histogram_quantile(\n      0.99,\n      sum by (le) (\n        irate(\n          istio_request_duration_milliseconds_bucket{destination_service=~\"$service\",reporter=~\"$qrep\"}[5m]\n        )\n      )\n    )\n  /\n    1000\nor\n  histogram_quantile(\n    0.99,\n    sum by (le) (\n      irate(istio_request_duration_seconds_bucket{destination_service=~\"$service\",reporter=~\"$qrep\"}[5m])\n    )\n  )",
                       "seriesNameFormat": "P99"
                     }
                   }
@@ -454,6 +320,9 @@
               "kind": "StatChart",
               "spec": {
                 "calculation": "last",
+                "format": {
+                  "unit": "ops/sec"
+                },
                 "sparkline": {
                   "width": 1
                 },
@@ -509,19 +378,19 @@
                   "width": 1
                 },
                 "thresholds": {
-                  "defaultColor": "green",
+                  "defaultColor": "dark-red",
                   "mode": "absolute",
                   "steps": [
                     {
-                      "color": "rgba(50, 172, 45, 0.97)",
+                      "color": "dark-red",
                       "value": 0
                     },
                     {
-                      "color": "rgba(237, 129, 40, 0.89)",
+                      "color": "dark-yellow",
                       "value": 0.95
                     },
                     {
-                      "color": "rgba(245, 54, 54, 0.9)",
+                      "color": "dark-green",
                       "value": 0.99
                     }
                   ]
@@ -558,7 +427,8 @@
               "spec": {
                 "legend": {
                   "mode": "list",
-                  "position": "right"
+                  "position": "bottom",
+                  "size": "medium"
                 },
                 "yAxis": {
                   "format": {
@@ -578,7 +448,7 @@
                         "kind": "PrometheusDatasource",
                         "name": "prometheus-datasource"
                       },
-                      "query": "    histogram_quantile(\n      0.5,\n      sum by (le) (\n        irate(\n          istio_request_duration_milliseconds_bucket{destination_service=~\"$service\",reporter=\"destination\"}[1m]\n        )\n      )\n    )\n  /\n    1000\nor\n  histogram_quantile(\n    0.5,\n    sum by (le) (\n      irate(\n        istio_request_duration_seconds_bucket{destination_service=~\"$service\",reporter=\"destination\"}[1m]\n      )\n    )\n  )",
+                      "query": "    histogram_quantile(\n      0.5,\n      sum by (le) (\n        irate(\n          istio_request_duration_milliseconds_bucket{destination_service=~\"$service\",reporter=\"destination\"}[5m]\n        )\n      )\n    )\n  /\n    1000\nor\n  histogram_quantile(\n    0.5,\n    sum by (le) (\n      irate(\n        istio_request_duration_seconds_bucket{destination_service=~\"$service\",reporter=\"destination\"}[5m]\n      )\n    )\n  )",
                       "seriesNameFormat": "P50"
                     }
                   }
@@ -594,7 +464,7 @@
                         "kind": "PrometheusDatasource",
                         "name": "prometheus-datasource"
                       },
-                      "query": "    histogram_quantile(\n      0.9,\n      sum by (le) (\n        irate(\n          istio_request_duration_milliseconds_bucket{destination_service=~\"$service\",reporter=\"destination\"}[1m]\n        )\n      )\n    )\n  /\n    1000\nor\n  histogram_quantile(\n    0.9,\n    sum by (le) (\n      irate(\n        istio_request_duration_seconds_bucket{destination_service=~\"$service\",reporter=\"destination\"}[1m]\n      )\n    )\n  )",
+                      "query": "    histogram_quantile(\n      0.9,\n      sum by (le) (\n        irate(\n          istio_request_duration_milliseconds_bucket{destination_service=~\"$service\",reporter=\"destination\"}[5m]\n        )\n      )\n    )\n  /\n    1000\nor\n  histogram_quantile(\n    0.9,\n    sum by (le) (\n      irate(\n        istio_request_duration_seconds_bucket{destination_service=~\"$service\",reporter=\"destination\"}[5m]\n      )\n    )\n  )",
                       "seriesNameFormat": "P90"
                     }
                   }
@@ -610,7 +480,7 @@
                         "kind": "PrometheusDatasource",
                         "name": "prometheus-datasource"
                       },
-                      "query": "    histogram_quantile(\n      0.99,\n      sum by (le) (\n        irate(\n          istio_request_duration_milliseconds_bucket{destination_service=~\"$service\",reporter=\"destination\"}[1m]\n        )\n      )\n    )\n  /\n    1000\nor\n  histogram_quantile(\n    0.99,\n    sum by (le) (\n      irate(\n        istio_request_duration_seconds_bucket{destination_service=~\"$service\",reporter=\"destination\"}[1m]\n      )\n    )\n  )",
+                      "query": "    histogram_quantile(\n      0.99,\n      sum by (le) (\n        irate(\n          istio_request_duration_milliseconds_bucket{destination_service=~\"$service\",reporter=\"destination\"}[5m]\n        )\n      )\n    )\n  /\n    1000\nor\n  histogram_quantile(\n    0.99,\n    sum by (le) (\n      irate(\n        istio_request_duration_seconds_bucket{destination_service=~\"$service\",reporter=\"destination\"}[5m]\n      )\n    )\n  )",
                       "seriesNameFormat": "P99"
                     }
                   }
@@ -695,7 +565,8 @@
               "spec": {
                 "legend": {
                   "mode": "list",
-                  "position": "bottom"
+                  "position": "bottom",
+                  "size": "medium"
                 },
                 "visual": {
                   "display": "line",
@@ -715,7 +586,7 @@
                         "kind": "PrometheusDatasource",
                         "name": "prometheus-datasource"
                       },
-                      "query": "round(\n  sum by (source_workload, source_workload_namespace, response_code) (\n    irate(\n      istio_requests_total{connection_security_policy=\"mutual_tls\",destination_service=~\"$service\",reporter=~\"$qrep\",source_workload=~\"$srcwl\",source_workload_namespace=~\"$srcns\"}[5m]\n    )\n  ),\n  0.001\n)",
+                      "query": "round(\n  sum by (source_workload, source_workload_namespace, response_code) (\n    irate(\n      istio_requests_total{connection_security_policy=\"mutual_tls\",destination_service=~\"$service\",reporter=~\"$qrep\"}[5m]\n    )\n  ),\n  0.001\n)",
                       "seriesNameFormat": "{{ source_workload }}.{{ source_workload_namespace }} : {{ response_code }} (🔐mTLS)"
                     }
                   }
@@ -731,7 +602,7 @@
                         "kind": "PrometheusDatasource",
                         "name": "prometheus-datasource"
                       },
-                      "query": "round(\n  sum by (source_workload, source_workload_namespace, response_code) (\n    irate(\n      istio_requests_total{connection_security_policy!=\"mutual_tls\",destination_service=~\"$service\",reporter=~\"$qrep\",source_workload=~\"$srcwl\",source_workload_namespace=~\"$srcns\"}[5m]\n    )\n  ),\n  0.001\n)",
+                      "query": "round(\n  sum by (source_workload, source_workload_namespace, response_code) (\n    irate(\n      istio_requests_total{connection_security_policy!=\"mutual_tls\",destination_service=~\"$service\",reporter=~\"$qrep\"}[5m]\n    )\n  ),\n  0.001\n)",
                       "seriesNameFormat": "{{ source_workload }}.{{ source_workload_namespace }} : {{ response_code }}"
                     }
                   }
@@ -751,7 +622,8 @@
               "spec": {
                 "legend": {
                   "mode": "list",
-                  "position": "bottom"
+                  "position": "bottom",
+                  "size": "medium"
                 },
                 "visual": {
                   "areaOpacity": 0.1,
@@ -777,7 +649,7 @@
                         "kind": "PrometheusDatasource",
                         "name": "prometheus-datasource"
                       },
-                      "query": "  sum by (source_workload, source_workload_namespace) (\n    irate(\n      istio_requests_total{connection_security_policy=\"mutual_tls\",destination_service=~\"$service\",reporter=~\"$qrep\",response_code!~\"5.*\",source_workload=~\"$srcwl\",source_workload_namespace=~\"$srcns\"}[5m]\n    )\n  )\n/\n  sum by (source_workload, source_workload_namespace) (\n    irate(\n      istio_requests_total{connection_security_policy=\"mutual_tls\",destination_service=~\"$service\",reporter=~\"$qrep\",source_workload=~\"$srcwl\",source_workload_namespace=~\"$srcns\"}[5m]\n    )\n  )",
+                      "query": "  sum by (source_workload, source_workload_namespace) (\n    irate(\n      istio_requests_total{connection_security_policy=\"mutual_tls\",destination_service=~\"$service\",reporter=~\"$qrep\",response_code!~\"5.*\"}[5m]\n    )\n  )\n/\n  sum by (source_workload, source_workload_namespace) (\n    irate(\n      istio_requests_total{connection_security_policy=\"mutual_tls\",destination_service=~\"$service\",reporter=~\"$qrep\"}[5m]\n    )\n  )",
                       "seriesNameFormat": "{{ source_workload }}.{{ source_workload_namespace }} (🔐mTLS)"
                     }
                   }
@@ -793,7 +665,7 @@
                         "kind": "PrometheusDatasource",
                         "name": "prometheus-datasource"
                       },
-                      "query": "  sum by (source_workload, source_workload_namespace) (\n    irate(\n      istio_requests_total{connection_security_policy!=\"mutual_tls\",destination_service=~\"$service\",reporter=~\"$qrep\",response_code!~\"5.*\",source_workload=~\"$srcwl\",source_workload_namespace=~\"$srcns\"}[5m]\n    )\n  )\n/\n  sum by (source_workload, source_workload_namespace) (\n    irate(\n      istio_requests_total{connection_security_policy!=\"mutual_tls\",destination_service=~\"$service\",reporter=~\"$qrep\",source_workload=~\"$srcwl\",source_workload_namespace=~\"$srcns\"}[5m]\n    )\n  )",
+                      "query": "  sum by (source_workload, source_workload_namespace) (\n    irate(\n      istio_requests_total{connection_security_policy!=\"mutual_tls\",destination_service=~\"$service\",reporter=~\"$qrep\",response_code!~\"5.*\"}[5m]\n    )\n  )\n/\n  sum by (source_workload, source_workload_namespace) (\n    irate(\n      istio_requests_total{connection_security_policy!=\"mutual_tls\",destination_service=~\"$service\",reporter=~\"$qrep\"}[5m]\n    )\n  )",
                       "seriesNameFormat": "{{ source_workload }}.{{ source_workload_namespace }}"
                     }
                   }
@@ -838,7 +710,7 @@
                         "kind": "PrometheusDatasource",
                         "name": "prometheus-datasource"
                       },
-                      "query": "    histogram_quantile(\n      0.5,\n      sum by (source_workload, source_workload_namespace, le) (\n        irate(\n          istio_request_duration_milliseconds_bucket{connection_security_policy=\"mutual_tls\",destination_service=~\"$service\",reporter=~\"$qrep\",source_workload=~\"$srcwl\",source_workload_namespace=~\"$srcns\"}[1m]\n        )\n      )\n    )\n  /\n    1000\nor\n  histogram_quantile(\n    0.5,\n    sum by (source_workload, source_workload_namespace, le) (\n      irate(\n        istio_request_duration_seconds_bucket{connection_security_policy=\"mutual_tls\",destination_service=~\"$service\",reporter=~\"$qrep\",source_workload=~\"$srcwl\",source_workload_namespace=~\"$srcns\"}[1m]\n      )\n    )\n  )",
+                      "query": "    histogram_quantile(\n      0.5,\n      sum by (source_workload, source_workload_namespace, le) (\n        irate(\n          istio_request_duration_milliseconds_bucket{connection_security_policy=\"mutual_tls\",destination_service=~\"$service\",reporter=~\"$qrep\"}[5m]\n        )\n      )\n    )\n  /\n    1000\nor\n  histogram_quantile(\n    0.5,\n    sum by (source_workload, source_workload_namespace, le) (\n      irate(\n        istio_request_duration_seconds_bucket{connection_security_policy=\"mutual_tls\",destination_service=~\"$service\",reporter=~\"$qrep\"}[5m]\n      )\n    )\n  )",
                       "seriesNameFormat": "{{source_workload}}.{{source_workload_namespace}} P50 (🔐mTLS)"
                     }
                   }
@@ -854,7 +726,7 @@
                         "kind": "PrometheusDatasource",
                         "name": "prometheus-datasource"
                       },
-                      "query": "    histogram_quantile(\n      0.9,\n      sum by (source_workload, source_workload_namespace, le) (\n        irate(\n          istio_request_duration_milliseconds_bucket{connection_security_policy=\"mutual_tls\",destination_service=~\"$service\",reporter=~\"$qrep\",source_workload=~\"$srcwl\",source_workload_namespace=~\"$srcns\"}[1m]\n        )\n      )\n    )\n  /\n    1000\nor\n  histogram_quantile(\n    0.9,\n    sum by (source_workload, source_workload_namespace, le) (\n      irate(\n        istio_request_duration_seconds_bucket{connection_security_policy=\"mutual_tls\",destination_service=~\"$service\",reporter=~\"$qrep\",source_workload=~\"$srcwl\",source_workload_namespace=~\"$srcns\"}[1m]\n      )\n    )\n  )",
+                      "query": "    histogram_quantile(\n      0.9,\n      sum by (source_workload, source_workload_namespace, le) (\n        irate(\n          istio_request_duration_milliseconds_bucket{connection_security_policy=\"mutual_tls\",destination_service=~\"$service\",reporter=~\"$qrep\"}[5m]\n        )\n      )\n    )\n  /\n    1000\nor\n  histogram_quantile(\n    0.9,\n    sum by (source_workload, source_workload_namespace, le) (\n      irate(\n        istio_request_duration_seconds_bucket{connection_security_policy=\"mutual_tls\",destination_service=~\"$service\",reporter=~\"$qrep\"}[5m]\n      )\n    )\n  )",
                       "seriesNameFormat": "{{source_workload}}.{{source_workload_namespace}} P90 (🔐mTLS)"
                     }
                   }
@@ -870,7 +742,7 @@
                         "kind": "PrometheusDatasource",
                         "name": "prometheus-datasource"
                       },
-                      "query": "    histogram_quantile(\n      0.95,\n      sum by (source_workload, source_workload_namespace, le) (\n        irate(\n          istio_request_duration_milliseconds_bucket{connection_security_policy=\"mutual_tls\",destination_service=~\"$service\",reporter=~\"$qrep\",source_workload=~\"$srcwl\",source_workload_namespace=~\"$srcns\"}[1m]\n        )\n      )\n    )\n  /\n    1000\nor\n  histogram_quantile(\n    0.95,\n    sum by (source_workload, source_workload_namespace, le) (\n      irate(\n        istio_request_duration_seconds_bucket{connection_security_policy=\"mutual_tls\",destination_service=~\"$service\",reporter=~\"$qrep\",source_workload=~\"$srcwl\",source_workload_namespace=~\"$srcns\"}[1m]\n      )\n    )\n  )",
+                      "query": "    histogram_quantile(\n      0.95,\n      sum by (source_workload, source_workload_namespace, le) (\n        irate(\n          istio_request_duration_milliseconds_bucket{connection_security_policy=\"mutual_tls\",destination_service=~\"$service\",reporter=~\"$qrep\"}[5m]\n        )\n      )\n    )\n  /\n    1000\nor\n  histogram_quantile(\n    0.95,\n    sum by (source_workload, source_workload_namespace, le) (\n      irate(\n        istio_request_duration_seconds_bucket{connection_security_policy=\"mutual_tls\",destination_service=~\"$service\",reporter=~\"$qrep\"}[5m]\n      )\n    )\n  )",
                       "seriesNameFormat": "{{source_workload}}.{{source_workload_namespace}} P95 (🔐mTLS)"
                     }
                   }
@@ -886,7 +758,7 @@
                         "kind": "PrometheusDatasource",
                         "name": "prometheus-datasource"
                       },
-                      "query": "    histogram_quantile(\n      0.99,\n      sum by (source_workload, source_workload_namespace, le) (\n        irate(\n          istio_request_duration_milliseconds_bucket{connection_security_policy=\"mutual_tls\",destination_service=~\"$service\",reporter=~\"$qrep\",source_workload=~\"$srcwl\",source_workload_namespace=~\"$srcns\"}[1m]\n        )\n      )\n    )\n  /\n    1000\nor\n  histogram_quantile(\n    0.99,\n    sum by (source_workload, source_workload_namespace, le) (\n      irate(\n        istio_request_duration_seconds_bucket{connection_security_policy=\"mutual_tls\",destination_service=~\"$service\",reporter=~\"$qrep\",source_workload=~\"$srcwl\",source_workload_namespace=~\"$srcns\"}[1m]\n      )\n    )\n  )",
+                      "query": "    histogram_quantile(\n      0.99,\n      sum by (source_workload, source_workload_namespace, le) (\n        irate(\n          istio_request_duration_milliseconds_bucket{connection_security_policy=\"mutual_tls\",destination_service=~\"$service\",reporter=~\"$qrep\"}[5m]\n        )\n      )\n    )\n  /\n    1000\nor\n  histogram_quantile(\n    0.99,\n    sum by (source_workload, source_workload_namespace, le) (\n      irate(\n        istio_request_duration_seconds_bucket{connection_security_policy=\"mutual_tls\",destination_service=~\"$service\",reporter=~\"$qrep\"}[5m]\n      )\n    )\n  )",
                       "seriesNameFormat": "{{source_workload}}.{{source_workload_namespace}} P99 (🔐mTLS)"
                     }
                   }
@@ -902,7 +774,7 @@
                         "kind": "PrometheusDatasource",
                         "name": "prometheus-datasource"
                       },
-                      "query": "    histogram_quantile(\n      0.5,\n      sum by (source_workload, source_workload_namespace, le) (\n        irate(\n          istio_request_duration_milliseconds_bucket{connection_security_policy!=\"mutual_tls\",destination_service=~\"$service\",reporter=~\"$qrep\",source_workload=~\"$srcwl\",source_workload_namespace=~\"$srcns\"}[1m]\n        )\n      )\n    )\n  /\n    1000\nor\n  histogram_quantile(\n    0.5,\n    sum by (source_workload, source_workload_namespace, le) (\n      irate(\n        istio_request_duration_seconds_bucket{connection_security_policy!=\"mutual_tls\",destination_service=~\"$service\",reporter=~\"$qrep\",source_workload=~\"$srcwl\",source_workload_namespace=~\"$srcns\"}[1m]\n      )\n    )\n  )",
+                      "query": "    histogram_quantile(\n      0.5,\n      sum by (source_workload, source_workload_namespace, le) (\n        irate(\n          istio_request_duration_milliseconds_bucket{connection_security_policy!=\"mutual_tls\",destination_service=~\"$service\",reporter=~\"$qrep\"}[5m]\n        )\n      )\n    )\n  /\n    1000\nor\n  histogram_quantile(\n    0.5,\n    sum by (source_workload, source_workload_namespace, le) (\n      irate(\n        istio_request_duration_seconds_bucket{connection_security_policy!=\"mutual_tls\",destination_service=~\"$service\",reporter=~\"$qrep\"}[5m]\n      )\n    )\n  )",
                       "seriesNameFormat": "{{source_workload}}.{{source_workload_namespace}} P50"
                     }
                   }
@@ -918,7 +790,7 @@
                         "kind": "PrometheusDatasource",
                         "name": "prometheus-datasource"
                       },
-                      "query": "    histogram_quantile(\n      0.9,\n      sum by (source_workload, source_workload_namespace, le) (\n        irate(\n          istio_request_duration_milliseconds_bucket{connection_security_policy!=\"mutual_tls\",destination_service=~\"$service\",reporter=~\"$qrep\",source_workload=~\"$srcwl\",source_workload_namespace=~\"$srcns\"}[1m]\n        )\n      )\n    )\n  /\n    1000\nor\n  histogram_quantile(\n    0.9,\n    sum by (source_workload, source_workload_namespace, le) (\n      irate(\n        istio_request_duration_seconds_bucket{connection_security_policy!=\"mutual_tls\",destination_service=~\"$service\",reporter=~\"$qrep\",source_workload=~\"$srcwl\",source_workload_namespace=~\"$srcns\"}[1m]\n      )\n    )\n  )",
+                      "query": "    histogram_quantile(\n      0.9,\n      sum by (source_workload, source_workload_namespace, le) (\n        irate(\n          istio_request_duration_milliseconds_bucket{connection_security_policy!=\"mutual_tls\",destination_service=~\"$service\",reporter=~\"$qrep\"}[5m]\n        )\n      )\n    )\n  /\n    1000\nor\n  histogram_quantile(\n    0.9,\n    sum by (source_workload, source_workload_namespace, le) (\n      irate(\n        istio_request_duration_seconds_bucket{connection_security_policy!=\"mutual_tls\",destination_service=~\"$service\",reporter=~\"$qrep\"}[5m]\n      )\n    )\n  )",
                       "seriesNameFormat": "{{source_workload}}.{{source_workload_namespace}} P90"
                     }
                   }
@@ -934,7 +806,7 @@
                         "kind": "PrometheusDatasource",
                         "name": "prometheus-datasource"
                       },
-                      "query": "    histogram_quantile(\n      0.95,\n      sum by (source_workload, source_workload_namespace, le) (\n        irate(\n          istio_request_duration_milliseconds_bucket{connection_security_policy!=\"mutual_tls\",destination_service=~\"$service\",reporter=~\"$qrep\",source_workload=~\"$srcwl\",source_workload_namespace=~\"$srcns\"}[1m]\n        )\n      )\n    )\n  /\n    1000\nor\n  histogram_quantile(\n    0.95,\n    sum by (source_workload, source_workload_namespace, le) (\n      irate(\n        istio_request_duration_seconds_bucket{connection_security_policy!=\"mutual_tls\",destination_service=~\"$service\",reporter=~\"$qrep\",source_workload=~\"$srcwl\",source_workload_namespace=~\"$srcns\"}[1m]\n      )\n    )\n  )",
+                      "query": "    histogram_quantile(\n      0.95,\n      sum by (source_workload, source_workload_namespace, le) (\n        irate(\n          istio_request_duration_milliseconds_bucket{connection_security_policy!=\"mutual_tls\",destination_service=~\"$service\",reporter=~\"$qrep\"}[5m]\n        )\n      )\n    )\n  /\n    1000\nor\n  histogram_quantile(\n    0.95,\n    sum by (source_workload, source_workload_namespace, le) (\n      irate(\n        istio_request_duration_seconds_bucket{connection_security_policy!=\"mutual_tls\",destination_service=~\"$service\",reporter=~\"$qrep\"}[5m]\n      )\n    )\n  )",
                       "seriesNameFormat": "{{source_workload}}.{{source_workload_namespace}} P95"
                     }
                   }
@@ -950,7 +822,7 @@
                         "kind": "PrometheusDatasource",
                         "name": "prometheus-datasource"
                       },
-                      "query": "    histogram_quantile(\n      0.99,\n      sum by (source_workload, source_workload_namespace, le) (\n        irate(\n          istio_request_duration_milliseconds_bucket{connection_security_policy!=\"mutual_tls\",destination_service=~\"$service\",reporter=~\"$qrep\",source_workload=~\"$srcwl\",source_workload_namespace=~\"$srcns\"}[1m]\n        )\n      )\n    )\n  /\n    1000\nor\n  histogram_quantile(\n    0.99,\n    sum by (source_workload, source_workload_namespace, le) (\n      irate(\n        istio_request_duration_seconds_bucket{connection_security_policy!=\"mutual_tls\",destination_service=~\"$service\",reporter=~\"$qrep\",source_workload=~\"$srcwl\",source_workload_namespace=~\"$srcns\"}[1m]\n      )\n    )\n  )",
+                      "query": "    histogram_quantile(\n      0.99,\n      sum by (source_workload, source_workload_namespace, le) (\n        irate(\n          istio_request_duration_milliseconds_bucket{connection_security_policy!=\"mutual_tls\",destination_service=~\"$service\",reporter=~\"$qrep\"}[5m]\n        )\n      )\n    )\n  /\n    1000\nor\n  histogram_quantile(\n    0.99,\n    sum by (source_workload, source_workload_namespace, le) (\n      irate(\n        istio_request_duration_seconds_bucket{connection_security_policy!=\"mutual_tls\",destination_service=~\"$service\",reporter=~\"$qrep\"}[5m]\n      )\n    )\n  )",
                       "seriesNameFormat": "{{source_workload}}.{{source_workload_namespace}} P99"
                     }
                   }
@@ -995,7 +867,7 @@
                         "kind": "PrometheusDatasource",
                         "name": "prometheus-datasource"
                       },
-                      "query": "histogram_quantile(\n  0.5,\n  sum by (source_workload, source_workload_namespace, le) (\n    irate(\n      istio_request_bytes_bucket{connection_security_policy=\"mutual_tls\",destination_service=~\"$service\",reporter=~\"$qrep\",source_workload=~\"$srcwl\",source_workload_namespace=~\"$srcns\"}[1m]\n    )\n  )\n)",
+                      "query": "histogram_quantile(\n  0.5,\n  sum by (source_workload, source_workload_namespace, le) (\n    irate(\n      istio_request_bytes_bucket{connection_security_policy=\"mutual_tls\",destination_service=~\"$service\",reporter=~\"$qrep\"}[5m]\n    )\n  )\n)",
                       "seriesNameFormat": "{{source_workload}}.{{source_workload_namespace}} P50 (🔐mTLS)"
                     }
                   }
@@ -1011,7 +883,7 @@
                         "kind": "PrometheusDatasource",
                         "name": "prometheus-datasource"
                       },
-                      "query": "histogram_quantile(\n  0.9,\n  sum by (source_workload, source_workload_namespace, le) (\n    irate(\n      istio_request_bytes_bucket{connection_security_policy=\"mutual_tls\",destination_service=~\"$service\",reporter=~\"$qrep\",source_workload=~\"$srcwl\",source_workload_namespace=~\"$srcns\"}[1m]\n    )\n  )\n)",
+                      "query": "histogram_quantile(\n  0.9,\n  sum by (source_workload, source_workload_namespace, le) (\n    irate(\n      istio_request_bytes_bucket{connection_security_policy=\"mutual_tls\",destination_service=~\"$service\",reporter=~\"$qrep\"}[5m]\n    )\n  )\n)",
                       "seriesNameFormat": "{{source_workload}}.{{source_workload_namespace}}  P90 (🔐mTLS)"
                     }
                   }
@@ -1027,7 +899,7 @@
                         "kind": "PrometheusDatasource",
                         "name": "prometheus-datasource"
                       },
-                      "query": "histogram_quantile(\n  0.95,\n  sum by (source_workload, source_workload_namespace, le) (\n    irate(\n      istio_request_bytes_bucket{connection_security_policy=\"mutual_tls\",destination_service=~\"$service\",reporter=~\"$qrep\",source_workload=~\"$srcwl\",source_workload_namespace=~\"$srcns\"}[1m]\n    )\n  )\n)",
+                      "query": "histogram_quantile(\n  0.95,\n  sum by (source_workload, source_workload_namespace, le) (\n    irate(\n      istio_request_bytes_bucket{connection_security_policy=\"mutual_tls\",destination_service=~\"$service\",reporter=~\"$qrep\"}[5m]\n    )\n  )\n)",
                       "seriesNameFormat": "{{source_workload}}.{{source_workload_namespace}} P95 (🔐mTLS)"
                     }
                   }
@@ -1043,7 +915,7 @@
                         "kind": "PrometheusDatasource",
                         "name": "prometheus-datasource"
                       },
-                      "query": "histogram_quantile(\n  0.99,\n  sum by (source_workload, source_workload_namespace, le) (\n    irate(\n      istio_request_bytes_bucket{connection_security_policy=\"mutual_tls\",destination_service=~\"$service\",reporter=~\"$qrep\",source_workload=~\"$srcwl\",source_workload_namespace=~\"$srcns\"}[1m]\n    )\n  )\n)",
+                      "query": "histogram_quantile(\n  0.99,\n  sum by (source_workload, source_workload_namespace, le) (\n    irate(\n      istio_request_bytes_bucket{connection_security_policy=\"mutual_tls\",destination_service=~\"$service\",reporter=~\"$qrep\"}[5m]\n    )\n  )\n)",
                       "seriesNameFormat": "{{source_workload}}.{{source_workload_namespace}}  P99 (🔐mTLS)"
                     }
                   }
@@ -1059,7 +931,7 @@
                         "kind": "PrometheusDatasource",
                         "name": "prometheus-datasource"
                       },
-                      "query": "histogram_quantile(\n  0.5,\n  sum by (source_workload, source_workload_namespace, le) (\n    irate(\n      istio_request_bytes_bucket{connection_security_policy!=\"mutual_tls\",destination_service=~\"$service\",reporter=~\"$qrep\",source_workload=~\"$srcwl\",source_workload_namespace=~\"$srcns\"}[1m]\n    )\n  )\n)",
+                      "query": "histogram_quantile(\n  0.5,\n  sum by (source_workload, source_workload_namespace, le) (\n    irate(\n      istio_request_bytes_bucket{connection_security_policy!=\"mutual_tls\",destination_service=~\"$service\",reporter=~\"$qrep\"}[5m]\n    )\n  )\n)",
                       "seriesNameFormat": "{{source_workload}}.{{source_workload_namespace}} P50"
                     }
                   }
@@ -1075,7 +947,7 @@
                         "kind": "PrometheusDatasource",
                         "name": "prometheus-datasource"
                       },
-                      "query": "histogram_quantile(\n  0.9,\n  sum by (source_workload, source_workload_namespace, le) (\n    irate(\n      istio_request_bytes_bucket{connection_security_policy!=\"mutual_tls\",destination_service=~\"$service\",reporter=~\"$qrep\",source_workload=~\"$srcwl\",source_workload_namespace=~\"$srcns\"}[1m]\n    )\n  )\n)",
+                      "query": "histogram_quantile(\n  0.9,\n  sum by (source_workload, source_workload_namespace, le) (\n    irate(\n      istio_request_bytes_bucket{connection_security_policy!=\"mutual_tls\",destination_service=~\"$service\",reporter=~\"$qrep\"}[5m]\n    )\n  )\n)",
                       "seriesNameFormat": "{{source_workload}}.{{source_workload_namespace}} P90"
                     }
                   }
@@ -1091,7 +963,7 @@
                         "kind": "PrometheusDatasource",
                         "name": "prometheus-datasource"
                       },
-                      "query": "histogram_quantile(\n  0.95,\n  sum by (source_workload, source_workload_namespace, le) (\n    irate(\n      istio_request_bytes_bucket{connection_security_policy!=\"mutual_tls\",destination_service=~\"$service\",reporter=~\"$qrep\",source_workload=~\"$srcwl\",source_workload_namespace=~\"$srcns\"}[1m]\n    )\n  )\n)",
+                      "query": "histogram_quantile(\n  0.95,\n  sum by (source_workload, source_workload_namespace, le) (\n    irate(\n      istio_request_bytes_bucket{connection_security_policy!=\"mutual_tls\",destination_service=~\"$service\",reporter=~\"$qrep\"}[5m]\n    )\n  )\n)",
                       "seriesNameFormat": "{{source_workload}}.{{source_workload_namespace}} P95"
                     }
                   }
@@ -1107,7 +979,7 @@
                         "kind": "PrometheusDatasource",
                         "name": "prometheus-datasource"
                       },
-                      "query": "histogram_quantile(\n  0.99,\n  sum by (source_workload, source_workload_namespace, le) (\n    irate(\n      istio_request_bytes_bucket{connection_security_policy!=\"mutual_tls\",destination_service=~\"$service\",reporter=~\"$qrep\",source_workload=~\"$srcwl\",source_workload_namespace=~\"$srcns\"}[1m]\n    )\n  )\n)",
+                      "query": "histogram_quantile(\n  0.99,\n  sum by (source_workload, source_workload_namespace, le) (\n    irate(\n      istio_request_bytes_bucket{connection_security_policy!=\"mutual_tls\",destination_service=~\"$service\",reporter=~\"$qrep\"}[5m]\n    )\n  )\n)",
                       "seriesNameFormat": "{{source_workload}}.{{source_workload_namespace}} P99"
                     }
                   }
@@ -1152,7 +1024,7 @@
                         "kind": "PrometheusDatasource",
                         "name": "prometheus-datasource"
                       },
-                      "query": "histogram_quantile(\n  0.5,\n  sum by (source_workload, source_workload_namespace, le) (\n    irate(\n      istio_response_bytes_bucket{connection_security_policy=\"mutual_tls\",destination_service=~\"$service\",reporter=~\"$qrep\",source_workload=~\"$srcwl\",source_workload_namespace=~\"$srcns\"}[1m]\n    )\n  )\n)",
+                      "query": "histogram_quantile(\n  0.5,\n  sum by (source_workload, source_workload_namespace, le) (\n    irate(\n      istio_response_bytes_bucket{connection_security_policy=\"mutual_tls\",destination_service=~\"$service\",reporter=~\"$qrep\"}[5m]\n    )\n  )\n)",
                       "seriesNameFormat": "{{source_workload}}.{{source_workload_namespace}} P50 (🔐mTLS)"
                     }
                   }
@@ -1168,7 +1040,7 @@
                         "kind": "PrometheusDatasource",
                         "name": "prometheus-datasource"
                       },
-                      "query": "histogram_quantile(\n  0.9,\n  sum by (source_workload, source_workload_namespace, le) (\n    irate(\n      istio_response_bytes_bucket{connection_security_policy=\"mutual_tls\",destination_service=~\"$service\",reporter=~\"$qrep\",source_workload=~\"$srcwl\",source_workload_namespace=~\"$srcns\"}[1m]\n    )\n  )\n)",
+                      "query": "histogram_quantile(\n  0.9,\n  sum by (source_workload, source_workload_namespace, le) (\n    irate(\n      istio_response_bytes_bucket{connection_security_policy=\"mutual_tls\",destination_service=~\"$service\",reporter=~\"$qrep\"}[5m]\n    )\n  )\n)",
                       "seriesNameFormat": "{{source_workload}}.{{source_workload_namespace}}  P90 (🔐mTLS)"
                     }
                   }
@@ -1184,7 +1056,7 @@
                         "kind": "PrometheusDatasource",
                         "name": "prometheus-datasource"
                       },
-                      "query": "histogram_quantile(\n  0.95,\n  sum by (source_workload, source_workload_namespace, le) (\n    irate(\n      istio_response_bytes_bucket{connection_security_policy=\"mutual_tls\",destination_service=~\"$service\",reporter=~\"$qrep\",source_workload=~\"$srcwl\",source_workload_namespace=~\"$srcns\"}[1m]\n    )\n  )\n)",
+                      "query": "histogram_quantile(\n  0.95,\n  sum by (source_workload, source_workload_namespace, le) (\n    irate(\n      istio_response_bytes_bucket{connection_security_policy=\"mutual_tls\",destination_service=~\"$service\",reporter=~\"$qrep\"}[5m]\n    )\n  )\n)",
                       "seriesNameFormat": "{{source_workload}}.{{source_workload_namespace}} P95 (🔐mTLS)"
                     }
                   }
@@ -1200,7 +1072,7 @@
                         "kind": "PrometheusDatasource",
                         "name": "prometheus-datasource"
                       },
-                      "query": "histogram_quantile(\n  0.95,\n  sum by (source_workload, source_workload_namespace, le) (\n    irate(\n      istio_response_bytes_bucket{connection_security_policy=\"mutual_tls\",destination_service=~\"$service\",reporter=~\"$qrep\",source_workload=~\"$srcwl\",source_workload_namespace=~\"$srcns\"}[1m]\n    )\n  )\n)",
+                      "query": "histogram_quantile(\n  0.99,\n  sum by (source_workload, source_workload_namespace, le) (\n    irate(\n      istio_response_bytes_bucket{connection_security_policy=\"mutual_tls\",destination_service=~\"$service\",reporter=~\"$qrep\"}[5m]\n    )\n  )\n)",
                       "seriesNameFormat": "{{source_workload}}.{{source_workload_namespace}}  P99 (🔐mTLS)"
                     }
                   }
@@ -1216,7 +1088,7 @@
                         "kind": "PrometheusDatasource",
                         "name": "prometheus-datasource"
                       },
-                      "query": "histogram_quantile(\n  0.5,\n  sum by (source_workload, source_workload_namespace, le) (\n    irate(\n      istio_response_bytes_bucket{connection_security_policy!=\"mutual_tls\",destination_service=~\"$service\",reporter=~\"$qrep\",source_workload=~\"$srcwl\",source_workload_namespace=~\"$srcns\"}[1m]\n    )\n  )\n)",
+                      "query": "histogram_quantile(\n  0.5,\n  sum by (source_workload, source_workload_namespace, le) (\n    irate(\n      istio_response_bytes_bucket{connection_security_policy!=\"mutual_tls\",destination_service=~\"$service\",reporter=~\"$qrep\"}[5m]\n    )\n  )\n)",
                       "seriesNameFormat": "{{source_workload}}.{{source_workload_namespace}} P50"
                     }
                   }
@@ -1232,7 +1104,7 @@
                         "kind": "PrometheusDatasource",
                         "name": "prometheus-datasource"
                       },
-                      "query": "histogram_quantile(\n  0.9,\n  sum by (source_workload, source_workload_namespace, le) (\n    irate(\n      istio_response_bytes_bucket{connection_security_policy!=\"mutual_tls\",destination_service=~\"$service\",reporter=~\"$qrep\",source_workload=~\"$srcwl\",source_workload_namespace=~\"$srcns\"}[1m]\n    )\n  )\n)",
+                      "query": "histogram_quantile(\n  0.9,\n  sum by (source_workload, source_workload_namespace, le) (\n    irate(\n      istio_response_bytes_bucket{connection_security_policy!=\"mutual_tls\",destination_service=~\"$service\",reporter=~\"$qrep\"}[5m]\n    )\n  )\n)",
                       "seriesNameFormat": "{{source_workload}}.{{source_workload_namespace}} P90"
                     }
                   }
@@ -1248,7 +1120,7 @@
                         "kind": "PrometheusDatasource",
                         "name": "prometheus-datasource"
                       },
-                      "query": "histogram_quantile(\n  0.95,\n  sum by (source_workload, source_workload_namespace, le) (\n    irate(\n      istio_response_bytes_bucket{connection_security_policy!=\"mutual_tls\",destination_service=~\"$service\",reporter=~\"$qrep\",source_workload=~\"$srcwl\",source_workload_namespace=~\"$srcns\"}[1m]\n    )\n  )\n)",
+                      "query": "histogram_quantile(\n  0.95,\n  sum by (source_workload, source_workload_namespace, le) (\n    irate(\n      istio_response_bytes_bucket{connection_security_policy!=\"mutual_tls\",destination_service=~\"$service\",reporter=~\"$qrep\"}[5m]\n    )\n  )\n)",
                       "seriesNameFormat": "{{source_workload}}.{{source_workload_namespace}} P95"
                     }
                   }
@@ -1264,7 +1136,7 @@
                         "kind": "PrometheusDatasource",
                         "name": "prometheus-datasource"
                       },
-                      "query": "histogram_quantile(\n  0.99,\n  sum by (source_workload, source_workload_namespace, le) (\n    irate(\n      istio_response_bytes_bucket{connection_security_policy!=\"mutual_tls\",destination_service=~\"$service\",reporter=~\"$qrep\",source_workload=~\"$srcwl\",source_workload_namespace=~\"$srcns\"}[1m]\n    )\n  )\n)",
+                      "query": "histogram_quantile(\n  0.99,\n  sum by (source_workload, source_workload_namespace, le) (\n    irate(\n      istio_response_bytes_bucket{connection_security_policy!=\"mutual_tls\",destination_service=~\"$service\",reporter=~\"$qrep\"}[5m]\n    )\n  )\n)",
                       "seriesNameFormat": "{{source_workload}}.{{source_workload_namespace}} P99"
                     }
                   }
@@ -1309,7 +1181,7 @@
                         "kind": "PrometheusDatasource",
                         "name": "prometheus-datasource"
                       },
-                      "query": "round(\n  sum by (source_workload, source_workload_namespace) (\n    irate(\n      istio_tcp_received_bytes_total{connection_security_policy=\"mutual_tls\",destination_service=~\"$service\",reporter=~\"$qrep\",source_workload=~\"$srcwl\",source_workload_namespace=~\"$srcns\"}[1m]\n    )\n  ),\n  0.001\n)",
+                      "query": "round(\n  sum by (source_workload, source_workload_namespace) (\n    irate(\n      istio_tcp_received_bytes_total{connection_security_policy=\"mutual_tls\",destination_service=~\"$service\",reporter=~\"$qrep\"}[5m]\n    )\n  ),\n  0.001\n)",
                       "seriesNameFormat": "{{ source_workload }}.{{ source_workload_namespace}} (🔐mTLS)"
                     }
                   }
@@ -1325,7 +1197,7 @@
                         "kind": "PrometheusDatasource",
                         "name": "prometheus-datasource"
                       },
-                      "query": "round(\n  sum by (source_workload, source_workload_namespace) (\n    irate(\n      istio_tcp_received_bytes_total{connection_security_policy!=\"mutual_tls\",destination_service=~\"$service\",reporter=~\"$qrep\",source_workload=~\"$srcwl\",source_workload_namespace=~\"$srcns\"}[1m]\n    )\n  ),\n  0.001\n)",
+                      "query": "round(\n  sum by (source_workload, source_workload_namespace) (\n    irate(\n      istio_tcp_received_bytes_total{connection_security_policy!=\"mutual_tls\",destination_service=~\"$service\",reporter=~\"$qrep\"}[5m]\n    )\n  ),\n  0.001\n)",
                       "seriesNameFormat": "{{ source_workload }}.{{ source_workload_namespace}}"
                     }
                   }
@@ -1370,7 +1242,7 @@
                         "kind": "PrometheusDatasource",
                         "name": "prometheus-datasource"
                       },
-                      "query": "round(\n  sum by (source_workload, source_workload_namespace) (\n    irate(\n      istio_tcp_sent_bytes_total{connection_security_policy=\"mutual_tls\",destination_service=~\"$service\",reporter=~\"$qrep\",source_workload=~\"$srcwl\",source_workload_namespace=~\"$srcns\"}[1m]\n    )\n  ),\n  0.001\n)",
+                      "query": "round(\n  sum by (source_workload, source_workload_namespace) (\n    irate(\n      istio_tcp_sent_bytes_total{connection_security_policy=\"mutual_tls\",destination_service=~\"$service\",reporter=~\"$qrep\"}[5m]\n    )\n  ),\n  0.001\n)",
                       "seriesNameFormat": "{{ source_workload }}.{{ source_workload_namespace}} (🔐mTLS)"
                     }
                   }
@@ -1386,7 +1258,7 @@
                         "kind": "PrometheusDatasource",
                         "name": "prometheus-datasource"
                       },
-                      "query": "round(\n  sum by (source_workload, source_workload_namespace) (\n    irate(\n      istio_tcp_sent_bytes_total{connection_security_policy!=\"mutual_tls\",destination_service=~\"$service\",reporter=~\"$qrep\",source_workload=~\"$srcwl\",source_workload_namespace=~\"$srcns\"}[1m]\n    )\n  ),\n  0.001\n)",
+                      "query": "round(\n  sum by (source_workload, source_workload_namespace) (\n    irate(\n      istio_tcp_sent_bytes_total{connection_security_policy!=\"mutual_tls\",destination_service=~\"$service\",reporter=~\"$qrep\"}[5m]\n    )\n  ),\n  0.001\n)",
                       "seriesNameFormat": "{{ source_workload }}.{{ source_workload_namespace}}"
                     }
                   }
@@ -1440,7 +1312,7 @@
                         "kind": "PrometheusDatasource",
                         "name": "prometheus-datasource"
                       },
-                      "query": "round(\n  sum by (destination_workload, destination_workload_namespace, response_code) (\n    irate(\n      istio_requests_total{connection_security_policy=\"mutual_tls\",destination_service=~\"$service\",destination_workload=~\"$dstwl\",destination_workload_namespace=~\"$dstns\",reporter=\"destination\"}[5m]\n    )\n  ),\n  0.001\n)",
+                      "query": "round(\n  sum by (destination_workload, destination_workload_namespace, response_code) (\n    irate(\n      istio_requests_total{connection_security_policy=\"mutual_tls\",destination_service=~\"$service\",reporter=\"destination\"}[5m]\n    )\n  ),\n  0.001\n)",
                       "seriesNameFormat": "{{ destination_workload }}.{{ destination_workload_namespace }} : {{ response_code }} (🔐mTLS)"
                     }
                   }
@@ -1456,7 +1328,7 @@
                         "kind": "PrometheusDatasource",
                         "name": "prometheus-datasource"
                       },
-                      "query": "round(\n  sum by (destination_workload, destination_workload_namespace, response_code) (\n    irate(\n      istio_requests_total{connection_security_policy!=\"mutual_tls\",destination_service=~\"$service\",destination_workload=~\"$dstwl\",destination_workload_namespace=~\"$dstns\",reporter=\"destination\"}[5m]\n    )\n  ),\n  0.001\n)",
+                      "query": "round(\n  sum by (destination_workload, destination_workload_namespace, response_code) (\n    irate(\n      istio_requests_total{connection_security_policy!=\"mutual_tls\",destination_service=~\"$service\",reporter=\"destination\"}[5m]\n    )\n  ),\n  0.001\n)",
                       "seriesNameFormat": "{{ destination_workload }}.{{ destination_workload_namespace }} : {{ response_code }}"
                     }
                   }
@@ -1502,7 +1374,7 @@
                         "kind": "PrometheusDatasource",
                         "name": "prometheus-datasource"
                       },
-                      "query": "  sum by (destination_workload, destination_workload_namespace) (\n    irate(\n      istio_requests_total{connection_security_policy=\"mutual_tls\",destination_service=~\"$service\",destination_workload=~\"$dstwl\",destination_workload_namespace=~\"$dstns\",reporter=\"destination\",response_code!~\"5.*\"}[5m]\n    )\n  )\n/\n  sum by (destination_workload, destination_workload_namespace) (\n    irate(\n      istio_requests_total{connection_security_policy=\"mutual_tls\",destination_service=~\"$service\",destination_workload=~\"$dstwl\",destination_workload_namespace=~\"$dstns\",reporter=\"destination\"}[5m]\n    )\n  )",
+                      "query": "  sum by (destination_workload, destination_workload_namespace) (\n    irate(\n      istio_requests_total{connection_security_policy=\"mutual_tls\",destination_service=~\"$service\",reporter=\"destination\",response_code!~\"5.*\"}[5m]\n    )\n  )\n/\n  sum by (destination_workload, destination_workload_namespace) (\n    irate(\n      istio_requests_total{connection_security_policy=\"mutual_tls\",destination_service=~\"$service\",reporter=\"destination\"}[5m]\n    )\n  )",
                       "seriesNameFormat": "{{ destination_workload }}.{{ destination_workload_namespace }} (🔐mTLS)"
                     }
                   }
@@ -1518,7 +1390,7 @@
                         "kind": "PrometheusDatasource",
                         "name": "prometheus-datasource"
                       },
-                      "query": "round(\n  sum by (destination_workload, destination_workload_namespace, response_code) (\n    irate(\n      istio_requests_total{connection_security_policy!=\"mutual_tls\",destination_service=~\"$service\",destination_workload=~\"$dstwl\",destination_workload_namespace=~\"$dstns\",reporter=\"destination\"}[5m]\n    )\n  ),\n  0.001\n)",
+                      "query": "  sum by (destination_workload, destination_workload_namespace) (\n    irate(\n      istio_requests_total{connection_security_policy!=\"mutual_tls\",destination_service=~\"$service\",reporter=\"destination\",response_code!~\"5.*\"}[5m]\n    )\n  )\n/\n  sum by (destination_workload, destination_workload_namespace) (\n    irate(\n      istio_requests_total{connection_security_policy!=\"mutual_tls\",destination_service=~\"$service\",reporter=\"destination\"}[5m]\n    )\n  )",
                       "seriesNameFormat": "{{ destination_workload }}.{{ destination_workload_namespace }}"
                     }
                   }
@@ -1563,7 +1435,7 @@
                         "kind": "PrometheusDatasource",
                         "name": "prometheus-datasource"
                       },
-                      "query": "    histogram_quantile(\n      0.5,\n      sum by (destination_workload, destination_workload_namespace, le) (\n        irate(\n          istio_request_duration_milliseconds_bucket{connection_security_policy=\"mutual_tls\",destination_service=~\"$service\",destination_workload=~\"$dstwl\",destination_workload_namespace=~\"$dstns\",reporter=\"destination\"}[1m]\n        )\n      )\n    )\n  /\n    1000\nor\n  histogram_quantile(\n    0.5,\n    sum by (destination_workload, destination_workload_namespace, le) (\n      irate(\n        istio_request_duration_seconds_bucket{connection_security_policy=\"mutual_tls\",destination_service=~\"$service\",destination_workload=~\"$dstwl\",destination_workload_namespace=~\"$dstns\",reporter=\"destination\"}[1m]\n      )\n    )\n  )",
+                      "query": "    histogram_quantile(\n      0.5,\n      sum by (destination_workload, destination_workload_namespace, le) (\n        irate(\n          istio_request_duration_milliseconds_bucket{connection_security_policy=\"mutual_tls\",destination_service=~\"$service\",reporter=\"destination\"}[5m]\n        )\n      )\n    )\n  /\n    1000\nor\n  histogram_quantile(\n    0.5,\n    sum by (destination_workload, destination_workload_namespace, le) (\n      irate(\n        istio_request_duration_seconds_bucket{connection_security_policy=\"mutual_tls\",destination_service=~\"$service\",reporter=\"destination\"}[5m]\n      )\n    )\n  )",
                       "seriesNameFormat": "{{ destination_workload }}.{{ destination_workload_namespace }} P50 (🔐mTLS)"
                     }
                   }
@@ -1579,7 +1451,7 @@
                         "kind": "PrometheusDatasource",
                         "name": "prometheus-datasource"
                       },
-                      "query": "    histogram_quantile(\n      0.9,\n      sum by (destination_workload, destination_workload_namespace, le) (\n        irate(\n          istio_request_duration_milliseconds_bucket{connection_security_policy=\"mutual_tls\",destination_service=~\"$service\",destination_workload=~\"$dstwl\",destination_workload_namespace=~\"$dstns\",reporter=\"destination\"}[1m]\n        )\n      )\n    )\n  /\n    1000\nor\n  histogram_quantile(\n    0.9,\n    sum by (destination_workload, destination_workload_namespace, le) (\n      irate(\n        istio_request_duration_seconds_bucket{connection_security_policy=\"mutual_tls\",destination_service=~\"$service\",destination_workload=~\"$dstwl\",destination_workload_namespace=~\"$dstns\",reporter=\"destination\"}[1m]\n      )\n    )\n  )",
+                      "query": "    histogram_quantile(\n      0.9,\n      sum by (destination_workload, destination_workload_namespace, le) (\n        irate(\n          istio_request_duration_milliseconds_bucket{connection_security_policy=\"mutual_tls\",destination_service=~\"$service\",reporter=\"destination\"}[5m]\n        )\n      )\n    )\n  /\n    1000\nor\n  histogram_quantile(\n    0.9,\n    sum by (destination_workload, destination_workload_namespace, le) (\n      irate(\n        istio_request_duration_seconds_bucket{connection_security_policy=\"mutual_tls\",destination_service=~\"$service\",reporter=\"destination\"}[5m]\n      )\n    )\n  )",
                       "seriesNameFormat": "{{ destination_workload }}.{{ destination_workload_namespace }} P90 (🔐mTLS)"
                     }
                   }
@@ -1595,7 +1467,7 @@
                         "kind": "PrometheusDatasource",
                         "name": "prometheus-datasource"
                       },
-                      "query": "    histogram_quantile(\n      0.95,\n      sum by (destination_workload, destination_workload_namespace, le) (\n        irate(\n          istio_request_duration_milliseconds_bucket{connection_security_policy=\"mutual_tls\",destination_service=~\"$service\",destination_workload=~\"$dstwl\",destination_workload_namespace=~\"$dstns\",reporter=\"destination\"}[1m]\n        )\n      )\n    )\n  /\n    1000\nor\n  histogram_quantile(\n    0.95,\n    sum by (destination_workload, destination_workload_namespace, le) (\n      irate(\n        istio_request_duration_seconds_bucket{connection_security_policy=\"mutual_tls\",destination_service=~\"$service\",destination_workload=~\"$dstwl\",destination_workload_namespace=~\"$dstns\",reporter=\"destination\"}[1m]\n      )\n    )\n  )",
+                      "query": "    histogram_quantile(\n      0.95,\n      sum by (destination_workload, destination_workload_namespace, le) (\n        irate(\n          istio_request_duration_milliseconds_bucket{connection_security_policy=\"mutual_tls\",destination_service=~\"$service\",reporter=\"destination\"}[5m]\n        )\n      )\n    )\n  /\n    1000\nor\n  histogram_quantile(\n    0.95,\n    sum by (destination_workload, destination_workload_namespace, le) (\n      irate(\n        istio_request_duration_seconds_bucket{connection_security_policy=\"mutual_tls\",destination_service=~\"$service\",reporter=\"destination\"}[5m]\n      )\n    )\n  )",
                       "seriesNameFormat": "{{ destination_workload }}.{{ destination_workload_namespace }} P95 (🔐mTLS)"
                     }
                   }
@@ -1611,7 +1483,7 @@
                         "kind": "PrometheusDatasource",
                         "name": "prometheus-datasource"
                       },
-                      "query": "    histogram_quantile(\n      0.99,\n      sum by (destination_workload, destination_workload_namespace, le) (\n        irate(\n          istio_request_duration_milliseconds_bucket{connection_security_policy=\"mutual_tls\",destination_service=~\"$service\",destination_workload=~\"$dstwl\",destination_workload_namespace=~\"$dstns\",reporter=\"destination\"}[1m]\n        )\n      )\n    )\n  /\n    1000\nor\n  histogram_quantile(\n    0.99,\n    sum by (destination_workload, destination_workload_namespace, le) (\n      irate(\n        istio_request_duration_seconds_bucket{connection_security_policy=\"mutual_tls\",destination_service=~\"$service\",destination_workload=~\"$dstwl\",destination_workload_namespace=~\"$dstns\",reporter=\"destination\"}[1m]\n      )\n    )\n  )",
+                      "query": "    histogram_quantile(\n      0.99,\n      sum by (destination_workload, destination_workload_namespace, le) (\n        irate(\n          istio_request_duration_milliseconds_bucket{connection_security_policy=\"mutual_tls\",destination_service=~\"$service\",reporter=\"destination\"}[5m]\n        )\n      )\n    )\n  /\n    1000\nor\n  histogram_quantile(\n    0.99,\n    sum by (destination_workload, destination_workload_namespace, le) (\n      irate(\n        istio_request_duration_seconds_bucket{connection_security_policy=\"mutual_tls\",destination_service=~\"$service\",reporter=\"destination\"}[5m]\n      )\n    )\n  )",
                       "seriesNameFormat": "{{ destination_workload }}.{{ destination_workload_namespace }} P99 (🔐mTLS)"
                     }
                   }
@@ -1627,7 +1499,7 @@
                         "kind": "PrometheusDatasource",
                         "name": "prometheus-datasource"
                       },
-                      "query": "    histogram_quantile(\n      0.5,\n      sum by (destination_workload, destination_workload_namespace, le) (\n        irate(\n          istio_request_duration_milliseconds_bucket{connection_security_policy!=\"mutual_tls\",destination_service=~\"$service\",destination_workload=~\"$dstwl\",destination_workload_namespace=~\"$dstns\",reporter=\"destination\"}[1m]\n        )\n      )\n    )\n  /\n    1000\nor\n  histogram_quantile(\n    0.5,\n    sum by (destination_workload, destination_workload_namespace, le) (\n      irate(\n        istio_request_duration_seconds_bucket{connection_security_policy!=\"mutual_tls\",destination_service=~\"$service\",destination_workload=~\"$dstwl\",destination_workload_namespace=~\"$dstns\",reporter=\"destination\"}[1m]\n      )\n    )\n  )",
+                      "query": "    histogram_quantile(\n      0.5,\n      sum by (destination_workload, destination_workload_namespace, le) (\n        irate(\n          istio_request_duration_milliseconds_bucket{connection_security_policy!=\"mutual_tls\",destination_service=~\"$service\",reporter=\"destination\"}[5m]\n        )\n      )\n    )\n  /\n    1000\nor\n  histogram_quantile(\n    0.5,\n    sum by (destination_workload, destination_workload_namespace, le) (\n      irate(\n        istio_request_duration_seconds_bucket{connection_security_policy!=\"mutual_tls\",destination_service=~\"$service\",reporter=\"destination\"}[5m]\n      )\n    )\n  )",
                       "seriesNameFormat": "{{ destination_workload }}.{{ destination_workload_namespace }} P50"
                     }
                   }
@@ -1643,7 +1515,7 @@
                         "kind": "PrometheusDatasource",
                         "name": "prometheus-datasource"
                       },
-                      "query": "    histogram_quantile(\n      0.9,\n      sum by (destination_workload, destination_workload_namespace, le) (\n        irate(\n          istio_request_duration_milliseconds_bucket{connection_security_policy!=\"mutual_tls\",destination_service=~\"$service\",destination_workload=~\"$dstwl\",destination_workload_namespace=~\"$dstns\",reporter=\"destination\"}[1m]\n        )\n      )\n    )\n  /\n    1000\nor\n  histogram_quantile(\n    0.9,\n    sum by (destination_workload, destination_workload_namespace, le) (\n      irate(\n        istio_request_duration_seconds_bucket{connection_security_policy!=\"mutual_tls\",destination_service=~\"$service\",destination_workload=~\"$dstwl\",destination_workload_namespace=~\"$dstns\",reporter=\"destination\"}[1m]\n      )\n    )\n  )",
+                      "query": "    histogram_quantile(\n      0.9,\n      sum by (destination_workload, destination_workload_namespace, le) (\n        irate(\n          istio_request_duration_milliseconds_bucket{connection_security_policy!=\"mutual_tls\",destination_service=~\"$service\",reporter=\"destination\"}[5m]\n        )\n      )\n    )\n  /\n    1000\nor\n  histogram_quantile(\n    0.9,\n    sum by (destination_workload, destination_workload_namespace, le) (\n      irate(\n        istio_request_duration_seconds_bucket{connection_security_policy!=\"mutual_tls\",destination_service=~\"$service\",reporter=\"destination\"}[5m]\n      )\n    )\n  )",
                       "seriesNameFormat": "{{ destination_workload }}.{{ destination_workload_namespace }} P90"
                     }
                   }
@@ -1659,7 +1531,7 @@
                         "kind": "PrometheusDatasource",
                         "name": "prometheus-datasource"
                       },
-                      "query": "    histogram_quantile(\n      0.95,\n      sum by (destination_workload, destination_workload_namespace, le) (\n        irate(\n          istio_request_duration_milliseconds_bucket{connection_security_policy!=\"mutual_tls\",destination_service=~\"$service\",destination_workload=~\"$dstwl\",destination_workload_namespace=~\"$dstns\",reporter=\"destination\"}[1m]\n        )\n      )\n    )\n  /\n    1000\nor\n  histogram_quantile(\n    0.95,\n    sum by (destination_workload, destination_workload_namespace, le) (\n      irate(\n        istio_request_duration_seconds_bucket{connection_security_policy!=\"mutual_tls\",destination_service=~\"$service\",destination_workload=~\"$dstwl\",destination_workload_namespace=~\"$dstns\",reporter=\"destination\"}[1m]\n      )\n    )\n  )",
+                      "query": "    histogram_quantile(\n      0.95,\n      sum by (destination_workload, destination_workload_namespace, le) (\n        irate(\n          istio_request_duration_milliseconds_bucket{connection_security_policy!=\"mutual_tls\",destination_service=~\"$service\",reporter=\"destination\"}[5m]\n        )\n      )\n    )\n  /\n    1000\nor\n  histogram_quantile(\n    0.95,\n    sum by (destination_workload, destination_workload_namespace, le) (\n      irate(\n        istio_request_duration_seconds_bucket{connection_security_policy!=\"mutual_tls\",destination_service=~\"$service\",reporter=\"destination\"}[5m]\n      )\n    )\n  )",
                       "seriesNameFormat": "{{ destination_workload }}.{{ destination_workload_namespace }} P95"
                     }
                   }
@@ -1675,7 +1547,7 @@
                         "kind": "PrometheusDatasource",
                         "name": "prometheus-datasource"
                       },
-                      "query": "    histogram_quantile(\n      0.99,\n      sum by (destination_workload, destination_workload_namespace, le) (\n        irate(\n          istio_request_duration_milliseconds_bucket{connection_security_policy!=\"mutual_tls\",destination_service=~\"$service\",destination_workload=~\"$dstwl\",destination_workload_namespace=~\"$dstns\",reporter=\"destination\"}[1m]\n        )\n      )\n    )\n  /\n    1000\nor\n  histogram_quantile(\n    0.99,\n    sum by (destination_workload, destination_workload_namespace, le) (\n      irate(\n        istio_request_duration_seconds_bucket{connection_security_policy!=\"mutual_tls\",destination_service=~\"$service\",destination_workload=~\"$dstwl\",destination_workload_namespace=~\"$dstns\",reporter=\"destination\"}[1m]\n      )\n    )\n  )",
+                      "query": "    histogram_quantile(\n      0.99,\n      sum by (destination_workload, destination_workload_namespace, le) (\n        irate(\n          istio_request_duration_milliseconds_bucket{connection_security_policy!=\"mutual_tls\",destination_service=~\"$service\",reporter=\"destination\"}[5m]\n        )\n      )\n    )\n  /\n    1000\nor\n  histogram_quantile(\n    0.99,\n    sum by (destination_workload, destination_workload_namespace, le) (\n      irate(\n        istio_request_duration_seconds_bucket{connection_security_policy!=\"mutual_tls\",destination_service=~\"$service\",reporter=\"destination\"}[5m]\n      )\n    )\n  )",
                       "seriesNameFormat": "{{ destination_workload }}.{{ destination_workload_namespace }} P99"
                     }
                   }
@@ -1720,7 +1592,7 @@
                         "kind": "PrometheusDatasource",
                         "name": "prometheus-datasource"
                       },
-                      "query": "histogram_quantile(\n  0.5,\n  sum by (destination_workload, destination_workload_namespace, le) (\n    irate(\n      istio_request_bytes_bucket{connection_security_policy=\"mutual_tls\",destination_service=~\"$service\",destination_workload=~\"$dstwl\",destination_workload_namespace=~\"$dstns\",reporter=\"destination\"}[1m]\n    )\n  )\n)",
+                      "query": "histogram_quantile(\n  0.5,\n  sum by (destination_workload, destination_workload_namespace, le) (\n    irate(\n      istio_request_bytes_bucket{connection_security_policy=\"mutual_tls\",destination_service=~\"$service\",reporter=\"destination\"}[5m]\n    )\n  )\n)",
                       "seriesNameFormat": "{{ destination_workload }}.{{ destination_workload_namespace }} P50 (🔐mTLS)"
                     }
                   }
@@ -1736,7 +1608,7 @@
                         "kind": "PrometheusDatasource",
                         "name": "prometheus-datasource"
                       },
-                      "query": "histogram_quantile(\n  0.9,\n  sum by (destination_workload, destination_workload_namespace, le) (\n    irate(\n      istio_request_bytes_bucket{connection_security_policy=\"mutual_tls\",destination_service=~\"$service\",destination_workload=~\"$dstwl\",destination_workload_namespace=~\"$dstns\",reporter=\"destination\"}[1m]\n    )\n  )\n)",
+                      "query": "histogram_quantile(\n  0.9,\n  sum by (destination_workload, destination_workload_namespace, le) (\n    irate(\n      istio_request_bytes_bucket{connection_security_policy=\"mutual_tls\",destination_service=~\"$service\",reporter=\"destination\"}[5m]\n    )\n  )\n)",
                       "seriesNameFormat": "{{ destination_workload }}.{{ destination_workload_namespace }}  P90 (🔐mTLS)"
                     }
                   }
@@ -1752,7 +1624,7 @@
                         "kind": "PrometheusDatasource",
                         "name": "prometheus-datasource"
                       },
-                      "query": "histogram_quantile(\n  0.95,\n  sum by (destination_workload, destination_workload_namespace, le) (\n    irate(\n      istio_request_bytes_bucket{connection_security_policy=\"mutual_tls\",destination_service=~\"$service\",destination_workload=~\"$dstwl\",destination_workload_namespace=~\"$dstns\",reporter=\"destination\"}[1m]\n    )\n  )\n)",
+                      "query": "histogram_quantile(\n  0.95,\n  sum by (destination_workload, destination_workload_namespace, le) (\n    irate(\n      istio_request_bytes_bucket{connection_security_policy=\"mutual_tls\",destination_service=~\"$service\",reporter=\"destination\"}[5m]\n    )\n  )\n)",
                       "seriesNameFormat": "{{ destination_workload }}.{{ destination_workload_namespace }} P95 (🔐mTLS)"
                     }
                   }
@@ -1768,7 +1640,7 @@
                         "kind": "PrometheusDatasource",
                         "name": "prometheus-datasource"
                       },
-                      "query": "histogram_quantile(\n  0.99,\n  sum by (destination_workload, destination_workload_namespace, le) (\n    irate(\n      istio_request_bytes_bucket{connection_security_policy=\"mutual_tls\",destination_service=~\"$service\",destination_workload=~\"$dstwl\",destination_workload_namespace=~\"$dstns\",reporter=\"destination\"}[1m]\n    )\n  )\n)",
+                      "query": "histogram_quantile(\n  0.99,\n  sum by (destination_workload, destination_workload_namespace, le) (\n    irate(\n      istio_request_bytes_bucket{connection_security_policy=\"mutual_tls\",destination_service=~\"$service\",reporter=\"destination\"}[5m]\n    )\n  )\n)",
                       "seriesNameFormat": "{{ destination_workload }}.{{ destination_workload_namespace }}  P99 (🔐mTLS)"
                     }
                   }
@@ -1784,7 +1656,7 @@
                         "kind": "PrometheusDatasource",
                         "name": "prometheus-datasource"
                       },
-                      "query": "histogram_quantile(\n  0.5,\n  sum by (destination_workload, destination_workload_namespace, le) (\n    irate(\n      istio_request_bytes_bucket{connection_security_policy!=\"mutual_tls\",destination_service=~\"$service\",destination_workload=~\"$dstwl\",destination_workload_namespace=~\"$dstns\",reporter=\"destination\"}[1m]\n    )\n  )\n)",
+                      "query": "histogram_quantile(\n  0.5,\n  sum by (destination_workload, destination_workload_namespace, le) (\n    irate(\n      istio_request_bytes_bucket{connection_security_policy!=\"mutual_tls\",destination_service=~\"$service\",reporter=\"destination\"}[5m]\n    )\n  )\n)",
                       "seriesNameFormat": "{{ destination_workload }}.{{ destination_workload_namespace }} P50"
                     }
                   }
@@ -1800,7 +1672,7 @@
                         "kind": "PrometheusDatasource",
                         "name": "prometheus-datasource"
                       },
-                      "query": "histogram_quantile(\n  0.9,\n  sum by (destination_workload, destination_workload_namespace, le) (\n    irate(\n      istio_request_bytes_bucket{connection_security_policy!=\"mutual_tls\",destination_service=~\"$service\",destination_workload=~\"$dstwl\",destination_workload_namespace=~\"$dstns\",reporter=\"destination\"}[1m]\n    )\n  )\n)",
+                      "query": "histogram_quantile(\n  0.9,\n  sum by (destination_workload, destination_workload_namespace, le) (\n    irate(\n      istio_request_bytes_bucket{connection_security_policy!=\"mutual_tls\",destination_service=~\"$service\",reporter=\"destination\"}[5m]\n    )\n  )\n)",
                       "seriesNameFormat": "{{ destination_workload }}.{{ destination_workload_namespace }} P90"
                     }
                   }
@@ -1816,7 +1688,7 @@
                         "kind": "PrometheusDatasource",
                         "name": "prometheus-datasource"
                       },
-                      "query": "histogram_quantile(\n  0.95,\n  sum by (destination_workload, destination_workload_namespace, le) (\n    irate(\n      istio_request_bytes_bucket{connection_security_policy!=\"mutual_tls\",destination_service=~\"$service\",destination_workload=~\"$dstwl\",destination_workload_namespace=~\"$dstns\",reporter=\"destination\"}[1m]\n    )\n  )\n)",
+                      "query": "histogram_quantile(\n  0.95,\n  sum by (destination_workload, destination_workload_namespace, le) (\n    irate(\n      istio_request_bytes_bucket{connection_security_policy!=\"mutual_tls\",destination_service=~\"$service\",reporter=\"destination\"}[5m]\n    )\n  )\n)",
                       "seriesNameFormat": "{{ destination_workload }}.{{ destination_workload_namespace }} P95"
                     }
                   }
@@ -1832,7 +1704,7 @@
                         "kind": "PrometheusDatasource",
                         "name": "prometheus-datasource"
                       },
-                      "query": "histogram_quantile(\n  0.99,\n  sum by (destination_workload, destination_workload_namespace, le) (\n    irate(\n      istio_request_bytes_bucket{connection_security_policy!=\"mutual_tls\",destination_service=~\"$service\",destination_workload=~\"$dstwl\",destination_workload_namespace=~\"$dstns\",reporter=\"destination\"}[1m]\n    )\n  )\n)",
+                      "query": "histogram_quantile(\n  0.99,\n  sum by (destination_workload, destination_workload_namespace, le) (\n    irate(\n      istio_request_bytes_bucket{connection_security_policy!=\"mutual_tls\",destination_service=~\"$service\",reporter=\"destination\"}[5m]\n    )\n  )\n)",
                       "seriesNameFormat": "{{ destination_workload }}.{{ destination_workload_namespace }} P99"
                     }
                   }
@@ -1877,7 +1749,7 @@
                         "kind": "PrometheusDatasource",
                         "name": "prometheus-datasource"
                       },
-                      "query": "histogram_quantile(\n  0.5,\n  sum by (destination_workload, destination_workload_namespace, le) (\n    irate(\n      istio_response_bytes_bucket{connection_security_policy=\"mutual_tls\",destination_service=~\"$service\",destination_workload=~\"$dstwl\",destination_workload_namespace=~\"$dstns\",reporter=\"destination\"}[1m]\n    )\n  )\n)",
+                      "query": "histogram_quantile(\n  0.5,\n  sum by (destination_workload, destination_workload_namespace, le) (\n    irate(\n      istio_response_bytes_bucket{connection_security_policy=\"mutual_tls\",destination_service=~\"$service\",reporter=\"destination\"}[5m]\n    )\n  )\n)",
                       "seriesNameFormat": "{{ destination_workload }}.{{ destination_workload_namespace }} P50 (🔐mTLS)"
                     }
                   }
@@ -1893,7 +1765,7 @@
                         "kind": "PrometheusDatasource",
                         "name": "prometheus-datasource"
                       },
-                      "query": "histogram_quantile(\n  0.9,\n  sum by (destination_workload, destination_workload_namespace, le) (\n    irate(\n      istio_response_bytes_bucket{connection_security_policy=\"mutual_tls\",destination_service=~\"$service\",destination_workload=~\"$dstwl\",destination_workload_namespace=~\"$dstns\",reporter=\"destination\"}[1m]\n    )\n  )\n)",
+                      "query": "histogram_quantile(\n  0.9,\n  sum by (destination_workload, destination_workload_namespace, le) (\n    irate(\n      istio_response_bytes_bucket{connection_security_policy=\"mutual_tls\",destination_service=~\"$service\",reporter=\"destination\"}[5m]\n    )\n  )\n)",
                       "seriesNameFormat": "{{ destination_workload }}.{{ destination_workload_namespace }}  P90 (🔐mTLS)"
                     }
                   }
@@ -1909,7 +1781,7 @@
                         "kind": "PrometheusDatasource",
                         "name": "prometheus-datasource"
                       },
-                      "query": "histogram_quantile(\n  0.95,\n  sum by (destination_workload, destination_workload_namespace, le) (\n    irate(\n      istio_response_bytes_bucket{connection_security_policy=\"mutual_tls\",destination_service=~\"$service\",destination_workload=~\"$dstwl\",destination_workload_namespace=~\"$dstns\",reporter=\"destination\"}[1m]\n    )\n  )\n)",
+                      "query": "histogram_quantile(\n  0.95,\n  sum by (destination_workload, destination_workload_namespace, le) (\n    irate(\n      istio_response_bytes_bucket{connection_security_policy=\"mutual_tls\",destination_service=~\"$service\",reporter=\"destination\"}[5m]\n    )\n  )\n)",
                       "seriesNameFormat": "{{ destination_workload }}.{{ destination_workload_namespace }} P95 (🔐mTLS)"
                     }
                   }
@@ -1925,7 +1797,7 @@
                         "kind": "PrometheusDatasource",
                         "name": "prometheus-datasource"
                       },
-                      "query": "histogram_quantile(\n  0.99,\n  sum by (destination_workload, destination_workload_namespace, le) (\n    irate(\n      istio_response_bytes_bucket{connection_security_policy=\"mutual_tls\",destination_service=~\"$service\",destination_workload=~\"$dstwl\",destination_workload_namespace=~\"$dstns\",reporter=\"destination\"}[1m]\n    )\n  )\n)",
+                      "query": "histogram_quantile(\n  0.99,\n  sum by (destination_workload, destination_workload_namespace, le) (\n    irate(\n      istio_response_bytes_bucket{connection_security_policy=\"mutual_tls\",destination_service=~\"$service\",reporter=\"destination\"}[5m]\n    )\n  )\n)",
                       "seriesNameFormat": "{{ destination_workload }}.{{ destination_workload_namespace }}  P99 (🔐mTLS)"
                     }
                   }
@@ -1941,7 +1813,7 @@
                         "kind": "PrometheusDatasource",
                         "name": "prometheus-datasource"
                       },
-                      "query": "histogram_quantile(\n  0.5,\n  sum by (destination_workload, destination_workload_namespace, le) (\n    irate(\n      istio_response_bytes_bucket{connection_security_policy!=\"mutual_tls\",destination_service=~\"$service\",destination_workload=~\"$dstwl\",destination_workload_namespace=~\"$dstns\",reporter=\"destination\"}[1m]\n    )\n  )\n)",
+                      "query": "histogram_quantile(\n  0.5,\n  sum by (destination_workload, destination_workload_namespace, le) (\n    irate(\n      istio_response_bytes_bucket{connection_security_policy!=\"mutual_tls\",destination_service=~\"$service\",reporter=\"destination\"}[5m]\n    )\n  )\n)",
                       "seriesNameFormat": "{{ destination_workload }}.{{ destination_workload_namespace }} P50"
                     }
                   }
@@ -1957,7 +1829,7 @@
                         "kind": "PrometheusDatasource",
                         "name": "prometheus-datasource"
                       },
-                      "query": "histogram_quantile(\n  0.9,\n  sum by (destination_workload, destination_workload_namespace, le) (\n    irate(\n      istio_response_bytes_bucket{connection_security_policy!=\"mutual_tls\",destination_service=~\"$service\",destination_workload=~\"$dstwl\",destination_workload_namespace=~\"$dstns\",reporter=\"destination\"}[1m]\n    )\n  )\n)",
+                      "query": "histogram_quantile(\n  0.9,\n  sum by (destination_workload, destination_workload_namespace, le) (\n    irate(\n      istio_response_bytes_bucket{connection_security_policy!=\"mutual_tls\",destination_service=~\"$service\",reporter=\"destination\"}[5m]\n    )\n  )\n)",
                       "seriesNameFormat": "{{ destination_workload }}.{{ destination_workload_namespace }} P90"
                     }
                   }
@@ -1973,7 +1845,7 @@
                         "kind": "PrometheusDatasource",
                         "name": "prometheus-datasource"
                       },
-                      "query": "histogram_quantile(\n  0.95,\n  sum by (destination_workload, destination_workload_namespace, le) (\n    irate(\n      istio_response_bytes_bucket{connection_security_policy!=\"mutual_tls\",destination_service=~\"$service\",destination_workload=~\"$dstwl\",destination_workload_namespace=~\"$dstns\",reporter=\"destination\"}[1m]\n    )\n  )\n)",
+                      "query": "histogram_quantile(\n  0.95,\n  sum by (destination_workload, destination_workload_namespace, le) (\n    irate(\n      istio_response_bytes_bucket{connection_security_policy!=\"mutual_tls\",destination_service=~\"$service\",reporter=\"destination\"}[5m]\n    )\n  )\n)",
                       "seriesNameFormat": "{{ destination_workload }}.{{ destination_workload_namespace }} P95"
                     }
                   }
@@ -1989,7 +1861,7 @@
                         "kind": "PrometheusDatasource",
                         "name": "prometheus-datasource"
                       },
-                      "query": "histogram_quantile(\n  0.99,\n  sum by (destination_workload, destination_workload_namespace, le) (\n    irate(\n      istio_response_bytes_bucket{connection_security_policy!=\"mutual_tls\",destination_service=~\"$service\",destination_workload=~\"$dstwl\",destination_workload_namespace=~\"$dstns\",reporter=\"destination\"}[1m]\n    )\n  )\n)",
+                      "query": "histogram_quantile(\n  0.99,\n  sum by (destination_workload, destination_workload_namespace, le) (\n    irate(\n      istio_response_bytes_bucket{connection_security_policy!=\"mutual_tls\",destination_service=~\"$service\",reporter=\"destination\"}[5m]\n    )\n  )\n)",
                       "seriesNameFormat": "{{ destination_workload }}.{{ destination_workload_namespace }} P99"
                     }
                   }
@@ -2034,7 +1906,7 @@
                         "kind": "PrometheusDatasource",
                         "name": "prometheus-datasource"
                       },
-                      "query": "round(\n  sum by (destination_workload, destination_workload_namespace) (\n    irate(\n      istio_tcp_received_bytes_total{connection_security_policy=\"mutual_tls\",destination_service=~\"$service\",destination_workload=~\"$dstwl\",destination_workload_namespace=~\"$dstns\",reporter=\"destination\"}[1m]\n    )\n  ),\n  0.001\n)",
+                      "query": "round(\n  sum by (destination_workload, destination_workload_namespace) (\n    irate(\n      istio_tcp_received_bytes_total{connection_security_policy=\"mutual_tls\",destination_service=~\"$service\",reporter=\"destination\"}[5m]\n    )\n  ),\n  0.001\n)",
                       "seriesNameFormat": "{{ destination_workload }}.{{ destination_workload_namespace}} (🔐mTLS)"
                     }
                   }
@@ -2050,7 +1922,7 @@
                         "kind": "PrometheusDatasource",
                         "name": "prometheus-datasource"
                       },
-                      "query": "round(\n  sum by (destination_workload, destination_workload_namespace) (\n    irate(\n      istio_tcp_received_bytes_total{connection_security_policy!=\"mutual_tls\",destination_service=~\"$service\",destination_workload=~\"$dstwl\",destination_workload_namespace=~\"$dstns\",reporter=\"destination\"}[1m]\n    )\n  ),\n  0.001\n)",
+                      "query": "round(\n  sum by (destination_workload, destination_workload_namespace) (\n    irate(\n      istio_tcp_received_bytes_total{connection_security_policy!=\"mutual_tls\",destination_service=~\"$service\",reporter=\"destination\"}[5m]\n    )\n  ),\n  0.001\n)",
                       "seriesNameFormat": "{{ destination_workload }}.{{ destination_workload_namespace}}"
                     }
                   }
@@ -2095,7 +1967,7 @@
                         "kind": "PrometheusDatasource",
                         "name": "prometheus-datasource"
                       },
-                      "query": "round(\n  sum by (destination_workload, destination_workload_namespace) (\n    irate(\n      istio_tcp_sent_bytes_total{connection_security_policy=\"mutual_tls\",destination_service=~\"$service\",destination_workload=~\"$dstwl\",destination_workload_namespace=~\"$dstns\",reporter=\"destination\"}[1m]\n    )\n  ),\n  0.001\n)",
+                      "query": "round(\n  sum by (destination_workload, destination_workload_namespace) (\n    irate(\n      istio_tcp_sent_bytes_total{connection_security_policy=\"mutual_tls\",destination_service=~\"$service\",reporter=\"destination\"}[5m]\n    )\n  ),\n  0.001\n)",
                       "seriesNameFormat": "{{ destination_workload }}.{{destination_workload_namespace }} (🔐mTLS)"
                     }
                   }
@@ -2111,7 +1983,7 @@
                         "kind": "PrometheusDatasource",
                         "name": "prometheus-datasource"
                       },
-                      "query": "round(\n  sum by (destination_workload, destination_workload_namespace) (\n    irate(\n      istio_tcp_sent_bytes_total{connection_security_policy!=\"mutual_tls\",destination_service=~\"$service\",destination_workload=~\"$dstwl\",destination_workload_namespace=~\"$dstns\",reporter=\"destination\"}[1m]\n    )\n  ),\n  0.001\n)",
+                      "query": "round(\n  sum by (destination_workload, destination_workload_namespace) (\n    irate(\n      istio_tcp_sent_bytes_total{connection_security_policy!=\"mutual_tls\",destination_service=~\"$service\",reporter=\"destination\"}[5m]\n    )\n  ),\n  0.001\n)",
                       "seriesNameFormat": "{{ destination_workload }}.{{destination_workload_namespace }}"
                     }
                   }
@@ -2152,7 +2024,7 @@
                 "x": 0,
                 "y": 0,
                 "width": 12,
-                "height": 4,
+                "height": 8,
                 "content": {
                   "$ref": "#/spec/panels/1_0"
                 }
@@ -2161,61 +2033,61 @@
                 "x": 12,
                 "y": 0,
                 "width": 12,
-                "height": 4,
+                "height": 8,
                 "content": {
                   "$ref": "#/spec/panels/1_1"
                 }
               },
               {
                 "x": 0,
-                "y": 4,
+                "y": 8,
                 "width": 12,
-                "height": 4,
+                "height": 8,
                 "content": {
                   "$ref": "#/spec/panels/1_2"
                 }
               },
               {
                 "x": 12,
-                "y": 4,
+                "y": 8,
                 "width": 12,
-                "height": 4,
+                "height": 8,
                 "content": {
                   "$ref": "#/spec/panels/1_3"
                 }
               },
               {
                 "x": 0,
-                "y": 8,
+                "y": 16,
                 "width": 12,
-                "height": 4,
+                "height": 8,
                 "content": {
                   "$ref": "#/spec/panels/1_4"
                 }
               },
               {
                 "x": 12,
-                "y": 8,
+                "y": 16,
                 "width": 12,
-                "height": 4,
+                "height": 8,
                 "content": {
                   "$ref": "#/spec/panels/1_5"
                 }
               },
               {
                 "x": 0,
-                "y": 12,
+                "y": 24,
                 "width": 12,
-                "height": 4,
+                "height": 8,
                 "content": {
                   "$ref": "#/spec/panels/1_6"
                 }
               },
               {
                 "x": 12,
-                "y": 12,
+                "y": 24,
                 "width": 12,
-                "height": 4,
+                "height": 8,
                 "content": {
                   "$ref": "#/spec/panels/1_7"
                 }
