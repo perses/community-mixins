@@ -96,7 +96,7 @@ func IncomingSuccessRateByService(datasourceName string, labelMatchers ...*label
 		panel.AddQuery(
 			query.PromQL(
 				promql.SetLabelMatchersV2(
-					IstioCommonPanelQueries["IstioIncomingRequestsByServiceNonmTLS"],
+					IstioCommonPanelQueries["IncomingSuccessRateByServiceNonmTLS"],
 					labelMatchers,
 				).Pretty(0),
 				dashboards.AddQueryDataSource(datasourceName),

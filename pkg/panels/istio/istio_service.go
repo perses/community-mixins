@@ -37,6 +37,7 @@ func ClientRequestVolume(datasourceName string, labelMatchers ...*labels.Matcher
 			timeSeriesPanel.WithLegend(timeSeriesPanel.Legend{
 				Position: timeSeriesPanel.BottomPosition,
 				Mode:     timeSeriesPanel.ListMode,
+				Size:     timeSeriesPanel.MediumSize,
 			}),
 			timeSeriesPanel.WithVisual(timeSeriesPanel.Visual{
 				Display:      timeSeriesPanel.LineDisplay,
@@ -73,6 +74,7 @@ func ClientSuccessRate(datasourceName string, labelMatchers ...*labels.Matcher) 
 			timeSeriesPanel.WithLegend(timeSeriesPanel.Legend{
 				Position: timeSeriesPanel.BottomPosition,
 				Mode:     timeSeriesPanel.ListMode,
+				Size:     timeSeriesPanel.MediumSize,
 			}),
 			timeSeriesPanel.WithVisual(timeSeriesPanel.Visual{
 				Display:      timeSeriesPanel.LineDisplay,
@@ -107,6 +109,7 @@ func ClientRequestDuration(datasourceName string, labelMatchers ...*labels.Match
 			timeSeriesPanel.WithLegend(timeSeriesPanel.Legend{
 				Position: timeSeriesPanel.BottomPosition,
 				Mode:     timeSeriesPanel.ListMode,
+				Size:     timeSeriesPanel.MediumSize,
 			}),
 			timeSeriesPanel.WithVisual(timeSeriesPanel.Visual{
 				Display:      timeSeriesPanel.LineDisplay,
@@ -161,6 +164,7 @@ func ServerRequestVolume(datasourceName string, labelMatchers ...*labels.Matcher
 			timeSeriesPanel.WithLegend(timeSeriesPanel.Legend{
 				Position: timeSeriesPanel.BottomPosition,
 				Mode:     timeSeriesPanel.ListMode,
+				Size:     timeSeriesPanel.MediumSize,
 			}),
 			timeSeriesPanel.WithVisual(timeSeriesPanel.Visual{
 				Display:      timeSeriesPanel.LineDisplay,
@@ -195,6 +199,7 @@ func ServiceTCPBytesReceived(datasourceName string, labelMatchers ...*labels.Mat
 			timeSeriesPanel.WithLegend(timeSeriesPanel.Legend{
 				Position: timeSeriesPanel.BottomPosition,
 				Mode:     timeSeriesPanel.ListMode,
+				Size:     timeSeriesPanel.MediumSize,
 			}),
 			timeSeriesPanel.WithVisual(timeSeriesPanel.Visual{
 				Display:      timeSeriesPanel.LineDisplay,
@@ -229,6 +234,7 @@ func ServiceTCPBytesSent(datasourceName string, labelMatchers ...*labels.Matcher
 			timeSeriesPanel.WithLegend(timeSeriesPanel.Legend{
 				Position: timeSeriesPanel.BottomPosition,
 				Mode:     timeSeriesPanel.ListMode,
+				Size:     timeSeriesPanel.MediumSize,
 			}),
 			timeSeriesPanel.WithVisual(timeSeriesPanel.Visual{
 				Display:      timeSeriesPanel.LineDisplay,
@@ -256,6 +262,7 @@ func ServiceTCPBytesSent(datasourceName string, labelMatchers ...*labels.Matcher
 func ClientRequestVolumeStat(datasourceName string, labelMatchers ...*labels.Matcher) panelgroup.Option {
 	return panelgroup.AddPanel("Client Request Volume",
 		statPanel.Chart(
+			statPanel.Format(commonSdk.Format{Unit: &dashboards.OpsPerSecondsUnit}),
 			statPanel.Calculation(commonSdk.LastCalculation),
 			statPanel.WithSparkline(statPanel.Sparkline{
 				Width: 1,
@@ -318,8 +325,9 @@ func ClientRequestDurationChart(datasourceName string, labelMatchers ...*labels.
 				Format: &commonSdk.Format{Unit: &dashboards.SecondsUnit},
 			}),
 			timeSeriesPanel.WithLegend(timeSeriesPanel.Legend{
-				Position: timeSeriesPanel.RightPosition,
+				Position: timeSeriesPanel.BottomPosition,
 				Mode:     timeSeriesPanel.ListMode,
+				Size:     timeSeriesPanel.MediumSize,
 			}),
 		),
 		panel.AddQuery(
@@ -387,6 +395,7 @@ func TCPReceivedBytesStat(datasourceName string, labelMatchers ...*labels.Matche
 func ServerRequestVolumeStat(datasourceName string, labelMatchers ...*labels.Matcher) panelgroup.Option {
 	return panelgroup.AddPanel("Server Request Volume",
 		statPanel.Chart(
+			statPanel.Format(commonSdk.Format{Unit: &dashboards.OpsPerSecondsUnit}),
 			statPanel.Calculation(commonSdk.LastCalculation),
 			statPanel.WithSparkline(statPanel.Sparkline{
 				Width: 1,
@@ -422,11 +431,11 @@ func ServerSuccessRateStat(datasourceName string, labelMatchers ...*labels.Match
 			}),
 			statPanel.Thresholds(commonSdk.Thresholds{
 				Mode:         commonSdk.AbsoluteMode,
-				DefaultColor: "green",
+				DefaultColor: "dark-red",
 				Steps: []commonSdk.StepOption{
-					{Color: "rgba(50, 172, 45, 0.97)", Value: 0},
-					{Color: "rgba(237, 129, 40, 0.89)", Value: 0.95},
-					{Color: "rgba(245, 54, 54, 0.9)", Value: 0.99},
+					{Color: "dark-red", Value: 0},
+					{Color: "dark-yellow", Value: 0.95},
+					{Color: "dark-green", Value: 0.99},
 				},
 			}),
 		),
@@ -449,8 +458,9 @@ func ServerRequestDurationChart(datasourceName string, labelMatchers ...*labels.
 				Format: &commonSdk.Format{Unit: &dashboards.SecondsUnit},
 			}),
 			timeSeriesPanel.WithLegend(timeSeriesPanel.Legend{
-				Position: timeSeriesPanel.RightPosition,
+				Position: timeSeriesPanel.BottomPosition,
 				Mode:     timeSeriesPanel.ListMode,
+				Size:     timeSeriesPanel.MediumSize,
 			}),
 		),
 		panel.AddQuery(
@@ -524,6 +534,7 @@ func IncomingRequestsByClient(datasourceName string, labelMatchers ...*labels.Ma
 			timeSeriesPanel.WithLegend(timeSeriesPanel.Legend{
 				Position: timeSeriesPanel.BottomPosition,
 				Mode:     timeSeriesPanel.ListMode,
+				Size:     timeSeriesPanel.MediumSize,
 			}),
 			timeSeriesPanel.WithVisual(timeSeriesPanel.Visual{
 				Display:      timeSeriesPanel.LineDisplay,
@@ -566,6 +577,7 @@ func IncomingSuccessRateByClient(datasourceName string, labelMatchers ...*labels
 			timeSeriesPanel.WithLegend(timeSeriesPanel.Legend{
 				Position: timeSeriesPanel.BottomPosition,
 				Mode:     timeSeriesPanel.ListMode,
+				Size:     timeSeriesPanel.MediumSize,
 			}),
 			timeSeriesPanel.WithVisual(timeSeriesPanel.Visual{
 				Display:      timeSeriesPanel.LineDisplay,

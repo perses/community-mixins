@@ -284,7 +284,7 @@ func ResponseSizeByClient(datasourceName string, labelMatchers ...*labels.Matche
 		panel.AddQuery(
 			query.PromQL(
 				promql.SetLabelMatchersV2(
-					IstioCommonPanelQueries["IstioResponseSizeByClient95"],
+					IstioCommonPanelQueries["IstioResponseSizeByClient99"],
 					labelMatchers,
 				).Pretty(0),
 				dashboards.AddQueryDataSource(datasourceName),

@@ -42,7 +42,8 @@
               "spec": {
                 "legend": {
                   "mode": "list",
-                  "position": "bottom"
+                  "position": "bottom",
+                  "size": "medium"
                 },
                 "visual": {
                   "areaOpacity": 0.1,
@@ -103,7 +104,8 @@
               "spec": {
                 "legend": {
                   "mode": "list",
-                  "position": "bottom"
+                  "position": "bottom",
+                  "size": "medium"
                 },
                 "visual": {
                   "areaOpacity": 0.1,
@@ -164,7 +166,8 @@
               "spec": {
                 "legend": {
                   "mode": "list",
-                  "position": "bottom"
+                  "position": "bottom",
+                  "size": "medium"
                 },
                 "visual": {
                   "areaOpacity": 0.1,
@@ -225,7 +228,8 @@
               "spec": {
                 "legend": {
                   "mode": "list",
-                  "position": "bottom"
+                  "position": "bottom",
+                  "size": "medium"
                 },
                 "visual": {
                   "areaOpacity": 0.1,
@@ -286,7 +290,8 @@
               "spec": {
                 "legend": {
                   "mode": "list",
-                  "position": "bottom"
+                  "position": "bottom",
+                  "size": "medium"
                 },
                 "visual": {
                   "areaOpacity": 0.1,
@@ -331,7 +336,8 @@
               "spec": {
                 "legend": {
                   "mode": "list",
-                  "position": "bottom"
+                  "position": "bottom",
+                  "size": "medium"
                 },
                 "visual": {
                   "areaOpacity": 0.1,
@@ -376,7 +382,8 @@
               "spec": {
                 "legend": {
                   "mode": "list",
-                  "position": "bottom"
+                  "position": "bottom",
+                  "size": "medium"
                 },
                 "visual": {
                   "areaOpacity": 0.1,
@@ -421,7 +428,8 @@
               "spec": {
                 "legend": {
                   "mode": "list",
-                  "position": "bottom"
+                  "position": "bottom",
+                  "size": "medium"
                 },
                 "visual": {
                   "areaOpacity": 0.1,
@@ -466,7 +474,8 @@
               "spec": {
                 "legend": {
                   "mode": "list",
-                  "position": "bottom"
+                  "position": "bottom",
+                  "size": "medium"
                 },
                 "visual": {
                   "areaOpacity": 0.1,
@@ -639,7 +648,8 @@
               "spec": {
                 "legend": {
                   "mode": "list",
-                  "position": "bottom"
+                  "position": "bottom",
+                  "size": "medium"
                 },
                 "visual": {
                   "areaOpacity": 0.1,
@@ -716,7 +726,8 @@
               "spec": {
                 "legend": {
                   "mode": "list",
-                  "position": "bottom"
+                  "position": "bottom",
+                  "size": "medium"
                 },
                 "visual": {
                   "areaOpacity": 0.1,
@@ -839,7 +850,7 @@
                 "x": 0,
                 "y": 0,
                 "width": 12,
-                "height": 8,
+                "height": 10,
                 "content": {
                   "$ref": "#/spec/panels/1_0"
                 }
@@ -848,7 +859,7 @@
                 "x": 12,
                 "y": 0,
                 "width": 12,
-                "height": 8,
+                "height": 10,
                 "content": {
                   "$ref": "#/spec/panels/1_1"
                 }
@@ -867,7 +878,7 @@
                 "x": 0,
                 "y": 0,
                 "width": 12,
-                "height": 8,
+                "height": 10,
                 "content": {
                   "$ref": "#/spec/panels/2_0"
                 }
@@ -876,7 +887,7 @@
                 "x": 12,
                 "y": 0,
                 "width": 12,
-                "height": 8,
+                "height": 10,
                 "content": {
                   "$ref": "#/spec/panels/2_1"
                 }
@@ -895,7 +906,7 @@
                 "x": 0,
                 "y": 0,
                 "width": 24,
-                "height": 8,
+                "height": 10,
                 "content": {
                   "$ref": "#/spec/panels/3_0"
                 }
@@ -914,7 +925,7 @@
                 "x": 0,
                 "y": 0,
                 "width": 8,
-                "height": 7,
+                "height": 9,
                 "content": {
                   "$ref": "#/spec/panels/4_0"
                 }
@@ -923,7 +934,7 @@
                 "x": 8,
                 "y": 0,
                 "width": 8,
-                "height": 7,
+                "height": 9,
                 "content": {
                   "$ref": "#/spec/panels/4_1"
                 }
@@ -932,7 +943,7 @@
                 "x": 16,
                 "y": 0,
                 "width": 8,
-                "height": 7,
+                "height": 9,
                 "content": {
                   "$ref": "#/spec/panels/4_2"
                 }
@@ -951,7 +962,7 @@
                 "x": 0,
                 "y": 0,
                 "width": 6,
-                "height": 7,
+                "height": 9,
                 "content": {
                   "$ref": "#/spec/panels/5_0"
                 }
@@ -960,7 +971,7 @@
                 "x": 6,
                 "y": 0,
                 "width": 6,
-                "height": 7,
+                "height": 9,
                 "content": {
                   "$ref": "#/spec/panels/5_1"
                 }
@@ -969,7 +980,7 @@
                 "x": 12,
                 "y": 0,
                 "width": 6,
-                "height": 7,
+                "height": 9,
                 "content": {
                   "$ref": "#/spec/panels/5_2"
                 }
@@ -978,7 +989,7 @@
                 "x": 18,
                 "y": 0,
                 "width": 6,
-                "height": 7,
+                "height": 9,
                 "content": {
                   "$ref": "#/spec/panels/5_3"
                 }

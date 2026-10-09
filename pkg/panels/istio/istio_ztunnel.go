@@ -35,8 +35,8 @@ func ZtunnelBytesTransmitted(datasourceName string, labelMatchers ...*labels.Mat
 			}),
 			timeSeriesPanel.WithLegend(timeSeriesPanel.Legend{
 				Position: timeSeriesPanel.BottomPosition,
-				Mode:     timeSeriesPanel.TableMode,
-				Values:   []commonSdk.Calculation{commonSdk.LastCalculation, commonSdk.MaxCalculation},
+				Mode:     timeSeriesPanel.ListMode,
+				Size:     timeSeriesPanel.MediumSize,
 			}),
 			timeSeriesPanel.WithVisual(timeSeriesPanel.Visual{
 				Display:      timeSeriesPanel.LineDisplay,
@@ -79,8 +79,8 @@ func ZtunnelConnections(datasourceName string, labelMatchers ...*labels.Matcher)
 			}),
 			timeSeriesPanel.WithLegend(timeSeriesPanel.Legend{
 				Position: timeSeriesPanel.BottomPosition,
-				Mode:     timeSeriesPanel.TableMode,
-				Values:   []commonSdk.Calculation{commonSdk.LastCalculation, commonSdk.MaxCalculation},
+				Mode:     timeSeriesPanel.ListMode,
+				Size:     timeSeriesPanel.MediumSize,
 			}),
 			timeSeriesPanel.WithVisual(timeSeriesPanel.Visual{
 				Display:      timeSeriesPanel.LineDisplay,
@@ -118,8 +118,8 @@ func ZtunnelCPUUsage(datasourceName string, labelMatchers ...*labels.Matcher) pa
 		timeSeriesPanel.Chart(
 			timeSeriesPanel.WithLegend(timeSeriesPanel.Legend{
 				Position: timeSeriesPanel.BottomPosition,
-				Mode:     timeSeriesPanel.TableMode,
-				Values:   []commonSdk.Calculation{commonSdk.LastCalculation, commonSdk.MaxCalculation},
+				Mode:     timeSeriesPanel.ListMode,
+				Size:     timeSeriesPanel.MediumSize,
 			}),
 			timeSeriesPanel.WithVisual(timeSeriesPanel.Visual{
 				Display:      timeSeriesPanel.LineDisplay,
@@ -147,8 +147,8 @@ func ZtunnelDNSRequest(datasourceName string, labelMatchers ...*labels.Matcher) 
 		timeSeriesPanel.Chart(
 			timeSeriesPanel.WithLegend(timeSeriesPanel.Legend{
 				Position: timeSeriesPanel.BottomPosition,
-				Mode:     timeSeriesPanel.TableMode,
-				Values:   []commonSdk.Calculation{commonSdk.LastCalculation, commonSdk.MaxCalculation},
+				Mode:     timeSeriesPanel.ListMode,
+				Size:     timeSeriesPanel.MediumSize,
 			}),
 			timeSeriesPanel.WithVisual(timeSeriesPanel.Visual{
 				Display:      timeSeriesPanel.LineDisplay,
@@ -181,8 +181,8 @@ func ZtunnelMemoryUsage(datasourceName string, labelMatchers ...*labels.Matcher)
 			}),
 			timeSeriesPanel.WithLegend(timeSeriesPanel.Legend{
 				Position: timeSeriesPanel.BottomPosition,
-				Mode:     timeSeriesPanel.TableMode,
-				Values:   []commonSdk.Calculation{commonSdk.LastCalculation, commonSdk.MaxCalculation},
+				Mode:     timeSeriesPanel.ListMode,
+				Size:     timeSeriesPanel.MediumSize,
 			}),
 			timeSeriesPanel.WithVisual(timeSeriesPanel.Visual{
 				Display:      timeSeriesPanel.LineDisplay,
@@ -210,8 +210,8 @@ func ZtunnelWorkloadManager(datasourceName string, labelMatchers ...*labels.Matc
 		timeSeriesPanel.Chart(
 			timeSeriesPanel.WithLegend(timeSeriesPanel.Legend{
 				Position: timeSeriesPanel.BottomPosition,
-				Mode:     timeSeriesPanel.TableMode,
-				Values:   []commonSdk.Calculation{commonSdk.LastCalculation, commonSdk.MaxCalculation},
+				Mode:     timeSeriesPanel.ListMode,
+				Size:     timeSeriesPanel.MediumSize,
 			}),
 			timeSeriesPanel.WithVisual(timeSeriesPanel.Visual{
 				Display:      timeSeriesPanel.LineDisplay,
@@ -249,8 +249,8 @@ func ZtunnelXDSConnections(datasourceName string, labelMatchers ...*labels.Match
 		timeSeriesPanel.Chart(
 			timeSeriesPanel.WithLegend(timeSeriesPanel.Legend{
 				Position: timeSeriesPanel.BottomPosition,
-				Mode:     timeSeriesPanel.TableMode,
-				Values:   []commonSdk.Calculation{commonSdk.LastCalculation, commonSdk.MaxCalculation},
+				Mode:     timeSeriesPanel.ListMode,
+				Size:     timeSeriesPanel.MediumSize,
 			}),
 			timeSeriesPanel.WithVisual(timeSeriesPanel.Visual{
 				Display:      timeSeriesPanel.LineDisplay,
@@ -307,8 +307,8 @@ func ZtunnelResourceUsage(datasourceName string, labelMatchers ...*labels.Matche
 		timeSeriesPanel.Chart(
 			timeSeriesPanel.WithLegend(timeSeriesPanel.Legend{
 				Position: timeSeriesPanel.BottomPosition,
-				Mode:     timeSeriesPanel.TableMode,
-				Values:   []commonSdk.Calculation{commonSdk.LastCalculation, commonSdk.MaxCalculation},
+				Mode:     timeSeriesPanel.ListMode,
+				Size:     timeSeriesPanel.MediumSize,
 			}),
 			timeSeriesPanel.WithVisual(timeSeriesPanel.Visual{
 				Display:      timeSeriesPanel.LineDisplay,
@@ -356,8 +356,8 @@ func ZtunnelVersions(datasourceName string, labelMatchers ...*labels.Matcher) pa
 		timeSeriesPanel.Chart(
 			timeSeriesPanel.WithLegend(timeSeriesPanel.Legend{
 				Position: timeSeriesPanel.BottomPosition,
-				Mode:     timeSeriesPanel.TableMode,
-				Values:   []commonSdk.Calculation{commonSdk.LastCalculation, commonSdk.MaxCalculation},
+				Mode:     timeSeriesPanel.ListMode,
+				Size:     timeSeriesPanel.MediumSize,
 			}),
 			timeSeriesPanel.WithVisual(timeSeriesPanel.Visual{
 				Display:      timeSeriesPanel.LineDisplay,

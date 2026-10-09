@@ -20,8 +20,8 @@ import (
 	panelgroup "github.com/perses/perses/go-sdk/panel-group"
 	listVar "github.com/perses/perses/go-sdk/variable/list-variable"
 	markdownPanel "github.com/perses/plugins/markdown/sdk/go"
-	labelValuesVar "github.com/perses/plugins/prometheus/sdk/go/variable/label-values"
 	promqlVar "github.com/perses/plugins/prometheus/sdk/go/variable/promql"
+	varapi "github.com/perses/spec/go/dashboard/variable"
 	"github.com/prometheus/prometheus/model/labels"
 )
 
@@ -48,10 +48,17 @@ func withWorkloadGeneralSection() dashboard.Option {
 
 func withWorkloadGeneralIISection(datasource string, labelMatcher *labels.Matcher) dashboard.Option {
 	return dashboard.AddPanelGroup("General (II)",
-		panelgroup.PanelsPerLine(3),
-		panelgroup.PanelHeight(4),
+		panelgroup.PanelsPerLine(2),
+		panelgroup.PanelHeight(6),
 		panels.IncomingRequestVolumeStat(datasource, labelMatcher),
 		panels.IncomingSuccessRateStat(datasource, labelMatcher),
+	)
+}
+
+func withWorkloadGeneralIIDurationSection(datasource string, labelMatcher *labels.Matcher) dashboard.Option {
+	return dashboard.AddPanelGroup("General (II Duration)",
+		panelgroup.PanelsPerLine(1),
+		panelgroup.PanelHeight(8),
 		panels.RequestDurationChart(datasource, labelMatcher),
 	)
 }
@@ -59,7 +66,7 @@ func withWorkloadGeneralIISection(datasource string, labelMatcher *labels.Matche
 func withWorkloadGeneralIIISection(datasource string, labelMatcher *labels.Matcher) dashboard.Option {
 	return dashboard.AddPanelGroup("General (III)",
 		panelgroup.PanelsPerLine(2),
-		panelgroup.PanelHeight(4),
+		panelgroup.PanelHeight(6),
 		panels.TCPServerTrafficStat(datasource, labelMatcher),
 		panels.TCPClientTrafficStat(datasource, labelMatcher),
 	)
@@ -80,7 +87,7 @@ func withWorkloadInboundWorkloadsSection() dashboard.Option {
 func withWorkloadInboundWorkloadsIISection(datasource string, labelMatcher *labels.Matcher) dashboard.Option {
 	return dashboard.AddPanelGroup("Inbound Workloads",
 		panelgroup.PanelsPerLine(2),
-		panelgroup.PanelHeight(6),
+		panelgroup.PanelHeight(9),
 		panels.IncomingRequestVolume(datasource, labelMatcher), // "Incoming Requests By Source And Response Code"
 		panels.IncomingSuccessRate(datasource, labelMatcher),   // "Incoming Success Rate (non-5xx responses) By Source"
 	)
@@ -89,7 +96,7 @@ func withWorkloadInboundWorkloadsIISection(datasource string, labelMatcher *labe
 func withWorkloadInboundWorkloadsIIISection(datasource string, labelMatcher *labels.Matcher) dashboard.Option {
 	return dashboard.AddPanelGroup("Inbound Workloads (II)",
 		panelgroup.PanelsPerLine(3),
-		panelgroup.PanelHeight(6),
+		panelgroup.PanelHeight(9),
 		panels.IncomingRequestDuration(datasource, labelMatcher),      // "Incoming Request Duration By Source"
 		panels.IncomingRequestSizeBySource(datasource, labelMatcher),  // "Incoming Request Size By Source"
 		panels.IncomingResponseSizeBySource(datasource, labelMatcher), // "Incoming Response Size By Source"
@@ -99,7 +106,7 @@ func withWorkloadInboundWorkloadsIIISection(datasource string, labelMatcher *lab
 func withWorkloadInboundWorkloadsIVSection(datasource string, labelMatcher *labels.Matcher) dashboard.Option {
 	return dashboard.AddPanelGroup("Inbound Workloads (III)",
 		panelgroup.PanelsPerLine(2),
-		panelgroup.PanelHeight(6),
+		panelgroup.PanelHeight(9),
 		panels.InboundTCPBytesReceived(datasource, labelMatcher), // "Bytes Received from Incoming TCP Connection"
 		panels.InboundTCPBytesSent(datasource, labelMatcher),     // "Bytes Sent to Incoming TCP Connection"
 	)
@@ -116,7 +123,7 @@ func withWorkloadOutboundServicesSection() dashboard.Option {
 func withWorkloadOutboundServicesIISection(datasource string, labelMatcher *labels.Matcher) dashboard.Option {
 	return dashboard.AddPanelGroup("Outbound Services (II)",
 		panelgroup.PanelsPerLine(2),
-		panelgroup.PanelHeight(6),
+		panelgroup.PanelHeight(9),
 		panels.OutgoingRequestVolume(datasource, labelMatcher),
 		panels.OutgoingSuccessRate(datasource, labelMatcher),
 	)
@@ -125,7 +132,7 @@ func withWorkloadOutboundServicesIISection(datasource string, labelMatcher *labe
 func withWorkloadOutboundServicesIIISection(datasource string, labelMatcher *labels.Matcher) dashboard.Option {
 	return dashboard.AddPanelGroup("Outbound Services (III)",
 		panelgroup.PanelsPerLine(3),
-		panelgroup.PanelHeight(6),
+		panelgroup.PanelHeight(9),
 		panels.OutgoingRequestDuration(datasource, labelMatcher),
 		panels.OutgoingRequestSize(datasource, labelMatcher),
 		panels.OutgoingResponseSize(datasource, labelMatcher),
@@ -135,7 +142,7 @@ func withWorkloadOutboundServicesIIISection(datasource string, labelMatcher *lab
 func withWorkloadOutboundServicesIVSection(datasource string, labelMatcher *labels.Matcher) dashboard.Option {
 	return dashboard.AddPanelGroup("Outbound Services (IV)",
 		panelgroup.PanelsPerLine(2),
-		panelgroup.PanelHeight(6),
+		panelgroup.PanelHeight(9),
 		panels.TCPBytesSent(datasource, labelMatcher),
 		panels.TCPBytesReceived(datasource, labelMatcher),
 	)
@@ -184,43 +191,55 @@ func BuildIstioWorkload(project string, datasource string, clusterLabelName stri
 					listVar.AllowMultiple(true),
 				),
 			),
-			dashboard.AddVariable("srcns",
+			dashboard.AddVariable("src_namespace",
 				listVar.List(
-					labelValuesVar.PrometheusLabelValues("source_workload_namespace",
-						labelValuesVar.Matchers("istio_requests_total{reporter=~\"$qrep\", destination_workload=\"$workload\", destination_workload_namespace=~\"$namespace\"}"),
-						dashboards.AddVariableDatasource(datasource),
+					promqlVar.PrometheusPromQL(
+						`sum(istio_requests_total{reporter=~"$qrep", destination_workload=~"$workload", destination_workload_namespace=~"$namespace"}) by (source_workload_namespace) or sum(istio_tcp_sent_bytes_total{reporter=~"$qrep", destination_workload=~"$workload", destination_workload_namespace=~"$namespace"}) by (source_workload_namespace)`,
+						promqlVar.Datasource(datasource),
+						promqlVar.LabelName("source_workload_namespace"),
 					),
 					listVar.DisplayName("Inbound Workload Namespace"),
 					listVar.AllowAllValue(true),
 					listVar.AllowMultiple(true),
+					listVar.CustomAllValue(".*"),
+					listVar.DefaultValues("$__all"),
+					listVar.SortingBy(varapi.SortAlphabeticalAsc),
 				),
 			),
-			dashboard.AddVariable("srcwl",
+			dashboard.AddVariable("src_workload",
 				listVar.List(
-					labelValuesVar.PrometheusLabelValues("source_workload",
-						labelValuesVar.Matchers("istio_requests_total{reporter=~\"$qrep\", destination_workload=\"$workload\", destination_workload_namespace=~\"$namespace\", source_workload_namespace=~\"$srcns\"}"),
-						dashboards.AddVariableDatasource(datasource),
+					promqlVar.PrometheusPromQL(
+						`sum(istio_requests_total{reporter=~"$qrep", destination_workload=~"$workload", destination_workload_namespace=~"$namespace", source_workload_namespace=~"$src_namespace"}) by (source_workload) or sum(istio_tcp_sent_bytes_total{reporter=~"$qrep", destination_workload=~"$workload", destination_workload_namespace=~"$namespace", source_workload_namespace=~"$src_namespace"}) by (source_workload)`,
+						promqlVar.Datasource(datasource),
+						promqlVar.LabelName("source_workload"),
 					),
 					listVar.DisplayName("Inbound Workload"),
 					listVar.AllowAllValue(true),
 					listVar.AllowMultiple(true),
+					listVar.CustomAllValue(".*"),
+					listVar.DefaultValues("$__all"),
+					listVar.SortingBy(varapi.SortAlphabeticalAsc),
 				),
 			),
 			dashboard.AddVariable("dstsvc",
 				listVar.List(
 					promqlVar.PrometheusPromQL(
-						"sum(istio_requests_total{reporter=\"source\", source_workload=~\"$workload\", source_workload_namespace=~\"$namespace\"}) by (destination_service) or sum(istio_tcp_sent_bytes_total{reporter=\"source\", source_workload=~\"$workload\", source_workload_namespace=~\"$namespace\"}) by (destination_service)",
+						`sum(istio_requests_total{reporter="source", source_workload=~"$workload", source_workload_namespace=~"$namespace"}) by (destination_service) or sum(istio_tcp_sent_bytes_total{reporter="source", source_workload=~"$workload", source_workload_namespace=~"$namespace"}) by (destination_service)`,
 						promqlVar.Datasource(datasource),
 						promqlVar.LabelName("destination_service"),
 					),
 					listVar.DisplayName("Destination Service"),
 					listVar.AllowAllValue(true),
 					listVar.AllowMultiple(true),
+					listVar.CustomAllValue(".*"),
+					listVar.DefaultValues("$__all"),
+					listVar.SortingBy(varapi.SortAlphabeticalAsc),
 				),
 			),
 			// Add all sections that match the JSON layout
 			withWorkloadGeneralSection(),
 			withWorkloadGeneralIISection(datasource, clusterLabelMatcher),
+			withWorkloadGeneralIIDurationSection(datasource, clusterLabelMatcher),
 			withWorkloadGeneralIIISection(datasource, clusterLabelMatcher),
 			withWorkloadInboundWorkloadsSection(),
 			withWorkloadInboundWorkloadsIISection(datasource, clusterLabelMatcher),

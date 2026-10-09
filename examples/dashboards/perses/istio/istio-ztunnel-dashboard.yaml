@@ -20,10 +20,8 @@ spec:
                     spec:
                         legend:
                             position: bottom
-                            mode: table
-                            values:
-                                - last
-                                - max
+                            mode: list
+                            size: medium
                         visual:
                             display: line
                             lineWidth: 1
@@ -50,10 +48,8 @@ spec:
                     spec:
                         legend:
                             position: bottom
-                            mode: table
-                            values:
-                                - last
-                                - max
+                            mode: list
+                            size: medium
                         yAxis:
                             format:
                                 unit: bytes
@@ -83,10 +79,8 @@ spec:
                     spec:
                         legend:
                             position: bottom
-                            mode: table
-                            values:
-                                - last
-                                - max
+                            mode: list
+                            size: medium
                         visual:
                             display: line
                             lineWidth: 1
@@ -118,10 +112,8 @@ spec:
                     spec:
                         legend:
                             position: bottom
-                            mode: table
-                            values:
-                                - last
-                                - max
+                            mode: list
+                            size: medium
                         yAxis:
                             format:
                                 unit: counts/sec
@@ -161,10 +153,8 @@ spec:
                     spec:
                         legend:
                             position: bottom
-                            mode: table
-                            values:
-                                - last
-                                - max
+                            mode: list
+                            size: medium
                         yAxis:
                             format:
                                 unit: bytes/sec
@@ -204,10 +194,8 @@ spec:
                     spec:
                         legend:
                             position: bottom
-                            mode: table
-                            values:
-                                - last
-                                - max
+                            mode: list
+                            size: medium
                         visual:
                             display: line
                             lineWidth: 1
@@ -236,10 +224,8 @@ spec:
                     spec:
                         legend:
                             position: bottom
-                            mode: table
-                            values:
-                                - last
-                                - max
+                            mode: list
+                            size: medium
                         visual:
                             display: line
                             lineWidth: 1
@@ -295,10 +281,8 @@ spec:
                     spec:
                         legend:
                             position: bottom
-                            mode: table
-                            values:
-                                - last
-                                - max
+                            mode: list
+                            size: medium
                         visual:
                             display: line
                             lineWidth: 1
@@ -335,10 +319,8 @@ spec:
                     spec:
                         legend:
                             position: bottom
-                            mode: table
-                            values:
-                                - last
-                                - max
+                            mode: list
+                            size: medium
                         visual:
                             display: line
                             lineWidth: 1
