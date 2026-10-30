@@ -83,7 +83,18 @@ wait_for_perses_url() {
 
 apply_perses_format_dashboards() {
   local output_dir="${ROOT_DIR}/built/dashboards/perses"
-  local pf_pid=""
+  # Use a global for the port-forward PID: EXIT traps run outside function
+  # locals under `set -u`, so a local pf_pid becomes unbound on failure.
+  PERSES_E2E_PF_PID=""
+
+  cleanup_port_forward() {
+    if [[ -n "${PERSES_E2E_PF_PID:-}" ]]; then
+      kill "${PERSES_E2E_PF_PID}" 2>/dev/null || true
+      wait "${PERSES_E2E_PF_PID}" 2>/dev/null || true
+      PERSES_E2E_PF_PID=""
+    fi
+  }
+  trap cleanup_port_forward EXIT
 
   if ! command -v percli >/dev/null 2>&1; then
     echo "percli is required to apply Perses-format dashboards" >&2
@@ -104,13 +115,7 @@ apply_perses_format_dashboards() {
 
   echo "Port-forwarding Perses service ${PERSES_SERVICE}"
   kubectl port-forward -n "${E2E_NAMESPACE}" "svc/${PERSES_SERVICE}" 8080:8080 >/tmp/perses-e2e-pf.log 2>&1 &
-  pf_pid=$!
-
-  cleanup_port_forward() {
-    kill "${pf_pid}" 2>/dev/null || true
-    wait "${pf_pid}" 2>/dev/null || true
-  }
-  trap cleanup_port_forward EXIT
+  PERSES_E2E_PF_PID=$!
 
   wait_for_perses_url "${PERSES_LOCAL_URL}"
 

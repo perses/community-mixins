@@ -54,14 +54,14 @@ const (
 // The Go SDK does not yet have builders for LokiLogQLVariable
 // (only the JS/TS UI supports them, added in perses/plugins#651).
 type lokiDatasourceRef struct {
-	Kind string `json:"kind"`
-	Name string `json:"name,omitempty"`
+	Kind string `json:"kind" yaml:"kind"`
+	Name string `json:"name,omitempty" yaml:"name,omitempty"`
 }
 
 type lokiLogQLVarSpec struct {
-	Datasource *lokiDatasourceRef `json:"datasource,omitempty"`
-	Expr       string             `json:"expr"`
-	LabelName  string             `json:"labelName"`
+	Datasource *lokiDatasourceRef `json:"datasource,omitempty" yaml:"datasource,omitempty"`
+	Expr       string             `json:"expr" yaml:"expr"`
+	LabelName  string             `json:"labelName" yaml:"labelName"`
 }
 
 // lokiLogQLVariable returns a listvariable.Option that populates the variable
@@ -82,8 +82,8 @@ func lokiLogQLVariable(datasourceName, expr, labelName string) listvariable.Opti
 // The Go SDK's staticlist.Values only accepts plain strings; this bypasses it
 // to use the {value, label} object form supported by the StaticListVariable schema.
 type labeledValue struct {
-	Value string `json:"value"`
-	Label string `json:"label,omitempty"`
+	Value string `json:"value" yaml:"value"`
+	Label string `json:"label,omitempty" yaml:"label,omitempty"`
 }
 
 // staticListWithLabels returns a listvariable.Option that uses StaticListVariable
@@ -93,7 +93,7 @@ func staticListWithLabels(values ...labeledValue) listvariable.Option {
 	return func(builder *listvariable.Builder) error {
 		builder.ListVariableSpec.Plugin.Kind = "StaticListVariable"
 		builder.ListVariableSpec.Plugin.Spec = struct {
-			Values []labeledValue `json:"values"`
+			Values []labeledValue `json:"values" yaml:"values"`
 		}{Values: values}
 		return nil
 	}
