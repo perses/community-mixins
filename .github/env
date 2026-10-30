@@ -1,6 +1,6 @@
-golang-version=1.26
-kind-version=v0.32.0
-kind-node-image=kindest/node:v1.36.1
-helm-version=v3.21.4
+golang-version=1.27
+kind-version=v0.33.0
+kind-node-image=kindest/node:v1.37.0
+helm-version=v3.22.1
 perses-operator-version=0.5.0
-perses-version=0.54.0
+perses-version=0.55.0
