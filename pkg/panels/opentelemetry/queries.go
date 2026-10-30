@@ -14,11 +14,12 @@
 package opentelemetry
 
 import (
+	"maps"
+
 	"github.com/perses/community-mixins/pkg/promql"
 	promqlbuilder "github.com/perses/promql-builder"
 	"github.com/perses/promql-builder/label"
 	"github.com/prometheus/prometheus/promql/parser"
-	"golang.org/x/exp/maps"
 )
 
 var OpentelemetryCommonPanelQueries = map[string]parser.Expr{
