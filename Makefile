@@ -92,11 +92,17 @@ test-e2e-operator:
 	@echo ">> running operator dashboard e2e tests"
 	OPERATOR_E2E=true $(GOCMD) test -v -count=1 ./test/e2e/... -timeout 20m
 
+.PHONY: test-e2e-perses
+test-e2e-perses:
+	@echo ">> running Perses-format dashboard e2e tests"
+	PERSES_E2E=true $(GOCMD) test -v -count=1 ./test/e2e/... -timeout 20m
+
 E2E_KIND_CLUSTER ?= community-mixins-e2e
 
 .PHONY: e2e e2e-up e2e-install e2e-down
 e2e: e2e-up
 	@$(MAKE) test-e2e-operator
+	@$(MAKE) test-e2e-perses
 
 e2e-up:
 	@bash test/e2e/setup.sh up

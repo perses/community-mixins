@@ -6,9 +6,9 @@ on:
     branches:
       - main
 jobs:
-  operator-e2e:
+  dashboard-e2e:
     runs-on: ubuntu-latest
-    name: Operator dashboard reconciliation
+    name: Dashboard e2e
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
@@ -33,11 +33,19 @@ jobs:
         with:
           version: ${{ env.helm-version }}
 
+      - name: Install percli
+        uses: perses/cli-actions/actions/install_percli@e1420dc776f79f624c7d570cccc0dcdddf0d104d # v0.2.1
+        with:
+          cli-version: "v${{ env.perses-version }}"
+
       - name: Install e2e stack
         run: make e2e-install
 
       - name: Run operator e2e tests
         run: make test-e2e-operator
+
+      - name: Run Perses-format e2e tests
+        run: make test-e2e-perses
 
       - name: Debug cluster state on failure
         if: failure()
@@ -46,3 +54,6 @@ jobs:
           kubectl get pods,svc,endpoints -n perses-dev
           kubectl describe pods -n perses-dev
           kubectl get events -n perses-dev --sort-by=.lastTimestamp | tail -n 50
+          kubectl port-forward -n perses-dev svc/perses 8080:8080 >/tmp/perses-debug-pf.log 2>&1 &
+          sleep 3
+          curl -sS http://127.0.0.1:8080/api/v1/projects/community-mixins/dashboards || true

@@ -29,7 +29,7 @@ func TestMain(m *testing.M) {
 }
 
 func testMain(m *testing.M) int {
-	if os.Getenv("OPERATOR_E2E") != "true" {
+	if os.Getenv("OPERATOR_E2E") != "true" && os.Getenv("PERSES_E2E") != "true" {
 		return m.Run()
 	}
 
