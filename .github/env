@@ -1,4 +1,4 @@
-golang-version=1.27
+golang-version=1.27.2
 kind-version=v0.33.0
 kind-node-image=kindest/node:v1.37.0
 helm-version=v3.22.1
