@@ -441,7 +441,6 @@ spec:
         allowAllValue: true
         allowMultiple: true
         display:
-          hidden: false
           name: job
         name: job
         plugin:
@@ -458,7 +457,6 @@ spec:
         allowAllValue: true
         allowMultiple: true
         display:
-          hidden: false
           name: instance
         name: instance
         plugin:

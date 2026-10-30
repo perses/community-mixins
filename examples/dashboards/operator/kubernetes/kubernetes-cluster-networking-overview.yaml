@@ -841,7 +841,6 @@ spec:
         allowAllValue: false
         allowMultiple: false
         display:
-          hidden: false
           name: cluster
         name: cluster
         plugin:

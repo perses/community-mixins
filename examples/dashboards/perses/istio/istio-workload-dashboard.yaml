@@ -13,7 +13,6 @@ spec:
           spec:
             display:
                 name: Namespace
-                hidden: false
             defaultValue: bookinfo
             allowAllValue: false
             allowMultiple: false
@@ -30,7 +29,6 @@ spec:
           spec:
             display:
                 name: Workload
-                hidden: false
             defaultValue: details-v1
             allowAllValue: false
             allowMultiple: false
@@ -47,7 +45,6 @@ spec:
           spec:
             display:
                 name: Reporter
-                hidden: false
             defaultValue: destination
             allowAllValue: false
             allowMultiple: true
@@ -64,7 +61,6 @@ spec:
           spec:
             display:
                 name: Inbound Workload Namespace
-                hidden: false
             defaultValue:
                 - $__all
             allowAllValue: true
@@ -84,7 +80,6 @@ spec:
           spec:
             display:
                 name: Inbound Workload
-                hidden: false
             defaultValue:
                 - $__all
             allowAllValue: true
@@ -104,7 +99,6 @@ spec:
           spec:
             display:
                 name: Destination Service
-                hidden: false
             defaultValue:
                 - $__all
             allowAllValue: true

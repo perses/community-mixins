@@ -407,7 +407,6 @@ spec:
         allowAllValue: true
         allowMultiple: true
         display:
-          hidden: false
           name: instance
         name: instance
         plugin:

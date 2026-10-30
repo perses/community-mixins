@@ -394,7 +394,6 @@ spec:
         allowAllValue: true
         allowMultiple: false
         display:
-          hidden: false
           name: instance
         name: instance
         plugin:

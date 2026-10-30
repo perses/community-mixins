@@ -14,7 +14,6 @@ spec:
             display:
                 name: Username
                 description: 'Regex filter. Examples: username, .*@redhat.com, admin|user'
-                hidden: false
             value: ""
             name: username
         - kind: ListVariable
@@ -22,7 +21,6 @@ spec:
             display:
                 name: Exclude System Users
                 description: Select None to show all users including system accounts
-                hidden: false
             defaultValue: $__all
             allowAllValue: true
             allowMultiple: true
@@ -52,7 +50,6 @@ spec:
             display:
                 name: Verb
                 description: Filter by API verb
-                hidden: false
             defaultValue: $__all
             allowAllValue: true
             allowMultiple: true
@@ -76,7 +73,6 @@ spec:
             display:
                 name: Resource
                 description: Filter by resource type (populated from audit logs)
-                hidden: false
             defaultValue: $__all
             allowAllValue: true
             allowMultiple: true
@@ -95,7 +91,6 @@ spec:
             display:
                 name: Resource Name
                 description: 'Regex filter. Examples: my-pod.*, nginx, etcd.*'
-                hidden: false
             value: ""
             name: resource_name
         - kind: TextVariable
@@ -103,7 +98,6 @@ spec:
             display:
                 name: Namespace
                 description: 'Regex filter. Examples: openshift-.*, my-app, kube-system|default'
-                hidden: false
             value: ""
             name: namespace
         - kind: ListVariable
@@ -111,7 +105,6 @@ spec:
             display:
                 name: Response Code
                 description: Filter by HTTP response code
-                hidden: false
             defaultValue: $__all
             allowAllValue: true
             allowMultiple: true
@@ -150,7 +143,6 @@ spec:
             display:
                 name: Exclude Resources
                 description: Select None to show all resource types
-                hidden: false
             defaultValue: $__all
             allowAllValue: true
             allowMultiple: true
@@ -175,7 +167,6 @@ spec:
             display:
                 name: Client
                 description: 'User agent regex. Examples: oc, kubectl, console, argocd'
-                hidden: false
             value: ""
             name: client
         - kind: TextVariable
@@ -183,7 +174,6 @@ spec:
             display:
                 name: LogQL Filter
                 description: 'Raw LogQL stage. Examples: |~ "error" (include), !~ "health" (exclude), | user_username!~"bot.*"'
-                hidden: false
             value: ""
             name: filter
     panels:

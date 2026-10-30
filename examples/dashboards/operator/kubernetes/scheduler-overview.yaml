@@ -675,7 +675,6 @@ spec:
         allowAllValue: false
         allowMultiple: false
         display:
-          hidden: false
           name: cluster
         name: cluster
         plugin:
@@ -692,7 +691,6 @@ spec:
         allowAllValue: false
         allowMultiple: false
         display:
-          hidden: false
           name: instance
         name: instance
         plugin:

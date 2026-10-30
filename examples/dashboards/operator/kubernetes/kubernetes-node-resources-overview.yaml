@@ -510,7 +510,6 @@ spec:
         allowAllValue: false
         allowMultiple: false
         display:
-          hidden: false
           name: cluster
         name: cluster
         plugin:
@@ -527,7 +526,6 @@ spec:
         allowAllValue: false
         allowMultiple: false
         display:
-          hidden: false
           name: node
         name: node
         plugin:

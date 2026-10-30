@@ -2336,7 +2336,6 @@ spec:
         allowAllValue: false
         allowMultiple: true
         display:
-          hidden: false
           name: Service
         name: service
         plugin:
@@ -2355,7 +2354,6 @@ spec:
         allowMultiple: true
         defaultValue: destination
         display:
-          hidden: false
           name: Reporter
         name: qrep
         plugin:

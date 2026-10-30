@@ -13,7 +13,6 @@ spec:
           spec:
             display:
                 name: cluster
-                hidden: false
             allowAllValue: false
             allowMultiple: false
             plugin:

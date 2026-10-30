@@ -809,7 +809,6 @@ spec:
         allowAllValue: false
         allowMultiple: false
         display:
-          hidden: false
           name: cluster
         name: cluster
         plugin:
@@ -826,7 +825,6 @@ spec:
         allowAllValue: false
         allowMultiple: false
         display:
-          hidden: false
           name: namespace
         name: namespace
         plugin:
@@ -843,7 +841,6 @@ spec:
         allowAllValue: false
         allowMultiple: false
         display:
-          hidden: false
           name: workload_type
         name: type
         plugin:

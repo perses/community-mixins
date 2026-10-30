@@ -13,7 +13,6 @@ spec:
           spec:
             display:
                 name: job
-                hidden: false
             allowAllValue: false
             allowMultiple: false
             plugin:
@@ -30,7 +29,6 @@ spec:
           spec:
             display:
                 name: integration
-                hidden: false
             allowAllValue: true
             allowMultiple: true
             plugin:

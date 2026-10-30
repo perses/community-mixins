@@ -21,8 +21,7 @@
           "kind": "ListVariable",
           "spec": {
             "display": {
-              "name": "instance",
-              "hidden": false
+              "name": "instance"
             },
             "allowAllValue": false,
             "allowMultiple": false,
@@ -46,8 +45,7 @@
           "kind": "ListVariable",
           "spec": {
             "display": {
-              "name": "url",
-              "hidden": false
+              "name": "url"
             },
             "allowAllValue": false,
             "allowMultiple": false,

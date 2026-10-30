@@ -13,7 +13,6 @@ spec:
           spec:
             display:
                 name: Service
-                hidden: false
             allowAllValue: false
             allowMultiple: true
             plugin:
@@ -29,7 +28,6 @@ spec:
           spec:
             display:
                 name: Reporter
-                hidden: false
             defaultValue: destination
             allowAllValue: false
             allowMultiple: true

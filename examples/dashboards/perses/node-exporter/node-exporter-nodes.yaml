@@ -13,7 +13,6 @@ spec:
           spec:
             display:
                 name: instance
-                hidden: false
             allowAllValue: true
             allowMultiple: false
             plugin:

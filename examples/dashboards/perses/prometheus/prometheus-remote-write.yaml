@@ -13,7 +13,6 @@ spec:
           spec:
             display:
                 name: instance
-                hidden: false
             allowAllValue: false
             allowMultiple: false
             plugin:
@@ -30,7 +29,6 @@ spec:
           spec:
             display:
                 name: url
-                hidden: false
             allowAllValue: false
             allowMultiple: false
             plugin:
