@@ -23,7 +23,6 @@ import (
 
 	operatorv2 "github.com/perses/perses-operator/api/v1alpha2"
 	"github.com/perses/perses/go-sdk/dashboard"
-	"gopkg.in/yaml.v3"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/runtime"
 	k8syaml "sigs.k8s.io/yaml"
@@ -43,7 +42,10 @@ func executeDashboardBuilder(builder dashboard.Builder, outputFormat string, out
 
 	switch outputFormat {
 	case YAMLOutput:
-		output, err = yaml.Marshal(builder.Dashboard)
+		// Use sigs.k8s.io/yaml so json struct tags are respected. gopkg.in/yaml.v3
+		// lowercases field names and breaks embedded plugin specs (e.g. PluginSpec →
+		// "pluginspec", LabelName → "labelname"), which Perses rejects on apply.
+		output, err = k8syaml.Marshal(builder.Dashboard)
 		ext = YAMLOutput
 	case JSONOutput:
 		output, err = json.MarshalIndent(builder.Dashboard, "", "  ")

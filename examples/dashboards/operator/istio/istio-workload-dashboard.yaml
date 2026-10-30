@@ -2210,7 +2210,6 @@ spec:
         allowMultiple: false
         defaultValue: bookinfo
         display:
-          hidden: false
           name: Namespace
         name: namespace
         plugin:
@@ -2234,7 +2233,6 @@ spec:
         allowMultiple: false
         defaultValue: details-v1
         display:
-          hidden: false
           name: Workload
         name: workload
         plugin:
@@ -2258,7 +2256,6 @@ spec:
         allowMultiple: true
         defaultValue: destination
         display:
-          hidden: false
           name: Reporter
         name: qrep
         plugin:
@@ -2278,7 +2275,6 @@ spec:
         defaultValue:
         - $__all
         display:
-          hidden: false
           name: Inbound Workload Namespace
         name: src_namespace
         plugin:
@@ -2301,7 +2297,6 @@ spec:
         defaultValue:
         - $__all
         display:
-          hidden: false
           name: Inbound Workload
         name: src_workload
         plugin:
@@ -2325,7 +2320,6 @@ spec:
         defaultValue:
         - $__all
         display:
-          hidden: false
           name: Destination Service
         name: dstsvc
         plugin:

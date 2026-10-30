@@ -1395,7 +1395,6 @@ spec:
         allowAllValue: false
         allowMultiple: true
         display:
-          hidden: false
           name: job
         name: job
         plugin:
@@ -1412,7 +1411,6 @@ spec:
         allowAllValue: false
         allowMultiple: false
         display:
-          hidden: false
           name: namespace
         name: namespace
         plugin:

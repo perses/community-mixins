@@ -298,7 +298,6 @@ spec:
         allowAllValue: false
         allowMultiple: false
         display:
-          hidden: false
           name: cluster
         name: cluster
         plugin:
@@ -315,7 +314,6 @@ spec:
         allowAllValue: false
         allowMultiple: false
         display:
-          hidden: false
           name: namespace
         name: namespace
         plugin:
@@ -332,7 +330,6 @@ spec:
         allowAllValue: false
         allowMultiple: false
         display:
-          hidden: false
           name: PersistentVolume
         name: volume
         plugin:

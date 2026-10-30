@@ -21,8 +21,7 @@
           "kind": "ListVariable",
           "spec": {
             "display": {
-              "name": "Namespace",
-              "hidden": false
+              "name": "Namespace"
             },
             "defaultValue": "bookinfo",
             "allowAllValue": false,
@@ -45,8 +44,7 @@
           "kind": "ListVariable",
           "spec": {
             "display": {
-              "name": "Workload",
-              "hidden": false
+              "name": "Workload"
             },
             "defaultValue": "details-v1",
             "allowAllValue": false,
@@ -69,8 +67,7 @@
           "kind": "ListVariable",
           "spec": {
             "display": {
-              "name": "Reporter",
-              "hidden": false
+              "name": "Reporter"
             },
             "defaultValue": "destination",
             "allowAllValue": false,
@@ -93,8 +90,7 @@
           "kind": "ListVariable",
           "spec": {
             "display": {
-              "name": "Inbound Workload Namespace",
-              "hidden": false
+              "name": "Inbound Workload Namespace"
             },
             "defaultValue": [
               "$__all"
@@ -121,8 +117,7 @@
           "kind": "ListVariable",
           "spec": {
             "display": {
-              "name": "Inbound Workload",
-              "hidden": false
+              "name": "Inbound Workload"
             },
             "defaultValue": [
               "$__all"
@@ -149,8 +144,7 @@
           "kind": "ListVariable",
           "spec": {
             "display": {
-              "name": "Destination Service",
-              "hidden": false
+              "name": "Destination Service"
             },
             "defaultValue": [
               "$__all"

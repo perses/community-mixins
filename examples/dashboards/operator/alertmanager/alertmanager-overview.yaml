@@ -259,7 +259,6 @@ spec:
         allowAllValue: false
         allowMultiple: false
         display:
-          hidden: false
           name: job
         name: job
         plugin:
@@ -276,7 +275,6 @@ spec:
         allowAllValue: true
         allowMultiple: true
         display:
-          hidden: false
           name: integration
         name: integration
         plugin:

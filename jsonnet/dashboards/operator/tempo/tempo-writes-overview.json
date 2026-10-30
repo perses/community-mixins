@@ -21,8 +21,7 @@
           "kind": "ListVariable",
           "spec": {
             "display": {
-              "name": "cluster",
-              "hidden": false
+              "name": "cluster"
             },
             "allowAllValue": false,
             "allowMultiple": true,
@@ -46,8 +45,7 @@
           "kind": "ListVariable",
           "spec": {
             "display": {
-              "name": "namespace",
-              "hidden": false
+              "name": "namespace"
             },
             "allowAllValue": false,
             "allowMultiple": false,

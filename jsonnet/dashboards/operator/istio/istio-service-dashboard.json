@@ -21,8 +21,7 @@
           "kind": "ListVariable",
           "spec": {
             "display": {
-              "name": "Service",
-              "hidden": false
+              "name": "Service"
             },
             "allowAllValue": false,
             "allowMultiple": true,
@@ -44,8 +43,7 @@
           "kind": "ListVariable",
           "spec": {
             "display": {
-              "name": "Reporter",
-              "hidden": false
+              "name": "Reporter"
             },
             "defaultValue": "destination",
             "allowAllValue": false,

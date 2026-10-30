@@ -1,0 +1,6 @@
+kind: Project
+metadata:
+  name: community-mixins
+spec:
+  display:
+    name: "community-mixins"

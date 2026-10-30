@@ -1,687 +1,687 @@
 kind: Dashboard
 metadata:
-    name: prometheus-overview
-    createdAt: 0001-01-01T00:00:00Z
-    updatedAt: 0001-01-01T00:00:00Z
-    version: 0
-    project: perses-dev
+  createdAt: "0001-01-01T00:00:00Z"
+  name: prometheus-overview
+  project: perses-dev
+  updatedAt: "0001-01-01T00:00:00Z"
+  version: 0
 spec:
-    display:
-        name: Prometheus / Overview
-    variables:
-        - kind: ListVariable
+  display:
+    name: Prometheus / Overview
+  duration: 1h
+  layouts:
+  - kind: Grid
+    spec:
+      display:
+        title: Prometheus Stats
+      items:
+      - content:
+          $ref: '#/spec/panels/0_0'
+        height: 8
+        width: 24
+        x: 0
+        "y": 0
+  - kind: Grid
+    spec:
+      display:
+        title: Discovery
+      items:
+      - content:
+          $ref: '#/spec/panels/1_0'
+        height: 8
+        width: 12
+        x: 0
+        "y": 0
+      - content:
+          $ref: '#/spec/panels/1_1'
+        height: 8
+        width: 12
+        x: 12
+        "y": 0
+  - kind: Grid
+    spec:
+      display:
+        title: Retrieval
+      items:
+      - content:
+          $ref: '#/spec/panels/2_0'
+        height: 8
+        width: 8
+        x: 0
+        "y": 0
+      - content:
+          $ref: '#/spec/panels/2_1'
+        height: 8
+        width: 8
+        x: 8
+        "y": 0
+      - content:
+          $ref: '#/spec/panels/2_2'
+        height: 8
+        width: 8
+        x: 16
+        "y": 0
+  - kind: Grid
+    spec:
+      display:
+        title: Storage
+      items:
+      - content:
+          $ref: '#/spec/panels/3_0'
+        height: 8
+        width: 12
+        x: 0
+        "y": 0
+      - content:
+          $ref: '#/spec/panels/3_1'
+        height: 8
+        width: 12
+        x: 12
+        "y": 0
+  - kind: Grid
+    spec:
+      display:
+        title: Query
+      items:
+      - content:
+          $ref: '#/spec/panels/4_0'
+        height: 8
+        width: 12
+        x: 0
+        "y": 0
+      - content:
+          $ref: '#/spec/panels/4_1'
+        height: 8
+        width: 12
+        x: 12
+        "y": 0
+  - kind: Grid
+    spec:
+      display:
+        title: Resources
+      items:
+      - content:
+          $ref: '#/spec/panels/5_0'
+        height: 10
+        width: 6
+        x: 0
+        "y": 0
+      - content:
+          $ref: '#/spec/panels/5_1'
+        height: 10
+        width: 6
+        x: 6
+        "y": 0
+      - content:
+          $ref: '#/spec/panels/5_2'
+        height: 10
+        width: 6
+        x: 12
+        "y": 0
+      - content:
+          $ref: '#/spec/panels/5_3'
+        height: 10
+        width: 6
+        x: 18
+        "y": 0
+  panels:
+    "0_0":
+      kind: Panel
+      spec:
+        display:
+          name: Prometheus Stats
+        plugin:
+          kind: Table
           spec:
-            display:
-                name: job
-                hidden: false
-            allowAllValue: false
-            allowMultiple: false
+            columnSettings:
+            - header: Job
+              name: job
+            - header: Instance
+              name: instance
+            - header: Version
+              name: version
+            - hide: true
+              name: value
+            - hide: true
+              name: timestamp
+        queries:
+        - kind: TimeSeriesQuery
+          spec:
             plugin:
-                kind: PrometheusLabelValuesVariable
-                spec:
-                    datasource:
-                        kind: PrometheusDatasource
-                        name: prometheus-datasource
-                    labelName: job
-                    matchers:
-                        - prometheus_build_info{}
-            name: job
-        - kind: ListVariable
+              kind: PrometheusTimeSeriesQuery
+              spec:
+                datasource:
+                  kind: PrometheusDatasource
+                  name: prometheus-datasource
+                query: count by (job, instance, version) (prometheus_build_info{instance=~"$instance",job=~"$job"})
+    "1_0":
+      kind: Panel
+      spec:
+        display:
+          description: Monitors target synchronization time for Prometheus instances
+          name: Target Sync
+        plugin:
+          kind: TimeSeriesChart
           spec:
-            display:
-                name: instance
-                hidden: false
-            allowAllValue: false
-            allowMultiple: false
+            legend:
+              mode: table
+              position: bottom
+            yAxis:
+              format:
+                unit: seconds
+        queries:
+        - kind: TimeSeriesQuery
+          spec:
             plugin:
-                kind: PrometheusLabelValuesVariable
-                spec:
-                    datasource:
-                        kind: PrometheusDatasource
-                        name: prometheus-datasource
-                    labelName: instance
-                    matchers:
-                        - prometheus_build_info{job="$job"}
-            name: instance
-    panels:
-        "0_0":
-            kind: Panel
-            spec:
-                display:
-                    name: Prometheus Stats
-                plugin:
-                    kind: Table
-                    spec:
-                        columnSettings:
-                            - name: job
-                              header: Job
-                            - name: instance
-                              header: Instance
-                            - name: version
-                              header: Version
-                            - name: value
-                              hide: true
-                            - name: timestamp
-                              hide: true
-                queries:
-                    - kind: TimeSeriesQuery
-                      spec:
-                        plugin:
-                            kind: PrometheusTimeSeriesQuery
-                            spec:
-                                datasource:
-                                    kind: PrometheusDatasource
-                                    name: prometheus-datasource
-                                query: count by (job, instance, version) (prometheus_build_info{instance=~"$instance",job=~"$job"})
-        "1_0":
-            kind: Panel
-            spec:
-                display:
-                    name: Target Sync
-                    description: Monitors target synchronization time for Prometheus instances
-                plugin:
-                    kind: TimeSeriesChart
-                    spec:
-                        legend:
-                            position: bottom
-                            mode: table
-                        yAxis:
-                            format:
-                                unit: seconds
-                queries:
-                    - kind: TimeSeriesQuery
-                      spec:
-                        plugin:
-                            kind: PrometheusTimeSeriesQuery
-                            spec:
-                                datasource:
-                                    kind: PrometheusDatasource
-                                    name: prometheus-datasource
-                                query: |-
-                                    sum by (job, scrape_job, instance) (
-                                      rate(prometheus_target_sync_length_seconds_sum{instance=~"$instance",job=~"$job"}[$__rate_interval])
-                                    )
-                                seriesNameFormat: '{{job}} - {{instance}} - Metrics'
-        "1_1":
-            kind: Panel
-            spec:
-                display:
-                    name: Targets
-                    description: Shows discovered targets across Prometheus instances
-                plugin:
-                    kind: TimeSeriesChart
-                    spec:
-                        legend:
-                            position: bottom
-                            mode: table
-                queries:
-                    - kind: TimeSeriesQuery
-                      spec:
-                        plugin:
-                            kind: PrometheusTimeSeriesQuery
-                            spec:
-                                datasource:
-                                    kind: PrometheusDatasource
-                                    name: prometheus-datasource
-                                query: sum by (job, instance) (prometheus_sd_discovered_targets{instance=~"$instance",job=~"$job"})
-                                seriesNameFormat: '{{job}} - {{instance}} - Metrics'
-        "2_0":
-            kind: Panel
-            spec:
-                display:
-                    name: Average Scrape Interval Duration
-                    description: Shows average interval between scrapes for Prometheus targets
-                plugin:
-                    kind: TimeSeriesChart
-                    spec:
-                        legend:
-                            position: bottom
-                            mode: table
-                        yAxis:
-                            format:
-                                unit: seconds
-                queries:
-                    - kind: TimeSeriesQuery
-                      spec:
-                        plugin:
-                            kind: PrometheusTimeSeriesQuery
-                            spec:
-                                datasource:
-                                    kind: PrometheusDatasource
-                                    name: prometheus-datasource
-                                query: |4-
-                                      rate(
-                                        prometheus_target_interval_length_seconds_sum{instance=~"$instance",job=~"$job"}[$__rate_interval]
-                                      )
-                                    /
-                                      rate(
-                                        prometheus_target_interval_length_seconds_count{instance=~"$instance",job=~"$job"}[$__rate_interval]
-                                      )
-                                seriesNameFormat: '{{job}} - {{instance}} - {{interval}} Configured'
-        "2_1":
-            kind: Panel
-            spec:
-                display:
-                    name: Scrape failures
-                    description: Shows scrape failure metrics for Prometheus targets
-                plugin:
-                    kind: TimeSeriesChart
-                    spec:
-                        legend:
-                            position: bottom
-                            mode: table
-                queries:
-                    - kind: TimeSeriesQuery
-                      spec:
-                        plugin:
-                            kind: PrometheusTimeSeriesQuery
-                            spec:
-                                datasource:
-                                    kind: PrometheusDatasource
-                                    name: prometheus-datasource
-                                query: |-
-                                    sum by (job, instance) (
-                                      rate(
-                                        prometheus_target_scrapes_exceeded_body_size_limit_total{instance=~"$instance",job=~"$job"}[$__rate_interval]
-                                      )
-                                    )
-                                seriesNameFormat: 'exceeded body size limit: {{job}} - {{instance}} - Metrics'
-                    - kind: TimeSeriesQuery
-                      spec:
-                        plugin:
-                            kind: PrometheusTimeSeriesQuery
-                            spec:
-                                datasource:
-                                    kind: PrometheusDatasource
-                                    name: prometheus-datasource
-                                query: |-
-                                    sum by (job, instance) (
-                                      rate(
-                                        prometheus_target_scrapes_exceeded_sample_limit_total{instance=~"$instance",job=~"$job"}[$__rate_interval]
-                                      )
-                                    )
-                                seriesNameFormat: 'exceeded sample limit: {{job}} - {{instance}} - Metrics'
-                    - kind: TimeSeriesQuery
-                      spec:
-                        plugin:
-                            kind: PrometheusTimeSeriesQuery
-                            spec:
-                                datasource:
-                                    kind: PrometheusDatasource
-                                    name: prometheus-datasource
-                                query: |-
-                                    sum by (job, instance) (
-                                      rate(
-                                        prometheus_target_scrapes_sample_duplicate_timestamp_total{instance=~"$instance",job=~"$job"}[$__rate_interval]
-                                      )
-                                    )
-                                seriesNameFormat: 'duplicate timestamp: {{job}} - {{instance}} - Metrics'
-                    - kind: TimeSeriesQuery
-                      spec:
-                        plugin:
-                            kind: PrometheusTimeSeriesQuery
-                            spec:
-                                datasource:
-                                    kind: PrometheusDatasource
-                                    name: prometheus-datasource
-                                query: |-
-                                    sum by (job, instance) (
-                                      rate(
-                                        prometheus_target_scrapes_sample_out_of_bounds_total{instance=~"$instance",job=~"$job"}[$__rate_interval]
-                                      )
-                                    )
-                                seriesNameFormat: 'out of bounds: {{job}} - {{instance}} - Metrics'
-                    - kind: TimeSeriesQuery
-                      spec:
-                        plugin:
-                            kind: PrometheusTimeSeriesQuery
-                            spec:
-                                datasource:
-                                    kind: PrometheusDatasource
-                                    name: prometheus-datasource
-                                query: |-
-                                    sum by (job, instance) (
-                                      rate(
-                                        prometheus_target_scrapes_sample_out_of_order_total{instance=~"$instance",job=~"$job"}[$__rate_interval]
-                                      )
-                                    )
-                                seriesNameFormat: 'out of order: {{job}} - {{instance}} - Metrics'
-        "2_2":
-            kind: Panel
-            spec:
-                display:
-                    name: Appended Samples
-                    description: Shows rate of samples appended to Prometheus TSDB
-                plugin:
-                    kind: TimeSeriesChart
-                    spec:
-                        legend:
-                            position: bottom
-                            mode: table
-                queries:
-                    - kind: TimeSeriesQuery
-                      spec:
-                        plugin:
-                            kind: PrometheusTimeSeriesQuery
-                            spec:
-                                datasource:
-                                    kind: PrometheusDatasource
-                                    name: prometheus-datasource
-                                query: |-
-                                    rate(
-                                      prometheus_tsdb_head_samples_appended_total{instance=~"$instance",job=~"$job"}[$__rate_interval]
-                                    )
-                                seriesNameFormat: '{{job}} - {{instance}} - {{remote_name}} - {{url}}'
-        "3_0":
-            kind: Panel
-            spec:
-                display:
-                    name: Head Series
-                    description: Shows number of series in Prometheus TSDB head
-                plugin:
-                    kind: TimeSeriesChart
-                    spec:
-                        legend:
-                            position: bottom
-                            mode: table
-                queries:
-                    - kind: TimeSeriesQuery
-                      spec:
-                        plugin:
-                            kind: PrometheusTimeSeriesQuery
-                            spec:
-                                datasource:
-                                    kind: PrometheusDatasource
-                                    name: prometheus-datasource
-                                query: prometheus_tsdb_head_series{instance=~"$instance",job=~"$job"}
-                                seriesNameFormat: '{{job}} - {{instance}} - Head Series'
-        "3_1":
-            kind: Panel
-            spec:
-                display:
-                    name: Head Chunks
-                    description: Shows number of chunks in Prometheus TSDB head
-                plugin:
-                    kind: TimeSeriesChart
-                    spec:
-                        legend:
-                            position: bottom
-                            mode: table
-                queries:
-                    - kind: TimeSeriesQuery
-                      spec:
-                        plugin:
-                            kind: PrometheusTimeSeriesQuery
-                            spec:
-                                datasource:
-                                    kind: PrometheusDatasource
-                                    name: prometheus-datasource
-                                query: prometheus_tsdb_head_chunks{instance=~"$instance",job=~"$job"}
-                                seriesNameFormat: '{{job}} - {{instance}} - Head Chunks'
-        "4_0":
-            kind: Panel
-            spec:
-                display:
-                    name: Query Rate
-                    description: Shows Prometheus query rate metrics
-                plugin:
-                    kind: TimeSeriesChart
-                    spec:
-                        legend:
-                            position: bottom
-                            mode: table
-                queries:
-                    - kind: TimeSeriesQuery
-                      spec:
-                        plugin:
-                            kind: PrometheusTimeSeriesQuery
-                            spec:
-                                datasource:
-                                    kind: PrometheusDatasource
-                                    name: prometheus-datasource
-                                query: |-
-                                    rate(
-                                      prometheus_engine_query_duration_seconds_count{instance=~"$instance",job=~"$job",slice="inner_eval"}[$__rate_interval]
-                                    )
-                                seriesNameFormat: '{{job}} - {{instance}} - Query Rate'
-        "4_1":
-            kind: Panel
-            spec:
-                display:
-                    name: Stage Duration
-                    description: Shows duration of different Prometheus query stages
-                plugin:
-                    kind: TimeSeriesChart
-                    spec:
-                        legend:
-                            position: bottom
-                            mode: table
-                        yAxis:
-                            format:
-                                unit: seconds
-                queries:
-                    - kind: TimeSeriesQuery
-                      spec:
-                        plugin:
-                            kind: PrometheusTimeSeriesQuery
-                            spec:
-                                datasource:
-                                    kind: PrometheusDatasource
-                                    name: prometheus-datasource
-                                query: |-
-                                    max by (slice) (
-                                      prometheus_engine_query_duration_seconds{instance=~"$instance",job=~"$job",quantile="0.9"}
-                                    )
-                                seriesNameFormat: '{{slice}} - Duration'
-        "5_0":
-            kind: Panel
-            spec:
-                display:
-                    name: CPU Usage
-                    description: Shows the CPU usage of the component.
-                plugin:
-                    kind: TimeSeriesChart
-                    spec:
-                        legend:
-                            position: bottom
-                            mode: table
-                            values:
-                                - last
-                        yAxis:
-                            format:
-                                unit: decimal
-                        visual:
-                            display: line
-                            lineWidth: 0.25
-                            areaOpacity: 0.5
-                            palette:
-                                mode: auto
-                queries:
-                    - kind: TimeSeriesQuery
-                      spec:
-                        plugin:
-                            kind: PrometheusTimeSeriesQuery
-                            spec:
-                                datasource:
-                                    kind: PrometheusDatasource
-                                    name: prometheus-datasource
-                                query: rate(process_cpu_seconds_total{instance=~"$instance",job=~"$job"}[$__rate_interval])
-                                seriesNameFormat: '{{pod}}'
-        "5_1":
-            kind: Panel
-            spec:
-                display:
-                    name: Memory Usage
-                    description: Shows various memory usage metrics of the component.
-                plugin:
-                    kind: TimeSeriesChart
-                    spec:
-                        legend:
-                            position: bottom
-                            mode: table
-                            values:
-                                - last
-                        yAxis:
-                            format:
-                                unit: bytes
-                        visual:
-                            display: line
-                            lineWidth: 0.25
-                            areaOpacity: 0.5
-                            palette:
-                                mode: auto
-                queries:
-                    - kind: TimeSeriesQuery
-                      spec:
-                        plugin:
-                            kind: PrometheusTimeSeriesQuery
-                            spec:
-                                datasource:
-                                    kind: PrometheusDatasource
-                                    name: prometheus-datasource
-                                query: go_memstats_alloc_bytes{instance=~"$instance",job=~"$job"}
-                                seriesNameFormat: Alloc All {{pod}}
-                    - kind: TimeSeriesQuery
-                      spec:
-                        plugin:
-                            kind: PrometheusTimeSeriesQuery
-                            spec:
-                                datasource:
-                                    kind: PrometheusDatasource
-                                    name: prometheus-datasource
-                                query: go_memstats_heap_alloc_bytes{instance=~"$instance",job=~"$job"}
-                                seriesNameFormat: Alloc Heap {{pod}}
-                    - kind: TimeSeriesQuery
-                      spec:
-                        plugin:
-                            kind: PrometheusTimeSeriesQuery
-                            spec:
-                                datasource:
-                                    kind: PrometheusDatasource
-                                    name: prometheus-datasource
-                                query: rate(go_memstats_alloc_bytes_total{instance=~"$instance",job=~"$job"}[$__rate_interval])
-                                seriesNameFormat: Alloc Rate All {{pod}}
-                    - kind: TimeSeriesQuery
-                      spec:
-                        plugin:
-                            kind: PrometheusTimeSeriesQuery
-                            spec:
-                                datasource:
-                                    kind: PrometheusDatasource
-                                    name: prometheus-datasource
-                                query: rate(go_memstats_heap_alloc_bytes{instance=~"$instance",job=~"$job"}[$__rate_interval])
-                                seriesNameFormat: Alloc Rate Heap {{pod}}
-                    - kind: TimeSeriesQuery
-                      spec:
-                        plugin:
-                            kind: PrometheusTimeSeriesQuery
-                            spec:
-                                datasource:
-                                    kind: PrometheusDatasource
-                                    name: prometheus-datasource
-                                query: go_memstats_stack_inuse_bytes{instance=~"$instance",job=~"$job"}
-                                seriesNameFormat: Inuse Stack {{pod}}
-                    - kind: TimeSeriesQuery
-                      spec:
-                        plugin:
-                            kind: PrometheusTimeSeriesQuery
-                            spec:
-                                datasource:
-                                    kind: PrometheusDatasource
-                                    name: prometheus-datasource
-                                query: go_memstats_heap_inuse_bytes{instance=~"$instance",job=~"$job"}
-                                seriesNameFormat: Inuse Heap {{pod}}
-                    - kind: TimeSeriesQuery
-                      spec:
-                        plugin:
-                            kind: PrometheusTimeSeriesQuery
-                            spec:
-                                datasource:
-                                    kind: PrometheusDatasource
-                                    name: prometheus-datasource
-                                query: process_resident_memory_bytes{instance=~"$instance",job=~"$job"}
-                                seriesNameFormat: Resident Memory {{pod}}
-        "5_2":
-            kind: Panel
-            spec:
-                display:
-                    name: Goroutines
-                    description: Shows the number of goroutines being used by the component.
-                plugin:
-                    kind: TimeSeriesChart
-                    spec:
-                        legend:
-                            position: bottom
-                            mode: table
-                            values:
-                                - last
-                        yAxis:
-                            format:
-                                unit: decimal
-                        visual:
-                            display: line
-                            lineWidth: 0.25
-                            areaOpacity: 0.5
-                            palette:
-                                mode: auto
-                queries:
-                    - kind: TimeSeriesQuery
-                      spec:
-                        plugin:
-                            kind: PrometheusTimeSeriesQuery
-                            spec:
-                                datasource:
-                                    kind: PrometheusDatasource
-                                    name: prometheus-datasource
-                                query: go_goroutines{instance=~"$instance",job=~"$job"}
-                                seriesNameFormat: '{{pod}}'
-        "5_3":
-            kind: Panel
-            spec:
-                display:
-                    name: GC Duration
-                    description: Shows the Go garbage collection pause durations for the component.
-                plugin:
-                    kind: TimeSeriesChart
-                    spec:
-                        legend:
-                            position: bottom
-                            mode: table
-                            values:
-                                - last
-                        yAxis:
-                            format:
-                                unit: seconds
-                        visual:
-                            display: line
-                            lineWidth: 0.25
-                            areaOpacity: 0.5
-                            palette:
-                                mode: auto
-                queries:
-                    - kind: TimeSeriesQuery
-                      spec:
-                        plugin:
-                            kind: PrometheusTimeSeriesQuery
-                            spec:
-                                datasource:
-                                    kind: PrometheusDatasource
-                                    name: prometheus-datasource
-                                query: go_gc_duration_seconds{instance=~"$instance",job=~"$job"}
-                                seriesNameFormat: '{{quantile}} - {{pod}}'
-    layouts:
-        - kind: Grid
+              kind: PrometheusTimeSeriesQuery
+              spec:
+                datasource:
+                  kind: PrometheusDatasource
+                  name: prometheus-datasource
+                query: |-
+                  sum by (job, scrape_job, instance) (
+                    rate(prometheus_target_sync_length_seconds_sum{instance=~"$instance",job=~"$job"}[$__rate_interval])
+                  )
+                seriesNameFormat: '{{job}} - {{instance}} - Metrics'
+    "1_1":
+      kind: Panel
+      spec:
+        display:
+          description: Shows discovered targets across Prometheus instances
+          name: Targets
+        plugin:
+          kind: TimeSeriesChart
           spec:
-            display:
-                title: Prometheus Stats
-            items:
-                - x: 0
-                  "y": 0
-                  width: 24
-                  height: 8
-                  content:
-                    $ref: '#/spec/panels/0_0'
-        - kind: Grid
+            legend:
+              mode: table
+              position: bottom
+        queries:
+        - kind: TimeSeriesQuery
           spec:
-            display:
-                title: Discovery
-            items:
-                - x: 0
-                  "y": 0
-                  width: 12
-                  height: 8
-                  content:
-                    $ref: '#/spec/panels/1_0'
-                - x: 12
-                  "y": 0
-                  width: 12
-                  height: 8
-                  content:
-                    $ref: '#/spec/panels/1_1'
-        - kind: Grid
+            plugin:
+              kind: PrometheusTimeSeriesQuery
+              spec:
+                datasource:
+                  kind: PrometheusDatasource
+                  name: prometheus-datasource
+                query: sum by (job, instance) (prometheus_sd_discovered_targets{instance=~"$instance",job=~"$job"})
+                seriesNameFormat: '{{job}} - {{instance}} - Metrics'
+    "2_0":
+      kind: Panel
+      spec:
+        display:
+          description: Shows average interval between scrapes for Prometheus targets
+          name: Average Scrape Interval Duration
+        plugin:
+          kind: TimeSeriesChart
           spec:
-            display:
-                title: Retrieval
-            items:
-                - x: 0
-                  "y": 0
-                  width: 8
-                  height: 8
-                  content:
-                    $ref: '#/spec/panels/2_0'
-                - x: 8
-                  "y": 0
-                  width: 8
-                  height: 8
-                  content:
-                    $ref: '#/spec/panels/2_1'
-                - x: 16
-                  "y": 0
-                  width: 8
-                  height: 8
-                  content:
-                    $ref: '#/spec/panels/2_2'
-        - kind: Grid
+            legend:
+              mode: table
+              position: bottom
+            yAxis:
+              format:
+                unit: seconds
+        queries:
+        - kind: TimeSeriesQuery
           spec:
-            display:
-                title: Storage
-            items:
-                - x: 0
-                  "y": 0
-                  width: 12
-                  height: 8
-                  content:
-                    $ref: '#/spec/panels/3_0'
-                - x: 12
-                  "y": 0
-                  width: 12
-                  height: 8
-                  content:
-                    $ref: '#/spec/panels/3_1'
-        - kind: Grid
+            plugin:
+              kind: PrometheusTimeSeriesQuery
+              spec:
+                datasource:
+                  kind: PrometheusDatasource
+                  name: prometheus-datasource
+                query: |2-
+                    rate(
+                      prometheus_target_interval_length_seconds_sum{instance=~"$instance",job=~"$job"}[$__rate_interval]
+                    )
+                  /
+                    rate(
+                      prometheus_target_interval_length_seconds_count{instance=~"$instance",job=~"$job"}[$__rate_interval]
+                    )
+                seriesNameFormat: '{{job}} - {{instance}} - {{interval}} Configured'
+    "2_1":
+      kind: Panel
+      spec:
+        display:
+          description: Shows scrape failure metrics for Prometheus targets
+          name: Scrape failures
+        plugin:
+          kind: TimeSeriesChart
           spec:
-            display:
-                title: Query
-            items:
-                - x: 0
-                  "y": 0
-                  width: 12
-                  height: 8
-                  content:
-                    $ref: '#/spec/panels/4_0'
-                - x: 12
-                  "y": 0
-                  width: 12
-                  height: 8
-                  content:
-                    $ref: '#/spec/panels/4_1'
-        - kind: Grid
+            legend:
+              mode: table
+              position: bottom
+        queries:
+        - kind: TimeSeriesQuery
           spec:
-            display:
-                title: Resources
-            items:
-                - x: 0
-                  "y": 0
-                  width: 6
-                  height: 10
-                  content:
-                    $ref: '#/spec/panels/5_0'
-                - x: 6
-                  "y": 0
-                  width: 6
-                  height: 10
-                  content:
-                    $ref: '#/spec/panels/5_1'
-                - x: 12
-                  "y": 0
-                  width: 6
-                  height: 10
-                  content:
-                    $ref: '#/spec/panels/5_2'
-                - x: 18
-                  "y": 0
-                  width: 6
-                  height: 10
-                  content:
-                    $ref: '#/spec/panels/5_3'
-    duration: 1h
+            plugin:
+              kind: PrometheusTimeSeriesQuery
+              spec:
+                datasource:
+                  kind: PrometheusDatasource
+                  name: prometheus-datasource
+                query: |-
+                  sum by (job, instance) (
+                    rate(
+                      prometheus_target_scrapes_exceeded_body_size_limit_total{instance=~"$instance",job=~"$job"}[$__rate_interval]
+                    )
+                  )
+                seriesNameFormat: 'exceeded body size limit: {{job}} - {{instance}}
+                  - Metrics'
+        - kind: TimeSeriesQuery
+          spec:
+            plugin:
+              kind: PrometheusTimeSeriesQuery
+              spec:
+                datasource:
+                  kind: PrometheusDatasource
+                  name: prometheus-datasource
+                query: |-
+                  sum by (job, instance) (
+                    rate(
+                      prometheus_target_scrapes_exceeded_sample_limit_total{instance=~"$instance",job=~"$job"}[$__rate_interval]
+                    )
+                  )
+                seriesNameFormat: 'exceeded sample limit: {{job}} - {{instance}} -
+                  Metrics'
+        - kind: TimeSeriesQuery
+          spec:
+            plugin:
+              kind: PrometheusTimeSeriesQuery
+              spec:
+                datasource:
+                  kind: PrometheusDatasource
+                  name: prometheus-datasource
+                query: |-
+                  sum by (job, instance) (
+                    rate(
+                      prometheus_target_scrapes_sample_duplicate_timestamp_total{instance=~"$instance",job=~"$job"}[$__rate_interval]
+                    )
+                  )
+                seriesNameFormat: 'duplicate timestamp: {{job}} - {{instance}} - Metrics'
+        - kind: TimeSeriesQuery
+          spec:
+            plugin:
+              kind: PrometheusTimeSeriesQuery
+              spec:
+                datasource:
+                  kind: PrometheusDatasource
+                  name: prometheus-datasource
+                query: |-
+                  sum by (job, instance) (
+                    rate(
+                      prometheus_target_scrapes_sample_out_of_bounds_total{instance=~"$instance",job=~"$job"}[$__rate_interval]
+                    )
+                  )
+                seriesNameFormat: 'out of bounds: {{job}} - {{instance}} - Metrics'
+        - kind: TimeSeriesQuery
+          spec:
+            plugin:
+              kind: PrometheusTimeSeriesQuery
+              spec:
+                datasource:
+                  kind: PrometheusDatasource
+                  name: prometheus-datasource
+                query: |-
+                  sum by (job, instance) (
+                    rate(
+                      prometheus_target_scrapes_sample_out_of_order_total{instance=~"$instance",job=~"$job"}[$__rate_interval]
+                    )
+                  )
+                seriesNameFormat: 'out of order: {{job}} - {{instance}} - Metrics'
+    "2_2":
+      kind: Panel
+      spec:
+        display:
+          description: Shows rate of samples appended to Prometheus TSDB
+          name: Appended Samples
+        plugin:
+          kind: TimeSeriesChart
+          spec:
+            legend:
+              mode: table
+              position: bottom
+        queries:
+        - kind: TimeSeriesQuery
+          spec:
+            plugin:
+              kind: PrometheusTimeSeriesQuery
+              spec:
+                datasource:
+                  kind: PrometheusDatasource
+                  name: prometheus-datasource
+                query: |-
+                  rate(
+                    prometheus_tsdb_head_samples_appended_total{instance=~"$instance",job=~"$job"}[$__rate_interval]
+                  )
+                seriesNameFormat: '{{job}} - {{instance}} - {{remote_name}} - {{url}}'
+    "3_0":
+      kind: Panel
+      spec:
+        display:
+          description: Shows number of series in Prometheus TSDB head
+          name: Head Series
+        plugin:
+          kind: TimeSeriesChart
+          spec:
+            legend:
+              mode: table
+              position: bottom
+        queries:
+        - kind: TimeSeriesQuery
+          spec:
+            plugin:
+              kind: PrometheusTimeSeriesQuery
+              spec:
+                datasource:
+                  kind: PrometheusDatasource
+                  name: prometheus-datasource
+                query: prometheus_tsdb_head_series{instance=~"$instance",job=~"$job"}
+                seriesNameFormat: '{{job}} - {{instance}} - Head Series'
+    "3_1":
+      kind: Panel
+      spec:
+        display:
+          description: Shows number of chunks in Prometheus TSDB head
+          name: Head Chunks
+        plugin:
+          kind: TimeSeriesChart
+          spec:
+            legend:
+              mode: table
+              position: bottom
+        queries:
+        - kind: TimeSeriesQuery
+          spec:
+            plugin:
+              kind: PrometheusTimeSeriesQuery
+              spec:
+                datasource:
+                  kind: PrometheusDatasource
+                  name: prometheus-datasource
+                query: prometheus_tsdb_head_chunks{instance=~"$instance",job=~"$job"}
+                seriesNameFormat: '{{job}} - {{instance}} - Head Chunks'
+    "4_0":
+      kind: Panel
+      spec:
+        display:
+          description: Shows Prometheus query rate metrics
+          name: Query Rate
+        plugin:
+          kind: TimeSeriesChart
+          spec:
+            legend:
+              mode: table
+              position: bottom
+        queries:
+        - kind: TimeSeriesQuery
+          spec:
+            plugin:
+              kind: PrometheusTimeSeriesQuery
+              spec:
+                datasource:
+                  kind: PrometheusDatasource
+                  name: prometheus-datasource
+                query: |-
+                  rate(
+                    prometheus_engine_query_duration_seconds_count{instance=~"$instance",job=~"$job",slice="inner_eval"}[$__rate_interval]
+                  )
+                seriesNameFormat: '{{job}} - {{instance}} - Query Rate'
+    "4_1":
+      kind: Panel
+      spec:
+        display:
+          description: Shows duration of different Prometheus query stages
+          name: Stage Duration
+        plugin:
+          kind: TimeSeriesChart
+          spec:
+            legend:
+              mode: table
+              position: bottom
+            yAxis:
+              format:
+                unit: seconds
+        queries:
+        - kind: TimeSeriesQuery
+          spec:
+            plugin:
+              kind: PrometheusTimeSeriesQuery
+              spec:
+                datasource:
+                  kind: PrometheusDatasource
+                  name: prometheus-datasource
+                query: |-
+                  max by (slice) (
+                    prometheus_engine_query_duration_seconds{instance=~"$instance",job=~"$job",quantile="0.9"}
+                  )
+                seriesNameFormat: '{{slice}} - Duration'
+    "5_0":
+      kind: Panel
+      spec:
+        display:
+          description: Shows the CPU usage of the component.
+          name: CPU Usage
+        plugin:
+          kind: TimeSeriesChart
+          spec:
+            legend:
+              mode: table
+              position: bottom
+              values:
+              - last
+            visual:
+              areaOpacity: 0.5
+              display: line
+              lineWidth: 0.25
+              palette:
+                mode: auto
+            yAxis:
+              format:
+                unit: decimal
+        queries:
+        - kind: TimeSeriesQuery
+          spec:
+            plugin:
+              kind: PrometheusTimeSeriesQuery
+              spec:
+                datasource:
+                  kind: PrometheusDatasource
+                  name: prometheus-datasource
+                query: rate(process_cpu_seconds_total{instance=~"$instance",job=~"$job"}[$__rate_interval])
+                seriesNameFormat: '{{pod}}'
+    "5_1":
+      kind: Panel
+      spec:
+        display:
+          description: Shows various memory usage metrics of the component.
+          name: Memory Usage
+        plugin:
+          kind: TimeSeriesChart
+          spec:
+            legend:
+              mode: table
+              position: bottom
+              values:
+              - last
+            visual:
+              areaOpacity: 0.5
+              display: line
+              lineWidth: 0.25
+              palette:
+                mode: auto
+            yAxis:
+              format:
+                unit: bytes
+        queries:
+        - kind: TimeSeriesQuery
+          spec:
+            plugin:
+              kind: PrometheusTimeSeriesQuery
+              spec:
+                datasource:
+                  kind: PrometheusDatasource
+                  name: prometheus-datasource
+                query: go_memstats_alloc_bytes{instance=~"$instance",job=~"$job"}
+                seriesNameFormat: Alloc All {{pod}}
+        - kind: TimeSeriesQuery
+          spec:
+            plugin:
+              kind: PrometheusTimeSeriesQuery
+              spec:
+                datasource:
+                  kind: PrometheusDatasource
+                  name: prometheus-datasource
+                query: go_memstats_heap_alloc_bytes{instance=~"$instance",job=~"$job"}
+                seriesNameFormat: Alloc Heap {{pod}}
+        - kind: TimeSeriesQuery
+          spec:
+            plugin:
+              kind: PrometheusTimeSeriesQuery
+              spec:
+                datasource:
+                  kind: PrometheusDatasource
+                  name: prometheus-datasource
+                query: rate(go_memstats_alloc_bytes_total{instance=~"$instance",job=~"$job"}[$__rate_interval])
+                seriesNameFormat: Alloc Rate All {{pod}}
+        - kind: TimeSeriesQuery
+          spec:
+            plugin:
+              kind: PrometheusTimeSeriesQuery
+              spec:
+                datasource:
+                  kind: PrometheusDatasource
+                  name: prometheus-datasource
+                query: rate(go_memstats_heap_alloc_bytes{instance=~"$instance",job=~"$job"}[$__rate_interval])
+                seriesNameFormat: Alloc Rate Heap {{pod}}
+        - kind: TimeSeriesQuery
+          spec:
+            plugin:
+              kind: PrometheusTimeSeriesQuery
+              spec:
+                datasource:
+                  kind: PrometheusDatasource
+                  name: prometheus-datasource
+                query: go_memstats_stack_inuse_bytes{instance=~"$instance",job=~"$job"}
+                seriesNameFormat: Inuse Stack {{pod}}
+        - kind: TimeSeriesQuery
+          spec:
+            plugin:
+              kind: PrometheusTimeSeriesQuery
+              spec:
+                datasource:
+                  kind: PrometheusDatasource
+                  name: prometheus-datasource
+                query: go_memstats_heap_inuse_bytes{instance=~"$instance",job=~"$job"}
+                seriesNameFormat: Inuse Heap {{pod}}
+        - kind: TimeSeriesQuery
+          spec:
+            plugin:
+              kind: PrometheusTimeSeriesQuery
+              spec:
+                datasource:
+                  kind: PrometheusDatasource
+                  name: prometheus-datasource
+                query: process_resident_memory_bytes{instance=~"$instance",job=~"$job"}
+                seriesNameFormat: Resident Memory {{pod}}
+    "5_2":
+      kind: Panel
+      spec:
+        display:
+          description: Shows the number of goroutines being used by the component.
+          name: Goroutines
+        plugin:
+          kind: TimeSeriesChart
+          spec:
+            legend:
+              mode: table
+              position: bottom
+              values:
+              - last
+            visual:
+              areaOpacity: 0.5
+              display: line
+              lineWidth: 0.25
+              palette:
+                mode: auto
+            yAxis:
+              format:
+                unit: decimal
+        queries:
+        - kind: TimeSeriesQuery
+          spec:
+            plugin:
+              kind: PrometheusTimeSeriesQuery
+              spec:
+                datasource:
+                  kind: PrometheusDatasource
+                  name: prometheus-datasource
+                query: go_goroutines{instance=~"$instance",job=~"$job"}
+                seriesNameFormat: '{{pod}}'
+    "5_3":
+      kind: Panel
+      spec:
+        display:
+          description: Shows the Go garbage collection pause durations for the component.
+          name: GC Duration
+        plugin:
+          kind: TimeSeriesChart
+          spec:
+            legend:
+              mode: table
+              position: bottom
+              values:
+              - last
+            visual:
+              areaOpacity: 0.5
+              display: line
+              lineWidth: 0.25
+              palette:
+                mode: auto
+            yAxis:
+              format:
+                unit: seconds
+        queries:
+        - kind: TimeSeriesQuery
+          spec:
+            plugin:
+              kind: PrometheusTimeSeriesQuery
+              spec:
+                datasource:
+                  kind: PrometheusDatasource
+                  name: prometheus-datasource
+                query: go_gc_duration_seconds{instance=~"$instance",job=~"$job"}
+                seriesNameFormat: '{{quantile}} - {{pod}}'
+  variables:
+  - kind: ListVariable
+    spec:
+      allowAllValue: false
+      allowMultiple: false
+      display:
+        name: job
+      name: job
+      plugin:
+        kind: PrometheusLabelValuesVariable
+        spec:
+          datasource:
+            kind: PrometheusDatasource
+            name: prometheus-datasource
+          labelName: job
+          matchers:
+          - prometheus_build_info{}
+  - kind: ListVariable
+    spec:
+      allowAllValue: false
+      allowMultiple: false
+      display:
+        name: instance
+      name: instance
+      plugin:
+        kind: PrometheusLabelValuesVariable
+        spec:
+          datasource:
+            kind: PrometheusDatasource
+            name: prometheus-datasource
+          labelName: instance
+          matchers:
+          - prometheus_build_info{job="$job"}

@@ -21,8 +21,7 @@
           "kind": "ListVariable",
           "spec": {
             "display": {
-              "name": "cluster",
-              "hidden": false
+              "name": "cluster"
             },
             "allowAllValue": false,
             "allowMultiple": false,

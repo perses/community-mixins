@@ -33,6 +33,7 @@ import (
 const (
 	testNamespace            = "perses-dev"
 	persesInstanceName       = "perses"
+	persesFormatProject      = "community-mixins"
 	operatorDeploymentName   = "perses-operator-controller-manager"
 	operatorPodLabelSelector = "control-plane=controller-manager"
 	operatorManagerContainer = "manager"
@@ -47,8 +48,11 @@ func builtOperatorDashboardDir() string {
 	return filepath.Join("..", "..", "built", "dashboards", "operator")
 }
 
-func countBuiltOperatorDashboards() (int, error) {
-	dir := builtOperatorDashboardDir()
+func builtPersesDashboardDir() string {
+	return filepath.Join("..", "..", "built", "dashboards", "perses")
+}
+
+func countBuiltDashboardFiles(dir, label string) (int, error) {
 	var count int
 	err := filepath.WalkDir(dir, func(path string, d fs.DirEntry, err error) error {
 		if err != nil {
@@ -57,7 +61,7 @@ func countBuiltOperatorDashboards() (int, error) {
 		if d.IsDir() {
 			return nil
 		}
-		if strings.HasSuffix(path, ".yaml") || strings.HasSuffix(path, ".yml") {
+		if strings.HasSuffix(path, ".yaml") || strings.HasSuffix(path, ".yml") || strings.HasSuffix(path, ".json") {
 			count++
 		}
 		return nil
@@ -66,9 +70,17 @@ func countBuiltOperatorDashboards() (int, error) {
 		return 0, fmt.Errorf("walk %s: %w", dir, err)
 	}
 	if count == 0 {
-		return 0, fmt.Errorf("no operator dashboard YAML found under %s", dir)
+		return 0, fmt.Errorf("no %s dashboard files found under %s", label, dir)
 	}
 	return count, nil
+}
+
+func countBuiltOperatorDashboards() (int, error) {
+	return countBuiltDashboardFiles(builtOperatorDashboardDir(), "operator")
+}
+
+func countBuiltPersesDashboards() (int, error) {
+	return countBuiltDashboardFiles(builtPersesDashboardDir(), "perses")
 }
 
 func pollCondition(timeout time.Duration, conditionFunc func() error) error {
@@ -94,6 +106,55 @@ func requireOperatorE2E(t *testing.T) {
 	if kubeClient == nil {
 		t.Fatal("kubeClient is not initialized; set KUBECONFIG when OPERATOR_E2E=true")
 	}
+}
+
+func requirePersesE2E(t *testing.T) {
+	t.Helper()
+	if os.Getenv("PERSES_E2E") != "true" {
+		t.Skip("PERSES_E2E != true, skipping Perses-format e2e tests")
+	}
+	if kubeClient == nil {
+		t.Fatal("kubeClient is not initialized; set KUBECONFIG when PERSES_E2E=true")
+	}
+}
+
+func persesAPIGet(kClient kubernetes.Interface, suffix string) ([]byte, error) {
+	proxyName, err := persesPodProxyName(kClient)
+	if err != nil {
+		return nil, err
+	}
+
+	return kClient.CoreV1().RESTClient().Get().
+		Namespace(testNamespace).
+		Resource("pods").
+		Name(proxyName).
+		SubResource("proxy").
+		Suffix(suffix).
+		DoRaw(context.Background())
+}
+
+// listPersesAPIDashboards returns dashboard names from the Perses HTTP API.
+// The API returns a plain JSON array of Dashboard objects per the OpenAPI spec.
+func listPersesAPIDashboards(kClient kubernetes.Interface, project string) ([]string, error) {
+	raw, err := persesAPIGet(kClient, fmt.Sprintf("/api/v1/projects/%s/dashboards", project))
+	if err != nil {
+		return nil, err
+	}
+
+	var dashboards []struct {
+		Metadata struct {
+			Name string `json:"name"`
+		} `json:"metadata"`
+	}
+	if err := json.Unmarshal(raw, &dashboards); err != nil {
+		return nil, fmt.Errorf("decode Perses dashboard list: %w; body=%s", err, string(raw))
+	}
+
+	names := make([]string, 0, len(dashboards))
+	for _, d := range dashboards {
+		names = append(names, d.Metadata.Name)
+	}
+	return names, nil
 }
 
 func persesInstanceReady(kClient kubernetes.Interface) error {

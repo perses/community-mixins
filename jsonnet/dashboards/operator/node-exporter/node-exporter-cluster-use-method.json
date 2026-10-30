@@ -21,8 +21,7 @@
           "kind": "ListVariable",
           "spec": {
             "display": {
-              "name": "instance",
-              "hidden": false
+              "name": "instance"
             },
             "allowAllValue": true,
             "allowMultiple": true,

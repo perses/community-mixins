@@ -122,7 +122,6 @@ spec:
       spec:
         display:
           description: 'Regex filter. Examples: username, .*@redhat.com, admin|user'
-          hidden: false
           name: Username
         name: username
         value: ""
@@ -134,7 +133,6 @@ spec:
         defaultValue: $__all
         display:
           description: Select None to show all users including system accounts
-          hidden: false
           name: Exclude System Users
         name: exclude_sa
         plugin:
@@ -163,7 +161,6 @@ spec:
         defaultValue: $__all
         display:
           description: Filter by API verb
-          hidden: false
           name: Verb
         name: verb
         plugin:
@@ -186,7 +183,6 @@ spec:
         defaultValue: $__all
         display:
           description: Filter by resource type (populated from audit logs)
-          hidden: false
           name: Resource
         name: resource
         plugin:
@@ -202,7 +198,6 @@ spec:
       spec:
         display:
           description: 'Regex filter. Examples: my-pod.*, nginx, etcd.*'
-          hidden: false
           name: Resource Name
         name: resource_name
         value: ""
@@ -210,7 +205,6 @@ spec:
       spec:
         display:
           description: 'Regex filter. Examples: openshift-.*, my-app, kube-system|default'
-          hidden: false
           name: Namespace
         name: namespace
         value: ""
@@ -222,7 +216,6 @@ spec:
         defaultValue: $__all
         display:
           description: Filter by HTTP response code
-          hidden: false
           name: Response Code
         name: response_code
         plugin:
@@ -261,7 +254,6 @@ spec:
         defaultValue: $__all
         display:
           description: Select None to show all resource types
-          hidden: false
           name: Exclude Resources
         name: exclude_resource
         plugin:
@@ -281,7 +273,6 @@ spec:
       spec:
         display:
           description: 'User agent regex. Examples: oc, kubectl, console, argocd'
-          hidden: false
           name: Client
         name: client
         value: ""
@@ -290,7 +281,6 @@ spec:
         display:
           description: 'Raw LogQL stage. Examples: |~ "error" (include), !~ "health"
             (exclude), | user_username!~"bot.*"'
-          hidden: false
           name: LogQL Filter
         name: filter
         value: ""
