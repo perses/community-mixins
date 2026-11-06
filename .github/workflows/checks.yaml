@@ -49,7 +49,7 @@ jobs:
         run: make build-dashboards-local
 
       - name: Install percli
-        uses: perses/cli-actions/actions/install_percli@e1420dc776f79f624c7d570cccc0dcdddf0d104d # v0.2.1
+        uses: perses/cli-actions/actions/install_percli@24cfc5b42c0f1e813bf6481e4804339e646c196c # v0.3.0
         with:
           cli-version: "latest"
 

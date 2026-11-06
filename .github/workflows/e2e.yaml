@@ -21,7 +21,7 @@ jobs:
           cache: true
 
       - name: Create kind cluster
-        uses: helm/kind-action@1544676c07bb3570fcb70166beaa07c4528fd4aa # v1.15.1
+        uses: helm/kind-action@ea822c7bf1874f08e5a491df991c228edffc3376 # v1.15.2
         with:
           version: ${{ env.kind-version }}
           node_image: ${{ env.kind-node-image }}
@@ -34,7 +34,7 @@ jobs:
           version: ${{ env.helm-version }}
 
       - name: Install percli
-        uses: perses/cli-actions/actions/install_percli@e1420dc776f79f624c7d570cccc0dcdddf0d104d # v0.2.1
+        uses: perses/cli-actions/actions/install_percli@24cfc5b42c0f1e813bf6481e4804339e646c196c # v0.3.0
         with:
           cli-version: "v${{ env.perses-version }}"
 
