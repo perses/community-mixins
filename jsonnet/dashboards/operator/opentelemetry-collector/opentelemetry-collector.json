@@ -130,7 +130,7 @@
                         "kind": "PrometheusDatasource",
                         "name": "prometheus-datasource"
                       },
-                      "query": "sum by (job, receiver) (\n  rate(otelcol_receiver_accepted_spans_total{job=~\"$job\",receiver=~\"$receiver\"}[$__rate_interval])\n)",
+                      "query": "sum by (job, receiver) (\n  rate(\n    {__name__=~\"otelcol_receiver_accepted_spans(_total)?\",job=~\"$job\",receiver=~\"$receiver\"}[$__rate_interval]\n  )\n)",
                       "seriesNameFormat": "Accepted: {{receiver}}"
                     }
                   }
@@ -146,7 +146,7 @@
                         "kind": "PrometheusDatasource",
                         "name": "prometheus-datasource"
                       },
-                      "query": "sum by (job, receiver) (\n  rate(otelcol_receiver_refused_spans_total{job=~\"$job\",receiver=~\"$receiver\"}[$__rate_interval])\n)",
+                      "query": "sum by (job, receiver) (\n  rate(\n    {__name__=~\"otelcol_receiver_refused_spans(_total)?\",job=~\"$job\",receiver=~\"$receiver\"}[$__rate_interval]\n  )\n)",
                       "seriesNameFormat": "Refused: {{receiver}}"
                     }
                   }
@@ -159,7 +159,7 @@
           "kind": "Panel",
           "spec": {
             "display": {
-              "name": "Metic Points Rate",
+              "name": "Metric Points Rate",
               "description": "Accepted: rate of metric points successfully pushed into the pipeline.\n\t\tRefused: rate of metric points that could not be pushed into the pipeline."
             },
             "plugin": {
@@ -190,7 +190,7 @@
                         "kind": "PrometheusDatasource",
                         "name": "prometheus-datasource"
                       },
-                      "query": "sum by (job, receiver) (\n  rate(\n    otelcol_receiver_accepted_metric_points_total{job=~\"$job\",receiver=~\"$receiver\"}[$__rate_interval]\n  )\n)",
+                      "query": "sum by (job, receiver) (\n  rate(\n    {__name__=~\"otelcol_receiver_accepted_metric_points(_total)?\",job=~\"$job\",receiver=~\"$receiver\"}[$__rate_interval]\n  )\n)",
                       "seriesNameFormat": "Accepted: {{receiver}}"
                     }
                   }
@@ -206,7 +206,7 @@
                         "kind": "PrometheusDatasource",
                         "name": "prometheus-datasource"
                       },
-                      "query": "sum by (job, receiver) (\n  rate(\n    otelcol_receiver_refused_metric_points_total{job=~\"$job\",receiver=~\"$receiver\"}[$__rate_interval]\n  )\n)",
+                      "query": "sum by (job, receiver) (\n  rate(\n    {__name__=~\"otelcol_receiver_refused_metric_points(_total)?\",job=~\"$job\",receiver=~\"$receiver\"}[$__rate_interval]\n  )\n)",
                       "seriesNameFormat": "Refused: {{receiver}}"
                     }
                   }
@@ -250,7 +250,7 @@
                         "kind": "PrometheusDatasource",
                         "name": "prometheus-datasource"
                       },
-                      "query": "sum by (job, receiver) (\n  rate(\n    otelcol_receiver_accepted_log_records_total{job=~\"$job\",receiver=~\"$receiver\"}[$__rate_interval]\n  )\n)",
+                      "query": "sum by (job, receiver) (\n  rate(\n    {__name__=~\"otelcol_receiver_accepted_log_records(_total)?\",job=~\"$job\",receiver=~\"$receiver\"}[$__rate_interval]\n  )\n)",
                       "seriesNameFormat": "Accepted: {{receiver}}"
                     }
                   }
@@ -266,7 +266,7 @@
                         "kind": "PrometheusDatasource",
                         "name": "prometheus-datasource"
                       },
-                      "query": "sum by (job, receiver) (\n  rate(\n    otelcol_receiver_refused_log_records_total{job=~\"$job\",receiver=~\"$receiver\"}[$__rate_interval]\n  )\n)",
+                      "query": "sum by (job, receiver) (\n  rate(\n    {__name__=~\"otelcol_receiver_refused_log_records(_total)?\",job=~\"$job\",receiver=~\"$receiver\"}[$__rate_interval]\n  )\n)",
                       "seriesNameFormat": "Refused: {{receiver}}"
                     }
                   }
@@ -310,7 +310,7 @@
                         "kind": "PrometheusDatasource",
                         "name": "prometheus-datasource"
                       },
-                      "query": "sum by (job, processor, otel_signal) (\n  rate(\n    otelcol_processor_incoming_items_total{job=~\"$job\",otel_signal=~\"traces\",processor=~\"$processor\"}[$__rate_interval]\n  )\n)",
+                      "query": "  sum by (job, processor, otel_signal) (\n    label_replace(\n      rate(\n        {__name__=~\"otelcol_processor_incoming_items(_total)?\",job=~\"$job\",processor=~\"$processor\"}[$__rate_interval]\n      ),\n      \"otel_signal\",\n      \"$1\",\n      \"otel.signal\",\n      \"(.+)\"\n    )\n  )\nand on (otel_signal)\n  label_replace(vector(1), \"otel_signal\", \"traces\", \"\", \"\")",
                       "seriesNameFormat": "Incoming: {{processor}}"
                     }
                   }
@@ -326,7 +326,7 @@
                         "kind": "PrometheusDatasource",
                         "name": "prometheus-datasource"
                       },
-                      "query": "sum by (job, processor, otel_signal) (\n  rate(\n    otelcol_processor_outgoing_items_total{job=~\"$job\",otel_signal=~\"traces\",processor=~\"$processor\"}[$__rate_interval]\n  )\n)",
+                      "query": "  sum by (job, processor, otel_signal) (\n    label_replace(\n      rate(\n        {__name__=~\"otelcol_processor_outgoing_items(_total)?\",job=~\"$job\",processor=~\"$processor\"}[$__rate_interval]\n      ),\n      \"otel_signal\",\n      \"$1\",\n      \"otel.signal\",\n      \"(.+)\"\n    )\n  )\nand on (otel_signal)\n  label_replace(vector(1), \"otel_signal\", \"traces\", \"\", \"\")",
                       "seriesNameFormat": "Outgoing: {{processor}}"
                     }
                   }
@@ -370,7 +370,7 @@
                         "kind": "PrometheusDatasource",
                         "name": "prometheus-datasource"
                       },
-                      "query": "sum by (job, processor, otel_signal) (\n  rate(\n    otelcol_processor_incoming_items_total{job=~\"$job\",otel_signal=~\"metrics\",processor=~\"$processor\"}[$__rate_interval]\n  )\n)",
+                      "query": "  sum by (job, processor, otel_signal) (\n    label_replace(\n      rate(\n        {__name__=~\"otelcol_processor_incoming_items(_total)?\",job=~\"$job\",processor=~\"$processor\"}[$__rate_interval]\n      ),\n      \"otel_signal\",\n      \"$1\",\n      \"otel.signal\",\n      \"(.+)\"\n    )\n  )\nand on (otel_signal)\n  label_replace(vector(1), \"otel_signal\", \"metrics\", \"\", \"\")",
                       "seriesNameFormat": "Incoming: {{processor}}"
                     }
                   }
@@ -386,7 +386,7 @@
                         "kind": "PrometheusDatasource",
                         "name": "prometheus-datasource"
                       },
-                      "query": "sum by (job, processor, otel_signal) (\n  rate(\n    otelcol_processor_outgoing_items_total{job=~\"$job\",otel_signal=~\"metrics\",processor=~\"$processor\"}[$__rate_interval]\n  )\n)",
+                      "query": "  sum by (job, processor, otel_signal) (\n    label_replace(\n      rate(\n        {__name__=~\"otelcol_processor_outgoing_items(_total)?\",job=~\"$job\",processor=~\"$processor\"}[$__rate_interval]\n      ),\n      \"otel_signal\",\n      \"$1\",\n      \"otel.signal\",\n      \"(.+)\"\n    )\n  )\nand on (otel_signal)\n  label_replace(vector(1), \"otel_signal\", \"metrics\", \"\", \"\")",
                       "seriesNameFormat": "Outgoing: {{processor}}"
                     }
                   }
@@ -430,7 +430,7 @@
                         "kind": "PrometheusDatasource",
                         "name": "prometheus-datasource"
                       },
-                      "query": "sum by (job, processor, otel_signal) (\n  rate(\n    otelcol_processor_incoming_items_total{job=~\"$job\",otel_signal=~\"logs\",processor=~\"$processor\"}[$__rate_interval]\n  )\n)",
+                      "query": "  sum by (job, processor, otel_signal) (\n    label_replace(\n      rate(\n        {__name__=~\"otelcol_processor_incoming_items(_total)?\",job=~\"$job\",processor=~\"$processor\"}[$__rate_interval]\n      ),\n      \"otel_signal\",\n      \"$1\",\n      \"otel.signal\",\n      \"(.+)\"\n    )\n  )\nand on (otel_signal)\n  label_replace(vector(1), \"otel_signal\", \"logs\", \"\", \"\")",
                       "seriesNameFormat": "Incoming: {{processor}}"
                     }
                   }
@@ -446,7 +446,7 @@
                         "kind": "PrometheusDatasource",
                         "name": "prometheus-datasource"
                       },
-                      "query": "sum by (job, processor, otel_signal) (\n  rate(\n    otelcol_processor_outgoing_items_total{job=~\"$job\",otel_signal=~\"logs\",processor=~\"$processor\"}[$__rate_interval]\n  )\n)",
+                      "query": "  sum by (job, processor, otel_signal) (\n    label_replace(\n      rate(\n        {__name__=~\"otelcol_processor_outgoing_items(_total)?\",job=~\"$job\",processor=~\"$processor\"}[$__rate_interval]\n      ),\n      \"otel_signal\",\n      \"$1\",\n      \"otel.signal\",\n      \"(.+)\"\n    )\n  )\nand on (otel_signal)\n  label_replace(vector(1), \"otel_signal\", \"logs\", \"\", \"\")",
                       "seriesNameFormat": "Outgoing: {{processor}}"
                     }
                   }
@@ -533,7 +533,7 @@
                         "kind": "PrometheusDatasource",
                         "name": "prometheus-datasource"
                       },
-                      "query": "sum by (processor) (\n  rate(\n    otelcol_processor_batch_batch_send_size_count{job=~\"$job\",processor=~\"$processor\"}[$__rate_interval]\n  )\n)",
+                      "query": "sum by (job, processor) (\n  rate(\n    otelcol_processor_batch_batch_send_size_count{job=~\"$job\",processor=~\"$processor\"}[$__rate_interval]\n  )\n)",
                       "seriesNameFormat": "Batch send size count: {{processor}}"
                     }
                   }
@@ -549,7 +549,7 @@
                         "kind": "PrometheusDatasource",
                         "name": "prometheus-datasource"
                       },
-                      "query": "sum by (processor) (\n  rate(\n    otelcol_processor_batch_batch_send_size_sum{job=~\"$job\",processor=~\"$processor\"}[$__rate_interval]\n  )\n)",
+                      "query": "sum by (job, processor) (\n  rate(\n    otelcol_processor_batch_batch_send_size_sum{job=~\"$job\",processor=~\"$processor\"}[$__rate_interval]\n  )\n)",
                       "seriesNameFormat": "Batch send size sum: {{processor}}"
                     }
                   }
@@ -586,8 +586,8 @@
                         "kind": "PrometheusDatasource",
                         "name": "prometheus-datasource"
                       },
-                      "query": "sum by (processor) (\n  rate(\n    otelcol_processor_batch_batch_size_trigger_send_total{job=~\"$job\",processor=~\"$processor\"}[$__rate_interval]\n  )\n)",
-                      "seriesNameFormat": "Batch sent due to a timeout trigger: {{processor}}"
+                      "query": "sum by (job, processor) (\n  rate(\n    {__name__=~\"otelcol_processor_batch_batch_size_trigger_send(_total)?\",job=~\"$job\",processor=~\"$processor\"}[$__rate_interval]\n  )\n)",
+                      "seriesNameFormat": "Batch sent due to a size trigger: {{processor}}"
                     }
                   }
                 }
@@ -602,7 +602,7 @@
                         "kind": "PrometheusDatasource",
                         "name": "prometheus-datasource"
                       },
-                      "query": "sum by (processor) (\n  rate(\n    otelcol_processor_batch_timeout_trigger_send_total{job=~\"$job\",processor=~\"$processor\"}[$__rate_interval]\n  )\n)",
+                      "query": "sum by (job, processor) (\n  rate(\n    {__name__=~\"otelcol_processor_batch_timeout_trigger_send(_total)?\",job=~\"$job\",processor=~\"$processor\"}[$__rate_interval]\n  )\n)",
                       "seriesNameFormat": "Batch sent due to a timeout trigger: {{processor}}"
                     }
                   }
@@ -639,7 +639,7 @@
                         "kind": "PrometheusDatasource",
                         "name": "prometheus-datasource"
                       },
-                      "query": "sum by (exporter) (\n  rate(otelcol_exporter_sent_spans_total{exporter=~\"$exporter\",job=~\"$job\"}[$__rate_interval])\n)",
+                      "query": "sum by (job, exporter) (\n  rate(\n    {__name__=~\"otelcol_exporter_sent_spans(_total)?\",exporter=~\"$exporter\",job=~\"$job\"}[$__rate_interval]\n  )\n)",
                       "seriesNameFormat": "Sent: {{exporter}}"
                     }
                   }
@@ -655,7 +655,7 @@
                         "kind": "PrometheusDatasource",
                         "name": "prometheus-datasource"
                       },
-                      "query": "sum by (exporter) (\n  rate(\n    otelcol_exporter_enqueue_failed_spans_total{exporter=~\"$exporter\",job=~\"$job\"}[$__rate_interval]\n  )\n)",
+                      "query": "sum by (job, exporter) (\n  rate(\n    {__name__=~\"otelcol_exporter_enqueue_failed_spans(_total)?\",exporter=~\"$exporter\",job=~\"$job\"}[$__rate_interval]\n  )\n)",
                       "seriesNameFormat": "Enqueue failed: {{exporter}}"
                     }
                   }
@@ -671,7 +671,7 @@
                         "kind": "PrometheusDatasource",
                         "name": "prometheus-datasource"
                       },
-                      "query": "sum by (exporter) (\n  rate(otelcol_exporter_send_failed_spans_total{exporter=~\"$exporter\",job=~\"$job\"}[$__rate_interval])\n)",
+                      "query": "sum by (job, exporter) (\n  rate(\n    {__name__=~\"otelcol_exporter_send_failed_spans(_total)?\",exporter=~\"$exporter\",job=~\"$job\"}[$__rate_interval]\n  )\n)",
                       "seriesNameFormat": "Send failed: {{exporter}}"
                     }
                   }
@@ -708,7 +708,7 @@
                         "kind": "PrometheusDatasource",
                         "name": "prometheus-datasource"
                       },
-                      "query": "sum by (exporter) (\n  rate(otelcol_exporter_sent_metric_points_total{exporter=~\"$exporter\",job=~\"$job\"}[$__rate_interval])\n)",
+                      "query": "sum by (job, exporter) (\n  rate(\n    {__name__=~\"otelcol_exporter_sent_metric_points(_total)?\",exporter=~\"$exporter\",job=~\"$job\"}[$__rate_interval]\n  )\n)",
                       "seriesNameFormat": "Sent: {{exporter}}"
                     }
                   }
@@ -724,7 +724,7 @@
                         "kind": "PrometheusDatasource",
                         "name": "prometheus-datasource"
                       },
-                      "query": "sum by (exporter) (\n  rate(\n    otelcol_exporter_enqueue_failed_metric_points_total{exporter=~\"$exporter\",job=~\"$job\"}[$__rate_interval]\n  )\n)",
+                      "query": "sum by (job, exporter) (\n  rate(\n    {__name__=~\"otelcol_exporter_enqueue_failed_metric_points(_total)?\",exporter=~\"$exporter\",job=~\"$job\"}[$__rate_interval]\n  )\n)",
                       "seriesNameFormat": "Enqueue failed: {{exporter}}"
                     }
                   }
@@ -740,7 +740,7 @@
                         "kind": "PrometheusDatasource",
                         "name": "prometheus-datasource"
                       },
-                      "query": "sum by (exporter) (\n  rate(\n    otelcol_exporter_send_failed_metric_points_total{exporter=~\"$exporter\",job=~\"$job\"}[$__rate_interval]\n  )\n)",
+                      "query": "sum by (job, exporter) (\n  rate(\n    {__name__=~\"otelcol_exporter_send_failed_metric_points(_total)?\",exporter=~\"$exporter\",job=~\"$job\"}[$__rate_interval]\n  )\n)",
                       "seriesNameFormat": "Send failed: {{exporter}}"
                     }
                   }
@@ -777,7 +777,7 @@
                         "kind": "PrometheusDatasource",
                         "name": "prometheus-datasource"
                       },
-                      "query": "sum by (exporter) (\n  rate(otelcol_exporter_sent_log_records_total{exporter=~\"$exporter\",job=~\"$job\"}[$__rate_interval])\n)",
+                      "query": "sum by (job, exporter) (\n  rate(\n    {__name__=~\"otelcol_exporter_sent_log_records(_total)?\",exporter=~\"$exporter\",job=~\"$job\"}[$__rate_interval]\n  )\n)",
                       "seriesNameFormat": "Sent: {{exporter}}"
                     }
                   }
@@ -793,7 +793,7 @@
                         "kind": "PrometheusDatasource",
                         "name": "prometheus-datasource"
                       },
-                      "query": "sum by (exporter) (\n  rate(\n    otelcol_exporter_enqueue_failed_log_records_total{exporter=~\"$exporter\",job=~\"$job\"}[$__rate_interval]\n  )\n)",
+                      "query": "sum by (job, exporter) (\n  rate(\n    {__name__=~\"otelcol_exporter_enqueue_failed_log_records(_total)?\",exporter=~\"$exporter\",job=~\"$job\"}[$__rate_interval]\n  )\n)",
                       "seriesNameFormat": "Enqueue failed: {{exporter}}"
                     }
                   }
@@ -809,7 +809,7 @@
                         "kind": "PrometheusDatasource",
                         "name": "prometheus-datasource"
                       },
-                      "query": "sum by (exporter) (\n  rate(\n    otelcol_exporter_send_failed_log_records_total{exporter=~\"$exporter\",job=~\"$job\"}[$__rate_interval]\n  )\n)",
+                      "query": "sum by (job, exporter) (\n  rate(\n    {__name__=~\"otelcol_exporter_send_failed_log_records(_total)?\",exporter=~\"$exporter\",job=~\"$job\"}[$__rate_interval]\n  )\n)",
                       "seriesNameFormat": "Send failed: {{exporter}}"
                     }
                   }
@@ -846,8 +846,8 @@
                         "kind": "PrometheusDatasource",
                         "name": "prometheus-datasource"
                       },
-                      "query": "max by (exporter) (otelcol_exporter_queue_size{exporter=~\"$exporter\",job=~\"$job\"})",
-                      "seriesNameFormat": "Queue size: {{exporter}}"
+                      "query": "max by (job, exporter, data_type) (otelcol_exporter_queue_size{exporter=~\"$exporter\",job=~\"$job\"})",
+                      "seriesNameFormat": "Queue size: {{exporter}} ({{data_type}})"
                     }
                   }
                 }
@@ -883,8 +883,8 @@
                         "kind": "PrometheusDatasource",
                         "name": "prometheus-datasource"
                       },
-                      "query": "min by (exporter) (otelcol_exporter_queue_capacity{exporter=~\"$exporter\",job=~\"$job\"})",
-                      "seriesNameFormat": "Queue capacity: {{exporter}}"
+                      "query": "min by (job, exporter, data_type) (\n  otelcol_exporter_queue_capacity{exporter=~\"$exporter\",job=~\"$job\"}\n)",
+                      "seriesNameFormat": "Queue capacity: {{exporter}} ({{data_type}})"
                     }
                   }
                 }
@@ -920,8 +920,8 @@
                         "kind": "PrometheusDatasource",
                         "name": "prometheus-datasource"
                       },
-                      "query": "  100\n*\n    max by (exporter) (otelcol_exporter_queue_size{exporter=~\"$exporter\",job=~\"$job\"})\n  /\n    max by (exporter) (otelcol_exporter_queue_capacity{exporter=~\"$exporter\",job=~\"$job\"})",
-                      "seriesNameFormat": "Queue utilization: {{exporter}}"
+                      "query": "  100\n*\n    max by (job, exporter, data_type) (otelcol_exporter_queue_size{exporter=~\"$exporter\",job=~\"$job\"})\n  /\n    max by (job, exporter, data_type) (\n      otelcol_exporter_queue_capacity{exporter=~\"$exporter\",job=~\"$job\"}\n    )",
+                      "seriesNameFormat": "Queue utilization: {{exporter}} ({{data_type}})"
                     }
                   }
                 }
