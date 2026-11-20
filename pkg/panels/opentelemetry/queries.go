@@ -19,88 +19,55 @@ import (
 	"github.com/perses/community-mixins/pkg/promql"
 	promqlbuilder "github.com/perses/promql-builder"
 	"github.com/perses/promql-builder/label"
+	"github.com/perses/promql-builder/matrix"
+	"github.com/perses/promql-builder/vector"
+	"github.com/prometheus/prometheus/model/labels"
 	"github.com/prometheus/prometheus/promql/parser"
 )
 
 var OpentelemetryCommonPanelQueries = map[string]parser.Expr{
-	"SpanRate_accepted": promql.SumByRate(
-		"otelcol_receiver_accepted_spans_total",
+	"SpanRate_accepted": counterSumByRate(
+		"otelcol_receiver_accepted_spans",
 		[]string{"job", "receiver"},
 		label.New("job").EqualRegexp("$job"),
 		label.New("receiver").EqualRegexp("$receiver"),
 	),
-	"SpanRate_refused": promql.SumByRate(
-		"otelcol_receiver_refused_spans_total",
+	"SpanRate_refused": counterSumByRate(
+		"otelcol_receiver_refused_spans",
 		[]string{"job", "receiver"},
 		label.New("job").EqualRegexp("$job"),
 		label.New("receiver").EqualRegexp("$receiver"),
 	),
-	"MeticPointsRate_accepted": promql.SumByRate(
-		"otelcol_receiver_accepted_metric_points_total",
+	"MeticPointsRate_accepted": counterSumByRate(
+		"otelcol_receiver_accepted_metric_points",
 		[]string{"job", "receiver"},
 		label.New("job").EqualRegexp("$job"),
 		label.New("receiver").EqualRegexp("$receiver"),
 	),
-	"MeticPointsRate_refused": promql.SumByRate(
-		"otelcol_receiver_refused_metric_points_total",
+	"MeticPointsRate_refused": counterSumByRate(
+		"otelcol_receiver_refused_metric_points",
 		[]string{"job", "receiver"},
 		label.New("job").EqualRegexp("$job"),
 		label.New("receiver").EqualRegexp("$receiver"),
 	),
-	"LogRecordsRate_accepted": promql.SumByRate(
-		"otelcol_receiver_accepted_log_records_total",
+	"LogRecordsRate_accepted": counterSumByRate(
+		"otelcol_receiver_accepted_log_records",
 		[]string{"job", "receiver"},
 		label.New("job").EqualRegexp("$job"),
 		label.New("receiver").EqualRegexp("$receiver"),
 	),
-	"LogRecordsRate_refused": promql.SumByRate(
-		"otelcol_receiver_refused_log_records_total",
+	"LogRecordsRate_refused": counterSumByRate(
+		"otelcol_receiver_refused_log_records",
 		[]string{"job", "receiver"},
 		label.New("job").EqualRegexp("$job"),
 		label.New("receiver").EqualRegexp("$receiver"),
 	),
-	"SpanProcessorRate_incoming_items": promql.SumByRate(
-		"otelcol_processor_incoming_items_total",
-		[]string{"job", "processor", "otel_signal"},
-		label.New("job").EqualRegexp("$job"),
-		label.New("processor").EqualRegexp("$processor"),
-		label.New("otel_signal").EqualRegexp("traces"),
-	),
-	"SpanProcessorRate_outgoing_items": promql.SumByRate(
-		"otelcol_processor_outgoing_items_total",
-		[]string{"job", "processor", "otel_signal"},
-		label.New("job").EqualRegexp("$job"),
-		label.New("processor").EqualRegexp("$processor"),
-		label.New("otel_signal").EqualRegexp("traces"),
-	),
-	"MetricProcessorRate_incoming_items": promql.SumByRate(
-		"otelcol_processor_incoming_items_total",
-		[]string{"job", "processor", "otel_signal"},
-		label.New("job").EqualRegexp("$job"),
-		label.New("processor").EqualRegexp("$processor"),
-		label.New("otel_signal").EqualRegexp("metrics"),
-	),
-	"MetricProcessorRate_outgoing_items": promql.SumByRate(
-		"otelcol_processor_outgoing_items_total",
-		[]string{"job", "processor", "otel_signal"},
-		label.New("job").EqualRegexp("$job"),
-		label.New("processor").EqualRegexp("$processor"),
-		label.New("otel_signal").EqualRegexp("metrics"),
-	),
-	"LogProcessorRate_incoming_items": promql.SumByRate(
-		"otelcol_processor_incoming_items_total",
-		[]string{"job", "processor", "otel_signal"},
-		label.New("job").EqualRegexp("$job"),
-		label.New("processor").EqualRegexp("$processor"),
-		label.New("otel_signal").EqualRegexp("logs"),
-	),
-	"LogProcessorRate_outgoing_items": promql.SumByRate(
-		"otelcol_processor_outgoing_items_total",
-		[]string{"job", "processor", "otel_signal"},
-		label.New("job").EqualRegexp("$job"),
-		label.New("processor").EqualRegexp("$processor"),
-		label.New("otel_signal").EqualRegexp("logs"),
-	),
+	"SpanProcessorRate_incoming_items":   processorItemsRate("otelcol_processor_incoming_items", "traces"),
+	"SpanProcessorRate_outgoing_items":   processorItemsRate("otelcol_processor_outgoing_items", "traces"),
+	"MetricProcessorRate_incoming_items": processorItemsRate("otelcol_processor_incoming_items", "metrics"),
+	"MetricProcessorRate_outgoing_items": processorItemsRate("otelcol_processor_outgoing_items", "metrics"),
+	"LogProcessorRate_incoming_items":    processorItemsRate("otelcol_processor_incoming_items", "logs"),
+	"LogProcessorRate_outgoing_items":    processorItemsRate("otelcol_processor_outgoing_items", "logs"),
 	"BatchProcessorRate_batch_send_size": promql.SumByIncrease(
 		"otelcol_processor_batch_batch_send_size_bucket",
 		[]string{"job", "processor", "le"},
@@ -109,91 +76,91 @@ var OpentelemetryCommonPanelQueries = map[string]parser.Expr{
 	),
 	"BatchProcessorRate_batch_send_size_count": promql.SumByRate(
 		"otelcol_processor_batch_batch_send_size_count",
-		[]string{"processor"},
+		[]string{"job", "processor"},
 		label.New("job").EqualRegexp("$job"),
 		label.New("processor").EqualRegexp("$processor"),
 	),
 	"BatchProcessorRate_batch_send_size_sum": promql.SumByRate(
 		"otelcol_processor_batch_batch_send_size_sum",
-		[]string{"processor"},
+		[]string{"job", "processor"},
 		label.New("job").EqualRegexp("$job"),
 		label.New("processor").EqualRegexp("$processor"),
 	),
-	"BatchProcessorRate_batch_size_trigger_send": promql.SumByRate(
-		"otelcol_processor_batch_batch_size_trigger_send_total",
-		[]string{"processor"},
+	"BatchProcessorRate_batch_size_trigger_send": counterSumByRate(
+		"otelcol_processor_batch_batch_size_trigger_send",
+		[]string{"job", "processor"},
 		label.New("job").EqualRegexp("$job"),
 		label.New("processor").EqualRegexp("$processor"),
 	),
-	"BatchProcessorRate_batch_timeout_trigger_send": promql.SumByRate(
-		"otelcol_processor_batch_timeout_trigger_send_total",
-		[]string{"processor"},
+	"BatchProcessorRate_batch_timeout_trigger_send": counterSumByRate(
+		"otelcol_processor_batch_timeout_trigger_send",
+		[]string{"job", "processor"},
 		label.New("job").EqualRegexp("$job"),
 		label.New("processor").EqualRegexp("$processor"),
 	),
-	"ExporterRate_sent_spans": promql.SumByRate(
-		"otelcol_exporter_sent_spans_total",
-		[]string{"exporter"},
+	"ExporterRate_sent_spans": counterSumByRate(
+		"otelcol_exporter_sent_spans",
+		[]string{"job", "exporter"},
 		label.New("job").EqualRegexp("$job"),
 		label.New("exporter").EqualRegexp("$exporter"),
 	),
-	"ExporterRate_enqueue_failed_spans": promql.SumByRate(
-		"otelcol_exporter_enqueue_failed_spans_total",
-		[]string{"exporter"},
+	"ExporterRate_enqueue_failed_spans": counterSumByRate(
+		"otelcol_exporter_enqueue_failed_spans",
+		[]string{"job", "exporter"},
 		label.New("job").EqualRegexp("$job"),
 		label.New("exporter").EqualRegexp("$exporter"),
 	),
-	"ExporterRate_send_failed_spans": promql.SumByRate(
-		"otelcol_exporter_send_failed_spans_total",
-		[]string{"exporter"},
+	"ExporterRate_send_failed_spans": counterSumByRate(
+		"otelcol_exporter_send_failed_spans",
+		[]string{"job", "exporter"},
 		label.New("job").EqualRegexp("$job"),
 		label.New("exporter").EqualRegexp("$exporter"),
 	),
-	"ExporterRate_sent_metrics": promql.SumByRate(
-		"otelcol_exporter_sent_metric_points_total",
-		[]string{"exporter"},
+	"ExporterRate_sent_metrics": counterSumByRate(
+		"otelcol_exporter_sent_metric_points",
+		[]string{"job", "exporter"},
 		label.New("job").EqualRegexp("$job"),
 		label.New("exporter").EqualRegexp("$exporter"),
 	),
-	"ExporterRate_enqueue_failed_metrics": promql.SumByRate(
-		"otelcol_exporter_enqueue_failed_metric_points_total",
-		[]string{"exporter"},
+	"ExporterRate_enqueue_failed_metrics": counterSumByRate(
+		"otelcol_exporter_enqueue_failed_metric_points",
+		[]string{"job", "exporter"},
 		label.New("job").EqualRegexp("$job"),
 		label.New("exporter").EqualRegexp("$exporter"),
 	),
-	"ExporterRate_send_failed_metrics": promql.SumByRate(
-		"otelcol_exporter_send_failed_metric_points_total",
-		[]string{"exporter"},
+	"ExporterRate_send_failed_metrics": counterSumByRate(
+		"otelcol_exporter_send_failed_metric_points",
+		[]string{"job", "exporter"},
 		label.New("job").EqualRegexp("$job"),
 		label.New("exporter").EqualRegexp("$exporter"),
 	),
-	"ExporterRate_sent_logs": promql.SumByRate(
-		"otelcol_exporter_sent_log_records_total",
-		[]string{"exporter"},
+	"ExporterRate_sent_logs": counterSumByRate(
+		"otelcol_exporter_sent_log_records",
+		[]string{"job", "exporter"},
 		label.New("job").EqualRegexp("$job"),
 		label.New("exporter").EqualRegexp("$exporter"),
 	),
-	"ExporterRate_enqueue_failed_logs": promql.SumByRate(
-		"otelcol_exporter_enqueue_failed_log_records_total",
-		[]string{"exporter"},
+	"ExporterRate_enqueue_failed_logs": counterSumByRate(
+		"otelcol_exporter_enqueue_failed_log_records",
+		[]string{"job", "exporter"},
 		label.New("job").EqualRegexp("$job"),
 		label.New("exporter").EqualRegexp("$exporter"),
 	),
-	"ExporterRate_send_failed_logs": promql.SumByRate(
-		"otelcol_exporter_send_failed_log_records_total",
-		[]string{"exporter"},
+	"ExporterRate_send_failed_logs": counterSumByRate(
+		"otelcol_exporter_send_failed_log_records",
+		[]string{"job", "exporter"},
 		label.New("job").EqualRegexp("$job"),
 		label.New("exporter").EqualRegexp("$exporter"),
 	),
 	"ExporterRate_queue_size": promql.MaxBy(
 		"otelcol_exporter_queue_size",
-		[]string{"exporter"},
+		[]string{"job", "exporter", "data_type"},
 		label.New("job").EqualRegexp("$job"),
 		label.New("exporter").EqualRegexp("$exporter"),
 	),
 	"ExporterRate_queue_capacity": promql.MinBy(
 		"otelcol_exporter_queue_capacity",
-		[]string{"exporter"},
+		[]string{"job", "exporter", "data_type"},
 		label.New("job").EqualRegexp("$job"),
 		label.New("exporter").EqualRegexp("$exporter"),
 	),
@@ -202,18 +169,56 @@ var OpentelemetryCommonPanelQueries = map[string]parser.Expr{
 		promqlbuilder.Div(
 			promql.MaxBy(
 				"otelcol_exporter_queue_size",
-				[]string{"exporter"},
+				[]string{"job", "exporter", "data_type"},
 				label.New("job").EqualRegexp("$job"),
 				label.New("exporter").EqualRegexp("$exporter"),
 			),
 			promql.MaxBy(
 				"otelcol_exporter_queue_capacity",
-				[]string{"exporter"},
+				[]string{"job", "exporter", "data_type"},
 				label.New("job").EqualRegexp("$job"),
 				label.New("exporter").EqualRegexp("$exporter"),
 			),
 		),
 	),
+}
+
+// counterName matches an otelcol counter under both naming conventions found in Prometheus.
+// The collector's own Prometheus endpoint exposes counters without the _total suffix
+// (without_type_suffix defaults to true), while the OTLP to Prometheus translation adds it.
+func counterName(name string) *labels.Matcher {
+	return label.New("__name__").EqualRegexp(name + "(_total)?")
+}
+
+func counterSumByRate(name string, byLabels []string, labelMatchers ...*labels.Matcher) parser.Expr {
+	return promql.SumByRate("", byLabels, append([]*labels.Matcher{counterName(name)}, labelMatchers...)...)
+}
+
+// processorItemsRate returns the rate of a processor items counter for one signal.
+// Prometheus 3 keeps the original otel.signal label name when it scrapes the collector with
+// UTF-8 names, whereas Prometheus 2, underscore escaping and the OTLP translation store it as
+// otel_signal. label_replace copies otel.signal into otel_signal so both layouts can be filtered.
+func processorItemsRate(name string, signal string) parser.Expr {
+	return promqlbuilder.And(
+		promqlbuilder.Sum(
+			promqlbuilder.LabelReplace(
+				promqlbuilder.Rate(
+					matrix.New(
+						vector.New(
+							vector.WithLabelMatchers(
+								counterName(name),
+								label.New("job").EqualRegexp("$job"),
+								label.New("processor").EqualRegexp("$processor"),
+							),
+						),
+						matrix.WithRangeAsVariable("$__rate_interval"),
+					),
+				),
+				"otel_signal", "$1", "otel.signal", "(.+)",
+			),
+		).By("job", "processor", "otel_signal"),
+		promqlbuilder.LabelReplace(promqlbuilder.Vector(1), "otel_signal", signal, "", ""),
+	).On("otel_signal")
 }
 
 // OverrideOpentelemetryPanelQueries overrides the OpentelemetryCommonPanelQueries global.

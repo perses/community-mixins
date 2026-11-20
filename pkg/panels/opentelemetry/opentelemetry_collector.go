@@ -80,7 +80,7 @@ func SpanRate(datasource string, labelMatchers ...*labels.Matcher) panelgroup.Op
 //
 // Returns a panelgroup.Option that can be used to add this panel to a dashboard.
 func MeticPointsRate(datasource string, labelMatchers ...*labels.Matcher) panelgroup.Option {
-	return panelgroup.AddPanel("Metic Points Rate",
+	return panelgroup.AddPanel("Metric Points Rate",
 		panel.Description(`Accepted: rate of metric points successfully pushed into the pipeline.
 		Refused: rate of metric points that could not be pushed into the pipeline.`),
 		timeSeriesPanel.Chart(
@@ -405,7 +405,7 @@ func BatchProcessorBatchSizeTriggerSend(datasource string, labelMatchers ...*lab
 					labelMatchers,
 				).Pretty(0),
 				dashboards.AddQueryDataSource(datasource),
-				query.SeriesNameFormat("Batch sent due to a timeout trigger: {{processor}}"),
+				query.SeriesNameFormat("Batch sent due to a size trigger: {{processor}}"),
 			),
 		),
 		panel.AddQuery(
@@ -590,7 +590,7 @@ func QueueSizeExporterRate(datasource string, labelMatchers ...*labels.Matcher) 
 					labelMatchers,
 				).Pretty(0),
 				dashboards.AddQueryDataSource(datasource),
-				query.SeriesNameFormat("Queue size: {{exporter}}"),
+				query.SeriesNameFormat("Queue size: {{exporter}} ({{data_type}})"),
 			),
 		),
 	)
@@ -618,7 +618,7 @@ func QueueCapacityExporterRate(datasource string, labelMatchers ...*labels.Match
 					labelMatchers,
 				).Pretty(0),
 				dashboards.AddQueryDataSource(datasource),
-				query.SeriesNameFormat("Queue capacity: {{exporter}}"),
+				query.SeriesNameFormat("Queue capacity: {{exporter}} ({{data_type}})"),
 			),
 		),
 	)
@@ -646,7 +646,7 @@ func QueueUtilizationExporterRate(datasource string, labelMatchers ...*labels.Ma
 					labelMatchers,
 				).Pretty(0),
 				dashboards.AddQueryDataSource(datasource),
-				query.SeriesNameFormat("Queue utilization: {{exporter}}"),
+				query.SeriesNameFormat("Queue utilization: {{exporter}} ({{data_type}})"),
 			),
 		),
 	)

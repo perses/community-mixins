@@ -74,7 +74,7 @@ func BuildOpenTelemetryCollector(project string, datasource string, clusterLabel
 					),
 				),
 			),
-			dashboards.AddClusterVariable(datasource, clusterLabelName, "up{job='$job'}"),
+			dashboards.AddClusterVariable(datasource, clusterLabelName, "{__name__=~'otelcol_process_uptime.*', job='$job'}"),
 			dashboard.AddVariable(
 				"receiver",
 				listVar.List(

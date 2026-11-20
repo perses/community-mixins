@@ -149,7 +149,9 @@ spec:
                     name: prometheus-datasource
                   query: |-
                     sum by (job, receiver) (
-                      rate(otelcol_receiver_accepted_spans_total{job=~"$job",receiver=~"$receiver"}[$__rate_interval])
+                      rate(
+                        {__name__=~"otelcol_receiver_accepted_spans(_total)?",job=~"$job",receiver=~"$receiver"}[$__rate_interval]
+                      )
                     )
                   seriesNameFormat: 'Accepted: {{receiver}}'
           - kind: TimeSeriesQuery
@@ -162,7 +164,9 @@ spec:
                     name: prometheus-datasource
                   query: |-
                     sum by (job, receiver) (
-                      rate(otelcol_receiver_refused_spans_total{job=~"$job",receiver=~"$receiver"}[$__rate_interval])
+                      rate(
+                        {__name__=~"otelcol_receiver_refused_spans(_total)?",job=~"$job",receiver=~"$receiver"}[$__rate_interval]
+                      )
                     )
                   seriesNameFormat: 'Refused: {{receiver}}'
       "0_1":
@@ -172,7 +176,7 @@ spec:
             description: "Accepted: rate of metric points successfully pushed into
               the pipeline.\n\t\tRefused: rate of metric points that could not be
               pushed into the pipeline."
-            name: Metic Points Rate
+            name: Metric Points Rate
           plugin:
             kind: TimeSeriesChart
             spec:
@@ -196,7 +200,7 @@ spec:
                   query: |-
                     sum by (job, receiver) (
                       rate(
-                        otelcol_receiver_accepted_metric_points_total{job=~"$job",receiver=~"$receiver"}[$__rate_interval]
+                        {__name__=~"otelcol_receiver_accepted_metric_points(_total)?",job=~"$job",receiver=~"$receiver"}[$__rate_interval]
                       )
                     )
                   seriesNameFormat: 'Accepted: {{receiver}}'
@@ -211,7 +215,7 @@ spec:
                   query: |-
                     sum by (job, receiver) (
                       rate(
-                        otelcol_receiver_refused_metric_points_total{job=~"$job",receiver=~"$receiver"}[$__rate_interval]
+                        {__name__=~"otelcol_receiver_refused_metric_points(_total)?",job=~"$job",receiver=~"$receiver"}[$__rate_interval]
                       )
                     )
                   seriesNameFormat: 'Refused: {{receiver}}'
@@ -246,7 +250,7 @@ spec:
                   query: |-
                     sum by (job, receiver) (
                       rate(
-                        otelcol_receiver_accepted_log_records_total{job=~"$job",receiver=~"$receiver"}[$__rate_interval]
+                        {__name__=~"otelcol_receiver_accepted_log_records(_total)?",job=~"$job",receiver=~"$receiver"}[$__rate_interval]
                       )
                     )
                   seriesNameFormat: 'Accepted: {{receiver}}'
@@ -261,7 +265,7 @@ spec:
                   query: |-
                     sum by (job, receiver) (
                       rate(
-                        otelcol_receiver_refused_log_records_total{job=~"$job",receiver=~"$receiver"}[$__rate_interval]
+                        {__name__=~"otelcol_receiver_refused_log_records(_total)?",job=~"$job",receiver=~"$receiver"}[$__rate_interval]
                       )
                     )
                   seriesNameFormat: 'Refused: {{receiver}}'
@@ -291,12 +295,20 @@ spec:
                   datasource:
                     kind: PrometheusDatasource
                     name: prometheus-datasource
-                  query: |-
-                    sum by (job, processor, otel_signal) (
-                      rate(
-                        otelcol_processor_incoming_items_total{job=~"$job",otel_signal=~"traces",processor=~"$processor"}[$__rate_interval]
+                  query: |2-
+                      sum by (job, processor, otel_signal) (
+                        label_replace(
+                          rate(
+                            {__name__=~"otelcol_processor_incoming_items(_total)?",job=~"$job",processor=~"$processor"}[$__rate_interval]
+                          ),
+                          "otel_signal",
+                          "$1",
+                          "otel.signal",
+                          "(.+)"
+                        )
                       )
-                    )
+                    and on (otel_signal)
+                      label_replace(vector(1), "otel_signal", "traces", "", "")
                   seriesNameFormat: 'Incoming: {{processor}}'
           - kind: TimeSeriesQuery
             spec:
@@ -306,12 +318,20 @@ spec:
                   datasource:
                     kind: PrometheusDatasource
                     name: prometheus-datasource
-                  query: |-
-                    sum by (job, processor, otel_signal) (
-                      rate(
-                        otelcol_processor_outgoing_items_total{job=~"$job",otel_signal=~"traces",processor=~"$processor"}[$__rate_interval]
+                  query: |2-
+                      sum by (job, processor, otel_signal) (
+                        label_replace(
+                          rate(
+                            {__name__=~"otelcol_processor_outgoing_items(_total)?",job=~"$job",processor=~"$processor"}[$__rate_interval]
+                          ),
+                          "otel_signal",
+                          "$1",
+                          "otel.signal",
+                          "(.+)"
+                        )
                       )
-                    )
+                    and on (otel_signal)
+                      label_replace(vector(1), "otel_signal", "traces", "", "")
                   seriesNameFormat: 'Outgoing: {{processor}}'
       "1_1":
         kind: Panel
@@ -339,12 +359,20 @@ spec:
                   datasource:
                     kind: PrometheusDatasource
                     name: prometheus-datasource
-                  query: |-
-                    sum by (job, processor, otel_signal) (
-                      rate(
-                        otelcol_processor_incoming_items_total{job=~"$job",otel_signal=~"metrics",processor=~"$processor"}[$__rate_interval]
+                  query: |2-
+                      sum by (job, processor, otel_signal) (
+                        label_replace(
+                          rate(
+                            {__name__=~"otelcol_processor_incoming_items(_total)?",job=~"$job",processor=~"$processor"}[$__rate_interval]
+                          ),
+                          "otel_signal",
+                          "$1",
+                          "otel.signal",
+                          "(.+)"
+                        )
                       )
-                    )
+                    and on (otel_signal)
+                      label_replace(vector(1), "otel_signal", "metrics", "", "")
                   seriesNameFormat: 'Incoming: {{processor}}'
           - kind: TimeSeriesQuery
             spec:
@@ -354,12 +382,20 @@ spec:
                   datasource:
                     kind: PrometheusDatasource
                     name: prometheus-datasource
-                  query: |-
-                    sum by (job, processor, otel_signal) (
-                      rate(
-                        otelcol_processor_outgoing_items_total{job=~"$job",otel_signal=~"metrics",processor=~"$processor"}[$__rate_interval]
+                  query: |2-
+                      sum by (job, processor, otel_signal) (
+                        label_replace(
+                          rate(
+                            {__name__=~"otelcol_processor_outgoing_items(_total)?",job=~"$job",processor=~"$processor"}[$__rate_interval]
+                          ),
+                          "otel_signal",
+                          "$1",
+                          "otel.signal",
+                          "(.+)"
+                        )
                       )
-                    )
+                    and on (otel_signal)
+                      label_replace(vector(1), "otel_signal", "metrics", "", "")
                   seriesNameFormat: 'Outgoing: {{processor}}'
       "1_2":
         kind: Panel
@@ -387,12 +423,20 @@ spec:
                   datasource:
                     kind: PrometheusDatasource
                     name: prometheus-datasource
-                  query: |-
-                    sum by (job, processor, otel_signal) (
-                      rate(
-                        otelcol_processor_incoming_items_total{job=~"$job",otel_signal=~"logs",processor=~"$processor"}[$__rate_interval]
+                  query: |2-
+                      sum by (job, processor, otel_signal) (
+                        label_replace(
+                          rate(
+                            {__name__=~"otelcol_processor_incoming_items(_total)?",job=~"$job",processor=~"$processor"}[$__rate_interval]
+                          ),
+                          "otel_signal",
+                          "$1",
+                          "otel.signal",
+                          "(.+)"
+                        )
                       )
-                    )
+                    and on (otel_signal)
+                      label_replace(vector(1), "otel_signal", "logs", "", "")
                   seriesNameFormat: 'Incoming: {{processor}}'
           - kind: TimeSeriesQuery
             spec:
@@ -402,12 +446,20 @@ spec:
                   datasource:
                     kind: PrometheusDatasource
                     name: prometheus-datasource
-                  query: |-
-                    sum by (job, processor, otel_signal) (
-                      rate(
-                        otelcol_processor_outgoing_items_total{job=~"$job",otel_signal=~"logs",processor=~"$processor"}[$__rate_interval]
+                  query: |2-
+                      sum by (job, processor, otel_signal) (
+                        label_replace(
+                          rate(
+                            {__name__=~"otelcol_processor_outgoing_items(_total)?",job=~"$job",processor=~"$processor"}[$__rate_interval]
+                          ),
+                          "otel_signal",
+                          "$1",
+                          "otel.signal",
+                          "(.+)"
+                        )
                       )
-                    )
+                    and on (otel_signal)
+                      label_replace(vector(1), "otel_signal", "logs", "", "")
                   seriesNameFormat: 'Outgoing: {{processor}}'
       "1_3":
         kind: Panel
@@ -468,7 +520,7 @@ spec:
                     kind: PrometheusDatasource
                     name: prometheus-datasource
                   query: |-
-                    sum by (processor) (
+                    sum by (job, processor) (
                       rate(
                         otelcol_processor_batch_batch_send_size_count{job=~"$job",processor=~"$processor"}[$__rate_interval]
                       )
@@ -483,7 +535,7 @@ spec:
                     kind: PrometheusDatasource
                     name: prometheus-datasource
                   query: |-
-                    sum by (processor) (
+                    sum by (job, processor) (
                       rate(
                         otelcol_processor_batch_batch_send_size_sum{job=~"$job",processor=~"$processor"}[$__rate_interval]
                       )
@@ -512,12 +564,12 @@ spec:
                     kind: PrometheusDatasource
                     name: prometheus-datasource
                   query: |-
-                    sum by (processor) (
+                    sum by (job, processor) (
                       rate(
-                        otelcol_processor_batch_batch_size_trigger_send_total{job=~"$job",processor=~"$processor"}[$__rate_interval]
+                        {__name__=~"otelcol_processor_batch_batch_size_trigger_send(_total)?",job=~"$job",processor=~"$processor"}[$__rate_interval]
                       )
                     )
-                  seriesNameFormat: 'Batch sent due to a timeout trigger: {{processor}}'
+                  seriesNameFormat: 'Batch sent due to a size trigger: {{processor}}'
           - kind: TimeSeriesQuery
             spec:
               plugin:
@@ -527,9 +579,9 @@ spec:
                     kind: PrometheusDatasource
                     name: prometheus-datasource
                   query: |-
-                    sum by (processor) (
+                    sum by (job, processor) (
                       rate(
-                        otelcol_processor_batch_timeout_trigger_send_total{job=~"$job",processor=~"$processor"}[$__rate_interval]
+                        {__name__=~"otelcol_processor_batch_timeout_trigger_send(_total)?",job=~"$job",processor=~"$processor"}[$__rate_interval]
                       )
                     )
                   seriesNameFormat: 'Batch sent due to a timeout trigger: {{processor}}'
@@ -556,8 +608,10 @@ spec:
                     kind: PrometheusDatasource
                     name: prometheus-datasource
                   query: |-
-                    sum by (exporter) (
-                      rate(otelcol_exporter_sent_spans_total{exporter=~"$exporter",job=~"$job"}[$__rate_interval])
+                    sum by (job, exporter) (
+                      rate(
+                        {__name__=~"otelcol_exporter_sent_spans(_total)?",exporter=~"$exporter",job=~"$job"}[$__rate_interval]
+                      )
                     )
                   seriesNameFormat: 'Sent: {{exporter}}'
           - kind: TimeSeriesQuery
@@ -569,9 +623,9 @@ spec:
                     kind: PrometheusDatasource
                     name: prometheus-datasource
                   query: |-
-                    sum by (exporter) (
+                    sum by (job, exporter) (
                       rate(
-                        otelcol_exporter_enqueue_failed_spans_total{exporter=~"$exporter",job=~"$job"}[$__rate_interval]
+                        {__name__=~"otelcol_exporter_enqueue_failed_spans(_total)?",exporter=~"$exporter",job=~"$job"}[$__rate_interval]
                       )
                     )
                   seriesNameFormat: 'Enqueue failed: {{exporter}}'
@@ -584,8 +638,10 @@ spec:
                     kind: PrometheusDatasource
                     name: prometheus-datasource
                   query: |-
-                    sum by (exporter) (
-                      rate(otelcol_exporter_send_failed_spans_total{exporter=~"$exporter",job=~"$job"}[$__rate_interval])
+                    sum by (job, exporter) (
+                      rate(
+                        {__name__=~"otelcol_exporter_send_failed_spans(_total)?",exporter=~"$exporter",job=~"$job"}[$__rate_interval]
+                      )
                     )
                   seriesNameFormat: 'Send failed: {{exporter}}'
       "2_1":
@@ -611,8 +667,10 @@ spec:
                     kind: PrometheusDatasource
                     name: prometheus-datasource
                   query: |-
-                    sum by (exporter) (
-                      rate(otelcol_exporter_sent_metric_points_total{exporter=~"$exporter",job=~"$job"}[$__rate_interval])
+                    sum by (job, exporter) (
+                      rate(
+                        {__name__=~"otelcol_exporter_sent_metric_points(_total)?",exporter=~"$exporter",job=~"$job"}[$__rate_interval]
+                      )
                     )
                   seriesNameFormat: 'Sent: {{exporter}}'
           - kind: TimeSeriesQuery
@@ -624,9 +682,9 @@ spec:
                     kind: PrometheusDatasource
                     name: prometheus-datasource
                   query: |-
-                    sum by (exporter) (
+                    sum by (job, exporter) (
                       rate(
-                        otelcol_exporter_enqueue_failed_metric_points_total{exporter=~"$exporter",job=~"$job"}[$__rate_interval]
+                        {__name__=~"otelcol_exporter_enqueue_failed_metric_points(_total)?",exporter=~"$exporter",job=~"$job"}[$__rate_interval]
                       )
                     )
                   seriesNameFormat: 'Enqueue failed: {{exporter}}'
@@ -639,9 +697,9 @@ spec:
                     kind: PrometheusDatasource
                     name: prometheus-datasource
                   query: |-
-                    sum by (exporter) (
+                    sum by (job, exporter) (
                       rate(
-                        otelcol_exporter_send_failed_metric_points_total{exporter=~"$exporter",job=~"$job"}[$__rate_interval]
+                        {__name__=~"otelcol_exporter_send_failed_metric_points(_total)?",exporter=~"$exporter",job=~"$job"}[$__rate_interval]
                       )
                     )
                   seriesNameFormat: 'Send failed: {{exporter}}'
@@ -668,8 +726,10 @@ spec:
                     kind: PrometheusDatasource
                     name: prometheus-datasource
                   query: |-
-                    sum by (exporter) (
-                      rate(otelcol_exporter_sent_log_records_total{exporter=~"$exporter",job=~"$job"}[$__rate_interval])
+                    sum by (job, exporter) (
+                      rate(
+                        {__name__=~"otelcol_exporter_sent_log_records(_total)?",exporter=~"$exporter",job=~"$job"}[$__rate_interval]
+                      )
                     )
                   seriesNameFormat: 'Sent: {{exporter}}'
           - kind: TimeSeriesQuery
@@ -681,9 +741,9 @@ spec:
                     kind: PrometheusDatasource
                     name: prometheus-datasource
                   query: |-
-                    sum by (exporter) (
+                    sum by (job, exporter) (
                       rate(
-                        otelcol_exporter_enqueue_failed_log_records_total{exporter=~"$exporter",job=~"$job"}[$__rate_interval]
+                        {__name__=~"otelcol_exporter_enqueue_failed_log_records(_total)?",exporter=~"$exporter",job=~"$job"}[$__rate_interval]
                       )
                     )
                   seriesNameFormat: 'Enqueue failed: {{exporter}}'
@@ -696,9 +756,9 @@ spec:
                     kind: PrometheusDatasource
                     name: prometheus-datasource
                   query: |-
-                    sum by (exporter) (
+                    sum by (job, exporter) (
                       rate(
-                        otelcol_exporter_send_failed_log_records_total{exporter=~"$exporter",job=~"$job"}[$__rate_interval]
+                        {__name__=~"otelcol_exporter_send_failed_log_records(_total)?",exporter=~"$exporter",job=~"$job"}[$__rate_interval]
                       )
                     )
                   seriesNameFormat: 'Send failed: {{exporter}}'
@@ -723,8 +783,8 @@ spec:
                   datasource:
                     kind: PrometheusDatasource
                     name: prometheus-datasource
-                  query: max by (exporter) (otelcol_exporter_queue_size{exporter=~"$exporter",job=~"$job"})
-                  seriesNameFormat: 'Queue size: {{exporter}}'
+                  query: max by (job, exporter, data_type) (otelcol_exporter_queue_size{exporter=~"$exporter",job=~"$job"})
+                  seriesNameFormat: 'Queue size: {{exporter}} ({{data_type}})'
       "2_4":
         kind: Panel
         spec:
@@ -746,8 +806,11 @@ spec:
                   datasource:
                     kind: PrometheusDatasource
                     name: prometheus-datasource
-                  query: min by (exporter) (otelcol_exporter_queue_capacity{exporter=~"$exporter",job=~"$job"})
-                  seriesNameFormat: 'Queue capacity: {{exporter}}'
+                  query: |-
+                    min by (job, exporter, data_type) (
+                      otelcol_exporter_queue_capacity{exporter=~"$exporter",job=~"$job"}
+                    )
+                  seriesNameFormat: 'Queue capacity: {{exporter}} ({{data_type}})'
       "2_5":
         kind: Panel
         spec:
@@ -772,10 +835,12 @@ spec:
                   query: |2-
                       100
                     *
-                        max by (exporter) (otelcol_exporter_queue_size{exporter=~"$exporter",job=~"$job"})
+                        max by (job, exporter, data_type) (otelcol_exporter_queue_size{exporter=~"$exporter",job=~"$job"})
                       /
-                        max by (exporter) (otelcol_exporter_queue_capacity{exporter=~"$exporter",job=~"$job"})
-                  seriesNameFormat: 'Queue utilization: {{exporter}}'
+                        max by (job, exporter, data_type) (
+                          otelcol_exporter_queue_capacity{exporter=~"$exporter",job=~"$job"}
+                        )
+                  seriesNameFormat: 'Queue utilization: {{exporter}} ({{data_type}})'
     variables:
     - kind: ListVariable
       spec:
